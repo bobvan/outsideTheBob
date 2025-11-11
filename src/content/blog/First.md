@@ -7,7 +7,7 @@ draft: false
 
 ## Backup and Storage Design
 
-### On-Site Backup Needs
+### On-Site Backup Needs Touchy
 
 * Fat finger recovery
 * Local storage failure recovery
@@ -34,8 +34,6 @@ draft: false
 
 ## Table Test
 
-
-
 | Guest    | Node Boot | Storage | Example |
 |----------|:-----|---------:|:-----:|
 | Tier 1 | RAID1 ZFS w/ECC RAM, Backed up, Replicated, HA | Automated node failover in seconds | Critical network services |
@@ -48,5 +46,5 @@ draft: false
 * Nodes dump to backup servers
 * Baseline: RAID1 ZFS Non-ECC boot for nodes and backup servers
 
-* XXX Boot failure resilience: 
-* XXX Storage failure resilience: 
+* XXX Boot failure resilience:
+* XXX Storage failure resilience:

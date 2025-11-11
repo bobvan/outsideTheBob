@@ -1,0 +1,73 @@
+---
+// ChartEmbed.astro (fixed)
+// I'm still calling this broken
+import type { ChartConfiguration } from "chart.js";
+
+type Props = {
+  title?: string;
+  data?: ChartConfiguration["data"];
+  config?: ChartConfiguration;
+  id?: string;
+};
+
+const {
+  title = "Chart",
+  data,
+  config,
+  id = typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `chart-${Math.random().toString(36).slice(2)}`,
+} = Astro.props;
+
+const finalConfig: ChartConfiguration = config ?? {
+  type: "line",
+  data: data ?? { labels: [], datasets: [] },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: "bottom" } },
+  },
+};
+---
+
+<style>
+.chart { text-align: center; margin: 1.5rem 0; }
+canvas { max-width: 100%; height: auto; }
+</style>
+
+<div class="chart">
+  {title && <h3>{title}</h3>}
+  <canvas id={id}></canvas>
+</div>
+
+<script is:inline type="module" define:vars={{ id, finalConfig }}>
+  (async () => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const init = async () => {
+      // ✅ Use ESM build from a CDN so the browser can resolve it
+      const { Chart } = await import('https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.esm.js');
+      new Chart(el, finalConfig);
+    };
+
+    const alreadyVisible = () => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom >= 0;
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some(e => e.isIntersecting)) {
+          io.disconnect();
+          init();
+        }
+      }, { rootMargin: '150px' });
+      io.observe(el);
+    } else {
+      if (alreadyVisible()) init();
+      else window.addEventListener('scroll', () => {
+        if (alreadyVisible()) init();
+      }, { passive: true });
+    }
+  })();
+</script>

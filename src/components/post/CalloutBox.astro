@@ -1,0 +1,42 @@
+---
+/** Narrow the allowed values for `type` */
+const TYPES = ['info', 'warn', 'tip'] as const;
+type CalloutType = typeof TYPES[number];
+
+type Props = {
+  type?: CalloutType;
+  title?: string;
+};
+
+/** Strongly type Astro.props and set defaults */
+const { type = 'info', title }: Props = Astro.props;
+
+/** Colors keyed by the same union */
+const colors: Record<CalloutType, string> = {
+  info: '#0077cc',
+  warn: '#d97706',
+  tip:  '#10b981',
+};
+
+/** Safe lookup */
+const color = colors[type];
+---
+
+<style>
+.box {
+  border-left: 4px solid var(--color);
+  background: color-mix(in srgb, var(--color) 10%, transparent);
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.25rem;
+}
+.title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+</style>
+
+<div class="box" style={`--color:${color}`}>
+  {title && <div class="title">{title}</div>}
+  <slot />
+</div>

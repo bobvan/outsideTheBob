@@ -1,0 +1,38 @@
+---
+const { imgSrc, imgAlt, side = 'right', caption } = Astro.props;
+---
+
+<style>
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin: 1.5rem 0;
+  gap: 1rem;
+}
+img {
+  max-width: 45%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+.text {
+  flex: 1;
+  min-width: 250px;
+}
+.right img { order: 2; }
+.left img { order: 0; }
+.caption {
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #666);
+  text-align: center;
+  margin-top: 0.25rem;
+}
+</style>
+
+<div class:list={`wrapper ${side}`}>
+  <img src={imgSrc} alt={imgAlt} loading="lazy" />
+  <div class="text">
+    <slot />
+    {caption && <p class="caption">{caption}</p>}
+  </div>
+</div>

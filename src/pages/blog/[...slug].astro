@@ -1,20 +1,40 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, getEntry, render } from "astro:content";
+
+const slugParam = Astro.params.slug ?? "";
+const slug = Array.isArray(slugParam) ? slugParam.join("/") : slugParam;
+const entry = await getEntry("blog", slug);
+if (!entry) return Astro.redirect("/");
+
+const { Content } = await render(entry);
+
+const newerToOlder = (await getCollection("blog", (p) => !p.data.draft))
+  .sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+const idx = newerToOlder.findIndex((p) => p.id === slug);
+const prev = newerToOlder[idx - 1];
+const next = newerToOlder[idx + 1];
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
+  const posts = await getCollection("blog", (p) => !p.data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+  }));
 }
-type Props = CollectionEntry<'blog'>;
-
-const post = Astro.props;
-const { Content } = await render(post);
 ---
 
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<BaseLayout title={entry.data.title}>
+  <article>
+    <h1>{entry.data.title}</h1>
+    <p class="post-meta">
+      {new Date(entry.data.pubDate).toLocaleDateString()}
+      {entry.data.tags?.length ? ` • ${entry.data.tags.join(", ")}` : ""}
+    </p>
+    <Content />
+    <p>
+      {prev && <a href={`/blog/${prev.id}/`}>← {prev.data.title}</a>}
+      {" "}
+      {next && <a href={`/blog/${next.id}/`} style="float:right">{next.data.title} →</a>}
+    </p>
+  </article>
+</BaseLayout>

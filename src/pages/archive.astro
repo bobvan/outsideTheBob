@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", (p) => !p.data.draft))
+  .sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+
+function ym(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+const groups = new Map<string, typeof posts>();
+for (const p of posts) {
+  const key = ym(new Date(p.data.pubDate));
+  if (!groups.has(key)) groups.set(key, []);
+  groups.get(key)!.push(p);
+}
+
+// Produce a nice heading like "November 2025"
+function monthHeading(key: string) {
+  const [y, m] = key.split("-").map(Number);
+  const dt = new Date(y, m - 1, 1);
+  return dt.toLocaleString(undefined, { month: "long", year: "numeric" });
+}
+
+const orderedKeys = Array.from(groups.keys()).sort((a, b) => (a < b ? 1 : -1));
+---
+
+<BaseLayout title="Archive">
+  <h1>Archive</h1>
+
+  {orderedKeys.map((key) => (
+    <section class="archive-month">
+      <h2>{monthHeading(key)}</h2>
+      <ul class="list-unstyled">
+        {groups.get(key)!.map((p) => (
+          <li>
+            <a href={`/blog/${p.slug}/`}>{p.data.title}</a>
+            <span class="muted"> — {new Date(p.data.pubDate).toLocaleDateString()}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</BaseLayout>

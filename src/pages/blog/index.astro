@@ -7,7 +7,8 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
+const includeDrafts = import.meta.env.DEV;
+const posts = (await getCollection('blog', (post) => includeDrafts || !post.data.draft)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const slugFor = (post: typeof posts[number]) => post.data.slug ?? post.id;

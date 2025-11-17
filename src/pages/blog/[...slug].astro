@@ -5,10 +5,12 @@ import type { CollectionEntry } from "astro:content";
 
 type BlogEntry = CollectionEntry<"blog">;
 
+const includeDrafts = import.meta.env.DEV;
+
 const slugParam = Astro.params.slug ?? "";
 const slug = Array.isArray(slugParam) ? slugParam.join("/") : slugParam;
 
-const posts = await getCollection("blog", (p) => !p.data.draft);
+const posts = await getCollection("blog", (post) => includeDrafts || !post.data.draft);
 const postSlug = (post: BlogEntry) => post.data.slug ?? post.id;
 
 const entry = posts.find((post) => postSlug(post) === slug);
@@ -22,7 +24,8 @@ const prev = newerToOlder[idx - 1];
 const next = newerToOlder[idx + 1];
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", (p) => !p.data.draft);
+  const includeDrafts = import.meta.env.DEV;
+  const posts = await getCollection("blog", (post) => includeDrafts || !post.data.draft);
   return posts.map((post) => ({
     params: { slug: post.data.slug ?? post.id },
   }));

@@ -2,7 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-const posts = (await getCollection("blog", (p) => !p.data.draft))
+const includeDrafts = import.meta.env.DEV;
+const posts = (await getCollection("blog", (p) => includeDrafts || !p.data.draft))
   .sort((a, b) => +b.data.pubDate - +a.data.pubDate);
 
 const slugFor = (post: typeof posts[number]) => post.data.slug ?? post.id;

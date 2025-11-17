@@ -5,6 +5,7 @@ pubDate: 2025-11-17
 description: "Considerations for Clock Sync Daemons and Proxmox"
 draft: false
 ---
+import CalloutBox from "../../components/post/CalloutBox.astro";
 
 Tight time sync requires consistent latency between packet arrival and user space processing.
 We can't expect consistent latency inside a container or VM.
@@ -37,6 +38,8 @@ apt install ntpsec
 apt install ntpsec-ntpviz # Optional
 ```
 
-Note that ntpviz now runs from a `systemd` timer, so there's no longer a need for a `crontab` entry.
+<CalloutBox>
+    Note that ntpviz now runs from a `systemd` timer, so there's no longer a need for a `crontab` entry.
+</CalloutBox>
 
 URL for `ntpviz`: `http://ProxmoxHost/ntpviz/`

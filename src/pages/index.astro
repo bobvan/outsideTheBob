@@ -6,6 +6,8 @@ const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => +b.data.pubDate - +a.data.pubDate)
   .slice(0, 10);
 
+const slugFor = (post: typeof posts[number]) => post.data.slug ?? post.id;
+
 const postsWithContent = await Promise.all(
   posts.map(async (post) => {
     const { Content } = await render(post);
@@ -19,7 +21,7 @@ const postsWithContent = await Promise.all(
 
   {postsWithContent.map(({ post, Content }) => (
     <article>
-      <h2><a href={`/blog/${post.id}/`}>{post.data.title}</a></h2>
+      <h2><a href={`/blog/${slugFor(post)}/`}>{post.data.title}</a></h2>
       <p class="post-meta">
         {new Date(post.data.pubDate).toLocaleDateString()}
         {post.data.tags?.length ? ` • ${post.data.tags.join(", ")}` : ""}

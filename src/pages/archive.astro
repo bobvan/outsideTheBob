@@ -5,6 +5,8 @@ import { getCollection } from "astro:content";
 const posts = (await getCollection("blog", (p) => !p.data.draft))
   .sort((a, b) => +b.data.pubDate - +a.data.pubDate);
 
+const slugFor = (post: typeof posts[number]) => post.data.slug ?? post.id;
+
 function ym(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
@@ -35,7 +37,7 @@ const orderedKeys = Array.from(groups.keys()).sort((a, b) => (a < b ? 1 : -1));
       <ul class="list-unstyled">
         {groups.get(key)!.map((p) => (
           <li>
-            <a href={`/blog/${p.slug}/`}>{p.data.title}</a>
+            <a href={`/blog/${slugFor(p)}/`}>{p.data.title}</a>
             <span class="muted"> — {new Date(p.data.pubDate).toLocaleDateString()}</span>
           </li>
         ))}

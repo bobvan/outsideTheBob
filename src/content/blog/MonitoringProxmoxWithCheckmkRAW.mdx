@@ -1,0 +1,83 @@
+---
+title: "Monitoring Proxmox with Checkmk RAW"
+slug: "monitoring-proxmox-with-checkmk-raw"
+pubDate: 2025-11-17
+description: "Indescribably delicious out Astro"
+draft: false
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+
+<CalloutBox>
+    This is for Proxmox VE version 8.4.14, Proxmox Backup Server version 4.0.11, and Checkmk RAW version 2.4.0p15.
+</CalloutBox>
+
+Proxmox VE and Proxmox Backup Server are both based on Debian Linux, so we can use the Debian-packaged Checkmk RAW Linux agent to monitor them.
+This procedure also installs the `smart` plugin to monitor disk health via S.M.A.R.T., which is especially important for Proxmox nodes with
+NVMe storage.
+
+1. Create a Checkmk host folder to hold Proxmox VE nodes and Proxmox Backup Servers that will be in your cluster.
+
+2. Inside that folder, create host for each Proxmox VE node and Proxmox Backup Server.
+<CalloutBox>
+  Expect to see "Problems with 1 data source, Errno 111 Connection refused" until we add smart plugin.
+</CalloutBox>
+Carefully note hostnames as they will be needed later.
+
+3. Download Checkmk agent Debian package to ProxMox node or PBS and install:
+
+* Browse to Setup->Agents->Linux->Packaged Agents.
+* Right-click on `check-mk-agent_VERSION_all.deb` and copy link address.
+
+``` bash
+cd /tmp
+wget http://your.checkmk.server/monitoring/check_mk/agents/check-mk-agent_VERSION_all.deb # Paste URL from above here
+dpkg -i check-mk-agent_VERSION_all.deb
+rm check-mk-agent_VERSION_all.deb
+```
+
+4. Register agent with Checkmk RAW
+
+``` bash
+cmk-agent-ctl register --server your.checkmk.server:8000 --site monitoring --user agent_registration --hostname HOSTNAME_BEING_REGISTERED --password 'AGENT_REGISTRATION_USER_PASSWORD' --trust-cert
+```
+Expect to see `Registration complete.`
+
+<CalloutBox>
+    The `--hostname` on `cmk-agent-ctl` above must match hostname given in Checkmk RAW host creation.
+</CalloutBox>
+
+
+5. Get URL of smart plugin for Checkmk agent:
+
+* Browse to Setup->Agents->Linux->Plug-ins.
+* Right-click on `smart` and copy link address.
+
+6. Download smart plugin to Proxmox node:
+
+``` bash
+wget -O /usr/lib/check_mk_agent/plugins/smart http://your.checkmk.server/monitoring/check_mk/agents/plugins/smart # Paste URL from above here
+chmod +x /usr/lib/check_mk_agent/plugins/smart
+```
+
+7. Disable `smartd` becaue it blocks access by Chekcmk:
+
+``` bash
+systemctl disable --now smartd
+```
+
+8. Verify Checkmk agent is working and smart plugin is loaded:
+
+``` bash
+check_mk_agent | grep '<<<smart>>>'
+```
+
+You should see output like:
+
+```
+<<<smart>>>
+```
+
+9. Configure Checkmk RAW to monitor new services from `smart` plugin:
+* Browse to Setup->Hosts->Your Proxmox Node->Host->Run service discovery".
+* Review services, and click Accept All.
+* Commit and activate Chekcmk changes.

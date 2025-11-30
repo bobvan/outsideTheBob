@@ -17,7 +17,7 @@ import ChartEmbed from "../../components/post/ChartEmbed.astro";
   caption="Checkmk warning that Proxmox mail is not belivered"
 />
 
-This should be upgraded so that the build process creates the thumbnail. Try this prompt:
+XXX This should be upgraded so that the build process creates the thumbnail. Try this prompt:
 What if I have a large image I want to include with a post, but just want to show a thumbnail until it is clicked? I don't want to download a 5MB image and have the browser thumbnail it. Who makes the thumbnail?
 
 1. Make sure your Proxmox server has good Internet connectivity and DNS resolution configured.
@@ -69,7 +69,7 @@ systemctl restart postfix
 7. Run the Postfix queue check to verify mail can be sent:
 
 ``` bash
-postfqueue -f
+postqueue -f
 ```
 
 It might take a few minutes to drain, especially if there are many messages queued.

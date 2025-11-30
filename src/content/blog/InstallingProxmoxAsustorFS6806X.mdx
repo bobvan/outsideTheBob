@@ -1,0 +1,200 @@
+---
+title: "Installing Proxmox on Asustor Flashstor 6 Gen 2 FS6806X"
+slug: "installing-proxmox-asustor-fs6806x"
+pubDate: 2025-11-22
+description: "Convoluted steps required without HDMI port and 10 GbE NIC support"
+draft: false
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+
+I bought the [Asustor FS6806X](https://www.amazon.com/dp/B0FKBLSSS9)
+due to its appealing features for a home lab NAS and virtualization host.
+1. Six hot-swappable M.2 NVMe drive bays
+2. Up to 64 GB of *ECC* RAM
+3. Built-in 10 GbE NIC
+
+I discovered significant challenges while installing Proxmox on the FS6806X:
+1. The built-in 10 GbE NIC is not supported by the Proxmox kernel.
+2. Without an HDMI port, there's no way to interact with the Proxmox installer directly.
+
+I worked around these, but it's not for the faint of heart.
+
+## Add a Video Card for Setup
+
+1. Get [an M.2 to PCI-e riser cable](https://www.amazon.com/dp/B0D9651WSN)
+2. Get a PC PSU hotwired to power the riser card through a floppy power connector
+3. Get a video card for the PCI-e slot
+4. Disassemble the FS6806X, install the riser cable and NVMe flash
+5. Add a USB keyboard and monitor
+
+## Boot Configuration
+
+It seems that the FX6806X boots from an internal USB flash device containing their ADM installer.
+We must configure the BIOS to boot from an external USB device for Proxmox installation and from NVMe flash after installation.
+Asus also recommends disabling their USB flash drive when installing another OS to protect it from
+accidental deletion, and so that it's around for recovery later.
+
+1. Plug in Proxmox installer on a USB drive
+2. Get into the BIOS by holding F2 during power-on
+3. Reorder drives on boot menu so Proxmox installer comes first, then NVMe flash drives, then internal USB flash drive
+4. Optional, but recommended: disable internal USB flash drive
+  * BIOS AMD menu -> AMD CBS -> FCH Common Options -> USB Configuration Options -> USB1 2.0 Port Enable-> Disabled
+<CalloutBox>
+    Note that you want *USB1* here, not USB0
+</CalloutBox>
+5. Save and exit BIOS
+
+## Add an External 10 GbE NIC and an External Slow NIC
+
+The built-in 10 GbE NIC uses the `amd_xgbe` driver, which is present in the Proxmox kernel.
+However, the NIC has to be initialized correctly by the BIOS or a device tree overlay or the driver can't use it.
+I also see reports of regressions in driver support for this chipset.
+After a day of trying to get the built-in 10 GbE NIC to work, I gave up and got an external 10 GbE NIC.
+Using the external 10GbE NIC requires additional packages, so there's a catch-22.
+
+Adding an external slow NIC gets around the catch-22 by providing network connectivity to
+install the necessary packages to support the external 10 GbE NIC.
+It also provides a comfort known that there's another way into the box if the 10 GbE NIC has
+issues later.
+This alternative was important to me since I wanted to use all six M.2 NVMe bays for storage, and
+didn't want the PCIe video card hanging dangeroulsy off to the side.
+
+1. Get a compatible external 10 GbE NIC, such as the [IOCREST 10 GbE NIC](https://www.amazon.com/dp/B0DHSWSSBY)
+2. Get a common, slow USB NIC dongle that Proxmox supports out of the box.
+
+A complication here is that Linux hosts don't do well with two interfaces on the same LAN.
+I'm fortunate to have a separate VLAN for PTP where I could address the slow external NIC.
+
+## Install Proxmox 9.1
+
+1. Set up the root filesystem and network on the slow USB NIC.
+2. Reboot and `apt install bolt polkit` to get support for Thunderbolt hotplugging devices.
+3. `boltctl list` to get the UUID of the external 10 GbE NIC.
+4. `boltctl enroll <UUID>` to authorize the external 10 GbE NIC.3. `boltctl list` to get the UUID of the external 10 GbE NIC.
+5. `lspci -nn | grep -i ether` and expect to see something like
+
+```
+e8:00.2 Ethernet controller [0200]: Advanced Micro Devices, Inc. [AMD] XGMAC 10GbE Controller [1022:1458]
+```
+
+## Naming Interfaces
+
+Someday the internal 10 GbE NIC may work, and it has at least two network interfaces until then, so
+confusion would be likely if naming weren't clear.
+I wanted to name the on-board 10 GbE NIC 'board0', the external 10 GbE NIC 'prod0', and the
+slow external NIC 'oob1' (out-of-band management).
+Knowing the MAC addresses of each NIC allowed persistent names to be set by
+creating files in `/etc/systemd/network/`.
+
+```
+root@Stor:~# cat /etc/systemd/network/20-oob1.link
+[Match]
+MACAddress=3c:18:a0:d2:09:54
+
+[Link]
+Name=oob1
+root@Stor:~# cat /etc/systemd/network/30-prod0.link
+[Match]
+MACAddress=88:c9:b3:b3:3f:bd
+
+[Link]
+Name=prod0
+root@Stor:~# cat /etc/systemd/network/40-board0.link
+[Match]
+MACAddress=78:72:64:43:a6:65
+
+[Link]
+Name=board0
+root@Stor:~# cat /etc/systemd/network/99-disable-predictable-names.link
+[Link]
+NamePolicy=
+```
+
+Aside from the naming consistency, I wanted the external interfaces to come up at boot, but also
+if they were hot-plugged later.
+Udev rules, and the right tweaks to `/etc/network/interfaces`, make that possible.
+
+```
+root@Stor:~# ls -l /etc/udev/rules.d/
+total 11
+lrwxrwxrwx 1 root root   9 Nov 22 10:29 60-bridge-network-interface.rules -> /dev/null
+-rw-r--r-- 1 root root  82 Nov 24 11:34 70-prod0.rules
+-rw-r--r-- 1 root root 140 Nov 24 13:32 99-ifupdown-hotplug.rules
+-rw-r--r-- 1 root root 116 Nov 24 14:21 99-oob-bridge.rules
+-rw-r--r-- 1 root root 168 Nov 24 16:08 99-prod0-bridge.rules
+root@Stor:~# cat /etc/udev/rules.d/60-bridge-network-interface.rules
+root@Stor:~# cat /etc/udev/rules.d/70-prod0.rules
+ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="88:c9:b3:b3:3f:bd", NAME="prod0"
+root@Stor:~# cat /etc/udev/rules.d/99-ifupdown-hotplug.rules
+ACTION=="add", SUBSYSTEM=="net", NAME=="oob0", RUN+="/sbin/ifup oob0"
+ACTION=="add", SUBSYSTEM=="net", NAME=="oob1", RUN+="/sbin/ifup oob1"
+root@Stor:~# cat /etc/udev/rules.d/99-oob-bridge.rules
+ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="3c:18:a0:d2:09:54", RUN+="/sbin/ip link set dev oob1 master vmbr2"
+root@Stor:~# cat /etc/udev/rules.d/99-prod0-bridge.rules
+ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="88:c9:b3:b3:3f:bd", \
+    RUN+="/sbin/ip link set dev prod0 up", \
+    RUN+="/sbin/ip link set dev prod0 master vmbr0"
+root@Stor:~#
+```
+
+And `/etc/network/interfaces`:
+
+```
+auto lo
+iface lo inet loopback
+
+# Onboard amd_xgbe 10GbE interface that doesn't seem to work with Proxmox 8.4 or 9.1
+iface board0 inet manual
+
+# Thunderbolt 10GbE
+auto prod0
+iface prod0 inet manual
+    pre-up ip link set $IFACE up
+
+auto vmbr0
+iface vmbr0 inet static
+	address 10.168.60.30/24
+	gateway 10.168.60.1
+	bridge-ports prod0
+	bridge-stp off
+	bridge-fd 0
+	bridge-waitport 15
+
+### Second BACK-DOOR / OOB MGMT
+auto oob1
+iface oob1 inet manual
+    pre-up ip link set $IFACE up
+
+auto vmbr2
+iface vmbr2 inet static
+    address 10.168.13.33/24
+    bridge-ports oob1
+    bridge-stp off
+    bridge-fd 0
+
+source /etc/network/interfaces.d/*
+```
+
+## Cleanup
+
+1. Remove M.2 to PCI-e riser and video card and replace with the last NVMe flash drive.
+2. Add rpool mirror to sixth NVMe drive
+
+```
+sgdisk --zap-all /dev/nvme5n1
+sgdisk -R=/dev/nvme5n1 /dev/nvme0n1
+sgdisk -G /dev/nvme5n1
+zpool attach rpool /dev/nvme5n1p3
+```
+
+3. Configure sixth NVMe drive for booting:
+
+```
+proxmox-boot-tool format /dev/nvme5n1p2
+proxmox-boot-tool init /dev/nvme5n1p2
+```
+
+## Longer Term
+
+I expect that support for the `amd_xgbe` driver will be added to Proxmox in the future.
+When that happens, I can remove the external 10GbE NIC, and run Proxmox on the built-in 10 GbE NIC.

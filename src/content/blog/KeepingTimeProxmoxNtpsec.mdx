@@ -30,7 +30,7 @@ I considered `chrony` because it runs continuously, measures multiple masters ag
 However, `chrony` is optimized for TSC discontinuities from CPU speed steps, sleep/wake, and CPU scheduling
 lateny etc.
 We should not see these in the Proxmox node itself.
-Chrony would be great the best we could do if we couldn't run a time sync daemon
+Chrony would be great if we couldn't run a time sync daemon
 directly on the Proxmox node.
 
 ``` bash

@@ -11,23 +11,46 @@ interface Props {
 	/** Width of the inline thumbnail that Astro generates. The zoomed view
 	    always shows the original at full resolution. */
 	width?: number;
+	/** When given, the image is wrapped in a figure with this caption. */
+	caption?: string;
 }
 
-const { src, alt, width = 720 } = Astro.props;
+const { src, alt, width = 720, caption } = Astro.props;
 
 // Each instance needs its own id so several zoomable images can share a page.
 const id = `zoom-${crypto.randomUUID()}`;
 ---
 
-<button type="button" class="zoom-thumb" popovertarget={id} aria-label={`Enlarge: ${alt}`}>
-	<Image src={src} alt={alt} width={width} loading="lazy" />
-</button>
+{
+	caption ? (
+		<figure class="zoom-figure">
+			<button type="button" class="zoom-thumb" popovertarget={id} aria-label={`Enlarge: ${alt}`}>
+				<Image src={src} alt={alt} width={width} loading="lazy" />
+			</button>
+			<figcaption>{caption}</figcaption>
+		</figure>
+	) : (
+		<button type="button" class="zoom-thumb" popovertarget={id} aria-label={`Enlarge: ${alt}`}>
+			<Image src={src} alt={alt} width={width} loading="lazy" />
+		</button>
+	)
+}
 
 <div id={id} popover class="zoom-overlay">
 	<img src={src.src} width={src.width} height={src.height} alt={alt} />
 </div>
 
 <style>
+	.zoom-figure {
+		margin: 1.5rem 0;
+	}
+	.zoom-figure figcaption {
+		margin-top: 0.4rem;
+		font-size: 0.9rem;
+		color: var(--muted, #666);
+		text-align: center;
+	}
+
 	/* The thumbnail is a button so it is keyboard focusable and announces
 	   itself, but it should look like a plain image. */
 	.zoom-thumb {

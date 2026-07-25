@@ -18,7 +18,7 @@ const postsWithContent = await Promise.all(
 );
 ---
 
-<BaseLayout title="Home">
+<BaseLayout title="Home" banner>
   <h1>Recent Posts</h1>
 
   {postsWithContent.map(({ post, Content }) => (

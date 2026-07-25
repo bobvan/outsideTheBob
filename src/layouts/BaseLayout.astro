@@ -5,13 +5,20 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  banner?: boolean;
+  frontmatter?: { title?: string; description?: string };
 }
 
-const { title, description = SITE_DESCRIPTION, image } = Astro.props;
+const { title, description, image, banner = false, frontmatter } = Astro.props;
+
+// Markdown and MDX pages that set `layout:` hand their frontmatter over as one
+// `frontmatter` prop rather than as individual props, so accept either shape.
+const resolvedTitle = title ?? frontmatter?.title;
+const resolvedDescription = description ?? frontmatter?.description ?? SITE_DESCRIPTION;
 
 // Pages pass their own name ("Home", a post title); the site name is appended
 // so a bare browser tab or a shared link still says whose blog this is.
-const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+const pageTitle = resolvedTitle ? `${resolvedTitle} · ${SITE_TITLE}` : SITE_TITLE;
 
 // Astro.site comes from `site:` in astro.config.mjs. Both are absolute, which
 // is what canonical and og: tags require.
@@ -36,18 +43,18 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
     <meta name="generator" content={Astro.generator} />
 
     <title>{pageTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={resolvedDescription} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_TITLE} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={resolvedDescription} />
     {socialImage && <meta property="og:image" content={socialImage} />}
 
     <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
     <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={resolvedDescription} />
     {socialImage && <meta name="twitter:image" content={socialImage} />}
     <style>
       :root { --text:#111; --muted:#666; --link:#0b5fff; --bg:#fff; --border:#e6e6e6; }
@@ -59,6 +66,8 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       nav a:hover { text-decoration: underline; }
       .brand { display: block; margin-bottom: 0.35rem; font-size: 1.25rem; font-weight: 600; color: var(--text); }
       .brand:hover { text-decoration: none; }
+      .banner { display: block; margin: 0 0 0.5rem; }
+      .banner img { display: block; width: 100%; max-width: 620px; height: auto; }
       h1,h2,h3 { line-height:1.25; }
       article { padding: 1rem 0; border-bottom: 1px solid var(--border); }
       .post-meta { color: var(--muted); font-size: 0.9rem; margin-top: -0.5rem; }
@@ -71,7 +80,15 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
   <body>
     <header>
       <div class="wrap">
-        <a class="brand" href="/">{SITE_TITLE}</a>
+        {
+          banner ? (
+            <a class="banner" href="/">
+              <img src="/images/outsideTheBob.svg" alt={SITE_TITLE} width="960" height="200" />
+            </a>
+          ) : (
+            <a class="brand" href="/">{SITE_TITLE}</a>
+          )
+        }
         <nav>
           <a href="/">Home</a>
           <a href="/blog">Blog</a>

@@ -5,11 +5,10 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
-  banner?: boolean;
   frontmatter?: { title?: string; description?: string };
 }
 
-const { title, description, image, banner = false, frontmatter } = Astro.props;
+const { title, description, image = "/images/og-banner.png", frontmatter } = Astro.props;
 
 // Markdown and MDX pages that set `layout:` hand their frontmatter over as one
 // `frontmatter` prop rather than as individual props, so accept either shape.
@@ -62,12 +61,14 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       body { margin: 0; font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--text); background: var(--bg); }
       header, footer { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background:#fafafa; }
       header .wrap, main .wrap, footer .wrap { max-width: 820px; margin: 0 auto; padding: 1rem; }
+      /* Astro compresses whitespace between elements, so gaps between inline
+         links have to come from CSS rather than from source newlines. */
       nav a { margin-right: 1rem; text-decoration: none; color: var(--link); }
       nav a:hover { text-decoration: underline; }
-      .brand { display: block; margin-bottom: 0.35rem; font-size: 1.25rem; font-weight: 600; color: var(--text); }
-      .brand:hover { text-decoration: none; }
+      nav .sep { margin-right: 1rem; }
       .banner { display: block; margin: 0 0 0.5rem; }
       .banner img { display: block; width: 100%; max-width: 620px; height: auto; }
+      footer a { margin-right: 1rem; }
       h1,h2,h3 { line-height:1.25; }
       article { padding: 1rem 0; border-bottom: 1px solid var(--border); }
       .post-meta { color: var(--muted); font-size: 0.9rem; margin-top: -0.5rem; }
@@ -80,21 +81,15 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
   <body>
     <header>
       <div class="wrap">
-        {
-          banner ? (
-            <a class="banner" href="/">
-              <img src="/images/outsideTheBob.svg" alt={SITE_TITLE} width="960" height="200" />
-            </a>
-          ) : (
-            <a class="brand" href="/">{SITE_TITLE}</a>
-          )
-        }
+        <a class="banner" href="/">
+          <img src="/images/outsideTheBob.svg" alt={SITE_TITLE} width="1000" height="270" />
+        </a>
         <nav>
           <a href="/">Home</a>
           <a href="/blog">Blog</a>
           <a href="/archive">Archive</a>
           <a href="/about">About</a>
-          <span class="muted">|</span>
+          <span class="sep muted">|</span>
           <a href="https://github.com/bobvan" rel="me">GitHub</a>
           <a href="https://www.linkedin.com/in/bobvan" rel="me">LinkedIn</a>
         </nav>

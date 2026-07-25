@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
@@ -32,11 +33,12 @@ export async function getStaticPaths() {
 }
 ---
 
-<BaseLayout title={entry.data.title}>
+<BaseLayout title={entry.data.title} description={entry.data.description}>
   <article>
     <h1>{entry.data.title}</h1>
     <p class="post-meta">
-      {new Date(entry.data.pubDate).toLocaleDateString()}
+      <FormattedDate date={entry.data.pubDate} />
+      {entry.data.updatedDate && <> · updated <FormattedDate date={entry.data.updatedDate} /></>}
       {entry.data.tags?.length ? ` • ${entry.data.tags.join(", ")}` : ""}
     </p>
     <Content />

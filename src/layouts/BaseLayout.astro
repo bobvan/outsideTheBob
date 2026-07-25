@@ -1,10 +1,22 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
-const { title, description = SITE_DESCRIPTION } = Astro.props;
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = SITE_DESCRIPTION, image } = Astro.props;
+
 // Pages pass their own name ("Home", a post title); the site name is appended
 // so a bare browser tab or a shared link still says whose blog this is.
 const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+
+// Astro.site comes from `site:` in astro.config.mjs. Both are absolute, which
+// is what canonical and og: tags require.
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImage = image ? new URL(image, Astro.site) : undefined;
 ---
 
 <!doctype html>
@@ -12,8 +24,31 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={SITE_TITLE}
+      href={new URL("rss.xml", Astro.site)}
+    />
+    <meta name="generator" content={Astro.generator} />
+
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+
+    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
     <style>
       :root { --text:#111; --muted:#666; --link:#0b5fff; --bg:#fff; --border:#e6e6e6; }
       * { box-sizing: border-box; }
@@ -22,6 +57,8 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
       header .wrap, main .wrap, footer .wrap { max-width: 820px; margin: 0 auto; padding: 1rem; }
       nav a { margin-right: 1rem; text-decoration: none; color: var(--link); }
       nav a:hover { text-decoration: underline; }
+      .brand { display: block; margin-bottom: 0.35rem; font-size: 1.25rem; font-weight: 600; color: var(--text); }
+      .brand:hover { text-decoration: none; }
       h1,h2,h3 { line-height:1.25; }
       article { padding: 1rem 0; border-bottom: 1px solid var(--border); }
       .post-meta { color: var(--muted); font-size: 0.9rem; margin-top: -0.5rem; }
@@ -34,8 +71,10 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
   <body>
     <header>
       <div class="wrap">
+        <a class="brand" href="/">{SITE_TITLE}</a>
         <nav>
           <a href="/">Home</a>
+          <a href="/blog">Blog</a>
           <a href="/archive">Archive</a>
           <a href="/about">About</a>
           <span class="muted">|</span>
@@ -54,6 +93,7 @@ const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
     <footer>
       <div class="wrap">
         <a href="/about">About</a>
+        <a href="/rss.xml">RSS</a>
       </div>
     </footer>
   </body>

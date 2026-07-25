@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FormattedDate from "../components/FormattedDate.astro";
 import { getCollection } from "astro:content";
 
 const includeDrafts = import.meta.env.DEV;
@@ -39,7 +40,7 @@ const orderedKeys = Array.from(groups.keys()).sort((a, b) => (a < b ? 1 : -1));
         {groups.get(key)!.map((p) => (
           <li>
             <a href={`/blog/${slugFor(p)}/`}>{p.data.title}</a>
-            <span class="muted"> — {new Date(p.data.pubDate).toLocaleDateString()}</span>
+            <span class="muted"> — <FormattedDate date={p.data.pubDate} /></span>
           </li>
         ))}
       </ul>

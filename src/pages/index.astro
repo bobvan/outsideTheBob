@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FormattedDate from "../components/FormattedDate.astro";
 import { getCollection, render } from "astro:content";
 
 const includeDrafts = import.meta.env.DEV;
@@ -24,7 +25,7 @@ const postsWithContent = await Promise.all(
     <article>
       <h2><a href={`/blog/${slugFor(post)}/`}>{post.data.title}</a></h2>
       <p class="post-meta">
-        {new Date(post.data.pubDate).toLocaleDateString()}
+        <FormattedDate date={post.data.pubDate} />
         {post.data.tags?.length ? ` • ${post.data.tags.join(", ")}` : ""}
       </p>
       {/* Full post body inline */}

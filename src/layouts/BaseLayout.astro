@@ -1,5 +1,10 @@
 ---
-const { title = "My Blog" } = Astro.props;
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+
+const { title, description = SITE_DESCRIPTION } = Astro.props;
+// Pages pass their own name ("Home", a post title); the site name is appended
+// so a bare browser tab or a shared link still says whose blog this is.
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 ---
 
 <!doctype html>
@@ -7,7 +12,8 @@ const { title = "My Blog" } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
     <style>
       :root { --text:#111; --muted:#666; --link:#0b5fff; --bg:#fff; --border:#e6e6e6; }
       * { box-sizing: border-box; }

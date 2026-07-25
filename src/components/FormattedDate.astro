@@ -4,14 +4,17 @@ interface Props {
 }
 
 const { date } = Astro.props;
+
+// Frontmatter dates are bare calendar days (`pubDate: 2025-11-22`), which parse
+// as UTC midnight. Formatting those in the build host's zone (America/Chicago)
+// rolls them back a day, so a post dated the 22nd rendered as the 21st. Format
+// in UTC so the displayed date matches what the frontmatter actually says.
+const formatted = date.toLocaleDateString('en-US', {
+	year: 'numeric',
+	month: 'short',
+	day: 'numeric',
+	timeZone: 'UTC',
+});
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
-</time>
+<time datetime={date.toISOString()}>{formatted}</time>

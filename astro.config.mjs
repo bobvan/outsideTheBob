@@ -8,6 +8,19 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://thinkoutsidethebob.com',
 	integrations: [mdx(), sitemap()],
+	// Astro's default is github-dark alone, which puts white-on-black code
+	// blocks on a light page. Naming both themes makes Shiki emit each token's
+	// dark colour as a --shiki-dark custom property alongside the light one, so
+	// a prefers-color-scheme rule in BaseLayout can switch between them with no
+	// JavaScript and no second copy of the markup.
+	markdown: {
+		shikiConfig: {
+			themes: {
+				light: 'github-light',
+				dark: 'github-dark',
+			},
+		},
+	},
 	devToolbar: {
 		enabled: false,
 	},

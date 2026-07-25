@@ -1,5 +1,19 @@
 ---
-const { imgSrc, imgAlt, side = 'right', caption } = Astro.props;
+import type { ImageMetadata } from 'astro';
+import ZoomableImage from './ZoomableImage.astro';
+
+interface Props {
+  /** Preferred: an imported image. Astro resizes it at build time and the
+      reader gets a click-to-zoom view of the original. */
+  img?: ImageMetadata;
+  /** Fallback for images that live in /public and so cannot be resized. */
+  imgSrc?: string;
+  imgAlt: string;
+  side?: 'left' | 'right';
+  caption?: string;
+}
+
+const { img, imgSrc, imgAlt, side = 'right', caption } = Astro.props;
 ---
 
 <style>
@@ -10,8 +24,12 @@ const { imgSrc, imgAlt, side = 'right', caption } = Astro.props;
   margin: 1.5rem 0;
   gap: 1rem;
 }
-img {
+.media {
   max-width: 45%;
+  min-width: 200px;
+}
+.media img {
+  width: 100%;
   height: auto;
   border-radius: 0.5rem;
 }
@@ -19,8 +37,8 @@ img {
   flex: 1;
   min-width: 250px;
 }
-.right img { order: 2; }
-.left img { order: 0; }
+.right .media { order: 2; }
+.left .media { order: 0; }
 .caption {
   font-size: 0.9rem;
   color: var(--color-text-muted, #666);
@@ -30,7 +48,15 @@ img {
 </style>
 
 <div class:list={`wrapper ${side}`}>
-  <img src={imgSrc} alt={imgAlt} loading="lazy" />
+  <div class="media">
+    {
+      img ? (
+        <ZoomableImage src={img} alt={imgAlt} />
+      ) : (
+        <img src={imgSrc} alt={imgAlt} loading="lazy" />
+      )
+    }
+  </div>
   <div class="text">
     <slot />
     {caption && <p class="caption">{caption}</p>}

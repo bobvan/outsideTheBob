@@ -9,16 +9,14 @@ draft: true
 import ImageAndText from "../../components/post/ImageAndText.astro";
 import CalloutBox from "../../components/post/CalloutBox.astro";
 import ChartEmbed from "../../components/post/ChartEmbed.astro";
+import PostfixQueueWarning from "../../assets/PostfixQueueWarning.png";
 
 <ImageAndText
-  imgSrc="/images/PostfixQueueWarning.png"
-  imgAlt="Checkmk screenshot"
+  img={PostfixQueueWarning}
+  imgAlt="Checkmk warning that Proxmox mail is not being delivered"
   side="right"
-  caption="Checkmk warning that Proxmox mail is not belivered"
+  caption="Checkmk warning that Proxmox mail is not delivered"
 />
-
-XXX This should be upgraded so that the build process creates the thumbnail. Try this prompt:
-What if I have a large image I want to include with a post, but just want to show a thumbnail until it is clicked? I don't want to download a 5MB image and have the browser thumbnail it. Who makes the thumbnail?
 
 1. Make sure your Proxmox server has good Internet connectivity and DNS resolution configured.
 

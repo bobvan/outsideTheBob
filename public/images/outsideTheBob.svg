@@ -1,54 +1,76 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="290" viewBox="0 0 920 290"
+<svg xmlns="http://www.w3.org/2000/svg" width="933" height="293" viewBox="0 0 933 293"
      role="img" aria-label="Think Outside The Bob">
   <!--
     The name is the joke: "Think" sits inside the box, and "OutsideTheBob"
-    breaks through the right wall and climbs away, scattering shrapnel.
+    smashes through the right wall and climbs away, scattering shrapnel.
 
-    The overlap is the whole point, so the "O" deliberately crosses the box's
-    right edge at x=270. The white outline stroke under the wordmark punches a
-    hole in the box line where they meet, which is what sells the break.
+    The wall is genuinely missing, not merely covered. An earlier version drew
+    a complete rect and relied on the wordmark's white outline stroke to hide
+    the line behind it, but a halo only follows the outside of a glyph - the
+    box line still showed through the counter of the "O". So the box is a path
+    with the right wall cut out between y=108 and y=202, which is the band the
+    wordmark passes through. Nothing to show through any more.
+
+    The broken ends are jagged and bent outward, the way a wall gives way when
+    something goes through it rather than being cut.
 
     Geometry is deliberate. An earlier version rotated 110px text inside a
     960x200 canvas, which lifted the right end above y=0 and clipped "Bob".
     The canvas is now sized to the rotated bounding box plus the outline stroke
-    and the shrapnel, with roughly even margin on every side - verified by
-    rasterising and trimming, not by eye.
+    and the shrapnel, verified by rasterising and trimming, not by eye.
 
-    textLength pins each string to an exact width, so the layout holds even
-    where the font stack resolves to something other than Inter.
+    textLength pins each string to an exact width so the layout holds under any
+    font stack - but kept near each string's natural width, because squeezing
+    glyphs horizontally thins their stems and makes a black weight look light.
   -->
 
-  <!-- The box -->
-  <rect x="20" y="85" width="250" height="140" rx="16"
-        fill="none" stroke="#111" stroke-width="6"/>
+  <!-- The box, with the right wall blown out between y=108 and y=202 -->
+  <path d="M 36,70
+           L 254,70
+           A 16,16 0 0 1 270,86
+           L 270,98
+           L 278,108
+           M 278,201
+           L 270,211
+           L 270,234
+           A 16,16 0 0 1 254,250
+           L 36,250
+           A 16,16 0 0 1 20,234
+           L 20,86
+           A 16,16 0 0 1 36,70"
+        fill="none" stroke="#111" stroke-width="6"
+        stroke-linecap="round" stroke-linejoin="round"/>
 
   <!-- Inside the box -->
-  <text x="140" y="175" text-anchor="middle"
+  <text x="130" y="185" text-anchor="middle"
         font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
-        font-size="64" font-weight="900" fill="#111"
-        textLength="150" lengthAdjust="spacingAndGlyphs">Think</text>
+        font-size="74" font-weight="900" fill="#111"
+        textLength="180" lengthAdjust="spacingAndGlyphs">Think</text>
 
-  <!-- Shrapnel: fragments of the wall, thrown clear of the wordmark's path -->
+  <!-- Shrapnel: irregular fragments of the wall, thrown clear of the wordmark -->
   <g fill="#111">
-    <polygon points="284,103 298,87 304,105"/>
-    <polygon points="316,83 334,65 338,87"/>
-    <polygon points="354,57 370,43 372,63"/>
-    <polygon points="282,217 298,229 284,235"/>
-    <polygon points="314,235 332,247 316,255"/>
-    <polygon points="350,249 366,259 352,265"/>
+    <polygon points="278,103 286,95 290,104 283,107"/>
+    <polygon points="299,91 308,82 311,93"/>
+    <polygon points="322,77 330,70 334,81 326,83"/>
+    <polygon points="347,61 354,54 357,65"/>
+    <polygon points="371,49 377,44 379,53 374,54"/>
+    <polygon points="276,209 284,215 278,219"/>
+    <polygon points="295,221 305,227 298,232 292,227"/>
+    <polygon points="317,233 326,240 319,244"/>
+    <polygon points="341,245 348,251 342,255"/>
+    <polygon points="364,254 371,259 366,263"/>
   </g>
 
   <!-- Through the wall and climbing -->
-  <g transform="rotate(-8 235 195)">
-    <!-- White outline first: it breaks the box line and keeps the wordmark
-         legible on any background -->
-    <text x="235" y="195"
+  <g transform="rotate(-8 248 195)">
+    <!-- White outline first, so the wordmark stays legible on any background -->
+    <text x="248" y="195"
           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
           font-size="96" font-weight="900"
           textLength="650" lengthAdjust="spacingAndGlyphs"
           text-rendering="geometricPrecision"
           style="paint-order: stroke fill; stroke: #fff; stroke-width: 14;">OutsideTheBob</text>
-    <text x="235" y="195"
+    <text x="248" y="195"
           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
           font-size="96" font-weight="900" fill="#111"
           textLength="650" lengthAdjust="spacingAndGlyphs">OutsideTheBob</text>

@@ -10,9 +10,11 @@ export async function GET(context) {
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
 		site: context.site,
-		items: posts.map((post) => ({
-			...post.data,
-			link: `/blog/${post.data.slug ?? post.id}/`,
-		})),
+		items: [...posts]
+			.sort((a, b) => +b.data.pubDate - +a.data.pubDate)
+			.map((post) => ({
+				...post.data,
+				link: `/blog/${post.data.slug ?? post.id}/`,
+			})),
 	});
 }

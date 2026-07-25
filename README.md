@@ -1,10 +1,16 @@
 # Think Outside The Bob
 
 Source for **Think Outside The Bob** — Bob Van Valzah's blog, at
-[thinkoutsidethebob.com](https://thinkoutsidethebob.com). Built with
+[ThinkOutsideTheBob.Com](https://thinkoutsidethebob.com). Built with
 [Astro](https://astro.build), published as a static site to GitHub Pages.
 
-`OutsideTheBob.com` redirects to the canonical `ThinkOutsideTheBob.com`.
+`OutsideTheBob.Com` redirects to the canonical `ThinkOutsideTheBob.Com`.
+
+Domain names are written in camel case wherever they are *rendered for a
+reader* — this README, the social card, page copy. DNS is case-insensitive, so
+this costs nothing and makes the word boundaries scan. Machine-readable URLs
+(`site:` in `astro.config.mjs`, and therefore canonical links, the sitemap, and
+RSS `guid`s) stay lowercase on purpose; see [Deploying](#deploying).
 
 ## Status
 
@@ -147,15 +153,24 @@ Two workflows:
 
 To go live:
 
-1. Point DNS for `thinkoutsidethebob.com` at GitHub Pages.
+1. Point DNS for `ThinkOutsideTheBob.Com` at GitHub Pages.
 2. Add `public/CNAME` containing the domain, and set the custom domain in the
-   repo's Pages settings.
-3. Set `OutsideTheBob.com` to redirect to the canonical domain.
+   repo's Pages settings. GitHub lowercases this one regardless of how it is
+   written.
+3. Set `OutsideTheBob.Com` to redirect to the canonical domain.
 4. `gh variable set PAGES_DEPLOY --body true`
 
-`site:` in `astro.config.mjs` is already the canonical domain. It has to be
-correct before publishing, because canonical URLs, the sitemap, and RSS links are
-all generated from it.
+`site:` in `astro.config.mjs` is already the canonical domain, in lowercase. It
+has to be correct before publishing, because canonical URLs, the sitemap, and RSS
+links are all generated from it.
+
+The lowercase there is deliberate. RFC 3986 treats the host as case-insensitive
+and says it should be normalised to lowercase, so anything in the chain — a
+crawler, a proxy, a cache — is entitled to rewrite it. RSS `guid`s, though, are
+compared by feed readers as literal strings. Publishing mixed-case URLs and
+having something normalise them later would make every post reappear as new in
+subscribers' feeds. Lowercase in URLs, camel case in prose, and the two never
+have to agree.
 
 ## Notes
 

@@ -18,7 +18,10 @@ const BANNER_W = 1000;
 const BANNER_H = 270;
 
 const TAGLINE = "Bob's Blog and Distilled Thoughts";
-const DOMAIN = 'thinkoutsidethebob.com';
+// Rendered text, so it carries the intended capitalisation. DNS is
+// case-insensitive; the camel case is for the reader's parsing, not the
+// resolver's.
+const DOMAIN = 'ThinkOutsideTheBob.Com';
 
 const FONT = 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
 

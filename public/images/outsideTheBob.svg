@@ -1,40 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="270" viewBox="0 0 1000 270"
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="290" viewBox="0 0 920 290"
      role="img" aria-label="Think Outside The Bob">
   <!--
-    The name is the joke: "Think" sits inside the box, "OutsideTheBob" is out of
-    it and climbing away. Reading order gives "Think Outside The Bob".
+    The name is the joke: "Think" sits inside the box, and "OutsideTheBob"
+    breaks through the right wall and climbs away, scattering shrapnel.
+
+    The overlap is the whole point, so the "O" deliberately crosses the box's
+    right edge at x=270. The white outline stroke under the wordmark punches a
+    hole in the box line where they meet, which is what sells the break.
 
     Geometry is deliberate. An earlier version rotated 110px text inside a
-    960x200 canvas, which put the right end of the wordmark above y=0 and
-    clipped the top of "Bob". The canvas is now tall enough for the rotated
-    bounding box plus the white outline stroke, with margin to spare.
+    960x200 canvas, which lifted the right end above y=0 and clipped "Bob".
+    The canvas is now sized to the rotated bounding box plus the outline stroke
+    and the shrapnel, with roughly even margin on every side - verified by
+    rasterising and trimming, not by eye.
 
     textLength pins each string to an exact width, so the layout holds even
     where the font stack resolves to something other than Inter.
   -->
 
   <!-- The box -->
-  <rect x="20" y="90" width="250" height="140" rx="16"
+  <rect x="20" y="85" width="250" height="140" rx="16"
         fill="none" stroke="#111" stroke-width="6"/>
 
   <!-- Inside the box -->
-  <text x="145" y="185" text-anchor="middle"
+  <text x="140" y="175" text-anchor="middle"
         font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
-        font-size="72" font-weight="900" fill="#111"
-        textLength="190" lengthAdjust="spacingAndGlyphs">Think</text>
+        font-size="64" font-weight="900" fill="#111"
+        textLength="150" lengthAdjust="spacingAndGlyphs">Think</text>
 
-  <!-- Outside the box, rising to the right -->
-  <g transform="rotate(-8 300 200)">
-    <!-- White outline first so the wordmark stays legible on any background -->
-    <text x="300" y="200"
+  <!-- Shrapnel: fragments of the wall, thrown clear of the wordmark's path -->
+  <g fill="#111">
+    <polygon points="284,103 298,87 304,105"/>
+    <polygon points="316,83 334,65 338,87"/>
+    <polygon points="354,57 370,43 372,63"/>
+    <polygon points="282,217 298,229 284,235"/>
+    <polygon points="314,235 332,247 316,255"/>
+    <polygon points="350,249 366,259 352,265"/>
+  </g>
+
+  <!-- Through the wall and climbing -->
+  <g transform="rotate(-8 235 195)">
+    <!-- White outline first: it breaks the box line and keeps the wordmark
+         legible on any background -->
+    <text x="235" y="195"
           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
           font-size="96" font-weight="900"
-          textLength="600" lengthAdjust="spacingAndGlyphs"
+          textLength="650" lengthAdjust="spacingAndGlyphs"
           text-rendering="geometricPrecision"
           style="paint-order: stroke fill; stroke: #fff; stroke-width: 14;">OutsideTheBob</text>
-    <text x="300" y="200"
+    <text x="235" y="195"
           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
           font-size="96" font-weight="900" fill="#111"
-          textLength="600" lengthAdjust="spacingAndGlyphs">OutsideTheBob</text>
+          textLength="650" lengthAdjust="spacingAndGlyphs">OutsideTheBob</text>
   </g>
 </svg>

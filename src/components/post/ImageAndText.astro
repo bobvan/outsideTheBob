@@ -27,6 +27,7 @@ const { img, imgSrc, imgAlt, side = 'right', caption } = Astro.props;
 .media {
   max-width: 45%;
   min-width: 200px;
+  margin: 0;
 }
 .media img {
   width: 100%;
@@ -48,7 +49,7 @@ const { img, imgSrc, imgAlt, side = 'right', caption } = Astro.props;
 </style>
 
 <div class:list={`wrapper ${side}`}>
-  <div class="media">
+  <figure class="media">
     {
       img ? (
         <ZoomableImage src={img} alt={imgAlt} />
@@ -56,9 +57,9 @@ const { img, imgSrc, imgAlt, side = 'right', caption } = Astro.props;
         <img src={imgSrc} alt={imgAlt} loading="lazy" />
       )
     }
-  </div>
+    {caption && <figcaption class="caption">{caption}</figcaption>}
+  </figure>
   <div class="text">
     <slot />
-    {caption && <p class="caption">{caption}</p>}
   </div>
 </div>

@@ -13,10 +13,17 @@ import PostfixQueueWarning from "../../assets/PostfixQueueWarning.png";
 
 <ImageAndText
   img={PostfixQueueWarning}
-  imgAlt="Checkmk warning that Proxmox mail is not being delivered"
+  imgAlt="Checkmk service listing showing an unhandled warning on the Postfix mail queue"
   side="right"
-  caption="Checkmk warning that Proxmox mail is not delivered"
-/>
+  caption="Mail piling up in the Postfix queue, with nowhere to go."
+>
+Not long after you start monitoring Proxmox with Checkmk, you may see unhandled
+service problems like this one. Proxmox has plenty to tell you — a failed backup,
+a degraded array, a certificate about to expire — but out of the box it has no way
+to send any of it. The mail piles up in the local Postfix queue and sits there.
+
+What follows is how to give Postfix a route out, using an external SMTP relay.
+</ImageAndText>
 
 1. Make sure your Proxmox server has good Internet connectivity and DNS resolution configured.
 

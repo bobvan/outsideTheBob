@@ -14,8 +14,6 @@ import sharp from 'sharp';
 
 const WIDTH = 1200;
 const HEIGHT = 630;
-const BANNER_W = 1000;
-const BANNER_H = 270;
 
 const TAGLINE = "Bob's Blog and Distilled Thoughts";
 // Rendered text, so it carries the intended capitalisation. DNS is
@@ -26,6 +24,12 @@ const DOMAIN = 'ThinkOutsideTheBob.Com';
 const FONT = 'Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
 
 const banner = await readFile('public/images/outsideTheBob.svg', 'utf8');
+
+// Read the banner's own dimensions rather than assuming them - make-banner.mjs
+// sizes the canvas to whatever the lettering needs, so they change.
+const BANNER_W = Number(banner.match(/\bwidth="(\d+)"/)?.[1]);
+const BANNER_H = Number(banner.match(/\bheight="(\d+)"/)?.[1]);
+if (!BANNER_W || !BANNER_H) throw new Error('could not read banner dimensions');
 
 // Take everything inside the banner's root <svg> element so it can be placed as
 // a group. Comments and all - they are only a few hundred bytes.

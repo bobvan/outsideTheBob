@@ -1,4 +1,4 @@
-# Topics In Time — structure draft
+# Topics In Timekeeping — structure draft
 
 **Status: draft, not published.** This file lives in `docs/` at the repo root.
 Astro only builds `src/pages/` and the collections declared in
@@ -165,9 +165,12 @@ precision question, and the garden covers both.
   which is exactly what the content is. Also already Bob's own word: the About
   page says "the limits of practically precise timekeeping".
 
-**Recommendation:** *Topics In Timekeeping* as the collection title, with the nav
-label shortened if it crowds the bar. The nav label and the page title do not
-have to match — nav has a space budget, a landing page does not.
+**Decided 2026-07-26:** collection title **Topics In Timekeeping**, nav label
+**Timekeeping**. The two differ on purpose — nav sits beside Home, Blog, Archive,
+Tags and About and has a space budget; a landing page does not.
+
+Open: the URL. `/timekeeping/` matches the nav label and reads well in a link.
+`/topics/` leaves room for a second garden that the name no longer would.
 
 **Scope decided 2026-07-26:** the garden starts as time-only, since Bob does not
 yet feel he could curate other subjects. So the name may commit to the subject;

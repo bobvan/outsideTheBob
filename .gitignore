@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# editor scratch files — vim swap files live beside the file being edited,
+# so an unqualified `git add -A` picks them up mid-edit
+*.sw[a-p]
+*~
+.*.swp

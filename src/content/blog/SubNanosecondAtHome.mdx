@@ -1,0 +1,123 @@
+---
+title: "Sub-Nanosecond at Home, with GNSS and AI"
+slug: "sub-nanosecond-at-home-with-gnss-and-ai"
+pubDate: 2026-07-14
+description: "Building a sub-nanosecond clock from a $1000 parts list, and what four months of AI-assisted research actually looked like"
+tags: ["GNSS", "timekeeping", "talks", "AI", "hardware"]
+draft: false
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
+import DressRehearsal from "../../assets/subNanoDressRehearsal.png";
+
+My [earlier talk](/blog/last-nanoseconds-to-utc/) asked whether sub-nanosecond
+GNSS clock sync was even possible. This one is about building it.
+
+I gave it on 9 July 2026 at the
+[STAC Summit](https://stacresearch.com/events/mini-summit-npl-london/) held at the
+[National Physical Laboratory](https://www.npl.co.uk/) in Teddington — which is a
+slightly intimidating room in which to discuss timekeeping.
+
+<ZoomableImage
+  src={DressRehearsal}
+  alt="Presenting over Zoom during the dress rehearsal, slides with presenter video in the corner"
+  caption="The dress rehearsal, which is also the recording linked below."
+  width={1000}
+/>
+
+## GPS Satellites Are Not Master Clocks
+
+It's natural to picture GPS satellites as autonomous master clocks, broadcasting
+the time to anyone who listens. That abstraction is fine until you want position
+or time better than a handful of meters or nanoseconds — and then it quietly
+becomes the thing standing in your way.
+
+**The satellites are the easy part. The earthbound infrastructure supporting them
+is what limits your accuracy.** Orbits, clock corrections, reference frames,
+atmospheric models: all of it is computed on the ground, and how good a copy you
+have of it decides how good your answer can be.
+
+Which leads to the point that reframed the whole project for me:
+
+<CalloutBox type="tip" title="Same signals, better answers">
+	The GNSS chip in your phone uses the simplest algorithms with the coarsest
+	models and corrections, to produce an approximate answer fast. The *same
+	received signals*, processed through more complex algorithms with far more
+	precise models, produce answers two to three orders of magnitude better.
+	The limit isn't what arrives at your antenna. It's what you do with it.
+</CalloutBox>
+
+There is a real tradeoff underneath that, and it's mostly about patience: fast
+approximate answers versus slow precise ones. A phone wants a blue dot in three
+seconds. A fixed-position clock can watch the sky for hours, and being nailed
+down is itself information you can exploit.
+
+## The Small Effects That Stop Being Small
+
+Once you're chasing the last nanoseconds, a list of effects you were previously
+entitled to ignore starts mattering. The talk highlights three, chosen because
+they're the ones people find least intuitive:
+
+- **Intersystem bias** — the constellations don't agree with each other, so
+  combining GPS and Galileo means accounting for the offset between them.
+- **Datum offsets** — the land itself moves. Plate motion means a position is
+  only meaningful against a dated reference frame, and "where I am" has a *when*
+  attached to it.
+- **Solid-Earth tides** — the ground beneath you rises and falls roughly daily,
+  by enough to matter. Not the ocean. The rock.
+
+There's also a largely visual section on antennas, because they turn out to be a
+critical part of getting precise answers and they get less attention than they
+deserve.
+
+## What I Built
+
+[PePPAR-Fix](https://github.com/bobvan/PePPAR-Fix/) uses raw GNSS carrier phase
+observations to drive a disciplined oscillator. The talk walks through the block
+diagram, shows deviation plots against a simple GNSS PPS receiver for comparison,
+and reports progress toward two-clock agreement.
+
+The parts list totals about **$1000**, and there's a photo of one of the
+prototypes. That number matters to me: this is meant to be reproducible by
+someone who wants to follow, not a demonstration that it can be done with a
+budget nobody has.
+
+## What Working with AI Actually Looked Like
+
+About four months of fairly intense research in 2026 took me from understanding
+only the basics of GNSS timing to a much deeper appreciation of what sub-nanosecond
+performance costs. Along the way I went from zero to roughly **140,000 lines of
+Python** for processing GNSS signals and disciplining precision oscillators.
+
+None of it would have happened without AI, and none of it would have happened
+without the pioneering work of others either.
+
+The approach that worked for me: **give the agents great power, but limit the
+blast radius if something goes wrong.** Broad authority to explore, tight bounds
+on what a mistake can damage. That's a design problem more than a trust problem,
+and getting it right is what made the pace sustainable.
+
+## If You Want to Build Your Own
+
+One goal was to leave a trail of crumbs.
+
+- [PePPAR-Fix](https://github.com/bobvan/PePPAR-Fix/) — the software, open source.
+- The slides include a complete parts list.
+- [f9tResearch](https://github.com/bobvan/f9tResearch/) — the measurement tools
+  behind the earlier work, including the dual F9T experiments.
+
+This stands on the shoulders of others, especially
+[Ole Petter Rønningen](https://no.linkedin.com/in/olepetter), who built
+[the first PPP GPSDO](https://www.efos3.com/GPSDO/GPSDO.html), and
+[John Ackermann, N8UR](https://www.febo.com/jra.html), for an inexpensive
+time-interval counter and divider.
+
+## The Slides
+
+[View the presentation on GitHub](https://github.com/bobvan/subNanoAtHomeGnssAI/blob/main/subNanoAtHomeGnssAI.pdf),
+[download it for offline viewing](https://raw.githubusercontent.com/bobvan/subNanoAtHomeGnssAI/main/subNanoAtHomeGnssAI.pdf),
+or
+[watch the dress rehearsal recording](https://us06web.zoom.us/rec/share/1zvoQ55HAjh64t1HXOtMuHbLQsf9KlSkImf9Kdp5P-IfeTKznRcYh0pjgsGdbWsc.UuqJBDgil96nxSYb).
+
+As before, the slides are heavy on visuals and light on bullets, so the PDF leaves
+out what the narration carried. The recording gets you closer.

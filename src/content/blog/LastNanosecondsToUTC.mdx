@@ -1,0 +1,105 @@
+---
+title: "The Last Nanoseconds to UTC"
+slug: "last-nanoseconds-to-utc"
+pubDate: 2025-11-12
+description: "Is sub-nanosecond UTC sync possible? Literally no. Practically yes — and the difference is the whole point"
+tags: ["GNSS", "timekeeping", "talks"]
+draft: false
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
+import LondonPhoto from "../../assets/lastNs2utcLondon.jpg";
+
+I set out to research the limits of clock sync precision — effectively chasing the
+last nanoseconds to UTC.
+
+**Is sub-nanosecond UTC sync possible? Literally, no. Practically, yes.**
+
+That sounds like a dodge, and it isn't. The gap between those two answers is the
+most useful thing I learned, and it turns on a distinction that's easy to skate
+past: **agreeing with another clock is not the same as being right about UTC.**
+
+I gave this talk at the [London](https://docs.stacresearch.com/fall2025LON) and
+[New York](https://docs.stacresearch.com/fall2025NYC) STAC Summits, to audiences
+who care about this for financial markets.
+
+<ZoomableImage
+  src={LondonPhoto}
+  alt="Presenting The Last Nanoseconds to UTC at the London STAC Summit"
+  caption="London STAC Summit."
+  width={1000}
+/>
+
+## Why You Literally Cannot Get Below About 5 ns
+
+Two things stand in the way, and neither is about your equipment.
+
+**The constellations themselves sit about 5 ns from UTC.** Even the best GNSS
+constellations have a standard deviation around 5 ns relative to UTC. That isn't
+a rumour — it's published. Look for `sigma_GPS` in a recent
+[Circular-T from BIPM](https://webtai.bipm.org/ftp/pub/tai/Circular-T/cirt/cirt.454)
+and check me on it.
+
+**UTC doesn't exist in real time.** A national lab like NIST has atomic clocks
+that do far better than 5 ns, but
+[UTC is a virtual timescale](https://www.nist.gov/pml/time-and-frequency-division/time-realization/utcnist-time-scale-0/introduction-utcnist),
+computed after the fact from contributions around the world. There is no wire you
+can plug into that carries UTC as it happens. You can be told, weeks later, what
+UTC was.
+
+So if you're getting time from GNSS rather than from a national lab, you cannot
+literally be closer than about 5 ns to UTC. That ceiling is structural.
+
+## Why You Can Practically Do Far Better
+
+Now the interesting part.
+
+In my homelab, two high-quality GNSS receiver modules —
+[u-blox F9T](https://github.com/bobvan/f9tResearch) — agreed with each other to
+**550 picoseconds** while tracking a single constellation.
+
+<CalloutBox type="tip" title="Agreement is not accuracy">
+	If a constellation is running 5 ns ahead of UTC, every receiver tracking it is
+	5 ns ahead of UTC too — together. The shared error cancels between them.
+	Two clocks can agree sub-nanosecond while both are wrong about UTC by an order
+	of magnitude more than that.
+</CalloutBox>
+
+Whether that's good news depends entirely on your question.
+
+If you need to prove to a regulator that a timestamp is within some tolerance of
+UTC, the 5 ns floor is your problem and no amount of care in the lab removes it.
+
+But if what you actually need is for two machines to agree on the order of events
+— which is what most people in markets are really asking — then the constellation's
+offset from UTC is a common-mode error that cancels. You care about the 550 ps,
+not the 5 ns.
+
+Most of the confusion I've seen in this area comes from conflating those two
+questions.
+
+## What I Haven't Tested Yet
+
+This is the state of GNSS clock sync as I see it in late 2025. Two developments
+look like they could move the floor and I haven't put either on the bench:
+
+- [Galileo HAS](https://www.gsc-europa.eu/galileo/services/galileo-high-accuracy-service-has),
+  which may bring their standard deviation down.
+- [Fugro AtomiChron](https://www.fugro.com/expertise/satellite-positioning/atomichron),
+  which promises sub-nanosecond sync to their own traceable reference timescale.
+
+## The Slides
+
+[View the presentation on GitHub](https://github.com/bobvan/lastNs2utc/blob/main/lastNs2utcGitHub76smaller.pdf),
+or [download it for offline viewing](https://raw.githubusercontent.com/bobvan/lastNs2utc/main/lastNs2utcGitHub76smaller.pdf).
+The measurement tools are in [f9tResearch](https://github.com/bobvan/f9tResearch/).
+
+My presentation style is heavy on visuals and light on bullets, with the key
+points carried by narration — so the PDF necessarily gives you less than the room
+got. The compensation runs the other way at the end: the live audiences never had
+enough screen time to sit with the final Takeaways and Best Practices slides, and
+you do.
+
+Having established what's possible, the obvious next question was whether I could
+build one. That became
+[a sequel](/blog/sub-nanosecond-at-home-with-gnss-and-ai/).

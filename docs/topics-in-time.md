@@ -145,6 +145,63 @@ The concepts that get referenced from several places, and where their Home is:
 
 ---
 
+## Naming
+
+`Topics In ___`, with two slots to fill.
+
+**Precise vs Precision — recommend neither.** In metrology *precision* is a term
+of art meaning repeatability, explicitly opposed to *accuracy*. This garden has a
+page whose whole job is teaching that distinction, so putting either word in the
+title makes a technical claim we then have to walk back. Worse, it is the wrong
+half: traceability to UTC is an accuracy question, two-clock agreement is a
+precision question, and the garden covers both.
+
+**Time vs Timing vs Timekeeping.**
+
+- *Timing* — avoid. To a trading audience "timing" collides with market timing.
+- *Time* — broadest, shortest, no false precision. Risks reading as the physics
+  or philosophy of time rather than the practice.
+- *Timekeeping* — the field-correct word for maintaining and disseminating time,
+  which is exactly what the content is. Also already Bob's own word: the About
+  page says "the limits of practically precise timekeeping".
+
+**Recommendation:** *Topics In Timekeeping* as the collection title, with the nav
+label shortened if it crowds the bar. The nav label and the page title do not
+have to match — nav has a space budget, a landing page does not.
+
+**Scope decided 2026-07-26:** the garden starts as time-only, since Bob does not
+yet feel he could curate other subjects. So the name may commit to the subject;
+a second garden can exist later if it ever earns one. This closes what was open
+question 2.
+
+## Feeds
+
+A garden page that changes should not behave like a new blog post. Three things
+to settle:
+
+**Separate feeds, not one.** `/rss.xml` stays the blog. The garden gets its own
+at `/topics/rss.xml`. A reader who wants revision notices opts in; a reader who
+wants new writing is not spammed by a typo fix.
+
+**RSS 2.0 has no concept of "revised".** It has `pubDate` and a `guid`, and that
+is all. Atom has `<published>` and `<updated>` as separate fields, which is
+precisely this problem, solved. `@astrojs/rss` emits RSS 2.0, so an Atom feed for
+the garden would be hand-rolled XML — not difficult, and arguably the honest
+format for content that is defined by being revised.
+
+**The `guid` policy is the real decision**, whichever format:
+
+| guid | Effect in a reader |
+|---|---|
+| Page URL, fixed | Revisions are invisible. The feed announces new pages only. |
+| URL + updated date | Every revision reappears as an unread item. Honest, potentially noisy. |
+| URL fixed, `pubDate` = updated | Behaviour varies by reader. Some re-sort, some ignore it. Worst of both — unpredictable. |
+
+Recommend **URL + updated date**, paired with the editorial discipline that
+`updated` is only bumped for a change worth someone's attention. Fixing a typo
+does not touch it. That puts the noise control in the author's hands rather than
+in a format that cannot express the distinction.
+
 ## Open questions
 
 1. **Fill the blank.** "Tick length errors can be ignored when the elapsed time
@@ -153,11 +210,7 @@ The concepts that get referenced from several places, and where their Home is:
    ignorable while εΔt stays under your stated tolerance. Is that the point you
    were making, or was it about something narrower?
 
-2. **Does the name commit the garden to time?** "Topics In Time" is good, and it
-   excludes a future Proxmox or homelab topic. Options: accept the commitment,
-   or make the nav label "Topics" with *Topics In Time* as the first collection.
-   I lean toward accepting it — the time material is the reason to build this,
-   and a second garden can exist later.
+2. ~~Does the name commit the garden to time?~~ **Closed** — garden starts time-only; see Naming.
 
 3. **Antennas: page or link?** The talk gives them a visual section and calls
    them critical. That suggests a Home, not a Summary — but antenna selection is

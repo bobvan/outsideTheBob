@@ -3,6 +3,7 @@ title: "Installing Proxmox on Asustor Flashstor 6 Gen 2 FS6806X"
 slug: "installing-proxmox-asustor-fs6806x"
 pubDate: 2025-11-22
 description: "Convoluted steps required without HDMI port and no on-board 10 GbE NIC support"
+tags: ["Proxmox", "hardware", "networking", "storage"]
 draft: false
 ---
 import CalloutBox from "../../components/post/CalloutBox.astro";
@@ -54,10 +55,10 @@ Using the external 10GbE NIC requires additional packages, so there's a catch-22
 
 Adding an external slow NIC gets around the catch-22 by providing network connectivity to
 install the necessary packages to support the external 10 GbE NIC.
-It also provides a comfort known that there's another way into the box if the 10 GbE NIC has
+It also provides the comfort of knowing that there's another way into the box if the 10 GbE NIC has
 issues later.
 This alternative was important to me since I wanted to use all six M.2 NVMe bays for storage, and
-didn't want the PCIe video card hanging dangeroulsy off to the side.
+didn't want the PCIe video card hanging dangerously off to the side.
 
 1. Get a compatible external 10 GbE NIC, such as the [IOCREST 10 GbE NIC](https://www.amazon.com/dp/B0DHSWSSBY)
 2. Get a common, slow USB NIC dongle that Proxmox supports out of the box.
@@ -70,7 +71,7 @@ I'm fortunate to have a separate VLAN for PTP where I could address the slow ext
 1. Set up the root filesystem and network on the slow USB NIC.
 2. Reboot and `apt install bolt polkit` to get support for Thunderbolt hotplugging devices.
 3. `boltctl list` to get the UUID of the external 10 GbE NIC.
-4. `boltctl enroll <UUID>` to authorize the external 10 GbE NIC.3. `boltctl list` to get the UUID of the external 10 GbE NIC.
+4. `boltctl enroll <UUID>` to authorize the external 10 GbE NIC.
 5. `lspci -nn | grep -i ether` and expect to see something like
 
 ```
@@ -87,25 +88,25 @@ Knowing the MAC addresses of each NIC allowed persistent names to be set by
 creating files in `/etc/systemd/network/`.
 
 ```
-root@Stor:~# cat /etc/systemd/network/20-oob1.link
+root@pve:~# cat /etc/systemd/network/20-oob1.link
 [Match]
 MACAddress=3c:18:a0:00:00:01
 
 [Link]
 Name=oob1
-root@Stor:~# cat /etc/systemd/network/30-prod0.link
+root@pve:~# cat /etc/systemd/network/30-prod0.link
 [Match]
 MACAddress=88:c9:b3:00:00:02
 
 [Link]
 Name=prod0
-root@Stor:~# cat /etc/systemd/network/40-board0.link
+root@pve:~# cat /etc/systemd/network/40-board0.link
 [Match]
 MACAddress=78:72:64:00:00:03
 
 [Link]
 Name=board0
-root@Stor:~# cat /etc/systemd/network/99-disable-predictable-names.link
+root@pve:~# cat /etc/systemd/network/99-disable-predictable-names.link
 [Link]
 NamePolicy=
 ```
@@ -115,26 +116,26 @@ if they were hot-plugged later.
 Udev rules, and the right tweaks to `/etc/network/interfaces`, make that possible.
 
 ```
-root@Stor:~# ls -l /etc/udev/rules.d/
+root@pve:~# ls -l /etc/udev/rules.d/
 total 11
 lrwxrwxrwx 1 root root   9 Nov 22 10:29 60-bridge-network-interface.rules -> /dev/null
 -rw-r--r-- 1 root root  82 Nov 24 11:34 70-prod0.rules
 -rw-r--r-- 1 root root 140 Nov 24 13:32 99-ifupdown-hotplug.rules
 -rw-r--r-- 1 root root 116 Nov 24 14:21 99-oob-bridge.rules
 -rw-r--r-- 1 root root 168 Nov 24 16:08 99-prod0-bridge.rules
-root@Stor:~# cat /etc/udev/rules.d/60-bridge-network-interface.rules
-root@Stor:~# cat /etc/udev/rules.d/70-prod0.rules
+root@pve:~# cat /etc/udev/rules.d/60-bridge-network-interface.rules
+root@pve:~# cat /etc/udev/rules.d/70-prod0.rules
 ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="88:c9:b3:00:00:02", NAME="prod0"
-root@Stor:~# cat /etc/udev/rules.d/99-ifupdown-hotplug.rules
+root@pve:~# cat /etc/udev/rules.d/99-ifupdown-hotplug.rules
 ACTION=="add", SUBSYSTEM=="net", NAME=="oob0", RUN+="/sbin/ifup oob0"
 ACTION=="add", SUBSYSTEM=="net", NAME=="oob1", RUN+="/sbin/ifup oob1"
-root@Stor:~# cat /etc/udev/rules.d/99-oob-bridge.rules
+root@pve:~# cat /etc/udev/rules.d/99-oob-bridge.rules
 ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="3c:18:a0:00:00:01", RUN+="/sbin/ip link set dev oob1 master vmbr2"
-root@Stor:~# cat /etc/udev/rules.d/99-prod0-bridge.rules
+root@pve:~# cat /etc/udev/rules.d/99-prod0-bridge.rules
 ACTION=="add", SUBSYSTEM=="net", ATTR{address}=="88:c9:b3:00:00:02", \
     RUN+="/sbin/ip link set dev prod0 up", \
     RUN+="/sbin/ip link set dev prod0 master vmbr0"
-root@Stor:~#
+root@pve:~#
 ```
 
 And `/etc/network/interfaces`:

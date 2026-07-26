@@ -3,6 +3,7 @@ title: "Monitoring Proxmox with Checkmk RAW"
 slug: "monitoring-proxmox-with-checkmk-raw"
 pubDate: 2025-11-17
 description: "Installing the Checkmk RAW agent on Proxmox VE and Backup Server, with the smart plugin for NVMe health"
+tags: ["Proxmox", "Checkmk", "monitoring", "storage"]
 draft: false
 ---
 import CalloutBox from "../../components/post/CalloutBox.astro";
@@ -59,7 +60,7 @@ wget -O /usr/lib/check_mk_agent/plugins/smart http://your.checkmk.server/monitor
 chmod +x /usr/lib/check_mk_agent/plugins/smart
 ```
 
-7. Disable `smartd` becaue it blocks access by Chekcmk:
+7. Disable `smartd` because it blocks access by Checkmk:
 
 ``` bash
 systemctl disable --now smartd

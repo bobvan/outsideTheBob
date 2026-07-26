@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tagIndex } from '../../tags';
+
+const tags = await tagIndex();
+const total = tags.length;
+---
+
+<BaseLayout
+	title="Tags"
+	description={`Every topic covered on Think Outside The Bob — ${total} tags across the archive.`}
+>
+	<h1>Tags</h1>
+
+	{
+		total === 0 ? (
+			<p class="muted">No tags yet.</p>
+		) : (
+			<ul class="list-unstyled tags">
+				{tags.map((tag) => (
+					<li>
+						<a href={`/tags/${tag.slug}/`}>{tag.label}</a>
+						<span class="muted">{tag.posts.length}</span>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</BaseLayout>
+
+<style>
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.tags li {
+		display: flex;
+		align-items: baseline;
+		gap: 0.4rem;
+		padding: 0.3rem 0.7rem;
+		border: 1px solid var(--border);
+		border-radius: 2rem;
+	}
+	.tags a {
+		text-decoration: none;
+	}
+	.tags a:hover {
+		text-decoration: underline;
+	}
+	.tags .muted {
+		font-size: 0.85rem;
+	}
+</style>

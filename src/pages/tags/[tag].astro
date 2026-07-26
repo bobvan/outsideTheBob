@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import TagList from '../../components/TagList.astro';
+import { tagIndex, postSlug, type Tag } from '../../tags';
+
+// One page per tag. The posts travel as props, so each page is built from the
+// index that already grouped them rather than re-querying the collection.
+export async function getStaticPaths() {
+	const tags = await tagIndex();
+	return tags.map((tag) => ({ params: { tag: tag.slug }, props: { tag } }));
+}
+
+interface Props {
+	tag: Tag;
+}
+
+const { tag } = Astro.props;
+const count = tag.posts.length;
+---
+
+<BaseLayout
+	title={`Tagged ${tag.label}`}
+	description={`${count} post${count === 1 ? '' : 's'} tagged ${tag.label} on Think Outside The Bob.`}
+>
+	<h1>Tagged “{tag.label}”</h1>
+	<p class="muted">
+		{count} post{count === 1 ? '' : 's'} · <a href="/tags/">all tags</a>
+	</p>
+
+	{
+		tag.posts.map((post) => (
+			<article>
+				<h2>
+					<a href={`/blog/${postSlug(post)}/`}>{post.data.title}</a>
+				</h2>
+				<p class="post-meta">
+					<FormattedDate date={post.data.pubDate} />
+					<TagList tags={post.data.tags} />
+				</p>
+				{post.data.description && <p>{post.data.description}</p>}
+			</article>
+		))
+	}
+</BaseLayout>

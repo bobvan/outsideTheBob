@@ -258,8 +258,12 @@ them, and nothing else in the outline holds it.
   carry it out, re-calibrate under open sky. T2 has the concrete version using
   TimeBeat's portable unit: *calibrated in a car park, carried into the data
   centre, measurements made, carried back out to the car park, and then
-  recalibrated.* (T1's prototype *got confiscated by the Irish police* — Bob's
-  call whether that story is published.)
+  recalibrated.*
+- **A prototype looks alarming** — a light touch to attach to any photo of a
+  clock prototype: it *could be mistaken for a bomb that must be carefully
+  defused in a Hollywood movie*. This is the sanctioned version of a longer
+  story Bob tells in person and does not publish. **Do not reconstruct that
+  story from the transcripts.**
 - **Disclosure** — Bob has invested in TimeBeat and borrowed hardware from them.
   Stated in T1; must be stated anywhere they are mentioned.
 
@@ -410,8 +414,9 @@ This also removes the reason to hand-roll Atom, so `@astrojs/rss` serves.
 4. **Numbers for the scale page.** T1 says "trillions of timestamps per day".
    Sourceable, or from memory?
 5. **Elapsed-time crossover table?** Interval versus contributed error at 1 ppm.
-6. **Publish the Irish police story?** It is the best anecdote in either
-   transcript and I have no idea whether it is tellable.
+6. ~~Publish the anecdote about the confiscated prototype?~~ **Closed — no.**
+   Bob keeps it for in-person telling. The published substitute is the
+   Hollywood-bomb line above.
 7. **Is "you have to use PPS, regular PTP isn't good enough" as absolute as it
    sounds?** As stated it will draw argument. Worth softening or defending
    explicitly.

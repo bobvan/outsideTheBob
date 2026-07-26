@@ -202,6 +202,55 @@ That is the whole argument for the split in one paragraph, and it should open
   - Parts under $1000.
   - Results framing: *these plots you're going to hate if you're a business guy,
     because down and to the right is good.*
+- **How often should you correct?** — **H**. **New. The Goldilocks interval.**
+  A hidden slide in T2, never spoken aloud. Sources:
+  `PePPAR-Fix/docs/goldilocks-update-rate-review-2026-06-15.md` and the figure
+  `PePPAR-Fix/data/goldilocks_cadence.png`.
+
+  The shape of the idea, which is a genuinely satisfying one:
+
+  - Every correction **injects** the actuator's quantisation noise σ_q. Correct
+    more often and you inject more often — that contribution falls as σ_q/√τ.
+  - Between corrections the oscillator **coasts** and wanders freely — that
+    contribution grows as σ_DO(1 s)·√τ.
+  - One curve falls, the other rises, and the total is the root-sum-square.
+    **There is a minimum, and it is not at either end.** Correct too often and
+    quantisation noise dominates; too rarely and free-running drift does.
+
+  The counterintuitive payoff: **more often is not better.** On the lab OCXO,
+  1 Hz correction was *worse* than coasting, because the actuator's own noise
+  exceeded what the drift would have cost.
+
+  τ\* depends entirely on the actuator's resolution, and the figure's two panels
+  make that vivid:
+
+  | Plant | σ_q | σ_DO(1 s) | τ\* |
+  |---|---|---|---|
+  | OCXO + 16-bit DAC | ≈18 ps | ≈18 ps | **≈1 s** — knee sits in the operating range |
+  | TCXO + PHC `adjfine` | ≈15 fs | ≈1.17 ns | **≈13 µs** — knee far below; coast never wins, so fire as fast as data arrives |
+
+  Six orders of magnitude of actuator resolution move the answer from "coast
+  between corrections" to "correct as fast as you can". Same control problem,
+  opposite conclusion, and the deciding parameter is one most people never
+  think about.
+
+  **The distinction that unlocks it** — and the reason the question is confusing
+  before you see it — is that *update rate* bundles two independent levers:
+
+  - **Observation rate** — how often you *estimate*. More is better, and it
+    costs nothing at the actuator.
+  - **Actuation rate** — how often you *correct*. Each one injects σ_q.
+
+  Goldilocks is only ever about the second. This generalises well beyond
+  GPSDOs, to any control loop whose actuator is noisy — which is a good reason
+  to give it a page rather than bury it in a GPSDO footnote.
+
+  **Keep the honesty.** The review is candid that σ_q was assumed from the
+  datasheet LSB rather than measured, and that if σ_q scales with correction
+  *size* the whole breakeven model changes sign. It also notes the model ignores
+  how a faster loop tracks more reference noise into the oscillator. Publishing
+  the open questions alongside the result is the whole difference between the
+  11th page and the 1001st.
 - **Sources other than GNSS** — **S**.
 
 ### 3. Antennas
@@ -388,6 +437,8 @@ belong. Bob's style is visual and anecdotal; these carry the load pictures did.*
 | Uncompensated feed line | Transferring Time | Antennas (S), Datacenter Problem (H-adjacent) |
 | Acquisition vs distribution | Transferring Time | Datacenters (S) |
 | Fixed position as an advantage | Datacenter Problem | Acquiring (S), GPSDOs (S) |
+| Goldilocks actuation interval | Acquiring Time (GPSDOs) | Benchmarking (S), Metrology (M) |
+| Observation rate vs actuation rate | Acquiring Time (GPSDOs) | Benchmarking (M) |
 
 ---
 
@@ -425,8 +476,25 @@ This also removes the reason to hand-roll Atom, so `@astrojs/rss` serves.
    is the outline's best material and also the part where attribution matters
    most. See the warning under **Sources**.
 
+## Someday / parked
+
+Things worth a page eventually, not now. Add freely.
+
+- **Host timing**, **GNSS holdover**, **spoofing and jamming** — all three
+  explicitly scoped *out* of T1. Each is a topic in its own right.
+- **Galileo HAS** — T2 calls the corrections *very good* and offers to go
+  deeper; nobody took him up on it.
+- **Fugro AtomiChron** and other commercial traceable services.
+- **White Rabbit in depth** — currently one page under Transferring Time.
+- **Choosing a receiver** — the F9T/F10T capability matrices in PePPAR-Fix docs
+  are already most of a page.
+
 ## Done this round
 
+- **Goldilocks actuation interval** added under GPSDOs, from the hidden slide
+  and the PePPAR-Fix review. Includes the observation-vs-actuation distinction,
+  the two-plant table, and the open questions the review is candid about.
+- Someday list started.
 - Audience settled; entry topic renamed.
 - Both transcripts mined; **~25 topics added** that the slides alone did not
   reveal, including three Bob explicitly said he had no time for.

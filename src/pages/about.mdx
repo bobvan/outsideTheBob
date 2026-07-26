@@ -1,10 +1,10 @@
 ---
 layout: ../layouts/BaseLayout.astro
 title: "About"
-description: "Bob Van Valzah — compilers, multicast, electronic trading, and now the limits of practically precise timekeeping."
+description: "Bob Van Valzah — compilers, multicast, electronic trading, and now the limits of practically precise timekeeping. Plus how this site is built."
 ---
 
-# About
+# About Bob
 
 If something isn't going as fast as it possibly can, I want to know why — and
 then I want to fix it. That impulse is the only thread running through all of
@@ -25,3 +25,79 @@ can buy and run yourself.
 
 This blog is where I write down what I find out. The name plays on "think
 outside the box."
+
+## Getting In Touch
+
+[LinkedIn](https://www.linkedin.com/in/bobvan) is the best way to reach me, and
+I'd start there.
+
+My address is `Bob` at `VanValzah` dot `Com`, but fair warning: the whitelist in
+front of it is short and aggressive. If we haven't corresponded before, a
+message is more likely to hit the floor than my inbox. That isn't personal — it
+just means LinkedIn will get you an answer and cold email probably won't.
+
+# Colophon
+
+## Built With
+
+[Astro](https://astro.build) 7, with posts written in MDX and images resized at
+build time by [sharp](https://sharp.pixelplumbing.com/). Node 24. The whole
+site is static — every page is a file, generated ahead of time, with nothing
+assembled while you wait.
+
+The [source is on GitHub](https://github.com/bobvan/outsideTheBob), including
+the scripts that generate the artwork.
+
+## Hosted On
+
+GitHub Pages, fronted by Cloudflare.
+
+## Nothing Comes From Anywhere Else
+
+No analytics scripts, no advertising, no webfonts, no libraries pulled from a
+CDN, no cookies, no trackers. **Your browser fetches nothing from anyone else
+while reading this — until you click a link that leaves.**
+
+That isn't an accident of a small site; it's the thing I check before adding
+anything. A charting library I tried briefly would have loaded itself from a
+CDN on every page view, which is how I ended up publishing charts as plain
+images instead.
+
+Traffic is measured at Cloudflare's edge, which counts requests as they pass
+through without putting a single line of JavaScript on the page or setting
+anything in your browser. I get to know which posts people read. You don't get
+followed around the internet. This seems like the right trade.
+
+## Typography
+
+Body text is set in whatever sans-serif your system already has — `system-ui`
+first, then the usual fallbacks. Nothing to download, which is both faster for
+you and one less request leaving your machine.
+
+The wordmark is [Inter](https://rsms.me/inter/) Display Black, by Rasmus
+Andersson, under the SIL Open Font License.
+
+## The Logo
+
+"Think" sits inside the box; "OutsideTheBob" smashes out through the right wall
+and climbs away, scattering fragments. The joke only works if the wall is
+actually broken, so it is — the box is drawn with a gap where the wordmark
+passes through, rather than a rectangle with something laid over it.
+
+It's generated rather than drawn. A script reads Inter's glyph outlines and
+kerning with [fontkit](https://github.com/foliojs/fontkit) and converts the
+lettering to paths, so it renders identically everywhere instead of depending
+on which fonts a viewer happens to have. The debris radiates from the point of
+rupture at computed angles, and the script refuses to place a fragment that
+would collide with the lettering. The social preview card is rendered from the
+same file by sharp, so the two can't drift apart.
+
+## Words
+
+The projects are mine, and so is the voice. The writing is a collaboration: I
+work through the problem, then Claude turns the notes and outlines into drafts
+that I edit until they sound like me. Claude also built most of the machinery
+here — the layouts, the tag index, the image pipeline, the logo generator —
+with me reviewing as we went.
+
+I mention it because I think you should say so.

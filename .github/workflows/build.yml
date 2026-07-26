@@ -12,7 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Astro 7 requires >=22.12. Matches the Node 24 LTS the site is built on locally.
+          node-version: 24
       - run: npm ci
       - run: npm run build
       - name: Upload static site as artifact

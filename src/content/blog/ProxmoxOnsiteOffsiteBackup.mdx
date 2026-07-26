@@ -1,0 +1,138 @@
+---
+title: "Proxmox On-Site and Off-Site Backup"
+slug: "proxmox-onsite-offsite-backup"
+pubDate: 2026-07-25
+description: "Which failures on-site backup covers, which ones need off-site, and why the amount of data decides both"
+tags: ["Proxmox", "backup", "ZFS", "storage"]
+draft: true
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+
+[Failure resilience](/blog/entry-level-proxmox-failure-resilience/) keeps a service running through a failure.
+Backup gets your data back after one.
+It's worth being clear about which of those you're buying, because a mirrored pool feels like a backup
+right up until the moment you need one.
+
+A ZFS mirror protects you from a drive dying.
+It does absolutely nothing about `rm -rf` in the wrong directory,
+which it will faithfully replicate to both drives at full speed.
+
+So the useful question isn't "am I backed up?" but "which failures does each copy of my data actually cover?"
+
+## What On-Site Backup Is For
+
+Two things, and they're worth naming separately because they have different recovery shapes.
+
+**Fat-finger recovery.**
+Somebody — probably you — deletes the wrong file, breaks a config, or upgrades something that
+turns out to be a mistake.
+This is by far the most common reason to reach for a backup,
+and it wants frequent snapshots and a fast, low-ceremony restore.
+You'll use this one dozens of times for every time you use the others.
+
+**Local storage failure beyond what redundancy covers.**
+A mirror survives one drive.
+A RAIDZ1 pool survives one drive.
+Lose two in a RAIDZ1, or one in a stripe, and the pool is gone regardless of how good ZFS is.
+Drives bought at the same time from the same batch have an unhelpful habit of failing at similar times,
+which makes this less theoretical than it sounds.
+
+On-site backup answers both, and it answers them fast, because the data is sitting on the same network.
+
+## What Off-Site Backup Is For
+
+Also two things, and both of them are the ones you never get to practise.
+
+**Local storage failure combined with local backup failure.**
+The pool fails, you reach for the on-site backup, and discover that it was on the same shelf,
+the same UPS, or the same controller.
+
+**Site disaster.**
+Fire, flood, theft, a burst pipe above the rack.
+Everything in the building is gone at once, and the only copies that matter are the ones that weren't in it.
+
+Off-site is slow to restore from and you will hardly ever touch it.
+That's fine. It isn't for convenience, it's for the day the building is a write-off.
+
+<CalloutBox type="tip" title="The rule this collapses to">
+	Keep more than one copy, on more than one kind of media, with at least one copy somewhere else.
+	Every decision below is just working out what that costs for a given service.
+</CalloutBox>
+
+## The Baseline
+
+Proxmox Backup Server does the on-site job well.
+Backups are incremental and deduplicated, so keeping many restore points costs far less space than
+keeping many full copies, and it can verify what it's holding rather than assuming.
+It can also sync a datastore to a second PBS elsewhere, which is the cleanest route to off-site.
+
+My baseline is a ZFS mirror on non-ECC RAM for both the nodes and the backup server,
+with every node dumping to PBS regardless of what tier its guests are in.
+Even a guest with no resilience at all gets backed up,
+because backup is the one thing that covers the mistake you're actually going to make.
+
+It's tempting to argue that a backup server which already replicates off-site doesn't need
+storage redundancy of its own — if the pool dies, the off-site copy is still there.
+That's true, and I'd still mirror it.
+A backup server that loses its pool leaves you restoring your fat-finger mistakes across a
+slow link from the off-site copy, which turns a five-minute annoyance into an afternoon.
+The mirror isn't protecting the data, it's protecting the fast path to it.
+
+## Where the Amount of Data Changes Everything
+
+This is the part that makes backup planning messier than it first looks.
+
+Some services carry almost no data.
+A DNS resolver, an NTP server, a small internal web app: a configuration file, a package list, some logs.
+These are ideal candidates for everything.
+ZFS replication between nodes is nearly free, so they can run HA and fail over in seconds.
+Backups are small, so you can keep many restore points and push them off-site over an ordinary
+internet connection without thinking about it.
+
+Other services churn large files continuously.
+A DVR is the clearest example: hours of new video every day, most of it never watched.
+Every option above gets expensive at once.
+
+- **Replication** would have to move gigabytes constantly, saturating the drives and the network to
+  protect data that mostly isn't worth protecting.
+- **HA** is therefore off the table, which is fine — nobody is harmed by a recorder being down for an hour.
+- **Off-site backup** would need an upload budget that no residential link is going to provide,
+  and would burn it on footage with a shelf life measured in days.
+
+The mistake is applying one policy to both.
+If you treat the DVR like the DNS server, you'll spend a fortune and still miss recordings.
+If you treat the DNS server like the DVR, you'll take a fifteen-minute outage
+for something that could have failed over in seconds.
+
+| Service profile | Replication / HA | On-site backup | Off-site backup |
+|---|---|---|---|
+| Small data, critical (DNS, NTP) | Yes — replicate often, HA on | Frequent, many restore points | Yes, small and cheap |
+| Moderate data, useful (internal apps, wikis) | Optional — replicate at a longer interval | Daily | Yes |
+| Large churning files (DVR, media) | No | Yes, but fewer restore points | Only the irreplaceable subset |
+
+That last cell is the one worth dwelling on.
+"Off-site the whole DVR" is unaffordable, but "off-site nothing from it" is usually wrong too.
+There's normally a small, precious subset — the recordings you actually kept,
+the config that took an afternoon to get right — and separating that from the bulk
+at the storage layout level is what makes the decision cheap.
+
+## Test the Restore
+
+A backup you have never restored from is a hypothesis.
+
+Restoring a guest to a different node, or to a scratch VM, takes a few minutes and tells you
+whether the thing you've been diligently running every night actually produces a working service.
+It also tells you how long a real restore takes, which is the number you'll want when
+something is broken and someone asks when it'll be back.
+
+I'd rather find out on a Tuesday afternoon than during the disaster.
+
+## Back to Resilience
+
+The dividing line here — how much data a service carries — is the same one that decides which
+[resilience tier](/blog/entry-level-proxmox-failure-resilience/) it belongs in.
+Small-data services get HA and generous backups because both are cheap.
+Large-data services get neither, and instead get a clear-eyed decision about which parts of their
+data are actually worth keeping.
+
+Work that out once per service, write it down, and most of the hard questions answer themselves.

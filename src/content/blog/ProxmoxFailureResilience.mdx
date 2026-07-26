@@ -1,0 +1,171 @@
+---
+title: "Entry-Level Failure Resilience with Proxmox VE"
+slug: "entry-level-proxmox-failure-resilience"
+pubDate: 2026-07-25
+description: "What each kind of failure actually costs you in downtime, and the smallest configuration that shortens it"
+tags: ["Proxmox", "ZFS", "storage", "networking", "hardware"]
+draft: true
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+
+If [Murphy's Law](https://en.wikipedia.org/wiki/Murphy%27s_law) tells us that anything that can go wrong will go wrong,
+then planning failure resilience means working through anything that can go wrong.
+For each kind of failure, the question I keep coming back to is a simple one:
+**how long is the service outage it creates, and what does shortening that outage cost?**
+
+I adopted virtualization to modernize and simplify the administration of my network services.
+Focusing on failure resilience is perhaps less common in a homelab, but it's what I actually cared about.
+The values that drive a high-end homelab overlap substantially with a small IT shop or an SMB:
+a handful of services that people notice immediately when they stop, and nobody on call at 3 a.m.
+
+This post is the entry-level version.
+It is not about building something impressive.
+It is about the smallest configuration that turns each failure from an evening of work into a few seconds of nothing.
+
+Backups are the other half of this and get [their own post](/blog/proxmox-onsite-offsite-backup/).
+Resilience keeps a service running through a failure.
+Backup gets your data back after one.
+They are different jobs, and it is worth being clear which one you are buying.
+
+## Hardware Baseline
+
+I'm done with spinning drives, noisy fans, and high power consumption 24x7.
+So I've stayed with compact, low-TDP CPUs and M.2 NVMe storage.
+
+At the low end you're likely to spend more on storage than on compute no matter what you do,
+so I think it's worth paying a bit more for name-brand drives with good warranties and reliability records.
+I've stayed with the Samsung 990 line, but beware of the confusing naming.
+
+There are three: the 990 EVO, the 990 EVO Plus, and the 990 PRO, each costing a bit more than the last.
+The PRO is the one with a dedicated DRAM cache, and I don't see that adding much value
+behind the large DRAM requirements of ZFS.
+The slightly higher performance of the EVO Plus likely makes no difference either,
+given the limited CPU power of low-TDP parts and the network interface bottleneck in front of them.
+So I'd stay with the plain 990 EVO unless you need the 4 TB density, which the EVO tops out below.
+
+<CalloutBox type="tip" title="Sizing the drives, not the CPU">
+	A node with too little CPU is slow.
+	A node with too little storage is a migration.
+	Buy the storage you'll want in two years and the CPU you need today.
+</CalloutBox>
+
+## Storage Layout
+
+ZFS is clearly the right choice for local storage here.
+Ceph is a possibility for distributed storage, but it's overkill for a homelab and it wants more nodes,
+more network, and more attention than this scale justifies.
+
+**Always mirror the boot device.**
+A Proxmox node whose boot drive fails is a node that is simply gone until you rebuild it,
+and rebuilding it is an evening, not a minute.
+A two-drive ZFS mirror turns that into a drive swap you can do whenever you feel like it.
+
+It is tempting to stripe instead, because striping two drives gets you the capacity of both.
+Resist it.
+
+<CalloutBox type="warn" title="What a ZFS stripe does and doesn't give you">
+	You still get ZFS's end-to-end checksums, copy-on-write, snapshots, and compression.
+	But a single drive failure destroys the whole pool.
+	Scrubs will still detect corruption and will not be able to repair it.
+	Backups and replication become your only real protection.
+</CalloutBox>
+
+## Failure Modes
+
+Here is the whole exercise: list what can break, work out the outage, then decide what shortening it is worth.
+
+### Boot Device Failure
+
+The node can't boot because its boot device has failed.
+
+Without mitigation, the outage runs until you have reinstalled Proxmox and restored the guests,
+which realistically means hours and a lot of attention.
+
+Configure the boot device as a ZFS mirror across two drives.
+The node keeps running on the surviving drive and the outage becomes zero.
+Replacing the failed drive is scheduled work rather than emergency work.
+
+### Network Link Failure
+
+The node's hardware is fine and the switch is fine, but the physical link between them has failed.
+A cable, a port, a transceiver.
+
+Without mitigation, everything on that node is unreachable until someone physically visits it.
+
+Configure bonded interfaces using LACP across multiple physical links to the same switch.
+Failover is sub-second and nobody notices.
+
+### Network Switch Failure
+
+The node's hardware is fine, but the switch it connects to has failed.
+LACP to a single switch does nothing for you here — the whole bond is behind the thing that broke.
+
+Configure multiple interfaces with MLAG using links to two different switches.
+This is the point where the cost starts to climb,
+because it needs a second switch and a pair that supports MLAG between them.
+It is also the first mitigation on this list I would consider genuinely optional for a homelab.
+
+### Compute Failure
+
+The physical hardware underlying a node fails in some way that isn't storage:
+loss of power, a kernel panic, a CPU that bursts into flames.
+
+This is the one that HA is for, and it is where entry-level gets interesting.
+
+## What High Availability Actually Requires
+
+Proxmox VE will fail a guest over to another node automatically, but only inside a cluster with quorum.
+
+<CalloutBox type="warn" title="Two nodes is not a cluster">
+	Quorum needs more than half the votes, so a two-node cluster cannot survive losing a node —
+	the survivor has exactly half and stops making decisions, which is the opposite of what you wanted.
+	Either run three nodes, or run two nodes plus a QDevice,
+	which is a tiny external tie-breaker that can live on a Raspberry Pi or any always-on Linux box.
+</CalloutBox>
+
+The second thing to understand is where the guest's disk lives.
+Automatic failover needs the guest's storage to be available on the node taking over.
+Without shared storage, that means **ZFS replication**: Proxmox periodically sends snapshots of the
+guest's disk to the other nodes so a copy is already there when it's needed.
+
+Replication runs on a schedule, and that schedule is your data loss window.
+Replicate every fifteen minutes and a node failure costs you up to fifteen minutes of that guest's writes.
+Replicate every minute and you pay for it in constant disk and network traffic.
+Nothing about HA makes this go away — it is the price of not having shared storage,
+and it is the number to decide deliberately rather than accept by default.
+
+So the honest summary of automatic failover is:
+the service comes back in seconds, on a slightly older copy of its data.
+
+## Putting It Together
+
+Not everything deserves the same treatment.
+I find it useful to sort guests into tiers and be explicit about what each one buys.
+
+| Tier | Node boot | On node failure | Typical guests |
+|------|-----------|-----------------|----------------|
+| 1 | ZFS mirror with ECC RAM, replicated, HA enabled | Automatic failover in seconds, losing up to one replication interval | DNS, NTP, other critical network services |
+| 2 | ZFS mirror, non-ECC RAM, replicated | Manual failover in minutes | Services people can wait a few minutes for |
+| 3 | ZFS mirror, non-ECC RAM, backed up only | Restore from backup, tens of minutes upward | Bulk storage, media, anything with a lot of data |
+
+A few things are true across all of them.
+The node boots to run the guest, and the guest boots to serve clients, so both need to survive a drive failure.
+Some guests also touch bulk storage that is far too large to replicate.
+And every node dumps to a backup server regardless of tier,
+because none of the above protects you from deleting the wrong thing.
+
+## Where This Runs Out
+
+The tiers above are really a proxy for one question: how much data does the guest carry?
+
+A DNS resolver or an NTP server holds a configuration file and not much else.
+Replicating it every few minutes is nearly free, so it can sit in Tier 1 and fail over in seconds.
+
+A DVR churning large files is the opposite case.
+Replicating it continuously would saturate the network and the drives to protect data that is,
+frankly, replaceable.
+It belongs in Tier 3 with a sensible backup and no HA at all.
+
+That dividing line — how much data a service carries — turns out to decide almost everything about
+both its resilience and its backups, which is where the [backup post](/blog/proxmox-onsite-offsite-backup/)
+picks up.

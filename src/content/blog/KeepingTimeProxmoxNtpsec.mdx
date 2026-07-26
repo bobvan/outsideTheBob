@@ -3,35 +3,64 @@ title: "Keeping Time with Proxmox and Ntpsec"
 slug: "keeping-time-proxmox-ntpsec"
 pubDate: 2025-11-16
 description: "Considerations for Clock Sync Daemons and Proxmox"
+tags: ["Proxmox", "DNS", "NTP", "monitoring", "ntpsec"]
 draft: false
 ---
 import CalloutBox from "../../components/post/CalloutBox.astro";
 
-Tight time sync requires consistent latency between packet arrival and user space processing.
+Tight network time sync requires consistent latency between packet arrival and user space processing.
 We can't expect consistent latency inside a container or VM.
-And even if we could, we wouldn't want containers or VMs to be steering the Proxmox node clock shared by all.
+And even if we could, we wouldn't want unprivileged containers or VMs to be
+steering the Proxmox node clock that is shared by all.
 
-My homelab has many hosts configured to expect DNS and NTP from two well-known IP addresses that were on
-bare metal hosts that I have transitioned to Proxmox LXC containers with high availibility so that
-they should both keep running in spite of sigle Proxmox node failure.
+My old homelab configuration had many hosts that were configured
+to expect DNS resolution and NTP from two well-known IP addresses formerly on bare metal
+hosts that also provided many other services.
+The other services have since been migrated to a group of high availability LXC containers delivering
+just one service each.
+This eliminated cross-service interactions and allowed services to
+keep running, even in the face of Proxmox node failures.
 
-The constraints above lead me to running time sync daemons directly on my Proxmox nodes for consistent
-latency between network and user space, but also running pass-through or "proxy" time sync daemons inside
-the high-availability LXC containers bound to the well-known IP addresses.
-These proxies deliver time sync services to other hosts in my homelab, but do not steer the
-Proxmox node clock.
+Making the jump to Proxmox required different treatment for DNS resolution and NTP services.
+NTP servers can be referenced by name, but DNS resolvers can't, due to the obvious chicken/egg problem.
 
-I've chosen `ntpsec` for  my sync daemon on the Proxmox cluster nodes.
+The DNS resolver IP address configured into all my homelab hosts could be moved to HA LXCs easily enough.
+I created `PTR` records going to `dns{1-3}` for these addresses to handle any inverse lookups.
+It seems unlikely that `A` records would ever be needed, but I added them for symmetry.
+No changes to
+`/etc/resolv.conf`
+were required, but it was a good opportunity to audit all my host configs.
+
+The privilege constraints above led me to run time sync daemons directly on my Proxmox nodes for consistent
+latency between network and user space.
+I also tried running pass-through or "proxy" time sync daemons inside
+high-availability LXC containers bound to the well-known IP addresses so that
+I wouldn't have to reconfigure NTP clients.
+
+That worked, but I didn't like the jitter added between the bare metal and containerized time daemons.
+And it turned out to be easy enough to find all clients using my old NTP servers by address: `ntpq -c mrulist`.
+That was a small enough list that I just edited all their NTP client configs to specify
+servers by the names `ntp{1-5}`, which I added as
+additional `A` records for my bare metal Proxmox hosts.
+
+I've chosen `ntpsec` for my sync daemon on the Proxmox cluster nodes.
 The default `systemd-timesyncd.service` isn't really designed to
 discipline the system clock to match master clocks.
 Rather, it steps the system clock when the difference to a master clock is above a threshold, while making
 occasional frequency adjustments below this threshold.
-I considered `chrony` because it runs continuously, measures multiple masters against each other, chooses the best, and disciplines the system clock from it.
+
+I considered `chrony` because it runs continuously, measures multiple masters against each other,
+chooses the best, and disciplines the system clock from it.
 However, `chrony` is optimized for TSC discontinuities from CPU speed steps, sleep/wake, and CPU scheduling
-lateny etc.
-We should not see these in the Proxmox node itself.
+latency etc.
+We should not see these discontinuities in Proxmox nodes.
 Chrony would be great if we couldn't run a time sync daemon
 directly on the Proxmox node.
+
+Ntpsec is my preferred time sync daemon because it supports the newer NTS protocol, which authenticates
+time servers and so prevents man-in-the-middle attacks.
+Moreover, it directly supports the ntpviz visualization tools that let you easily see
+how your NTP servers are performing.
 
 ``` bash
 apt install ntpsec
@@ -42,4 +71,4 @@ apt install ntpsec-ntpviz # Optional
     Note that ntpviz now runs from a `systemd` timer, so there's no longer a need for a `crontab` entry.
 </CalloutBox>
 
-URL for `ntpviz`: `http://ProxmoxHost/ntpviz/`
+Monitor your NTP server performance using `ntpviz`: `http://ProxmoxHost/ntpviz/`

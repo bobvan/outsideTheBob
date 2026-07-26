@@ -2,13 +2,16 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import TagList from '../../components/TagList.astro';
-import { tagIndex, postSlug, type Tag } from '../../tags';
+import { tagIndex, hasOwnPage, postSlug, type Tag } from '../../tags';
 
-// One page per tag. The posts travel as props, so each page is built from the
-// index that already grouped them rather than re-querying the collection.
+// One page per tag that groups more than one post. Single-post tags link
+// straight to their post from everywhere, so a page here would be unreachable -
+// and a page nothing links to, still listed in the sitemap, is worse than no
+// page at all. The posts travel as props, so each page is built from the index
+// that already grouped them rather than re-querying the collection.
 export async function getStaticPaths() {
 	const tags = await tagIndex();
-	return tags.map((tag) => ({ params: { tag: tag.slug }, props: { tag } }));
+	return tags.filter(hasOwnPage).map((tag) => ({ params: { tag: tag.slug }, props: { tag } }));
 }
 
 interface Props {

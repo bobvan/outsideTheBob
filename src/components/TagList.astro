@@ -1,11 +1,26 @@
 ---
-import { tagSlug } from '../tags';
+import { tagSlug, tagLinks } from '../tags';
 
 interface Props {
 	tags?: string[];
 }
 
 const { tags } = Astro.props;
+
+// Shared with the tags index, so a one-post tag points at that post from
+// everywhere rather than only from the index.
+const links = await tagLinks();
+
+const withSlash = (path: string) => (path.endsWith('/') ? path : `${path}/`);
+const here = withSlash(Astro.url.pathname);
+
+// A single-post tag resolves to that post, which on the post itself is the page
+// you are already reading. Render those as plain text rather than a link that
+// goes nowhere.
+const destination = (tag: string) => {
+	const href = links.get(tagSlug(tag)) ?? `/tags/${tagSlug(tag)}/`;
+	return withSlash(href) === here ? null : href;
+};
 ---
 
 {
@@ -15,7 +30,7 @@ const { tags } = Astro.props;
 			{tags.map((tag, i) => (
 				<>
 					{i > 0 && ', '}
-					<a href={`/tags/${tagSlug(tag)}/`}>{tag}</a>
+					{destination(tag) ? <a href={destination(tag)}>{tag}</a> : <span>{tag}</span>}
 				</>
 			))}
 		</span>

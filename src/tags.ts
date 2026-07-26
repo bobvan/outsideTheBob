@@ -50,3 +50,24 @@ export async function tagIndex(): Promise<Tag[]> {
 		(a, b) => b.posts.length - a.posts.length || a.label.localeCompare(b.label),
 	);
 }
+
+/**
+ * A tag earns its own page only once it groups more than one post. A page
+ * listing a single post is just a link wearing a page costume - one more click
+ * for a reader, and a thin near-duplicate for a crawler.
+ */
+export const hasOwnPage = (tag: Tag) => tag.posts.length > 1;
+
+/**
+ * Where each tag should link, by slug: its own page when it has one, otherwise
+ * straight to the only post carrying it.
+ */
+export async function tagLinks(): Promise<Map<string, string>> {
+	const tags = await tagIndex();
+	return new Map(
+		tags.map((tag) => [
+			tag.slug,
+			hasOwnPage(tag) ? `/tags/${tag.slug}/` : `/blog/${postSlug(tag.posts[0])}/`,
+		]),
+	);
+}

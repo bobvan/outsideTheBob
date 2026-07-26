@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { tagIndex } from '../../tags';
+import { tagIndex, tagLinks } from '../../tags';
 
 const tags = await tagIndex();
+const links = await tagLinks();
 const total = tags.length;
 ---
 
@@ -19,7 +20,16 @@ const total = tags.length;
 			<ul class="list-unstyled tags">
 				{tags.map((tag) => (
 					<li>
-						<a href={`/tags/${tag.slug}/`}>{tag.label}</a>
+						<a
+							href={links.get(tag.slug)}
+							title={
+								tag.posts.length === 1
+									? `One post: ${tag.posts[0].data.title}`
+									: `${tag.posts.length} posts tagged ${tag.label}`
+							}
+						>
+							{tag.label}
+						</a>
 						<span class="muted">{tag.posts.length}</span>
 					</li>
 				))}

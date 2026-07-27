@@ -122,6 +122,78 @@ worked number.
 
 ---
 
+## 📌 Serrano — a history of White Rabbit
+
+**White Rabbit history, by Javier Serrano.** Written 25 January 2024, covering
+mid-2007 to end-2023. <https://www.white-rabbit.tech/wr-history-by-javier/>
+
+**Verified 2026-07-27.**
+
+Milestones worth having: first meeting on renovating CERN's accelerator timing
+in **July 2007**; first workshop introducing PTP plus Synchronous Ethernet in
+February 2008; a working fibre-link demonstrator by October 2008; Spanish
+government funding for commercial switch development in 2009–2010; the WR High
+Accuracy profile folded into **IEEE 1588-2019**; and the White Rabbit
+Collaboration formally established in 2023.
+
+⚠️ **One correction to Bob's recollection.** OPERA did not kick off White
+Rabbit — WR was already four years old by 2011, and its original target was only
+*"around 1 μs"*, which the account says proved insufficient. What OPERA did was
+create pressure to **deploy** it: there was, per Serrano, *"a lot of pressure to
+deploy WR in parallel with the OPERA timing system in Gran Sasso"* so the
+timing could be independently verified. That became **White Rabbit's first
+operational deployment, in 2011**.
+
+So the accurate version is better than the remembered one. OPERA did not inspire
+White Rabbit; it put an unproven project into production under pressure, because
+suddenly nobody trusted a timing chain that nothing else could check. That is a
+sharper argument for independent verification than "it motivated the work".
+
+**Use in:** Transferring Time → White Rabbit (Home), and *Stories* → OPERA.
+
+---
+
+## 📌 The OPERA timing fault
+
+**Verified 2026-07-27** against the encyclopaedic account and contemporary press.
+
+- **23 September 2011** — OPERA reports neutrinos arriving from CERN at Gran
+  Sasso about **60.7 ns earlier** than light would.
+- **February 2012** — two hardware faults found in the timing chain.
+- **12 July 2012** — final result **6.5 ± 15 ns**, consistent with the speed of
+  light.
+
+**Two faults, pulling in opposite directions** — which is the detail that makes
+the story worth telling:
+
+| Fault | Magnitude | Effect |
+|---|---|---|
+| Fibre from the GPS receiver to the OPERA master clock not fully seated, increasing delay through the fibre | **73 ns** | Made neutrinos appear **faster** |
+| Clock on an electronic board ticking above its nominal 10 MHz | partially offsetting | Made neutrinos appear **slower** |
+
+The two partially cancelled, leaving the ~60 ns anomaly. So the headline number
+was never one error — it was the residue of two, and the smaller one was busy
+hiding some of the larger.
+
+⚠️ **Bob's mechanism is not in the popular accounts.** In the T1 Q&A he
+described the loose connector producing low light levels on an analogue signal,
+whose rise time then shifted the apparent phase. That is a physical explanation
+of *why* a loose connector changes apparent delay, and it is consistent with the
+reported effect — but the press coverage says only "loose cable, 73 ns". Before
+publishing the mechanism, source it from the OPERA collaboration's own account
+rather than from recollection.
+
+Press: [Live Science](https://www.livescience.com/18603-error-faster-light-neutrinos.html) ·
+[Space.com](https://www.space.com/14654-error-faster-light-neutrinos.html) ·
+[Wikipedia](https://en.wikipedia.org/wiki/2011_OPERA_faster-than-light_neutrino_anomaly).
+Bob also has **two screenshots from CERN press releases** in the *Last
+Nanoseconds* deck — the announcement and the retraction — which are better
+primary illustration than any of the above.
+
+**Use in:** *Stories* → OPERA, feeding Transferring Time.
+
+---
+
 ## ✅ Already cited in published posts
 
 - **BIPM Circular T** — <https://webtai.bipm.org/ftp/pub/tai/Circular-T/cirt/cirt.454>
@@ -149,5 +221,6 @@ Sources we need and do not have:
   the specific regimes, so a reader can find their own obligation.
 - **Message-volume figures** for *The scale of it* — trillions of market data
   messages per day, orders per day, ideally citable.
-- **OPERA neutrino timing fault** — the official account, for the *Stories*
-  entry. The loose-connector detail should be sourced, not recalled.
+- **OPERA collaboration's own technical account** — to source the *mechanism*
+  by which a loose connector shifted apparent delay, which the press coverage
+  does not explain. See the OPERA entry above.

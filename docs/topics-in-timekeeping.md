@@ -329,8 +329,13 @@ under-appreciated part of precision timekeeping."*
 - **NTP** — **S**, linking out.
 - **PTP** — **H** for datacenter framing. T2: *you have to use PPS. Regular old
   PTP isn't good enough* — worth unpacking, since it is a strong claim.
-- **White Rabbit** — **H**. A couple of hundred picoseconds. Motivated by the
-  OPERA story below.
+- **White Rabbit** — **H**. A couple of hundred picoseconds. Cite Serrano's
+  history (`docs/references.md`). Note the correction recorded there: OPERA did
+  not start White Rabbit, which was already four years old and originally aimed
+  at only ~1 µs. OPERA forced its **first operational deployment**, in parallel
+  with OPERA's own timing at Gran Sasso, so the chain could be independently
+  checked. That is the stronger argument, and it belongs on this page: the value
+  of a second, independent timing path is exactly what the story demonstrates.
 - **What the network does to your time** — **H**. Asymmetry, queueing, switches.
 
 ### 5. The Datacenter Problem
@@ -434,10 +439,15 @@ them, and nothing else in the outline holds it.
 *Not a topic. A list of things worth telling somewhere, tagged with where they
 belong. Bob's style is visual and anecdotal; these carry the load pictures did.*
 
-- **The OPERA neutrinos** — CERN to Gran Sasso, apparently faster than light,
-  and nine months later a clock sync problem. Motivated White Rabbit. Q&A adds
-  precision: a loose fibre connector produced low light levels, and the rise time
-  of an analogue signal shifted the apparent phase. → *Transferring Time*.
+- **The OPERA neutrinos** — CERN to Gran Sasso, apparently 60.7 ns faster than
+  light in September 2011; two faults found in February 2012; final answer
+  6.5 ± 15 ns in July 2012. **Two faults pulling opposite ways**: an unseated
+  fibre from the GPS receiver worth 73 ns of apparent speed-up, and a clock
+  ticking fast that hid part of it. The headline anomaly was the residue of two
+  errors, not one — which is the version worth telling. Dates, magnitudes and
+  the caveat about Bob's rise-time mechanism are in `docs/references.md`. Bob
+  has CERN press-release screenshots of both the claim and the retraction.
+  → *Transferring Time* / *White Rabbit*.
 - **The Italian earthquake** — plate motion at millimetres per month, then 8 cm
   overnight. → *Datum offsets*.
 - **The market that isn't ours** — GNSS is a $260 bn market, 92 % of it precise

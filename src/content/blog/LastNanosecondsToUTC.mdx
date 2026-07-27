@@ -98,20 +98,55 @@ questions.
 All of the above assumes you can put an antenna where it needs to be. In a
 datacenter you usually can't, and this is where the theory meets a roof.
 
-The roof blocks the sky, so the antenna has to go on top of it — either yours, or
-one the facility provides. Either way you are likely to be missing the two
-quantities you most need: **the length of the feed line**, and **an accurate
-position for the antenna**.
+The roof blocks the sky, so the antenna goes on top of it — either one you
+install or one the facility provides. Either way, as a tenant you are likely
+missing two numbers: **where the antenna actually is**, and **how long the
+feedline is** that runs from it down to your rack.
 
-That matters because of where time is and isn't corrected for delay. Inside the
-distribution network, NTP and PTP subtract out the delay they measure, so time
-looks the same everywhere. But the antenna feed line sits *outside* that
-compensated region, along with the pulse-per-second signal. Nothing measures those
-for you. If you want time that is honestly traceable to what arrived at the
-antenna, you have to know the feed line's delay and subtract it yourself.
+They cost you time for entirely different reasons, so they are worth taking
+apart separately.
 
-A cable of unknown length is a constant, unknown offset — which is precisely the
-kind of error that a beautiful clock cannot fix.
+### The solution is for a point inside the antenna
+
+GNSS doesn't solve for the time at your receiver. It solves for the time at the
+**antenna phase center** — a spot several centimeters up inside the antenna
+housing, invisible from outside, and in a different place for every model. It is
+the antenna phase center's position that goes into the equations, not the
+mounting bracket's.
+
+Get that position wrong and the error lands directly in your clock. The
+arithmetic is easy to carry around: light covers roughly a foot per nanosecond,
+so **every foot of position error is worth about a nanosecond** — east-west,
+north-south, or up-down.
+
+It is a static offset. It does not average away, and no amount of patience
+improves it.
+
+### Nothing measures the feedline for you
+
+The second number is the cable, and it is the one people find surprising.
+
+Signal travels more slowly down coax than through free space — typically around
+two-thirds to four-fifths of *c* — so a foot of feedline costs you rather more
+than a foot of free space, call it 1.2 to 1.5 nanoseconds. A run from a rooftop
+antenna to a rack inside can easily be a hundred feet of it.
+
+Now, the reason this is a *surprise* rather than a nuisance. Inside the
+distribution network, NTP, PTP and White Rabbit all **measure** the delay between
+nodes and subtract it, which is why time looks the same everywhere downstream.
+That machinery is genuinely good, and it teaches people that delay is a solved
+problem.
+
+It stops at the receiver. The antenna feedline — and the pulse-per-second wiring
+on the other side of the receiver — sit outside the compensated region entirely.
+Nothing on your network measures them, because nothing on your network can see
+them. If you want time that is honestly traceable to what arrived at the antenna,
+you have to know those lengths and subtract them yourself.
+
+**Both of these are errors a beautiful clock cannot fix.** An antenna of unknown
+position and a cable of unknown length are constant, unknown offsets. Oscillator
+stability does nothing for either, which is what makes them the characteristic
+datacenter problem rather than a timekeeping one.
 
 ## What I Haven't Tested Yet
 

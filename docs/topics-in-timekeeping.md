@@ -280,30 +280,28 @@ under-appreciated part of precision timekeeping."*
   a foot of position error is worth up to about a nanosecond, and vertical error
   is the direction that couples hardest.
 
-  Two pieces of evidence, one of which needs its source:
+  Two pieces of evidence:
 
-  - **NIST measured the u-blox F9T** — an excellent timing module — and found a
-    position bias **exceeding their 30 cm limit**. ⚠️ **Citation needed.** I
-    could not find this paper in three searches, and will not invent a
-    reference. Bob: title, author, or a link, and it goes in as a footnote.
+  - **NIST measured exactly this**, on exactly this receiver, and published it.
+    Montare, Novick & Sherman, *Evaluating Common-View Time Transfer Using a
+    Low-Cost Dual-Frequency GNSS Receiver* (NIST, 2024) — they wanted height to
+    30 cm, evaluated the ZED-F9T's own built-in survey mode, and found the
+    results *"biased high relative to the PPP solution, the cause of which has
+    not yet been identified and thus do not meet the ±30 cm accuracy goal."*
+    Full quotes and the citation are in `docs/references.md`.
   - **Bob's own lab measurements of F9T position bias** show the same effect.
-    First-hand and unpublished, which makes it worth writing up — it is
-    corroboration nobody else is offering.
+    First-hand and unpublished.
 
-  Related material I *did* find, either as supporting citations or as leads to
-  the paper Bob means:
+  Three details make this a better page than "the survey isn't accurate enough":
 
-  - NIST has published that vertical position error is the most damaging to
-    timing, at up to ~3.3 ns per metre — which is 1/c, i.e. the same worst-case
-    bound the datacenter post uses, arrived at independently.
-  - NIST has also documented self-survey by averaging landing ~10 m out, and in
-    one case a 23.2 m altitude error producing a −57.62 ns offset against
-    UTC(NIST). Different magnitude from Bob's point but the identical mechanism,
-    and a vivid number.
-  - John Ackermann (N8UR), *Timing and Location Performance of Recent u-blox
-    GNSS Receiver Modules*, TAPR DCC 2020 — directly on u-blox timing **and
-    location** performance, and by someone Bob already credits in the talk.
-    Possibly the actual source, or a good companion to it.
+  1. **The bias is directional** — biased *high*, not scattered. Their 24-hour
+     surveys converge tidily, and converge to the wrong answer. Averaging longer
+     does not help, which is exactly the trap.
+  2. **NIST could not explain it either.** The cause "has not yet been
+     identified." Bob independently reproducing an *unexplained* result is
+     stronger than confirming a known one, and is worth publishing as such.
+  3. **Their fix is the same as ours** — compute a PPP solution afterwards and
+     configure it in.
 
   **The practical takeaway the page exists for:** survey the antenna properly,
   by post-processing or a professional survey, and *configure* the result into
@@ -511,10 +509,8 @@ This also removes the reason to hand-roll Atom, so `@astrojs/rss` serves.
    Rabbit, uncompensated paths. Still needs a ceiling.
 4. **Numbers for the scale page.** T1 says "trillions of timestamps per day".
    Sourceable, or from memory?
-5. **The NIST F9T citation.** Title, author or link for the paper finding a
-   position bias above their 30 cm limit. Three searches did not turn it up and
-   I will not fabricate a reference. Candidate leads are listed under *Don't let
-   the receiver survey itself*.
+5. ~~The NIST F9T citation.~~ **Closed** — Montare, Novick & Sherman (NIST,
+   2024), verified and quoted in `docs/references.md`.
 
 6. **Elapsed-time crossover table?** Interval versus contributed error at 1 ppm.
 6. ~~Publish the anecdote about the confiscated prototype?~~ **Closed — no.**

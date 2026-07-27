@@ -1,0 +1,153 @@
+# References
+
+Sources worth citing, and where they are used. **Status: draft, not published** —
+`docs/` is invisible to the Astro build.
+
+Keep this honest. A reference listed here has been **read and verified to say
+what we claim it says**, or it is marked otherwise. Anything unverified is
+flagged rather than quietly cited.
+
+| Status | Means |
+|---|---|
+| ✅ **used** | Cited in published content |
+| 📌 **pending** | Verified, not yet cited anywhere |
+| ⚠️ **unverified** | We believe it exists but have not confirmed the claim |
+
+---
+
+## 📌 Montare, Novick & Sherman (NIST, 2024)
+
+**Evaluating Common-View Time Transfer Using a Low-Cost Dual-Frequency GNSS
+Receiver.** Aidan A. Montare, Andrew N. Novick, Jeff A. Sherman, Time and
+Frequency Division, National Institute of Standards and Technology.
+<https://tf.nist.gov/general/pdf/3280.pdf> — 9 pp., PDF dated 2024-02-05.
+
+**Verified 2026-07-27.** Read in full. This is the paper behind the
+receiver-self-survey page, and it says what Bob remembered.
+
+Why they wanted 30 cm:
+
+> Accurately determining antenna position is important for a common-view system,
+> as errors in position translate into timing errors. Due to the geometry of the
+> problem, vertical (height) positioning errors are the most detrimental to
+> timing performance. Since each meter of vertical error corresponds to up to
+> 3.3 ns of timing error, we desired a height accuracy of 30 cm or less for our
+> system.
+
+That they evaluated the built-in survey specifically:
+
+> The receiver under study features a built-in configurable survey mode that
+> produces a weighted-average position, after which the receiver fixes its
+> position estimate and uses GNSS signals for a timing-only solution; **it was
+> this method that we evaluated.**
+
+The finding:
+
+> In the multiple cold-start surveys performed, the receiver reliably gets within
+> 2 m of the PPP solution after about 6 h, and within 1 m after 18 h. The final
+> results of these surveys have a total dispersion of about 0.5 m… The maximum
+> excursions in the first few minutes of surveying were up to 18 m.
+
+> **The final results are biased high relative to the PPP solution, the cause of
+> which has not yet been identified and thus do not meet the ±30 cm accuracy
+> goal stated earlier.** However, the dual-frequency receiver is clearly superior
+> to a single frequency receiver in height determination. **For users desiring
+> greater position accuracy, a PPP solution can be computed after the fact.**
+
+Three things worth drawing out on the page:
+
+1. **The bias is directional** — *biased high*, not scattered. So it is not
+   noise, and no amount of survey time removes it. Their 24 h runs converge
+   nicely and converge to the wrong answer.
+2. **NIST could not explain it either** — "the cause of which has not yet been
+   identified". Bob seeing the same effect independently in his lab is
+   corroboration of an *unexplained* result, which is more interesting than
+   confirming a known one, and is genuinely publishable observation.
+3. **Their recommendation is ours** — compute a PPP solution after the fact and
+   configure it. Same configure-don't-guess conclusion the datacenter section
+   reaches about feedline delay.
+
+Also useful: their reference and PPP solutions agreed to **2.4 cm**, so the
+yardstick was sound; and the 3.3 ns/m figure is 1/*c*, i.e. the same worst-case
+bound *The Last Nanoseconds to UTC* arrives at from the other direction.
+
+**Use in:** Antennas → *Don't let the receiver survey itself* (Home, footnote).
+Possibly **S** from Acquiring Time and The Datacenter Problem.
+
+---
+
+## 📌 Lombardi (NIST) — position error and timing
+
+Cited within the Montare paper for the single-frequency comparison:
+
+> Using a single-frequency receiver with a 24-hour survey period, height
+> determination is generally accurate within 10 m, but is sometimes greater than
+> 15 m, leading to a **timing error that approaches 50 ns**.
+
+Not yet read in the original. Track down the Lombardi (2016) and Lombardi et al.
+(2014) citations from the Montare bibliography before quoting directly — the
+number above is quoted here at second hand and should be attributed that way
+until then.
+
+**Use in:** Antennas → *Don't let the receiver survey itself*, as the
+"single-frequency is far worse" contrast.
+
+---
+
+## 📌 Ackermann (N8UR, 2020)
+
+**Timing and Location Performance of Recent u-blox GNSS Receiver Modules.**
+John Ackermann N8UR, TAPR Digital Communications Conference, August 2020.
+<https://hamsci.org/sites/default/files/publications/2020_TAPR_DCC/N8UR_GPS_Evaluation_August2020.pdf>
+
+⚠️ Not yet read. Surfaced while hunting the NIST paper. Directly on u-blox timing
+*and location* performance, and Ackermann is already credited in the
+sub-nanosecond talk for the time-interval counter and divider, so citing his
+measurement work is natural.
+
+**Use in:** Antennas, and possibly *Choosing a receiver* on the someday list.
+
+---
+
+## 📌 NIST — self-survey altitude error in practice
+
+A documented case of a 23.2 m altitude error from antenna self-survey producing
+a **−57.62 ns** mean offset against UTC(NIST). Surfaced in search; **source not
+yet pinned down** — likely one of the NIST remote-calibration papers
+(<https://tf.nist.gov/general/pdf/1824.pdf> or
+<https://tf.nist.gov/general/pdf/3167.pdf>). Verify before use.
+
+**Use in:** Antennas → *Don't let the receiver survey itself*, as the vivid
+worked number.
+
+---
+
+## ✅ Already cited in published posts
+
+- **BIPM Circular T** — <https://webtai.bipm.org/ftp/pub/tai/Circular-T/cirt/cirt.454>
+  for `sigma_GPS`. In *The Last Nanoseconds to UTC*.
+- **NIST, UTC(NIST) introduction** —
+  <https://www.nist.gov/pml/time-and-frequency-division/time-realization/utcnist-time-scale-0/introduction-utcnist>
+  for UTC as a virtual timescale computed after the fact. In *The Last
+  Nanoseconds to UTC*.
+- **Galileo HAS** —
+  <https://www.gsc-europa.eu/galileo/services/galileo-high-accuracy-service-has>.
+  In *The Last Nanoseconds to UTC*.
+- **Fugro AtomiChron** —
+  <https://www.fugro.com/expertise/satellite-positioning/atomichron>.
+  In *The Last Nanoseconds to UTC*.
+- **Ole Petter Rønningen, the first PPP GPSDO** —
+  <https://www.efos3.com/GPSDO/GPSDO.html>. In *Sub-Nanosecond at Home*.
+
+---
+
+## Wanted
+
+Sources we need and do not have:
+
+- **Regulatory clock-sync requirements** for the *A means to an end* page —
+  the specific regimes, so a reader can find their own obligation.
+- **Message-volume figures** for *The scale of it* — trillions of market data
+  messages per day, orders per day, ideally citable.
+- **OPERA neutrino timing fault** — the official account, for the *Stories*
+  entry. The loose-connector detail should be sourced, not recalled.

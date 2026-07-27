@@ -43,12 +43,20 @@ and check me on it.
 **UTC doesn't exist in real time.** A national lab like NIST has atomic clocks
 that do far better than 5 ns, but
 [UTC is a virtual timescale](https://www.nist.gov/pml/time-and-frequency-division/time-realization/utcnist-time-scale-0/introduction-utcnist),
-computed after the fact from contributions around the world. There is no wire you
-can plug into that carries UTC as it happens. You can be told, weeks later, what
-UTC was.
+computed after the fact from contributions around the world.
+
+The mechanism is worth spelling out, because it's the part that surprises people.
+Each country's time lab watches the satellites, compares what comes down against
+its own earthbound clocks, and reports the differences to the BIPM in Paris. Then
+— weeks to months later — the BIPM publishes what UTC *was*.
+
+There is no wire you can plug into that carries UTC as it happens. As I put it in
+the talk: everybody else on Earth is *predicting* UTC. The BIPM is *defining* it,
+in arrears.
 
 So if you're getting time from GNSS rather than from a national lab, you cannot
-literally be closer than about 5 ns to UTC. That ceiling is structural.
+literally be closer than about 5 ns to UTC. That ceiling is structural, and no
+equipment budget moves it.
 
 ## Why You Can Practically Do Far Better
 
@@ -56,7 +64,14 @@ Now the interesting part.
 
 In my homelab, two high-quality GNSS receiver modules —
 [u-blox F9T](https://github.com/bobvan/f9tResearch) — agreed with each other to
-**550 picoseconds** while tracking a single constellation.
+**550 picoseconds** over half a day, while each wandered 6 to 7 nanoseconds
+against GPS.
+
+Two conditions made that number possible, and I skipped past both in the talk for
+lack of time. You need to track a **single constellation**, because the
+constellations don't agree with each other to better than about 5 ns. And you need
+a **dual-frequency** receiver, so the ionosphere can be measured out rather than
+modelled. Take either away and the result doesn't hold.
 
 <CalloutBox type="tip" title="Agreement is not accuracy">
 	If a constellation is running 5 ns ahead of UTC, every receiver tracking it is
@@ -77,6 +92,26 @@ not the 5 ns.
 
 Most of the confusion I've seen in this area comes from conflating those two
 questions.
+
+## The Part That Bites in a Datacenter
+
+All of the above assumes you can put an antenna where it needs to be. In a
+datacenter you usually can't, and this is where the theory meets a roof.
+
+The roof blocks the sky, so the antenna has to go on top of it — either yours, or
+one the facility provides. Either way you are likely to be missing the two
+quantities you most need: **the length of the feed line**, and **an accurate
+position for the antenna**.
+
+That matters because of where time is and isn't corrected for delay. Inside the
+distribution network, NTP and PTP subtract out the delay they measure, so time
+looks the same everywhere. But the antenna feed line sits *outside* that
+compensated region, along with the pulse-per-second signal. Nothing measures those
+for you. If you want time that is honestly traceable to what arrived at the
+antenna, you have to know the feed line's delay and subtract it yourself.
+
+A cable of unknown length is a constant, unknown offset — which is precisely the
+kind of error that a beautiful clock cannot fix.
 
 ## What I Haven't Tested Yet
 

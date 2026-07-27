@@ -34,7 +34,7 @@ becomes the thing standing in your way.
 
 Here is the question that reframed it for me. There are around 120 atomic clocks
 circling the Earth, perhaps 60 of them visible at once on a good day. **How would
-you synchronise clocks you can't touch?**
+you synchronize clocks you can't touch?**
 
 The answer is that you don't even try. You start them at roughly the same time,
 let them drift, measure each one's error against good clocks on the ground,
@@ -60,14 +60,15 @@ Which leads to the point that reframed the whole project for me:
 
 There is a real tradeoff underneath that, and it's mostly about patience: fast
 approximate answers versus slow precise ones. A phone wants a blue dot in three
-seconds. A fixed-position clock can watch the sky for hours, and being nailed
-down is itself information you can exploit.
+seconds. A fixed-position clock can watch the sky for hours, and knowing that the
+antenna won't move is itself information you can exploit.
 
-I found it easiest to think about that ladder in things you can hold. Process the
-pseudorange signals and your answer sits somewhere inside a **beach ball** — about
-a metre. Move to carrier phase and it shrinks to a **softball**. Keep going and
-you're down to a **ping-pong ball**. The practical limit is about the size of a
-**green pea**, under a centimetre. That's the regime I was trying to work in.
+I found it easiest to picture what that patience buys in terms of things you can
+hold. Process only the pseudorange signals from the satellites and your answer
+sits somewhere inside a **very large beach ball** — about a meter. Move to carrier
+phase and it shrinks to a **softball**. Keep going and you're down to a
+**ping-pong ball**. The practical limit is about the size of a **green pea**,
+under a centimeter. That's the regime I was trying to work in.
 
 ## The Small Effects That Stop Being Small
 
@@ -85,13 +86,15 @@ they're the ones people find least intuitive:
 
 There's also a largely visual section on antennas, because they turn out to be a
 critical part of getting precise answers and they get less attention than they
-deserve. A surveyed antenna position is good to about the width of a pencil
-eraser east-west — but the point being surveyed is five centimetres up *inside*
-the antenna, and higher still in a choke ring. Locating an object the size of a
+deserve.
+I patiently surveyed the position of an antenna on my roof and got an answer
+good to about the width of a pencil
+eraser east-west — but the point being surveyed is five centimeters up *inside*
+the antenna, and higher still in a choke ring antenna. Locating an object the size of a
 dinner plate to the width of a pencil eraser, when the point you care about isn't
 visible from outside, is a fair summary of the whole field.
 
-My favourite of the small effects has the best diagnosis attached to it. Watching
+My favorite of the small effects has the best diagnosis attached to it. Watching
 the sawtooth jitter in my lab one afternoon, the pattern reversed direction
 partway through, and it took me a while to work out why: I'd switched on the air
 conditioning. **When you compare GPS time to quartz time, you have built a very
@@ -107,7 +110,7 @@ and reports progress toward two-clock agreement.
 The parts list totals about **$1000**, and there's a photo of one of the
 prototypes. That number matters to me: this is meant to be reproducible by
 someone who wants to follow, not a demonstration that it can be done with a
-budget nobody has.
+budget nobody has outside of national labs.
 
 ## What Working with AI Actually Looked Like
 
@@ -127,8 +130,8 @@ and getting it right is what made the pace sustainable.
 Concretely, that meant a command line interface rather than a chat window, and
 running with permission prompts switched off — inside a virtual machine that had
 root access to the lab equipment and not much else. Broad authority, small blast
-radius. I ran several agents with specialised roles: research and planning,
-Python, driving the instruments and collecting data, and analysis. Some of the
+radius. I ran several agents with specialized roles: research and planning,
+Python coding, driving the instruments and collecting data, and analysis. Some of the
 slides in the talk were made by agents to convey points I'd asked for.
 
 The hardest lesson was about language, not code. **Sloppy language is sloppy

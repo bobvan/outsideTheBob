@@ -114,10 +114,12 @@ housing, invisible from outside, and in a different place for every model. It is
 the antenna phase center's position that goes into the equations, not the
 mounting bracket's.
 
-Get that position wrong and the error lands directly in your clock. The
-arithmetic is easy to carry around: light covers roughly a foot per nanosecond,
-so **every foot of position error is worth about a nanosecond** — east-west,
-north-south, or up-down.
+Get that position wrong and the error lands directly in your clock. Time error is
+proportional to position error, though the constant relating the two is not
+simply the speed of light — it depends on which direction you are wrong in, and
+on where the satellites happen to be while you are wrong. The bound is the part
+worth carrying around: **a foot of position error costs at most about a
+nanosecond**, and in practice usually less.
 
 It is a static offset. It does not average away, and no amount of patience
 improves it.
@@ -140,13 +142,19 @@ problem.
 It stops at the receiver. The antenna feedline — and the pulse-per-second wiring
 on the other side of the receiver — sit outside the compensated region entirely.
 Nothing on your network measures them, because nothing on your network can see
-them. If you want time that is honestly traceable to what arrived at the antenna,
-you have to know those lengths and subtract them yourself.
+them.
 
-**Both of these are errors a beautiful clock cannot fix.** An antenna of unknown
-position and a cable of unknown length are constant, unknown offsets. Oscillator
-stability does nothing for either, which is what makes them the characteristic
-datacenter problem rather than a timekeeping one.
+## What Actually Removes Them
+
+Configuration, not measurement. **The antenna phase center's position and the
+feedline's delay are numbers you configure into the GNSS receiver**, which then
+corrects for both. Get them right and they disappear.
+
+Which is why not knowing them is the problem, rather than an inconvenience. Leave
+either at a default, or at a guess, and you are left with a constant, unknown
+offset in every timestamp the receiver produces. **Both are errors a beautiful
+clock cannot fix** — oscillator quality does nothing for either — and that is
+what makes this a datacenter problem rather than a timekeeping one.
 
 ## What I Haven't Tested Yet
 

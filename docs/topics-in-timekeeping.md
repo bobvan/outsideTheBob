@@ -264,6 +264,52 @@ under-appreciated part of precision timekeeping."*
 - **Surveying its position precisely** — **H**. T2's pencil-eraser scale: east-west
   known to about the width of a pencil eraser, north-south better, up-down about
   one and a half. *Up and down is the harder way to get a precise position.*
+- **Don't let the receiver survey itself** — **H**. **New, and probably the most
+  practically useful page in the topic**, because the trap is built into the
+  product and looks like a feature.
+
+  Timing receivers offer to "survey in" their own position: leave it running,
+  and it averages a fix and adopts the answer. It is genuinely convenient, and
+  for most timing work it is fine. **It is not good enough for sub-nanosecond
+  work**, and the reason is a mismatch of purpose — these are modules built to
+  deliver excellent *time*, and resolving *position* to the precision that
+  sub-nanosecond timing needs is simply not what they are for.
+
+  The consequence is a **static position bias** that no amount of averaging
+  removes, because it is not noise. Cross-link to the datacenter post's bound:
+  a foot of position error is worth up to about a nanosecond, and vertical error
+  is the direction that couples hardest.
+
+  Two pieces of evidence, one of which needs its source:
+
+  - **NIST measured the u-blox F9T** — an excellent timing module — and found a
+    position bias **exceeding their 30 cm limit**. ⚠️ **Citation needed.** I
+    could not find this paper in three searches, and will not invent a
+    reference. Bob: title, author, or a link, and it goes in as a footnote.
+  - **Bob's own lab measurements of F9T position bias** show the same effect.
+    First-hand and unpublished, which makes it worth writing up — it is
+    corroboration nobody else is offering.
+
+  Related material I *did* find, either as supporting citations or as leads to
+  the paper Bob means:
+
+  - NIST has published that vertical position error is the most damaging to
+    timing, at up to ~3.3 ns per metre — which is 1/c, i.e. the same worst-case
+    bound the datacenter post uses, arrived at independently.
+  - NIST has also documented self-survey by averaging landing ~10 m out, and in
+    one case a 23.2 m altitude error producing a −57.62 ns offset against
+    UTC(NIST). Different magnitude from Bob's point but the identical mechanism,
+    and a vivid number.
+  - John Ackermann (N8UR), *Timing and Location Performance of Recent u-blox
+    GNSS Receiver Modules*, TAPR DCC 2020 — directly on u-blox timing **and
+    location** performance, and by someone Bob already credits in the talk.
+    Possibly the actual source, or a good companion to it.
+
+  **The practical takeaway the page exists for:** survey the antenna properly,
+  by post-processing or a professional survey, and *configure* the result into
+  the receiver. Do not accept the receiver's own answer. This is the same
+  configure-don't-guess point the datacenter section makes about feedline delay,
+  which is worth linking rather than repeating.
 - **The phase centre is not the antenna** — **H**. **New and important.** The
   surveyed point sits about 5 cm up **inside** the antenna, higher in a choke
   ring. So an antenna far larger than a pencil eraser is located to a pencil
@@ -434,6 +480,7 @@ belong. Bob's style is visual and anecdotal; these carry the load pictures did.*
 | Sawtooth jitter | Acquiring Time | GPSDOs (S), Metrology (M) |
 | Antenna phase centre | Antennas | Acquiring (S), Datacenter Problem (S) |
 | Antenna position survey | Antennas | Acquiring (S), Datacenter Problem (S) |
+| Receiver self-survey is not enough | Antennas | Acquiring (S), Datacenter Problem (S), Benchmarking (M) |
 | Uncompensated feed line | Transferring Time | Antennas (S), Datacenter Problem (H-adjacent) |
 | Acquisition vs distribution | Transferring Time | Datacenters (S) |
 | Fixed position as an advantage | Datacenter Problem | Acquiring (S), GPSDOs (S) |
@@ -464,7 +511,12 @@ This also removes the reason to hand-roll Atom, so `@astrojs/rss` serves.
    Rabbit, uncompensated paths. Still needs a ceiling.
 4. **Numbers for the scale page.** T1 says "trillions of timestamps per day".
    Sourceable, or from memory?
-5. **Elapsed-time crossover table?** Interval versus contributed error at 1 ppm.
+5. **The NIST F9T citation.** Title, author or link for the paper finding a
+   position bias above their 30 cm limit. Three searches did not turn it up and
+   I will not fabricate a reference. Candidate leads are listed under *Don't let
+   the receiver survey itself*.
+
+6. **Elapsed-time crossover table?** Interval versus contributed error at 1 ppm.
 6. ~~Publish the anecdote about the confiscated prototype?~~ **Closed — no.**
    Bob keeps it for in-person telling. The published substitute is the
    Hollywood-bomb line above.

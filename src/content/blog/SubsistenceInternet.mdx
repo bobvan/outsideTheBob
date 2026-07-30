@@ -1,0 +1,171 @@
+---
+title: "Subsistence Internet"
+slug: "subsistence-internet"
+pubDate: 2026-07-29
+description: "A thirty-one hour blackout proved my three redundant DNS resolvers had one thing in common: the power tier that dies first"
+tags: ["networking", "DNS", "hardware", "monitoring", "Proxmox"]
+draft: true
+---
+import CalloutBox from "../../components/post/CalloutBox.astro";
+
+I wrote a post about [failure resilience](/blog/entry-level-proxmox-failure-resilience/) with a tidy little table in it.
+Tier 1 was for DNS and NTP: mirrored boot drives, ECC memory, replicated storage, HA enabled, automatic failover in seconds.
+I meant every word, and every word of it worked.
+
+Then a storm took my power out for thirty-one hours and showed me the table was missing a column.
+
+## What Actually Happened
+
+The utility failed just after noon.
+I run two groups of gear on two different UPSes, and until that afternoon I had never thought carefully about the difference between them.
+
+One UPS carries the servers.
+It was holding about 366 watts, it predicted twelve to fourteen minutes of runtime, and it delivered fourteen minutes and five seconds.
+An honest UPS.
+
+The other carries the modems, the gateway, the switching, and the access points — under 200 watts — and it ran for hours.
+
+So the shape of the outage was this: **the network stayed up and the computers went dark.**
+
+Which sounds survivable, and would have been, except for one thing.
+All three of my DNS resolvers are containers on the Proxmox cluster.
+They went down together, fourteen minutes in.
+
+That produced the strangest failure mode I've had at home.
+Phones and laptops were on their own batteries.
+The WiFi was up.
+Both WAN links were up.
+And nothing resolved — not my own hostnames, not anything.
+A working internet connection that nobody could use.
+
+## Two Tiers, and Only One of Them Matters at 2 a.m.
+
+Sketching it out afterward, the two UPS groups turned out to deserve names:
+
+**Subsistence Internet** — the minimum required to stay connected.
+Modems, gateway, one PoE switch, a couple of access points.
+
+**Luxury Internet** — everything else.
+The cluster and its guests: file service, cameras, monitoring, the DVR, and, as it turns out, DNS.
+
+The names are the useful part.
+Once you have them, the placement question asks itself: during an outage, is this service subsistence or luxury?
+DNS is obviously subsistence.
+It had been living in the luxury tier for years.
+
+## Redundancy Only Protects You Along the Axis You Spread It On
+
+Here's the part I got wrong, and I got it wrong *carefully*.
+
+The three resolvers are deliberately spread one per cluster node, so no single node failure can take down more than one of them.
+Each is an HA resource, each replicates its disk to the others, each can restart elsewhere in seconds.
+Against node failure, that is genuinely good engineering.
+
+Against power, it is worth nothing at all.
+All three nodes sit on the same UPS.
+
+<CalloutBox type="warn" title="Count your failure domains, not your copies">
+	Spreading N copies across N nodes protects you from losing a node.
+	It does nothing about anything all N nodes share — a UPS, a breaker, an uplink, a rack, a room.
+	Redundancy is only redundancy along the axis you spread it on.
+	Three copies in one failure domain is one copy with extra steps.
+</CalloutBox>
+
+## And a Spare Nobody Is Told About Is Not a Spare
+
+There is a second, dumber half to this.
+
+DHCP was handing out exactly one resolver.
+So even if one of the three had somehow survived, no client would have thought to ask it.
+My name service was one deep on the wire no matter how many copies were running.
+
+That was the actual root cause, and fixing it was one edit to one field.
+
+## The Fix Is a Raspberry Pi
+
+Not another cluster node.
+A bare Pi running BIND as both a caching recursive resolver and an authoritative secondary of the primary — full root recursion, no forwarder, nothing upstream to have an opinion about my queries.
+The zone copies persist to disk and the SOA expire is 28 days, so it keeps answering authoritatively for about four weeks after the primary disappears.
+That is longer than any outage I intend to have.
+
+Three choices in there were deliberate:
+
+- **Same software as the others.** BIND, with the same configuration idioms, because a survivor you administer differently is a survivor you will misconfigure.
+- **Bare metal, not a container.** The entire point is to not be on the cluster.
+- **Not highly available.** Making the survivor HA would put it right back on the tier I'm trying to escape.
+
+It had a previous life as a GNSS reference station on a full desktop image, so most of the work was stripping it back down: no desktop, no print service, no mDNS, no RPC, until the only things listening were DNS and SSH.
+A survivor should be small.
+Every service it runs is another way for it to not be there when you need it.
+
+And DHCP now hands out all four resolvers, with the Pi last.
+Clients prefer the cluster and fall through to the survivor only when the cluster is gone.
+The cost is a few resolver timeouts during a total outage, which is exactly the right trade.
+
+## The Subsistence Tier Is a Watt Budget
+
+Here's what surprised me once I started drawing the two tiers as a picture.
+
+The subsistence tier is not "the important gear."
+It is "the gear that fits in the watt budget."
+Every watt you add is minutes you take away, and the arithmetic is unforgiving: runtime scales with how small you can make the load, which is why the same class of battery gave me fourteen minutes on one tier and hours on the other.
+
+My access points make the point nicely.
+
+| | Older APs | Newer APs |
+|---|---|---|
+| Model | U6 Lite | U7 Pro XG |
+| Max power | 12 W | 22 W |
+| Power method | plain PoE | PoE+ |
+| Uplink | 1 GbE | 10 GbE |
+
+The newer ones are genuinely better.
+They are faster when you are near one, and they earn their place on mains power.
+They also draw nearly twice as much, demand more from the switch, and run hot enough that you notice when you touch one.
+Wonderful habits. Expensive ones on battery.
+
+So the older access points are the subsistence pair.
+They give coverage everywhere at twelve watts apiece, and the fast hot ones are allowed to go dark.
+On the subsistence tier, *good enough everywhere* beats *excellent nearby*.
+
+## The Same Mistake, Three More Times
+
+Once you have the phrase "shared fate," you start finding it everywhere.
+Each of these is the same error as the DNS one, wearing a different hat:
+
+- **The monitoring was a guest of a machine it monitors.**
+  It died fourteen minutes in — so my entire outage-alerting budget is fourteen minutes, and the notification path itself probably depended on gear that was also dying.
+- **Both UPS network cards lost their wall clocks.**
+  Their own event logs are now stamped in 2010 and are useless for dating the outage, so I had to reconstruct the timeline from the monitoring system that died at fourteen minutes.
+  The instrument that records a power failure should not be a casualty of it.
+- **Fourteen minutes of runtime were available and none of it was spent shutting anything down.**
+  No low-battery threshold was set, and nothing was wired to act on one if it had been.
+  The nodes were not shut down; they were cut off.
+  That is the most actionable finding in the whole post-mortem, and it has nothing to do with batteries.
+
+## Three Questions Worth Asking About Your Own Setup
+
+1. **Which UPS feeds which machine?**
+   I still cannot fully answer this, which is embarrassing to write down.
+   Tracing outlets to hosts is now on the list, and until it's done, no post-mortem I write can say what *should* have stayed up.
+2. **Does anything you'd want during an outage live only on the tier that dies first?**
+   Name resolution, certainly. Think about what else — a password manager that syncs, a door lock controller, the thing that tells you the power is out.
+3. **Are clients actually told about the survivor?**
+   A survivor nobody queries is decoration.
+
+## What's Still Undone
+
+The Pi resolver is built, verified, and being handed out by DHCP — but it is not yet plugged into the subsistence UPS, which is the entire point of it.
+A PoE switch arrives tomorrow to make that island physically self-contained, down to the switch port the Pi lands on.
+A wrong switch is as easy to get wrong as a wrong UPS, so both are getting labeled.
+
+And one thing I cannot resolve from my desk.
+Both UPS cards report 1000 VA and 990 W, and I am fairly sure I bought 1500 VA units.
+If the cards carry the wrong nameplate, every load percentage and runtime estimate above is suspect with them.
+The one number that survives either way is the fourteen minutes, because that came from a log that simply stopped.
+
+So the next step is to go read a physical label — which is a fitting end for a post about the difference between what you configured and what you actually have.
+
+[[? Two calls for you.
+1) I left the UPS brand out on purpose, and the ISPs too. Say the word if you'd rather name the units — the nameplate discrepancy is arguably a vendor firmware bug worth naming out loud.
+2) I gave no room names for the APs (just "older pair" / "newer"). Fine, or would the geography help the story? ?]]

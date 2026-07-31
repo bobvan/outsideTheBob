@@ -1,5 +1,11 @@
 ---
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+// Inlined rather than loaded through <img> so the mark shares this document and
+// can read `color` and `--banner-halo` from the theme below. An <img>-referenced
+// SVG is a separate document: it sees none of the page's CSS, and browsers do
+// not agree on whether prefers-color-scheme inside it follows the page or the OS
+// (Safari's answer is the reason the logo stayed dark-on-dark).
+import bannerSvg from "../../public/images/outsideTheBob.svg?raw";
 
 interface Props {
   title?: string;
@@ -76,8 +82,16 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       nav a { margin-right: 1rem; text-decoration: none; color: var(--link); }
       nav a:hover { text-decoration: underline; }
       nav .sep { margin-right: 1rem; }
-      .banner { display: block; margin: 0 0 0.5rem; }
-      .banner img { display: block; width: 100%; max-width: 620px; height: auto; }
+      /* The banner is inlined SVG, so its ink is currentColor and follows this.
+         The halo behind the wordmark is a separate problem: it is there to punch
+         a hole through the box wall, so it has to match what is actually behind
+         the mark — the header's --surface, not the page --bg. The SVG ships a
+         literal white fallback for standalone use; this rule overrides it.
+         The SVG arrives through set:html, so it carries no scope attribute and
+         anything below `.banner` has to be :global() to match at all. */
+      .banner { display: block; margin: 0 0 0.5rem; color: var(--text); }
+      .banner :global(svg) { display: block; width: 100%; max-width: 620px; height: auto; }
+      .banner :global(.wordmark) { stroke: var(--surface); }
       footer a { margin-right: 1rem; }
       h1,h2,h3 { line-height:1.25; }
       article { padding: 1rem 0; border-bottom: 1px solid var(--border); }
@@ -148,9 +162,7 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
   <body>
     <header>
       <div class="wrap">
-        <a class="banner" href="/">
-          <img src="/images/outsideTheBob.svg" alt={SITE_TITLE} width="1000" height="300" />
-        </a>
+        <a class="banner" href="/" aria-label={SITE_TITLE} set:html={bannerSvg} />
         <nav>
           <a href="/">Home</a>
           <a href="/blog">Blog</a>

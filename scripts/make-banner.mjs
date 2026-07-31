@@ -18,6 +18,21 @@
 // Everything below is computed from the font's real metrics. Change a constant
 // and re-run; nothing is hand-placed, and the script refuses to emit shrapnel
 // that would collide with the lettering.
+//
+// Why the ink is currentColor: the mark then takes the colour of whatever it is
+// placed in, which is how it follows a light/dark theme. That only works when
+// the SVG shares a document with the page's CSS, which is why BaseLayout inlines
+// this file rather than pointing an <img> at it - an <img> loads the SVG as a
+// separate document that cannot see the page's CSS at all, and browsers do not
+// agree on whether prefers-color-scheme inside such a document follows the page
+// or the OS. Safari's answer is why the logo stayed dark-on-dark.
+//
+// The halo is the one colour that cannot be currentColor: it exists to punch the
+// page background through the box wall, so it has to BE the background. It keeps
+// a literal #fff presentation attribute as the standalone fallback and carries
+// class="wordmark" so the page can override it with a real CSS rule. A CSS rule
+// beats a presentation attribute, and unlike var() inside an attribute that is
+// true in every browser.
 import { existsSync, writeFileSync } from 'node:fs';
 import { openSync } from 'fontkit';
 
@@ -39,7 +54,7 @@ const THINK = { size: 74, x: 47, baseline: 185 };
 const WORD = { size: 96, x: 274, baseline: 195, angle: -8 };
 const CANVAS = { w: 1000, h: 300 };
 
-const HALO = 7; // half of the white outline stroke width
+const HALO = 7; // half of the halo outline stroke width
 const WALL_PAD = 12; // extra clearance either side of the wall break
 const BAND_PAD = 12; // keep shrapnel this far off the lettering
 
@@ -233,34 +248,40 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CANVAS.w}" height=
     The lettering is Inter Display Black converted to outlines, so every
     renderer draws identical shapes and the kerning is Inter's own rather than
     whatever the viewer's fallback font happens to do. The wall is genuinely
-    missing across the band the wordmark passes through, because a white halo
-    only follows the outside of a glyph - the box line used to show through the
+    missing across the band the wordmark passes through, because the halo only
+    follows the outside of a glyph - the box line used to show through the
     counter of the "O".
+
+    The ink is currentColor, so this takes the colour of the document it is
+    inlined into. The halo has to be the page background rather than the ink,
+    so it carries class="wordmark" for the page to restyle. Opened on its own
+    the file falls back to near-black ink on a white halo.
   -->
 
   <!-- The box, with the right wall blown out between y=${breakTop.toFixed(0)} and y=${breakBot.toFixed(0)} -->
   <path d="${boxPath}"
-        fill="none" stroke="#111" stroke-width="${BOX.stroke}"
+        fill="none" stroke="currentColor" stroke-width="${BOX.stroke}"
         stroke-linecap="round" stroke-linejoin="round"/>
 
   <!-- Inside the box -->
-  <path transform="translate(${THINK.x} ${THINK.baseline})" fill="#111"
+  <path transform="translate(${THINK.x} ${THINK.baseline})" fill="currentColor"
         d="${think.d}"/>
 
   <!-- Motion trails back to the rupture -->
-  <g stroke="#111" stroke-width="1.6" stroke-linecap="round" opacity="0.5">
+  <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity="0.5">
 ${trails.join('\n')}
   </g>
 
   <!-- Shrapnel: irregular fragments radiating from the break -->
-  <g fill="#111">
+  <g fill="currentColor">
 ${rocks.join('\n')}
   </g>
 
-  <!-- Through the wall and climbing. One path, stroked white then filled, so
-       the halo cuts the wall where the two meet. -->
+  <!-- Through the wall and climbing. One path, stroked with the page background
+       then filled, so the halo cuts the wall where the two meet. -->
   <path transform="rotate(${WORD.angle} ${WORD.x} ${WORD.baseline}) translate(${WORD.x} ${WORD.baseline})"
-        fill="#111" stroke="#fff" stroke-width="${HALO * 2}" stroke-linejoin="round"
+        class="wordmark"
+        fill="currentColor" stroke="#fff" stroke-width="${HALO * 2}" stroke-linejoin="round"
         style="paint-order: stroke fill;"
         d="${word.d}"/>
 </svg>

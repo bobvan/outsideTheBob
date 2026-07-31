@@ -7,6 +7,11 @@
 // The banner is the single source of truth: its markup is inlined here rather
 // than redrawn, so editing the SVG and re-running this keeps the two in step.
 //
+// The banner's ink is currentColor so it can follow the site's light/dark theme.
+// A social card has no theme to follow — it is a fixed PNG on a white plate — so
+// the group below pins `color` to the banner's original ink. The halo keeps its
+// literal white attribute, which is already right against that plate.
+//
 //     npm run og
 //
 import { readFile, writeFile } from 'node:fs/promises';
@@ -42,7 +47,7 @@ const y = 140;
 
 const composed = `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
   <rect width="${WIDTH}" height="${HEIGHT}" fill="#ffffff"/>
-  <g transform="translate(${x} ${y}) scale(${scale})">${inner}</g>
+  <g color="#111" transform="translate(${x} ${y}) scale(${scale})">${inner}</g>
   <text x="${WIDTH / 2}" y="${y + BANNER_H * scale + 70}" text-anchor="middle"
         font-family="${FONT}" font-size="40" font-weight="600" fill="#555">${TAGLINE}</text>
   <text x="${WIDTH / 2}" y="${y + BANNER_H * scale + 130}" text-anchor="middle"

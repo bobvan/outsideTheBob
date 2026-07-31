@@ -1,7 +1,7 @@
 ---
 title: "Subsistence Internet"
 slug: "subsistence-internet"
-pubDate: 2026-07-29
+pubDate: 2026-07-31
 description: "A thirty-one hour blackout proved my three redundant DNS resolvers had one thing in common: the power tier that dies first"
 tags: ["networking", "DNS", "hardware", "monitoring", "Proxmox"]
 draft: true
@@ -43,7 +43,7 @@ A working internet connection that nobody could use.
 Sketching it out afterward, the two UPS groups turned out to deserve names:
 
 **Subsistence Internet** — the minimum required to stay connected.
-Modems, gateway, one PoE switch, a couple of access points.
+Modems, gateway, one PoE switch, a couple of access points, and — now — a resolver.
 
 **Luxury Internet** — everything else.
 The cluster and its guests: file service, cameras, monitoring, the DVR, and, as it turns out, DNS.
@@ -128,6 +128,32 @@ So the older access points are the subsistence pair.
 They give coverage everywhere at twelve watts apiece, and the fast hot ones are allowed to go dark.
 On the subsistence tier, *good enough everywhere* beats *excellent nearby*.
 
+## A Power Island Is Only an Island If the Network Agrees
+
+Moving the Pi onto the subsistence UPS took an afternoon.
+Convincing myself it would actually help took two more evenings, and it nearly didn't survive them.
+
+A UPS gives a device power. It does not give it a path.
+
+My first careful reading of my own wiring had the subsistence switch hanging off the main spine switch — and the spine sits on the servers' UPS.
+If that had been right, the entire plan was theatre.
+The Pi would have kept running on battery, in perfect health, answering nobody, because the hops between it and the phone asking the question would have died fourteen minutes in with everything else.
+
+It turned out not to be right.
+The gateway feeds both tiers directly rather than chaining one behind the other, so the subsistence switch does not pass through the spine, and the island really is an island.
+
+But I want to be honest about how that went: I discovered it by tracing cables, not by designing it that way.
+The topology that makes my fix work is one I got by luck and only later confirmed.
+Had the cable gone to the obvious place — the big switch where everything else lands — I would have built the whole thing and never known it didn't work until the next storm.
+
+The general form is worth saying plainly, because it is easy to protect the endpoint and forget the path:
+
+<CalloutBox type="warn" title="Protect the path, not just the box">
+	Everything between a protected device and the people who need it has to be on the same protected tier.
+	A resolver with power and no path is exactly as useful as a resolver with no power.
+	Trace it hop by hop, on the actual cables, and assume nothing about where a wire goes because of where it *should* go.
+</CalloutBox>
+
 ## The Same Mistake, Three More Times
 
 Once you have the phrase "shared fate," you start finding it everywhere.
@@ -145,27 +171,66 @@ Each of these is the same error as the DNS one, wearing a different hat:
 
 ## Three Questions Worth Asking About Your Own Setup
 
-1. **Which UPS feeds which machine?**
-   I still cannot fully answer this, which is embarrassing to write down.
-   Tracing outlets to hosts is now on the list, and until it's done, no post-mortem I write can say what *should* have stayed up.
+1. **Which UPS feeds which machine, and which switch feeds which UPS?**
+   I could not answer either when the power came back, which was embarrassing to write down at the time.
+   Answering them took two evenings with a flashlight and changed the design twice.
+   Until that map exists, no post-mortem you write can say what *should* have stayed up.
 2. **Does anything you'd want during an outage live only on the tier that dies first?**
    Name resolution, certainly. Think about what else — a password manager that syncs, a door lock controller, the thing that tells you the power is out.
 3. **Are clients actually told about the survivor?**
    A survivor nobody queries is decoration.
 
-## What's Still Undone
+## It Is No Longer a Theory
 
-The Pi resolver is built, verified, and being handed out by DHCP — but it is not yet plugged into the subsistence UPS, which is the entire point of it.
-A PoE switch arrives tomorrow to make that island physically self-contained, down to the switch port the Pi lands on.
-A wrong switch is as easy to get wrong as a wrong UPS, so both are getting labeled.
+The Pi is on the subsistence UPS now, behind its own PoE switch, and the tier stopped being an argument and became a measurement:
 
-And one thing I cannot resolve from my desk.
-Both UPS cards report 1000 VA and 990 W, and I am fairly sure I bought 1500 VA units.
-If the cards carry the wrong nameplate, every load percentage and runtime estimate above is suspect with them.
-The one number that survives either way is the fourteen minutes, because that came from a log that simply stopped.
+| | Subsistence tier | Servers |
+|---|---|---|
+| Load | 96 W | 366 W |
+| Runtime | 52 minutes | 14 minutes |
 
-So the next step is to go read a physical label — which is a fitting end for a post about the difference between what you configured and what you actually have.
+Those are the same class of battery. The difference is entirely the load.
+Which is the watt budget stated as a number: the tier is not the important gear, it is the gear cheap enough to still be running an hour later.
 
-[[? Two calls for you.
-1) I left the UPS brand out on purpose, and the ISPs too. Say the word if you'd rather name the units — the nameplate discrepancy is arguably a vendor firmware bug worth naming out loud.
-2) I gave no room names for the APs (just "older pair" / "newer"). Fine, or would the geography help the story? ?]]
+The monitoring moved too, and moved somewhere better than where it was.
+The Pi now polls all three UPSes, so the thing that watches for a power failure finally lives on the only tier that reliably outlives one.
+
+It is not perfect, and the flaw is instructive.
+The Pi cannot see the upstairs UPS once the basement one dies, because the path between them runs through a switch on the basement UPS — the same shared-fate error, now hiding in the *monitoring path* rather than the service.
+The fix needs no cable. Each UPS already contains a complete loop: a server, its switch, and that UPS's own management port are all on the same battery.
+So the decision to shut down goes *inside* each power domain, where it can never be cut off from its own evidence, and the Pi keeps only the independent view across all of them.
+
+Count the failure domains of your monitoring, too.
+
+## The Label, Read
+
+I ended the first draft of this saying the next step was to go read a physical label. So I did.
+
+The two server UPSes report 1000 VA and 990 W, and I was fairly sure I had bought 1500 VA units.
+The units were right and I was wrong.
+The manual says 1000 VA and 990 W, and their cards report their own nameplate exactly.
+I had spent a week quietly distrusting the one set of numbers that was honest.
+
+The lie was somewhere I had not thought to look.
+The new subsistence UPS is a 1000 VA unit rated at 600 W.
+Its telemetry reports a nominal output of 960 W — which is not a watt rating at all, but the VA number wearing a W.
+And it computes its own load percentage against that inflated figure, so 96 real watts is displayed as 10% when the honest number against 600 W is 16%.
+
+It is wrong by about 1.6x, and it is wrong in the direction that makes you feel safe.
+
+<CalloutBox type="tip" title="Alert on watts, not percent">
+	A load percentage is not a measurement. It is a division, and the device supplies the denominator from a nameplate it may have wrong.
+	Watts are measured. Percentages are an opinion.
+	Set your thresholds on the number the device cannot get wrong about itself.
+</CalloutBox>
+
+Two things are still undone, and both are the same shape as everything above.
+Nothing is yet wired to actually shut a machine down, so the fourteen minutes remain fourteen minutes of watching.
+And a fourth UPS arrived this week whose management port hangs off a switch with no battery behind it — so at the exact moment an outage begins it goes invisible while still cheerfully running.
+
+That one made me laugh, which is the correct response to finding the same mistake for the sixth time in one week.
+It is never the batteries. It is always the thing you assumed was somewhere else.
+
+[[? Two calls for you, and question 1 got sharper since you read the nameplate.
+1) I still have both UPS vendors unnamed, and the ISPs too. The 960-vs-600 W thing is now a load-bearing part of the ending, and it is a specific, reproducible, arguably reportable firmware defect in a product people buy on your recommendation. Naming it is a service to the reader; not naming it keeps the post about the idea. I lean toward naming that one unit and leaving everything else generic. Your call — you own the consequences of a vendor reading it.
+2) Still no room names for the APs (just "older pair" / "newer"). Fine, or would the geography help? ?]]

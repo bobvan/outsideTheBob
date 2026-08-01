@@ -2,7 +2,7 @@
 title: "Subsistence Internet"
 slug: "subsistence-internet"
 pubDate: 2026-07-31
-description: "A blackout took my Internet down fourteen minutes in, while the ISPs stayed up and every battery in the home kept working. The obvious fix would not have worked either"
+description: "A blackout killed my Internet in fourteen minutes. I wired up a car battery, found both ISPs were fine, restored the gateway — and still could not get online"
 tags: ["networking", "DNS", "hardware", "monitoring", "Proxmox"]
 draft: true
 ---
@@ -14,22 +14,31 @@ The interesting part was over in fourteen minutes.
 That is how long the UPS lasted — one UPS, carrying everything.
 When it quit, all of it went at once: the cluster, the switching, the access points, the gateway.
 
-Both ISPs stayed up the whole time. The outage was on my side of the demarc, not theirs.
-The phones and laptops around the home had hours of battery left in them.
-So the Internet was there, and the devices that wanted it were there, and in between was a dead pile of my own equipment.
+Fourteen minutes was a great deal less than I had expected, and being that wrong about a number I thought I knew is what sent me looking.
+I had thirty-one hours to look.
 
-The obvious fix is a second UPS for the Internet gear, so the connection outlives the servers.
-I nearly built exactly that.
-It would not have worked, and understanding why is what this post is about.
+## What a Car Battery Taught Me
+
+Somewhere in the dark I wired up a car battery and an inverter.
+
+The first thing that turned up was that **both ISPs were still up.**
+Whatever the storm had done, it had not touched their side of the demarc.
+The Internet had been there the whole time, sitting a few feet from equipment with nothing to run it.
+
+So I fed the modems and my Internet gateway off the improvised supply and brought the path back.
+
+And my battery-powered WiFi devices still could not get online.
+
+That sentence is the reason this post exists.
+I had restored the Internet — carriers, modems, gateway, the entire path — and the devices that wanted it were sitting there with hours of charge in them, and nothing worked.
+
+Without meaning to, I had built the obvious fix and watched it fail.
+A car battery and an inverter are a crude second power source for the Internet gear, which is exactly the upgrade I would otherwise have bought, installed, and felt clever about.
+On its own it does nothing.
 
 ## The Dependency With No Fallback
 
-Picture the obvious fix actually built. A second UPS carries the modems, the gateway and a couple of access points, so the connection outlives the servers by hours.
-The storm hits, the servers die on schedule at fourteen minutes, and every phone in the home still has WiFi and a live path to two ISPs.
-
-Nothing works.
-
-The clients can reach the Internet and cannot ask it anything, because there is nobody left to turn a name into an address.
+What I had actually found was that nothing in the home could turn a name into an address.
 
 My resolvers are not an optional convenience I could route around.
 I run split-horizon DNS: the internal view of my domain answers with internal addresses, and only my own resolvers hold that view.
@@ -54,7 +63,9 @@ Spreading copies across nodes protects you from losing a node. It does nothing a
 
 ## Two Networks, and Only One of Them Matters at 2 a.m.
 
-Sketching the home afterward, the gear sorted itself into two groups so cleanly that I felt slow for not having seen it before:
+The car battery had drawn the line for me without my noticing.
+What I had chosen to power off it at two in the morning was not a random subset of my equipment — it was a category, and everything I had left dark was the other one.
+Sketching it out afterward, the gear sorted itself so cleanly that I felt slow for not having seen it before:
 
 **The subsistence network** — the minimum required to stay connected.
 The ISP handoffs, the gateway, one small PoE switch, a couple of access points, and a resolver.
@@ -87,6 +98,7 @@ As long as the subsistence gear draws from the same battery as the cluster, it i
 Sorting the network into two roles only becomes real when the two roles stop sharing a battery.
 
 So the split had to be physical: a second UPS, carrying nothing but the subsistence network.
+A permanent, better-behaved version of the car battery on the floor — but wired to the resolver as well as to the gateway, which is the part the car battery taught me it needed.
 
 Pulling a little load off the luxury UPS buys the luxury network slightly longer runtime, which is a nice fringe benefit.
 The important benefit is the other direction: the subsistence network, alone on its own battery with a small load, now runs for hours instead of minutes.
@@ -224,3 +236,13 @@ What moved instead is the small, urgent job: the shutdown notification, which ha
 
 The batteries will still run out. That was never the part worth fixing.
 What changed is the order things go dark in, and how long the home can keep answering its own questions on the way down.
+
+[[? One factual gap in the car battery scene, and a reader will find it.
+
+The post says everything died at fourteen minutes, access points included. So when you fed the modems and the gateway off the inverter, what were your WiFi devices associating *to*? Three possibilities I can write, but I don't want to invent one:
+
+a) You ran an access point off the inverter too.
+b) You fed an AP from the gateway's own PoE — the UCG-Fiber has a 30 W budget, which covers a U6 Lite with room to spare. This is my guess, and it's a lovely detail if true: the subsistence tier already existed inside one box.
+c) You were testing over a cable, not WiFi, and "WiFi devices" is shorthand for the phones and laptops that were stranded.
+
+Tell me which and I'll put one clause in. As written the scene has a hole in it. ?]]

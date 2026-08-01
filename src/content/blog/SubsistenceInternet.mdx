@@ -26,6 +26,7 @@ Whatever the storm had done, it had not touched their side of the demarc.
 The Internet had been there the whole time, sitting a few feet from equipment with nothing to run it.
 
 So I fed the modems and my Internet gateway off the improvised supply and brought the path back.
+The gateway carries a small PoE budget of its own, and that was enough to light one access point — so the WiFi came back too, off a car battery, out of a single box.
 
 And my battery-powered WiFi devices still could not get online.
 
@@ -161,9 +162,15 @@ The same contrast, and more starkly, in the two boxes each network hangs off:
 |---|---|---|
 | Model | UCG-Fiber | USW Pro XG 8 PoE |
 | Max power | 29.4 W excluding PoE | 61 W excluding PoE, 210 W including |
+| PoE budget | 30 W | 155 W |
 
 The device that roots the entire subsistence network is rated below thirty watts.
 The single switch at the head of the luxury network is rated for two hundred and ten, before you count anything hanging off it.
+
+Look at the PoE row, though, because that is the one that surprised me.
+Thirty watts is not much of a budget — and it is comfortably more than a twelve-watt access point needs.
+That is the whole reason the WiFi came back on the car battery: I powered one box, and one box quietly powered the access point behind it.
+The subsistence network was always small enough to fit inside its own gateway. I had just never had a reason to notice.
 That gap, repeated in miniature across every device on each side of the line, is why the subsistence UPS now runs for hours where the old shared one ran for fourteen minutes.
 It is not a better battery. It is a much smaller ask.
 
@@ -236,13 +243,3 @@ What moved instead is the small, urgent job: the shutdown notification, which ha
 
 The batteries will still run out. That was never the part worth fixing.
 What changed is the order things go dark in, and how long the home can keep answering its own questions on the way down.
-
-[[? One factual gap in the car battery scene, and a reader will find it.
-
-The post says everything died at fourteen minutes, access points included. So when you fed the modems and the gateway off the inverter, what were your WiFi devices associating *to*? Three possibilities I can write, but I don't want to invent one:
-
-a) You ran an access point off the inverter too.
-b) You fed an AP from the gateway's own PoE — the UCG-Fiber has a 30 W budget, which covers a U6 Lite with room to spare. This is my guess, and it's a lovely detail if true: the subsistence tier already existed inside one box.
-c) You were testing over a cable, not WiFi, and "WiFi devices" is shorthand for the phones and laptops that were stranded.
-
-Tell me which and I'll put one clause in. As written the scene has a hole in it. ?]]

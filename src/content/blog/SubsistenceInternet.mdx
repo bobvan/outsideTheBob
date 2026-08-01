@@ -41,33 +41,38 @@ On its own it does nothing.
 
 What I had actually found was that nothing in the home could turn a name into an address.
 
-My DNS servers are not an optional convenience I could route around, and without ever thinking about it I had given them two entirely different jobs.
+My DNS servers do two jobs at once.
+They are authoritative for the internal view of my domain — I run split-horizon DNS, so they answer with internal addresses unknown to public DNS servers.
+They are also the recursive resolvers for every name outside my domain.
 
-The first is a job only they can do.
-I run split-horizon DNS: my internal DNS servers answer with internal addresses unknown to public DNS servers.
-Nothing else in the world holds those answers, so everything in the home is required to ask them.
+That combination is not a mistake. It is what split-horizon costs.
+A client takes a list of DNS servers and treats them as interchangeable; there is no way to tell a phone to ask one server about my domain and a different one about everything else — certainly not across a home full of laptops, tablets, televisions and appliances that will never agree on how to be configured.
+Choose split-horizon and you have chosen one set of servers that must answer *every* question every device asks.
 
-The second is a job anyone could do.
-They are also the recursive resolvers for every name outside my domain — the ordinary lookups a phone makes before it can do anything at all.
-
-Coupling those two is the mistake, and it took a blackout to show me why.
-The servers that only I can provide had quietly become the servers that everything else routes through.
-Losing them does not cost you your internal names. It costs you all of them.
-
-**And there is no fallback.**
+Which also means there is no fallback, by construction.
 I cannot hand clients a public resolver as a backup, because a public resolver does not know my names — it would answer the public questions and break the private ones.
-My clients must use my servers, and my servers are all that stands between them and the entire Internet.
 
-I had three of them, and that was real redundancy.
-It was also all of the same kind: three containers on the Proxmox cluster, which is to say three copies of one dependency on one power domain.
+None of that is the error. The error was failing to follow it through, in two directions I had never looked.
+
+**I had never noticed that my Internet connectivity depended on my cluster.**
+Not the ISPs, not the gateway, not the WiFi — those are the things you would list if someone asked what your Internet depends on, and that night all three of them were working.
+A device with a perfect path to the Internet and nothing to resolve names with is simply offline, and no amount of health in the rest of the chain rescues it.
+
+**And I had never compared what the two halves cost to keep running.**
+Keeping the Internet and the WiFi alive is a matter of tens of watts — a gateway and an access point, exactly as the car battery demonstrated.
+Keeping my DNS answers alive meant keeping a Proxmox cluster alive, which is a different order of magnitude altogether.
+I had made the cheapest part of my network depend on the most expensive part, and I had never once put those two numbers beside each other.
+
+The three resolvers were real redundancy, and all of the same kind: three containers on one cluster, which is to say three copies of one dependency in one power domain.
 Spreading copies across nodes protects you from losing a node. It does nothing about anything all the nodes share.
 
-<CalloutBox type="warn" title="Splitting off the Internet gear is not enough">
-	A gateway on its own UPS gives you a working path to the Internet and no way to use it.
-	The clients still need something to answer their queries, and if that answer lives on the tier
-	that dies first, so does the connection — path intact, unusable.
-	Whatever your clients cannot function without has to move to the surviving tier too, and for
-	most networks that list starts with the resolver.
+<CalloutBox type="warn" title="Follow the dependency, then price it">
+	A gateway on its own UPS gives you a working path to the Internet and no way to use it — path
+	intact, unusable. So follow the chain past the obvious links: whatever your clients cannot
+	function without has to move to the surviving tier too, and for most networks that list starts
+	with name resolution.
+	Then price what you found. A cheap dependency chained to an expensive one inherits the expensive
+	one's runtime, and that is where the surprise usually hides.
 </CalloutBox>
 
 ## Two Networks, and Only One of Them Matters at 2 a.m.
@@ -141,7 +146,7 @@ The one crossing is a single Ethernet link between the two switches, and it is d
 
 ## The Subsistence Tier Is a Watt Budget
 
-Something else falls out once the line is drawn.
+That comparison I had never made — what each half of the network costs to keep running — is not a footnote to the design. It *is* the design.
 
 The subsistence tier is not "the important gear." It is "the gear that fits in the watt budget."
 Every watt on that tier is minutes off the runtime, so the question stops being *what do I want during an outage* and becomes *what can I afford to keep powered.*
@@ -187,7 +192,7 @@ The subsistence network was always small enough to fit inside its own gateway. I
 The fix is the box labeled `dns4` in the diagram, and it is a Raspberry Pi.
 
 Not another cluster node. A bare Pi running BIND, doing both of the jobs above: a caching recursive resolver *and* an authoritative secondary of the internal zones.
-It has to be both, because a survivor that does only one of them still strands the clients — half an answer is no answer.
+It has to be both, for the same reason the originals are: split-horizon leaves the client no way to split the question, so a survivor that answers only half of them strands it just as completely.
 Full root recursion, no forwarder, nothing upstream with an opinion about my queries.
 The zone copies persist to disk with a 28-day expiry, so it keeps answering authoritatively for about four weeks after the primary disappears.
 That is longer than any outage I intend to have.

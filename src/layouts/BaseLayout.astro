@@ -117,6 +117,35 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
         font-size: 0.9em;
       }
 
+      /* Line-art diagrams. These are authored on white with white-filled boxes
+         so the wires don't show through them, and their legend colours are
+         chosen against white — so rather than fight that in dark mode, the
+         figure keeps its own light plate in both themes and reads as a
+         deliberate inset. The plate is what makes it look intentional instead
+         of like a blown-out PNG. */
+      :global(figure.diagram) {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+      }
+      :global(figure.diagram img) {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      :global(figure.diagram figcaption) {
+        margin-top: 0.75rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid #e6e6e6;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        /* Fixed rather than var(--muted): this sits on the light plate above,
+           so it must stay dark even when the page around it is dark. */
+        color: #555;
+      }
+
       :global(pre.astro-code) {
         padding: 0.9rem 1rem;
         border-radius: 0.4rem;

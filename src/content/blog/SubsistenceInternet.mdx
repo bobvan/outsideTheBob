@@ -2,115 +2,120 @@
 title: "Subsistence Internet"
 slug: "subsistence-internet"
 pubDate: 2026-07-31
-description: "A thirty-one hour blackout proved my three redundant DNS resolvers had one thing in common: the power tier that dies first"
+description: "A blackout took my Internet down fourteen minutes in, while the ISPs and every battery in the house kept working. The fix was drawing a line I should have drawn years ago"
 tags: ["networking", "DNS", "hardware", "monitoring", "Proxmox"]
 draft: true
 ---
 import CalloutBox from "../../components/post/CalloutBox.astro";
 
-I wrote a post about [failure resilience](/blog/entry-level-proxmox-failure-resilience/) with a tidy little table in it.
-Tier 1 was for DNS and NTP: mirrored boot drives, ECC memory, replicated storage, HA enabled, automatic failover in seconds.
-I meant every word, and every word of it worked.
+A storm took my power out for thirty-one hours.
+The interesting part was over in fourteen minutes.
 
-Then a storm took my power out for thirty-one hours and showed me the table was missing a column.
+That is how long the UPS lasted. When it quit, my Internet went with it — and almost nothing else did.
+Both ISPs were fine; the outage was on my side of the demarc, not theirs.
+The phones and laptops in the house were on their own batteries with hours left in them.
+There was still WiFi.
+There was still a working path to the Internet.
 
-## What Actually Happened
+And nothing worked, because nothing could resolve a name.
 
-The utility failed just after noon.
-I run two groups of gear on two different UPSes, and until that afternoon I had never thought carefully about the difference between them.
+## Why DNS Was the Thing That Broke
 
-One UPS carries the servers.
-It was holding about 366 watts, it predicted twelve to fourteen minutes of runtime, and it delivered fourteen minutes and five seconds.
-An honest UPS.
+Not by accident. By design, and the design was mine.
 
-The other carries the modems, the gateway, the switching, and the access points — under 200 watts — and it ran for hours.
+I run split-horizon DNS: the internal view of my domain answers with internal addresses, and only my own resolvers hold that view.
+Everything in the house is therefore required to use them.
+That is the whole point — it is how a laptop reaches a service by name without caring whether it is home or away — but it has a consequence I had never had to think about.
 
-So the shape of the outage was this: **the network stayed up and the computers went dark.**
+**There is no fallback.**
+A client that cannot reach my resolvers cannot quietly fail over to a public one, because a public resolver does not know my names.
+The redundancy I had built was three resolvers, and it was real redundancy, but it was all of the same kind.
 
-Which sounds survivable, and would have been, except for one thing.
-All three of my DNS resolvers are containers on the Proxmox cluster.
-They went down together, fourteen minutes in.
+They were containers on the Proxmox cluster.
+So they were also the recursive resolvers for every device in the house — the thing a phone asks before it can do anything at all.
+When the cluster went, they went, and the entire house lost the ability to turn a name into an address while sitting in full view of two working Internet connections.
 
-That produced the strangest failure mode I've had at home.
-Phones and laptops were on their own batteries.
-The WiFi was up.
-Both WAN links were up.
-And nothing resolved — not my own hostnames, not anything.
-A working internet connection that nobody could use.
+## Two Networks, and Only One of Them Matters at 2 a.m.
 
-## Two Tiers, and Only One of Them Matters at 2 a.m.
+Sketching the house afterward, the gear sorted itself into two groups so cleanly that I felt slow for not having seen it before:
 
-Sketching it out afterward, the two UPS groups turned out to deserve names:
+**The subsistence network** — the minimum required to stay connected.
+The ISP handoffs, the gateway, one small PoE switch, a couple of access points, and a resolver.
 
-**Subsistence Internet** — the minimum required to stay connected.
-Modems, gateway, one PoE switch, a couple of access points, and — now — a resolver.
+**The luxury network** — everything else.
+The cluster and its guests, the fast access points, the big switches, file service, cameras, the DVR.
 
-**Luxury Internet** — everything else.
-The cluster and its guests: file service, cameras, monitoring, the DVR, and, as it turns out, DNS.
+<figure class="diagram">
+	<img src="/images/subsistence-network.svg"
+	     alt="Network diagram split into a Subsistence Network on the left and a Luxury Network on the right. On the subsistence side, two ISPs feed a UCG-Fiber gateway, which feeds a PoE switch serving two access points and the dns4 host; a UPS supplies AC power to the ISP equipment, the gateway, the switch and dns4. On the luxury side, a PoE switch serves three access points and connects to a house switch and the PVE cluster running dns1 through dns3, all powered by a second UPS. A single Ethernet link crosses between the two PoE switches. A legend marks AC power in red, Ethernet in blue and PoE in green." />
+	<figcaption>
+		The layout after the rebuild. The dotted line is the one that matters: everything left of it
+		has to survive on its own, so the AC power, the Ethernet and the PoE all stop at that line
+		too. Only the blue Ethernet link crosses it — and when the luxury side goes dark, losing that
+		link costs the subsistence side nothing.
+	</figcaption>
+</figure>
 
 The names are the useful part.
-Once you have them, the placement question asks itself: during an outage, is this service subsistence or luxury?
-DNS is obviously subsistence.
-It had been living in the luxury tier for years.
+Once you have them, the placement question asks itself: during an outage, is this thing subsistence or luxury?
+DNS is obviously subsistence. It had been sitting in the luxury tier for years.
 
-## Redundancy Only Protects You Along the Axis You Spread It On
+## The Line Was Always There. Nobody Had Drawn It.
 
-Here's the part I got wrong, and I got it wrong *carefully*.
+Before the storm there were no tiers, just outlets.
+One UPS carried a combined load that mixed both networks without anyone deciding it should: the cluster, the spine switch that everything downstream hangs off, and several of the access points, all sharing one battery and therefore one runtime.
+Its runtime was set by the heaviest thing on it, and DNS was riding along.
 
-The three resolvers are deliberately spread one per cluster node, so no single node failure can take down more than one of them.
-Each is an HA resource, each replicates its disk to the others, each can restart elsewhere in seconds.
-Against node failure, that is genuinely good engineering.
+Here is the part I want to be honest about, because it is the whole lesson.
 
-Against power, it is worth nothing at all.
-All three nodes sit on the same UPS.
+**I already had the gateway and the modems on a different UPS.**
+That is why the ISPs and part of the WiFi were still up at minute fifteen.
+By the obvious reasoning — put the Internet gear on its own battery — I had already done the right thing, years earlier, and it bought me nothing.
 
-<CalloutBox type="warn" title="Count your failure domains, not your copies">
-	Spreading N copies across N nodes protects you from losing a node.
-	It does nothing about anything all N nodes share — a UPS, a breaker, an uplink, a rack, a room.
-	Redundancy is only redundancy along the axis you spread it on.
-	Three copies in one failure domain is one copy with extra steps.
+<CalloutBox type="warn" title="Splitting off the Internet gear is not enough">
+	A gateway on its own UPS gives you a working path to the Internet and no way to use it.
+	The clients need something to answer their queries, and if that answer lives on the tier that
+	dies first, then so does the connection — path intact, unusable.
+	Whatever your clients cannot function without has to move to the surviving tier, and for most
+	networks that list starts with the resolver.
 </CalloutBox>
 
-## And a Spare Nobody Is Told About Is Not a Spare
+## Power and Network Paths Have to Agree
 
-There is a second, dumber half to this.
+This is the point I would keep if I could keep only one.
 
-DHCP was handing out exactly one resolver.
-So even if one of the three had somehow survived, no client would have thought to ask it.
-My name service was one deep on the wire no matter how many copies were running.
+A UPS gives a device power. It does not give it a path.
+The subsistence tier is not a set of devices — it is a set of devices *plus every hop between them*, and all of it has to be on the right side of the line.
 
-That was the actual root cause, and fixing it was one edit to one field.
+Three kinds of wire had to be checked, and they are easy to check separately and get wrong together:
 
-## The Fix Is a Raspberry Pi
+- **AC power.** The obvious one, and the only one most people trace.
+- **Ethernet.** A device on the subsistence UPS whose uplink switch is on the luxury UPS is a luxury device wearing a disguise. It keeps running and stops being reachable.
+- **PoE.** The one that hides, because the power and the network arrive on the same cable from the same box. An access point is only as protected as the switch port feeding it — which means an AP is on whichever tier its *switch* is on, no matter which room it lives in.
 
-Not another cluster node.
-A bare Pi running BIND as both a caching recursive resolver and an authoritative secondary of the primary — full root recursion, no forwarder, nothing upstream to have an opinion about my queries.
-The zone copies persist to disk and the SOA expire is 28 days, so it keeps answering authoritatively for about four weeks after the primary disappears.
-That is longer than any outage I intend to have.
+That last one nearly caught me. Splitting access points across tiers is not a matter of choosing which APs matter; it is a matter of which switch each one plugs into, and that switch's power decides for you.
 
-Three choices in there were deliberate:
+The diagram above is really just this rule drawn out: red, blue and green all stop at the dotted line together.
+The one crossing is a single Ethernet link between the two switches, and it is deliberately the only thing that dies at the boundary.
 
-- **Same software as the others.** BIND, with the same configuration idioms, because a survivor you administer differently is a survivor you will misconfigure.
-- **Bare metal, not a container.** The entire point is to not be on the cluster.
-- **Not highly available.** Making the survivor HA would put it right back on the tier I'm trying to escape.
-
-It had a previous life as a GNSS reference station on a full desktop image, so most of the work was stripping it back down: no desktop, no print service, no mDNS, no RPC, until the only things listening were DNS and SSH.
-A survivor should be small.
-Every service it runs is another way for it to not be there when you need it.
-
-And DHCP now hands out all four resolvers, with the Pi last.
-Clients prefer the cluster and fall through to the survivor only when the cluster is gone.
-The cost is a few resolver timeouts during a total outage, which is exactly the right trade.
+<CalloutBox type="warn" title="Trace all three, on the actual cables">
+	Follow AC, Ethernet and PoE separately, hop by hop, and assume nothing about where a wire goes
+	because of where it ought to go.
+	I found one link that would have made the whole rebuild theatre — the subsistence switch appeared
+	to chain through the luxury spine, which would have left the survivors running perfectly and
+	talking to nobody.
+	It turned out not to, but I learned that by tracing cable, not by remembering.
+</CalloutBox>
 
 ## The Subsistence Tier Is a Watt Budget
 
-Here's what surprised me once I started drawing the two tiers as a picture.
+Something else falls out once the line is drawn.
 
-The subsistence tier is not "the important gear."
-It is "the gear that fits in the watt budget."
-Every watt you add is minutes you take away, and the arithmetic is unforgiving: runtime scales with how small you can make the load, which is why the same class of battery gave me fourteen minutes on one tier and hours on the other.
+The subsistence tier is not "the important gear." It is "the gear that fits in the watt budget."
+Every watt on that tier is minutes off the runtime, so the question stops being *what do I want during an outage* and becomes *what can I afford to keep powered.*
+Those are very different questions, and the second one has much shorter answers.
 
-My access points make the point nicely.
+My access points make it concrete. They are the same brand, a generation apart:
 
 | | Older APs | Newer APs |
 |---|---|---|
@@ -119,118 +124,100 @@ My access points make the point nicely.
 | Power method | plain PoE | PoE+ |
 | Uplink | 1 GbE | 10 GbE |
 
-The newer ones are genuinely better.
-They are faster when you are near one, and they earn their place on mains power.
-They also draw nearly twice as much, demand more from the switch, and run hot enough that you notice when you touch one.
-Wonderful habits. Expensive ones on battery.
+The newer ones are genuinely better and earn their place on mains power.
+They are also nearly twice the draw, they demand more from the switch, and they run hot enough that you notice when you touch one.
+Fine habits. Expensive ones on battery.
 
-So the older access points are the subsistence pair.
-They give coverage everywhere at twelve watts apiece, and the fast hot ones are allowed to go dark.
-On the subsistence tier, *good enough everywhere* beats *excellent nearby*.
+So the older pair are the subsistence APs.
+They cover the house at twelve watts apiece, and the fast hot ones are allowed to go dark.
+**On the subsistence tier, *good enough everywhere* beats *excellent nearby*.**
 
-## A Power Island Is Only an Island If the Network Agrees
+The same contrast, and more starkly, in the two boxes each network hangs off:
 
-Moving the Pi onto the subsistence UPS took an afternoon.
-Convincing myself it would actually help took two more evenings, and it nearly didn't survive them.
+| | Subsistence gateway | Luxury switch |
+|---|---|---|
+| Model | UCG-Fiber | USW Pro XG 8 PoE |
+| Max power | 29.4 W excluding PoE | 61 W excluding PoE, 210 W including |
 
-A UPS gives a device power. It does not give it a path.
+The device that roots the entire subsistence network is rated below thirty watts.
+The single switch at the head of the luxury network is rated for two hundred and ten, before you count anything hanging off it.
+That ratio is why the new subsistence UPS runs for hours where the old shared one ran for fourteen minutes.
+It is not a better battery. It is a much smaller ask.
 
-My first careful reading of my own wiring had the subsistence switch hanging off the main spine switch — and the spine sits on the servers' UPS.
-If that had been right, the entire plan was theatre.
-The Pi would have kept running on battery, in perfect health, answering nobody, because the hops between it and the phone asking the question would have died fourteen minutes in with everything else.
+## The Survivor
 
-It turned out not to be right.
-The gateway feeds both tiers directly rather than chaining one behind the other, so the subsistence switch does not pass through the spine, and the island really is an island.
+The fix is the box labelled `dns4` in the diagram, and it is a Raspberry Pi.
 
-But I want to be honest about how that went: I discovered it by tracing cables, not by designing it that way.
-The topology that makes my fix work is one I got by luck and only later confirmed.
-Had the cable gone to the obvious place — the big switch where everything else lands — I would have built the whole thing and never known it didn't work until the next storm.
+Not another cluster node. A bare Pi running BIND as both a caching recursive resolver and an authoritative secondary of the internal zones — full root recursion, no forwarder, nothing upstream with an opinion about my queries.
+The zone copies persist to disk with a 28-day expiry, so it keeps answering authoritatively for about four weeks after the primary disappears.
+That is longer than any outage I intend to have.
 
-The general form is worth saying plainly, because it is easy to protect the endpoint and forget the path:
+Three choices in there were deliberate:
 
-<CalloutBox type="warn" title="Protect the path, not just the box">
-	Everything between a protected device and the people who need it has to be on the same protected tier.
-	A resolver with power and no path is exactly as useful as a resolver with no power.
-	Trace it hop by hop, on the actual cables, and assume nothing about where a wire goes because of where it *should* go.
+- **Same software as the others.** BIND, with the same configuration idioms, because a survivor you administer differently is a survivor you will misconfigure.
+- **Bare metal, not a container.** The entire point is to not be on the cluster.
+- **Not highly available.** Making the survivor HA would put it straight back onto the tier I am trying to escape.
+
+It had a previous life as a GNSS reference station on a full desktop image, so most of the work was stripping it back down: no desktop, no print service, no mDNS, no RPC, until the only things listening were DNS and SSH.
+A survivor should be small.
+Every service it runs is one more way for it to not be there when you need it.
+
+### And a spare nobody is told about is not a spare
+
+There was a second, dumber half to this, and it was the actual root cause.
+
+DHCP was handing out exactly one resolver.
+So even if one of the three had somehow survived, no client would have thought to ask it.
+My name service was one deep on the wire no matter how many copies were running.
+
+DHCP now hands out all four, with the Pi last.
+Clients prefer the cluster and fall through to the survivor only when the cluster is gone.
+The cost is a few resolver timeouts during a total outage, which is exactly the right trade.
+
+## What Else Was Riding on the Wrong Tier
+
+Two more things turned out to be the same mistake wearing different hats, and finding them is what convinced me the tier idea was worth the rewiring.
+
+**Nothing was ever told to shut down.** The UPS knew perfectly well that it was on battery and running out.
+No server knew, because nothing was wired to tell them.
+The nodes were not shut down at fourteen minutes; they were cut off.
+That is a worse outcome than a clean shutdown and it was free to fix.
+The shutdown notification now runs on `dns4`, on the subsistence tier — because a process that warns machines about a power failure is worthless if it is on the power that failed.
+
+**The monitoring was a guest of the thing it monitors.** Checkmk runs in a container on the cluster, so at fourteen minutes I lost the monitoring at the same moment I lost the thing worth monitoring, and had to reconstruct the outage timeline afterward from a log that simply stopped.
+
+That one I did *not* move, and the reasoning is worth stating because it cuts against the tidy version of this post.
+Checkmk is heavy. Putting it on the subsistence tier would spend watts — and therefore runtime — on something that is not required to keep the house connected.
+So it stays a luxury service, and it stays a guest of what it monitors.
+What moved instead is the small, urgent job: the shutdown notification, which has to survive, and now does.
+
+<CalloutBox type="tip" title="Split the alarm from the dashboard">
+	The job that must survive an outage is small — notice the power failed, tell the machines to stop.
+	The job that helps you understand it afterward is large.
+	Put the small one on the tier that lives and let the large one die with everything else.
+	Trying to keep your whole observability stack alive on battery is how the watt budget gets spent
+	on the wrong thing.
 </CalloutBox>
-
-## The Same Mistake, Three More Times
-
-Once you have the phrase "shared fate," you start finding it everywhere.
-Each of these is the same error as the DNS one, wearing a different hat:
-
-- **The monitoring was a guest of a machine it monitors.**
-  It died fourteen minutes in — so my entire outage-alerting budget is fourteen minutes, and the notification path itself probably depended on gear that was also dying.
-- **Both UPS network cards lost their wall clocks.**
-  Their own event logs are now stamped in 2010 and are useless for dating the outage, so I had to reconstruct the timeline from the monitoring system that died at fourteen minutes.
-  The instrument that records a power failure should not be a casualty of it.
-- **Fourteen minutes of runtime were available and none of it was spent shutting anything down.**
-  No low-battery threshold was set, and nothing was wired to act on one if it had been.
-  The nodes were not shut down; they were cut off.
-  That is the most actionable finding in the whole post-mortem, and it has nothing to do with batteries.
 
 ## Three Questions Worth Asking About Your Own Setup
 
 1. **Which UPS feeds which machine, and which switch feeds which UPS?**
-   I could not answer either when the power came back, which was embarrassing to write down at the time.
+   I could not answer either when the power came back.
    Answering them took two evenings with a flashlight and changed the design twice.
    Until that map exists, no post-mortem you write can say what *should* have stayed up.
-2. **Does anything you'd want during an outage live only on the tier that dies first?**
-   Name resolution, certainly. Think about what else — a password manager that syncs, a door lock controller, the thing that tells you the power is out.
+2. **Does anything your clients cannot function without live only on the tier that dies first?**
+   Name resolution, certainly — especially if a split-horizon setup means there is no public fallback.
+   Then think about what else: a password manager that syncs, a door lock controller, the thing that tells you the power is out.
 3. **Are clients actually told about the survivor?**
    A survivor nobody queries is decoration.
 
-## It Is No Longer a Theory
+None of this made the batteries last longer.
+It just moved the line so that when they run out, the house still knows its own names.
 
-The Pi is on the subsistence UPS now, behind its own PoE switch, and the tier stopped being an argument and became a measurement:
+[[? Three calls for you.
 
-| | Subsistence tier | Servers |
-|---|---|---|
-| Load | 96 W | 366 W |
-| Runtime | 52 minutes | 14 minutes |
+1) **The before-state.** I wrote it as: one UPS carrying a mixed load (cluster + spine switch + several APs), while the gateway and modems were already on a *different* UPS — which is why the ISPs and some WiFi survived to minute fifteen. I think that's the strongest version of your point, because it means you had already done the obvious thing and it still failed. But you said "a single UPS sharing the combined load," so tell me if I've split it one UPS too many.
 
-Those are the same class of battery. The difference is entirely the load.
-Which is the watt budget stated as a number: the tier is not the important gear, it is the gear cheap enough to still be running an hour later.
+2) **Naming.** The figure names UCG-Fiber, dns4 and the PVE cluster, so I've used those in prose. Still unnamed: the UPS vendors, the ISPs, and the AP rooms (the figure's FR/NB/A/MR/O initials are doing that work nicely). Say the word if you want any of them named.
 
-The monitoring moved too, and moved somewhere better than where it was.
-The Pi now polls all three UPSes, so the thing that watches for a power failure finally lives on the only tier that reliably outlives one.
-
-It is not perfect, and the flaw is instructive.
-The Pi cannot see the upstairs UPS once the basement one dies, because the path between them runs through a switch on the basement UPS — the same shared-fate error, now hiding in the *monitoring path* rather than the service.
-The fix needs no cable. Each UPS already contains a complete loop: a server, its switch, and that UPS's own management port are all on the same battery.
-So the decision to shut down goes *inside* each power domain, where it can never be cut off from its own evidence, and the Pi keeps only the independent view across all of them.
-
-Count the failure domains of your monitoring, too.
-
-## The Label, Read
-
-I ended the first draft of this saying the next step was to go read a physical label. So I did.
-
-The two server UPSes report 1000 VA and 990 W, and I was fairly sure I had bought 1500 VA units.
-The units were right and I was wrong.
-The manual says 1000 VA and 990 W, and their cards report their own nameplate exactly.
-I had spent a week quietly distrusting the one set of numbers that was honest.
-
-The lie was somewhere I had not thought to look.
-The new subsistence UPS is a 1000 VA unit rated at 600 W.
-Its telemetry reports a nominal output of 960 W — which is not a watt rating at all, but the VA number wearing a W.
-And it computes its own load percentage against that inflated figure, so 96 real watts is displayed as 10% when the honest number against 600 W is 16%.
-
-It is wrong by about 1.6x, and it is wrong in the direction that makes you feel safe.
-
-<CalloutBox type="tip" title="Alert on watts, not percent">
-	A load percentage is not a measurement. It is a division, and the device supplies the denominator from a nameplate it may have wrong.
-	Watts are measured. Percentages are an opinion.
-	Set your thresholds on the number the device cannot get wrong about itself.
-</CalloutBox>
-
-Two things are still undone, and both are the same shape as everything above.
-Nothing is yet wired to actually shut a machine down, so the fourteen minutes remain fourteen minutes of watching.
-And a fourth UPS arrived this week whose management port hangs off a switch with no battery behind it — so at the exact moment an outage begins it goes invisible while still cheerfully running.
-
-That one made me laugh, which is the correct response to finding the same mistake for the sixth time in one week.
-It is never the batteries. It is always the thing you assumed was somewhere else.
-
-[[? Two calls for you, and question 1 got sharper since you read the nameplate.
-1) I still have both UPS vendors unnamed, and the ISPs too. The 960-vs-600 W thing is now a load-bearing part of the ending, and it is a specific, reproducible, arguably reportable firmware defect in a product people buy on your recommendation. Naming it is a service to the reader; not naming it keeps the post about the idea. I lean toward naming that one unit and leaving everything else generic. Your call — you own the consequences of a vendor reading it.
-2) Still no room names for the APs (just "older pair" / "newer"). Fine, or would the geography help? ?]]
+3) **Cut for length.** This is ~2,170 words — still not "brief," even after dropping the UPS numbers. The section I'd cut first is "Three Questions Worth Asking," which is the most generic part and costs the post nothing. That gets it near 1,950. I dropped the whole UPS-nameplate thread you asked me to — but that story (a UPS reporting a nominal wattage derived from its VA rating, so its own load percentage understates real draw by ~1.6x) is a good standalone post about trusting device self-reporting. Want me to park it as its own draft? ?]]

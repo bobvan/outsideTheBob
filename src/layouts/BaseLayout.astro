@@ -296,5 +296,23 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
         });
       }
     </script>
+
+    {/* Cloudflare Web Analytics. The token is a public site identifier, not a
+        secret — it ships in the HTML of every page by design.
+
+        is:inline keeps Astro's hands off it: the beacon has to reach the browser
+        with its data-cf-beacon attribute intact, and bundling would strip it.
+
+        PROD-only so `npm run dev` does not report local page views as traffic.
+        Analytics you cannot trust is worse than none, and the first thing that
+        makes it untrustworthy is counting yourself. */}
+    {import.meta.env.PROD && (
+      <script
+        is:inline
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "df7b2f33142f4a86823619cf7b156095"}'
+      ></script>
+    )}
   </body>
 </html>

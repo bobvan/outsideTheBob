@@ -60,7 +60,7 @@ A device with a perfect path to the Internet and nothing to resolve names with i
 
 **And I had never compared the relative power costs.**
 Keeping the Internet and the WiFi alive is a matter of tens of watts — a gateway and an access point, exactly as the car battery demonstrated.
-Keeping my DNS answers alive meant keeping a Proxmox cluster on rackmount servers alive, which is a different order of magnitude altogether.
+Keeping my DNS answers alive meant keeping a three-node Proxmox cluster alive, with its ECC memory and its mirrored storage, which is a different order of magnitude altogether.
 In terms of power used, I had made the cheapest part of my network depend on the most expensive part, and I had never once put those two numbers beside each other.
 
 The three resolvers were real redundancy, and all of the same kind: three containers on one cluster, which is to say three copies of one dependency in one power domain.

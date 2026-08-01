@@ -1,0 +1,40 @@
+---
+title: "Don't let the receiver survey itself"
+description: "Averaging a GNSS position removes random error but not bias, and timing receivers are biased. Here is how to tell which one you have."
+section: "antennas"
+order: 40
+updatedDate: 2026-08-01
+coverage: "H"
+tags: ["GNSS", "antennas", "timing"]
+draft: true
+---
+
+**STUB.** Material is gathered in `docs/topics-in-timekeeping.md` (Antennas →
+*Don't let the receiver survey itself*) and `docs/references.md` (Montare,
+Novick & Sherman, verified and quoted). This file exists to prove the route,
+the feed and the draft gate; the prose is yours to write.
+
+Planned spine, in order:
+
+1. **The question people arrive with.** *Can I just average the position for a
+   couple of days?* Answer it in three sentences with no arithmetic: averaging
+   removes random error, not bias. Half your fixes 30 cm too far east and half
+   too far west average out. All of them 1 m too far north never does.
+2. **The conversion, which is the page's spine.** Light moves about 30 cm per
+   nanosecond, so a position error and a time error are the same error in
+   different units. 30 cm *is* 1.00 ns — that is why NIST's goal is 30 cm, and
+   their 3.3 ns/m is the same constant on its side.
+3. **A decision rule, not a warning.** Metres and ±15 ns: averaging is fine.
+   Centimetres and sub-nanosecond: bias defeats you. Note the two halves agree —
+   15 ns of vertical error is 4.5 m.
+4. **The diagnostic.** Restart the survey every 24 h for 14 days. Converging on
+   one answer means noise; fourteen different answers means bias. No reference
+   receiver, no PPP service — it works with what you already own.
+5. **The evidence.** NIST measured this on this receiver and published it, and
+   could not explain the bias either.
+
+[[? Two things I cannot supply.
+
+1) Your own F9T lab measurements — the draft calls them "first-hand and unpublished". How much do you want to show, and do you have numbers or plots?
+
+2) The Lombardi single-frequency figure (height wrong by 10–15 m, timing error approaching 50 ns) is still quoted at second hand through the Montare bibliography. Worth me tracking down the originals before this page cites it directly? ?]]

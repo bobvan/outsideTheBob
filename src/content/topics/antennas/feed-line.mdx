@@ -1,0 +1,42 @@
+---
+title: "Your feed line is probably wrong"
+description: "Two compounding errors — an unmeasured cable length and an assumed velocity factor — that together cost far more than the antenna survey everyone worries about."
+section: "antennas"
+order: 50
+updatedDate: 2026-08-01
+coverage: "H"
+tags: ["GNSS", "antennas", "timing", "datacenter"]
+draft: true
+---
+
+**STUB.** Material and verified arithmetic are in
+`docs/topics-in-timekeeping.md` (Antennas → *Your feed line is probably wrong*).
+
+The claim the page exists to make: feedline compensation is likely the largest
+single source of timing bias in typical datacenter deployments — which makes
+the natural reading order of this topic counter-intuitive, and that is worth
+saying out loud. People agonise over a survey wrong by tens of centimetres
+while a cable quietly costs them tens of nanoseconds.
+
+Two independent errors that compound, and the fixes differ:
+
+1. **Wrong length.** The markings are usually printed on the jacket. The
+   failure is not that the information is unavailable — it is that nobody walks
+   the cable.
+2. **Wrong velocity factor.** Worse, because it is silent. Nothing about the
+   install tells you the assumption was wrong.
+
+Worked numbers, verified — ⚠️ still check against real datasheets before this
+publishes. The algebra is just *length ÷ (VF × c)*:
+
+| | VF 0.66 (solid PE) | VF 0.85 (foam) |
+|---|---|---|
+| Delay down a 30 m run | ≈ 152 ns | ≈ 118 ns |
+
+So ≈ 34 ns from one wrong assumption about a cable, on a run length a
+datacenter would think unremarkable. A length error is gentler but not gentle:
+at VF 0.8, every metre costs ≈ 4.2 ns.
+
+Ends on the same conclusion as
+[Don't let the receiver survey itself](/timekeeping/antennas/receiver-self-survey/):
+measure it and configure it. Do not accept a default and do not guess.

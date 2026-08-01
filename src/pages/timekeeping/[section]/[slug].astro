@@ -1,0 +1,43 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import TagList from '../../../components/TagList.astro';
+import { publishedTopics, sectionTitle, topicSlug } from '../../../topics';
+
+export async function getStaticPaths() {
+	const pages = await publishedTopics();
+	return pages.map((page) => ({
+		params: { section: page.data.section, slug: topicSlug(page) },
+		props: { page },
+	}));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+	<article>
+		<p class="post-meta breadcrumb">
+			<a href="/timekeeping/">Topics In Timekeeping</a> ·
+			{sectionTitle(page.data.section)}
+		</p>
+
+		<h1>{page.data.title}</h1>
+
+		<p class="post-meta">
+			{/* Evergreen pages are revised, so the useful date is the last change,
+			    not a publication date that would only get staler. */}
+			Updated <FormattedDate date={page.data.updatedDate} />
+			<TagList tags={page.data.tags} />
+		</p>
+
+		<Content />
+	</article>
+</BaseLayout>
+
+<style>
+	.breadcrumb { margin-bottom: 0.75rem; }
+	article > :global(h1) { margin-bottom: 0.25rem; }
+</style>

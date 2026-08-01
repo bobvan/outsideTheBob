@@ -19,7 +19,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const DIRS = ['src/content/blog', 'src/pages'];
+const DIRS = ['src/content/blog', 'src/content/topics', 'src/pages'];
 const PROMPT = /\[\[\?([\s\S]*?)\?\]\]/g;
 
 let publishable = 0;

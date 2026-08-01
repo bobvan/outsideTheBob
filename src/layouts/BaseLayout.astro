@@ -6,15 +6,31 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 // not agree on whether prefers-color-scheme inside it follows the page or the OS
 // (Safari's answer is the reason the logo stayed dark-on-dark).
 import bannerSvg from "../../public/images/outsideTheBob.svg?raw";
+import { hasPublishedTopics } from "../topics";
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
   frontmatter?: { title?: string; description?: string };
+  /** Raw SVG to use in place of the site banner. The 404 page swaps in its own
+      variant so the page carries one mark rather than two stacked boxes. */
+  banner?: string;
+  /** Keep this page out of search results. Astro's sitemap lists every built
+      page, so a route that exists but has nothing worth reading yet — the
+      Timekeeping index before anything is published — needs to say so itself.
+      `follow` so the crawler still walks the links once there are some. */
+  noindex?: boolean;
 }
 
-const { title, description, image = "/images/og-banner.png", frontmatter } = Astro.props;
+const { title, description, image = "/images/og-banner.png", frontmatter, banner, noindex } = Astro.props;
+const bannerMarkup = banner ?? bannerSvg;
+
+// The Timekeeping nav entry appears only once something is actually published
+// there. That lets the whole section be built and refined on main — pushing
+// deploys, so a half-finished garden would otherwise be one commit from being
+// linked in the navigation — without any branch to keep in sync.
+const showTopics = await hasPublishedTopics();
 
 // Markdown and MDX pages that set `layout:` hand their frontmatter over as one
 // `frontmatter` prop rather than as individual props, so accept either shape.
@@ -38,6 +54,7 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link
       rel="alternate"
@@ -214,12 +231,13 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
   <body>
     <header>
       <div class="wrap">
-        <a class="banner" href="/" aria-label={SITE_TITLE} set:html={bannerSvg} />
+        <a class="banner" href="/" aria-label={SITE_TITLE} set:html={bannerMarkup} />
         <nav>
           <a href="/">Home</a>
           <a href="/blog">Blog</a>
           <a href="/archive">Archive</a>
           <a href="/tags">Tags</a>
+          {showTopics && <a href="/timekeeping">Timekeeping</a>}
           <a href="/about">About</a>
           <span class="sep muted">|</span>
           <a href="https://github.com/bobvan" rel="me">GitHub</a>

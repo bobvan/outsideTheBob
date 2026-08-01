@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { sectionsWithPages, topicPath } from '../../topics';
+
+// Empty sections are omitted rather than shown as bare headings, so this page
+// stays honest while the garden is still filling in.
+const sections = await sectionsWithPages();
+---
+
+<BaseLayout
+	title="Topics In Timekeeping"
+	description="An evergreen set of short pages on precision timekeeping — acquiring time, moving it, and proving it."
+	noindex={sections.length === 0}
+>
+	<h1>Topics In Timekeeping</h1>
+
+	<p>
+		Short pages, one idea each, revised rather than republished. There is no
+		required reading order — every page is meant to be a valid place to start,
+		and to link to whatever you needed in one hop.
+	</p>
+
+	{
+		sections.length === 0 ? (
+			<p class="muted">Nothing published here yet.</p>
+		) : (
+			sections.map((section) => (
+				<section class="topic">
+					<h2>{section.title}</h2>
+					<ul class="list-unstyled">
+						{section.pages.map((page) => (
+							<li>
+								<a href={topicPath(page)}>{page.data.title}</a>
+								<p class="post-meta">
+									Updated <FormattedDate date={page.data.updatedDate} />
+								</p>
+								<p>{page.data.description}</p>
+							</li>
+						))}
+					</ul>
+				</section>
+			))
+		)
+	}
+</BaseLayout>
+
+<style>
+	.topic { margin-top: 2.5rem; }
+	.topic h2 { margin-bottom: 0.5rem; }
+	.topic li { padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
+	.topic li p { margin: 0.15rem 0 0; }
+</style>

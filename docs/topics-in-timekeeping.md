@@ -646,6 +646,33 @@ Things worth a page eventually, not now. Add freely.
 - **White Rabbit in depth** — currently one page under Transferring Time.
 - **Choosing a receiver** — the F9T/F10T capability matrices in PePPAR-Fix docs
   are already most of a page.
+- **"Is it up" is not "does it work"** — ⚠️ *a standalone blog post, not a
+  timekeeping topic; parked here because this is where post ideas land.*
+  Wait for ops/dns and ops/checkmk to finish, so the post can name the actual
+  cause rather than gesture at one.
+
+  The subsistence resolver built in *Subsistence Internet* — the survivor, the
+  whole point of the rebuild — turned out to be **silently broken**. It answered
+  its authoritative internal zones perfectly and **SERVFAILed on every external
+  name**, with the `ra` flag set, so it believed it was offering recursion. It
+  was trying and failing, not refusing.
+
+  What makes it a post rather than a war story is the shape of the blind spot:
+
+  - **Every cheap check passes.** Port 53 answers. The process is running. A
+    query for a local name returns. Ping — where it works at all — is fine. The
+    check that catches this has to ask for something the server must *leave the
+    building* to answer.
+  - **The failure is invisible by construction.** It is fourth in the DHCP list,
+    so nothing reaches it while the cluster is healthy. It would have surfaced
+    at the exact moment of an outage, which is the one moment you cannot debug.
+  - **It is one level deeper than the post already published.** *Subsistence
+    Internet* argues that monitoring must not share fate with what it monitors.
+    This says the surviving monitor must also be asked the right question — and
+    that "responds" and "works" are different claims about a service.
+
+  Ties back to the callout already written: *split the alarm from the dashboard*.
+  The alarm survived. It just was not being asked anything that could fail.
 
 ## Done this round
 

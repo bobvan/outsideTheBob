@@ -1,0 +1,29 @@
+{
+	// Cloudflare Workers deployment config.
+	//
+	// This site is entirely static, so there is no Worker script and no Astro
+	// adapter: `assets` alone tells Cloudflare to serve the built files. If no
+	// asset matches and no Worker script exists, Cloudflare returns its own 404.
+	//
+	// `name` MUST match the Worker created in the Cloudflare dashboard. Wrangler
+	// deploys to whatever name is written here, so a mismatch silently creates a
+	// second Worker rather than updating the one the custom domain points at.
+	"name": "outsidethebob",
+
+	// Pins the Workers runtime behaviour to how it worked on this date, so a
+	// future platform change cannot alter the deploy without an explicit bump.
+	"compatibility_date": "2026-08-01",
+
+	"assets": {
+		// Astro's default build output.
+		"directory": "./dist"
+
+		// Deliberately no "not_found_handling": there is no src/pages/404.astro,
+		// so no 404.html is built and pointing at one would 500. Add the page
+		// first, then set "not_found_handling": "404-page".
+		//
+		// Also deliberately no "html_handling": the default (auto-trailing-slash)
+		// already matches Astro's directory-style output, where
+		// /blog/post/ resolves to /blog/post/index.html.
+	}
+}

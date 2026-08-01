@@ -16,14 +16,14 @@
 
 	"assets": {
 		// Astro's default build output.
-		"directory": "./dist"
+		"directory": "./dist",
 
-		// Deliberately no "not_found_handling": there is no src/pages/404.astro,
-		// so no 404.html is built and pointing at one would 500. Add the page
-		// first, then set "not_found_handling": "404-page".
-		//
-		// Also deliberately no "html_handling": the default (auto-trailing-slash)
-		// already matches Astro's directory-style output, where
-		// /blog/post/ resolves to /blog/post/index.html.
+		// src/pages/404.astro builds to dist/404.html; this is what makes
+		// Cloudflare serve it for unmatched paths instead of its own bare 404.
+		"not_found_handling": "404-page"
+
+		// Still deliberately no "html_handling": the default
+		// (auto-trailing-slash) already matches Astro's directory-style output,
+		// where /blog/post/ resolves to /blog/post/index.html.
 	}
 }

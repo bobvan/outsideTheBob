@@ -1,0 +1,56 @@
+---
+// Astro builds this to dist/404.html. Cloudflare only serves it for unmatched
+// paths because wrangler.jsonc sets assets.not_found_handling to "404-page" —
+// without that the Worker returns its own bare 404 and this file is never seen.
+//
+// The mark is the site logo run through the same generator with different words
+// (npm run banner:404), so the joke is reused rather than a second one invented:
+// "404" sits in the box, and "OutsideTheSite" is where you have ended up.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import notFoundSvg from "../../public/images/outsideTheSite.svg?raw";
+---
+
+<BaseLayout
+	title="404"
+	description="That page is not here — you have gone outside the site."
+>
+	<div class="notfound" set:html={notFoundSvg} />
+
+	<h1>You have gone outside the site.</h1>
+
+	<p>
+		There is nothing at this address. Either the link was wrong, or something
+		here moved and I did not leave a forwarding note.
+	</p>
+
+	<p>
+		Try <a href="/blog">the blog</a>, or the <a href="/archive">archive</a> if
+		you are looking for something specific and know roughly when it was written.
+		<a href="/tags">Tags</a> are the other way in.
+	</p>
+</BaseLayout>
+
+<style>
+	/* Inlined markup carries no scope attribute, so the SVG and its classes have
+	   to be reached with :global(). Same trap as BaseLayout. */
+	.notfound {
+		margin: 1.5rem 0 2rem;
+		color: var(--text);
+	}
+	.notfound :global(svg) {
+		display: block;
+		width: 100%;
+		max-width: 620px;
+		height: auto;
+	}
+	/* The halo punches the page background through the box wall, so here it is
+	   --bg rather than the header's --surface. */
+	.notfound :global(.wordmark) {
+		stroke: var(--bg);
+	}
+
+	h1 {
+		margin-top: 0;
+		font-size: 1.5rem;
+	}
+</style>

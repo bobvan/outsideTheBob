@@ -46,7 +46,7 @@ They are authoritative for the internal view of my domain — I run split-horizo
 They are also the recursive resolvers for every name outside my domain.
 
 That combination is not a mistake. It is what split-horizon costs.
-A client takes a list of DNS servers and treats them as interchangeable; there is no way to tell a phone to ask one server about my domain and a different one about everything else — certainly not across a home full of laptops, tablets, televisions and appliances that will never agree on how to be configured.
+A client is configured with a list of DNS resolvers and uses them for all queries; there is no way to tell a phone to ask one resolver about my domain and a different one about everything else.
 Choose split-horizon and you have chosen one set of servers that must answer *every* question every device asks.
 
 Which also means there is no fallback, by construction.
@@ -55,13 +55,13 @@ I cannot hand clients a public resolver as a backup, because a public resolver d
 None of that is the error. The error was failing to follow it through, in two directions I had never looked.
 
 **I had never noticed that my Internet connectivity depended on my cluster.**
-Not the ISPs, not the gateway, not the WiFi — those are the things you would list if someone asked what your Internet depends on, and that night all three of them were working.
+The ISPs, the gateway, the WiFi — those are the things you would list if someone asked what your Internet depends on, and that night all three of them were working.
 A device with a perfect path to the Internet and nothing to resolve names with is simply offline, and no amount of health in the rest of the chain rescues it.
 
-**And I had never compared what the two halves cost to keep running.**
+**And I had never compared the relative power costs.**
 Keeping the Internet and the WiFi alive is a matter of tens of watts — a gateway and an access point, exactly as the car battery demonstrated.
-Keeping my DNS answers alive meant keeping a Proxmox cluster alive, which is a different order of magnitude altogether.
-I had made the cheapest part of my network depend on the most expensive part, and I had never once put those two numbers beside each other.
+Keeping my DNS answers alive meant keeping a Proxmox cluster on rackmount servers alive, which is a different order of magnitude altogether.
+In terms of power used, I had made the cheapest part of my network depend on the most expensive part, and I had never once put those two numbers beside each other.
 
 The three resolvers were real redundancy, and all of the same kind: three containers on one cluster, which is to say three copies of one dependency in one power domain.
 Spreading copies across nodes protects you from losing a node. It does nothing about anything all the nodes share.
@@ -146,7 +146,7 @@ The one crossing is a single Ethernet link between the two switches, and it is d
 
 ## The Subsistence Tier Is a Watt Budget
 
-That comparison I had never made — what each half of the network costs to keep running — is not a footnote to the design. It *is* the design.
+That comparison I had never made — the relative power cost of each half of the network — is not a footnote to the design. It *is* the design.
 
 The subsistence tier is not "the important gear." It is "the gear that fits in the watt budget."
 Every watt on that tier is minutes off the runtime, so the question stops being *what do I want during an outage* and becomes *what can I afford to keep powered.*

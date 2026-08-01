@@ -65,12 +65,12 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       :root {
         color-scheme: light dark;
         --text:#111; --muted:#666; --link:#0b5fff; --bg:#fff; --border:#e6e6e6;
-        --surface:#fafafa; --code-bg:#f1f2f4;
+        --surface:#fafafa; --code-bg:#f1f2f4; --table-border:#c2c6cc;
       }
       @media (prefers-color-scheme: dark) {
         :root {
           --text:#e7e8ea; --muted:#9b9ca4; --link:#7fb2ff; --bg:#16171b; --border:#2d2f36;
-          --surface:#1c1d22; --code-bg:#24262d;
+          --surface:#1c1d22; --code-bg:#24262d; --table-border:#474a53;
         }
       }
       * { box-sizing: border-box; }
@@ -117,6 +117,29 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
         font-size: 0.9em;
       }
 
+      /* Markdown tables arrive with no styling at all, so they read as drifting
+         columns of text. Collapsed borders on every cell give them edges and a
+         shaded header band separates the labels from the data.
+         --table-border rather than --border: the latter is tuned for large quiet
+         edges like the header rule, and at cell scale it is too faint to read as
+         a grid. A table needs its lines actually visible. */
+      :global(.wrap table) {
+        width: 100%;
+        margin: 1.25rem 0;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+      :global(.wrap th),
+      :global(.wrap td) {
+        padding: 0.45rem 0.7rem;
+        border: 1px solid var(--table-border);
+        text-align: left;
+        vertical-align: top;
+      }
+      :global(.wrap thead th) {
+        background: var(--surface);
+        font-weight: 600;
+      }
       /* Line-art diagrams. These are authored on white with white-filled boxes
          so the wires don't show through them, and their legend colours are
          chosen against white — so rather than fight that in dark mode, the

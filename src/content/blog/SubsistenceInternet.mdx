@@ -41,14 +41,22 @@ On its own it does nothing.
 
 What I had actually found was that nothing in the home could turn a name into an address.
 
-My resolvers are not an optional convenience I could route around.
-I run split-horizon DNS: the internal view of my domain answers with internal addresses, and only my own resolvers hold that view.
-Everything in the home is therefore required to use them.
-That is the whole point — it is how a laptop reaches a service by name without caring whether it is home or away — but it has a consequence I had never had to think about.
+My DNS servers are not an optional convenience I could route around, and without ever thinking about it I had given them two entirely different jobs.
 
-**There is no fallback.**
-A client that cannot reach my resolvers cannot quietly fail over to a public one, because a public resolver does not know my names.
-And those same resolvers are the recursive resolvers for every device in the home — the thing a phone asks before it can do anything at all, including reach the public Internet.
+The first is a job only they can do.
+I run split-horizon DNS: my internal DNS servers answer with internal addresses unknown to public DNS servers.
+Nothing else in the world holds those answers, so everything in the home is required to ask them.
+
+The second is a job anyone could do.
+They are also the recursive resolvers for every name outside my domain — the ordinary lookups a phone makes before it can do anything at all.
+
+Coupling those two is the mistake, and it took a blackout to show me why.
+The servers that only I can provide had quietly become the servers that everything else routes through.
+Losing them does not cost you your internal names. It costs you all of them.
+
+**And there is no fallback.**
+I cannot hand clients a public resolver as a backup, because a public resolver does not know my names — it would answer the public questions and break the private ones.
+My clients must use my servers, and my servers are all that stands between them and the entire Internet.
 
 I had three of them, and that was real redundancy.
 It was also all of the same kind: three containers on the Proxmox cluster, which is to say three copies of one dependency on one power domain.
@@ -85,9 +93,9 @@ The cluster and its guests, the fast access points, the big switches, file servi
 	</figcaption>
 </figure>
 
-The names are the useful part.
+The network names are the useful part.
 Once you have them, the placement question asks itself: during an outage, is this thing subsistence or luxury?
-DNS is obviously subsistence. It had been sitting in the luxury tier for years.
+DNS resolution is obviously subsistence. It had been sitting in the luxury tier for years.
 
 ## Separating the Networks Meant Separating the UPSes
 
@@ -99,7 +107,7 @@ As long as the subsistence gear draws from the same battery as the cluster, it i
 Sorting the network into two roles only becomes real when the two roles stop sharing a battery.
 
 So the split had to be physical: a second UPS, carrying nothing but the subsistence network.
-A permanent, better-behaved version of the car battery on the floor — but wired to the resolver as well as to the gateway, which is the part the car battery taught me it needed.
+A permanent, better-behaved version of the car battery on the floor — but wired to a new resolver as well as to the gateway, which is the part the car battery taught me it needed.
 
 Pulling a little load off the luxury UPS buys the luxury network slightly longer runtime, which is a nice fringe benefit.
 The important benefit is the other direction: the subsistence network, alone on its own battery with a small load, now runs for hours instead of minutes.
@@ -166,19 +174,21 @@ The same contrast, and more starkly, in the two boxes each network hangs off:
 
 The device that roots the entire subsistence network is rated below thirty watts.
 The single switch at the head of the luxury network is rated for two hundred and ten, before you count anything hanging off it.
+That gap, repeated in miniature across every device on each side of the line, is why the subsistence UPS now runs for hours where the old shared one ran for fourteen minutes.
+It is not a better battery. It is a much smaller ask.
 
 Look at the PoE row, though, because that is the one that surprised me.
 Thirty watts is not much of a budget — and it is comfortably more than a twelve-watt access point needs.
 That is the whole reason the WiFi came back on the car battery: I powered one box, and one box quietly powered the access point behind it.
 The subsistence network was always small enough to fit inside its own gateway. I had just never had a reason to notice.
-That gap, repeated in miniature across every device on each side of the line, is why the subsistence UPS now runs for hours where the old shared one ran for fourteen minutes.
-It is not a better battery. It is a much smaller ask.
 
 ## The Survivor
 
 The fix is the box labeled `dns4` in the diagram, and it is a Raspberry Pi.
 
-Not another cluster node. A bare Pi running BIND as both a caching recursive resolver and an authoritative secondary of the internal zones — full root recursion, no forwarder, nothing upstream with an opinion about my queries.
+Not another cluster node. A bare Pi running BIND, doing both of the jobs above: a caching recursive resolver *and* an authoritative secondary of the internal zones.
+It has to be both, because a survivor that does only one of them still strands the clients — half an answer is no answer.
+Full root recursion, no forwarder, nothing upstream with an opinion about my queries.
 The zone copies persist to disk with a 28-day expiry, so it keeps answering authoritatively for about four weeks after the primary disappears.
 That is longer than any outage I intend to have.
 

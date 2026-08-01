@@ -154,6 +154,11 @@ Some guests also touch bulk storage that is far too large to replicate.
 And every node dumps to a backup server regardless of tier,
 because none of the above protects you from deleting the wrong thing.
 
+There is one more thing this table quietly assumes, and it took a blackout to show me what.
+Every tier above describes what happens when a *node* fails, not what happens when the room does.
+Three HA resolvers spread across three nodes are still one power failure away from silence,
+which turned out to deserve [a post of its own](/blog/subsistence-internet/).
+
 ## Where This Runs Out
 
 The tiers above are really a proxy for one question: how much data does the guest carry?

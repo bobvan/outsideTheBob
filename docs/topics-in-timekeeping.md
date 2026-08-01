@@ -58,6 +58,12 @@ of question-and-answer each, and the Q&A is where the unsaid things surface.
 
 - **T1** — *The Last Nanoseconds to UTC*, autumn 2025. Talk 00:07–00:28, Q&A to 01:30.
 - **T2** — *Sub-Nanosecond at Home*, July 2026. Talk 00:00–00:35, Q&A to 01:04.
+- **L1** — LinkedIn exchange, 2026-08-01. A reader asked whether you can simply
+  average a GNSS position over a couple of days, and what that costs in clock
+  accuracy. Bob's answer is the clearest statement of the averaging-versus-bias
+  argument we have, and the questioner's follow-up added the coax velocity-factor
+  point. Same attribution rule as the rehearsals: **use the substance, not the
+  name**, unless Bob clears it with them.
 
 > ⚠️ **Attribution.** Both rehearsals had named colleagues on the call who asked
 > sharp questions. Their words were given to a private review session, not for
@@ -280,6 +286,50 @@ under-appreciated part of precision timekeeping."*
   a foot of position error is worth up to about a nanosecond, and vertical error
   is the direction that couples hardest.
 
+  **Open the page with the averaging argument (L1), because it is the question
+  people actually arrive with** — *can I just average for a couple of days?*
+
+  > L1: *Averaging removes random errors, but not bias. If half your position
+  > fixes are 30 cm too far east and the other half are too far west, that
+  > averages out. But if all your position fixes are 1 m too far north, that
+  > never goes away with averaging.*
+
+  That is the whole idea in three sentences and it needs no arithmetic to follow.
+  The arithmetic then answers the second half of the question — *what does it
+  cost in clock accuracy?* — and the conversion is the spine of the page:
+  **light moves about 30 cm per nanosecond**, so a position error and a time
+  error are the same error in different units. That is *why* NIST's goal is
+  30 cm: 30 cm **is** a nanosecond. Their 3.3 ns/m is the same constant lying on
+  its side.
+
+  Which gives the reader a decision rule rather than a warning (L1):
+
+  - **Position to a few metres, time to ±15 ns** → averaging is fine, given a
+    good antenna and a good sky view. (And note the two halves agree: 15 ns of
+    vertical error *is* about 4.5 m. Same statement twice.)
+  - **Position to a few centimetres, sub-nanosecond time** → receiver bias
+    defeats you, and no amount of patience fixes it.
+
+  **The diagnostic is the best thing in the L1 answer and belongs on the page as
+  the thing a reader can go and do:**
+
+  > L1: *If you just start the averaging process over again every 24 hours for
+  > 14 days, you get 14 different averages, instead of converging on the same
+  > answer 14 times.*
+
+  That is how you tell noise from bias *with the equipment you already own* — no
+  reference receiver, no PPP service, no survey. Restart it and see whether the
+  answers pile up in one place or wander. It converts the page from "trust NIST"
+  into "here is an experiment," which is the whole ethos of the topic.
+
+  ⚠️ **One correction to carry into the prose.** L1 describes the NIST work as
+  studying *"high-quality timing receivers."* The paper's own title is
+  *Evaluating Common-View Time Transfer Using a **Low-Cost** Dual-Frequency GNSS
+  Receiver*, and the unit is the ZED-F9T. Anyone who follows the link will notice.
+  Say *a low-cost dual-frequency timing receiver* — which is also the stronger
+  framing, because the point is that this trap ships in the receivers people
+  actually deploy, not in exotic ones.
+
   Two pieces of evidence:
 
   - **NIST measured exactly this**, on exactly this receiver, and published it.
@@ -314,8 +364,58 @@ under-appreciated part of precision timekeeping."*
   eraser — of a point you cannot see. Plus antenna calibration: patterns
   measured by *a robot on a building in Germany* moving the antenna while the
   satellites appear to stand still.
-- **Siting, cabling, multipath** — **H** or folded in. The feed line is the
-  uncompensated path — cross-link to **Transferring Time**.
+- **Your feed line is probably wrong** — **H**. **New, promoted out of *Siting,
+  cabling, multipath* on the strength of L1**, where Bob makes a claim big enough
+  to carry a page on its own:
+
+  > L1: *I'd bet the largest source of bias in typical data center applications
+  > is incorrect compensation for antenna feed line length. Unless you've measured
+  > it with a TDR or have coax with length markings on the jacket, it's really hard
+  > to get that right.*
+
+  If that bet is right — and the arithmetic below says it is — then the ordering
+  of this whole topic is counter-intuitive and worth saying out loud: people
+  agonise over a receiver survey that is wrong by tens of centimetres while
+  a feed line quietly costs them **tens of nanoseconds**. The survey page argues
+  over a nanosecond. This one is two orders of magnitude bigger, and it is almost
+  never checked.
+
+  The questioner's reply added the second half, and it is the better half:
+
+  > L1 (questioner): *Almost all coax is marked, but nobody checks it. Coax types
+  > also differ in propagation velocity, not allowed for either.*
+
+  So there are **two independent errors that compound**, and the page should
+  separate them cleanly because the fixes differ:
+
+  1. **Wrong length.** The markings are usually right there on the jacket. The
+     failure is not that the information is unavailable, it is that nobody walks
+     the cable. That is a much better story than "measure your coax" — the data
+     was printed on the thing the whole time.
+  2. **Wrong velocity factor.** Worse, because it is silent. Nothing on the
+     install tells you the assumption was wrong, and a plausible default is
+     plausibly wrong.
+
+  Worked numbers to make the second one land — ⚠️ **check against real datasheets
+  before publishing**, but the algebra is just *length ÷ (VF × c)*:
+
+  | | VF 0.66 (solid PE, RG-58/213) | VF 0.85 (foam, LMR-400/RG-6) |
+  |---|---|---|
+  | Delay down a 30 m run | ≈ 152 ns | ≈ 118 ns |
+
+  **≈ 34 ns of error from one wrong assumption about a cable**, on a run length
+  a datacenter would consider unremarkable. For scale, that is roughly the entire
+  error budget the self-survey page spends nine pages of NIST worrying about,
+  arriving from a completely different direction. A length error is gentler but
+  not gentle: at VF 0.8, every metre you are wrong about is **≈ 4.2 ns**.
+
+  Ends on the same conclusion as the survey page, which is why they cross-link:
+  **measure it and configure it — do not accept a default and do not guess.**
+  Cross-link to **Transferring Time**, since the feed line is the canonical
+  uncompensated path in T1's diagram.
+
+- **Siting and multipath** — **H** or folded in. What is left of the original
+  entry once the feed line moved out.
 
 ### 4. Transferring Time
 
@@ -549,6 +649,20 @@ Things worth a page eventually, not now. Add freely.
 
 ## Done this round
 
+- **L1 (LinkedIn, 2026-08-01) mined into Antennas.** *Don't let the receiver
+  survey itself* gains the averaging-versus-bias opening, the 30 cm = 1 ns spine,
+  a two-line decision rule, and — the best of it — a **diagnostic the reader can
+  run with the equipment they already own**: restart the survey every 24 h for
+  14 days and see whether the answers converge or wander.
+- **New topic promoted: *Your feed line is probably wrong*.** Bob's bet that
+  feedline compensation is the largest bias in typical datacenter deployments,
+  plus the questioner's velocity-factor point, is too big to stay a clause inside
+  *Siting, cabling, multipath*. Arithmetic verified: 30 m of coax costs 152 ns at
+  VF 0.66 and 118 ns at VF 0.85, so **one wrong assumption about a cable is ≈34 ns**
+  — about two orders of magnitude past what the self-survey page argues over.
+- **Correction logged:** L1 calls the NIST subject "high-quality timing
+  receivers"; the paper says *low-cost*, and the unit is the ZED-F9T. Prose must
+  follow the paper.
 - **Goldilocks actuation interval** added under GPSDOs, from the hidden slide
   and the PePPAR-Fix review. Includes the observation-vs-actuation distinction,
   the two-plant table, and the open questions the review is candid about.

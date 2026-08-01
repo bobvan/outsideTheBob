@@ -309,7 +309,7 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
     {import.meta.env.PROD && (
       <script
         is:inline
-        type="module"
+        defer
         src="https://static.cloudflareinsights.com/beacon.min.js"
         data-cf-beacon='{"token": "df7b2f33142f4a86823619cf7b156095"}'
       ></script>

@@ -36,11 +36,16 @@
     How close the *average* of infinitely many repeated measurements sits to the
     reference value. It is inversely related to systematic error and entirely
     unrelated to random error — which is the formal way of saying that no amount
-    of averaging will ever fix a bias.
+    of averaging will ever fix a bias. In datacenter timing the reference value
+    is UTC, and that has a peculiarity worth sitting with: UTC is a
+    deferred-time scale, so the thing your measurement is being judged against
+    does not exist yet at the moment you take it.
   authority:
     label: "VIM 2.14, measurement trueness"
     url: "https://jcgm.bipm.org/vim/en/2.14.html"
   seeAlso:
+    - label: "UTC"
+      href: "#utc"
     - label: "Why averaging a GNSS position hits a floor"
       href: "/timekeeping/antennas/receiver-self-survey/"
   draft: true
@@ -141,4 +146,40 @@
       href: "#precision"
     - label: "Trueness"
       href: "#trueness"
+  draft: true
+
+- id: utc
+  term: UTC
+  aliases: ["Coordinated Universal Time"]
+  definition: >-
+    The world's civil timescale, computed by the BIPM from the clocks of about
+    eighty contributing institutes and published monthly in *Circular T*. It is
+    a **deferred-time** scale: nobody can tell you what UTC reads right now,
+    because this month's answer is settled next month. Everything that claims to
+    distribute UTC in real time is in fact distributing a realisation or a
+    prediction of it.
+  authority:
+    label: "BIPM — Circular T"
+    url: "https://www.bipm.org/en/time-ftp/circular-t"
+  seeAlso:
+    - label: "UTC(k)"
+      href: "#utc-k"
+    - label: "Traceability"
+      href: "#traceability"
+  draft: true
+
+- id: utc-k
+  term: UTC(k)
+  definition: >-
+    A national institute's own real-time realisation of UTC — the thing you can
+    actually steer to, since UTC itself is not available live. *Circular T*
+    publishes the difference [UTC − UTC(k)] every five days, so how far your
+    reference sat from the truth is knowable, but only in arrears. BIPM's weekly
+    *UTCr* narrows the wait without closing it.
+  authority:
+    label: "BIPM — Rapid UTC (UTCr)"
+    url: "https://www.bipm.org/en/time-ftp/utcr"
+  seeAlso:
+    - label: "UTC"
+      href: "#utc"
   draft: true

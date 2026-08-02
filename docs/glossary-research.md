@@ -110,6 +110,56 @@ Worth keeping the ringed target for the four-quadrant relabelling and using the
 blob for the reveal. They are doing different jobs: the grid names the axes, the
 blob says which axis you can actually observe.
 
+### Does UTC sit at the centre of the bullseye? Yes — but it is not painted yet
+
+Bob's framing: for trading, and probably for all datacenter timing, truth **is**
+UTC, or an analysis centre's prediction of it, and trueness is the distance to
+it. That grounds the abstraction perfectly for the audience, and it breaks the
+archery analogy in a way worth exploiting rather than hiding.
+
+📌 **Verified.** BIPM's own wording: *"TAI and UTC are **deferred-time** time
+scales that cannot be immediately available to real-time users."* Circular T is
+monthly and gives [UTC − UTC(k)] at five-day intervals for about eighty
+contributing institutes. UTCr, weekly since July 2013, is published explicitly
+as *a prediction of UTC* for about fifty labs.
+
+So the target has **three marks, not one**:
+
+| Mark | What it is | When you can know it |
+|---|---|---|
+| Your group's centre | what you actually achieved | now, from your own data |
+| **UTC(k)** | the lab realisation you steer to | now |
+| **UTC** | the answer | next month, in Circular T |
+
+And three distances, which is what makes it a diagram rather than a label:
+
+- **group → UTC(k)** — your systematic error against the reference you can
+  actually reach. Measurable in real time.
+- **UTC(k) → UTC** — your reference's own offset. Published monthly at five-day
+  granularity; unknowable at the instant, lookupable afterwards.
+- **group → UTC** — your trueness. Only ever known in arrears.
+
+This is the field-specific twist, and it is a strong 11th-page argument: **the
+standard accuracy/trueness/precision picture silently assumes the reference
+exists at the moment of measurement.** In timekeeping it does not. The centre is
+determined later, by committee, from the contributing labs' own clocks — so for
+national labs the bullseye is drawn partly *from where the arrows landed*, which
+has no archery equivalent at all.
+
+It also upgrades the earlier "you cannot see the bullseye" panel. That was an
+epistemic limitation; this is a **temporal** one, which is both truer and more
+interesting. And it gives traceability an obvious job: the documented chain is
+precisely what lets you locate, afterwards, a centre that did not exist when you
+fired.
+
+⚠️ **One wording caution for the prose.** Bob writes "trueness is the absolute
+value of the difference to UTC." Strictly the VIM says trueness *is not a
+quantity* and cannot be expressed numerically — the quantity is the systematic
+error, and trueness is the property of that error being small. So: *your offset
+from UTC is the systematic error; trueness is how little of it you have.* One
+clause, not a lecture, and worth getting right on a page that is otherwise
+correcting everyone else's vocabulary.
+
 ### Resolution: pixelate, do not re-space the rings
 
 📌 **Verified.** VIM 4.14 *resolution*: "smallest change in a quantity being

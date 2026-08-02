@@ -65,6 +65,7 @@ const glossary = defineCollection({
 	schema: z.object({
 		term: z.string(),
 		definition: z.string(),
+		aliases: z.array(z.string()).default([]),
 		// Stable external definition. Prefer sources with a per-term URL — the
 		// VIM gives one per clause — over a good article you would have to
 		// deep-link by anchor and hope.

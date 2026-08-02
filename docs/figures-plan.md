@@ -32,6 +32,7 @@ exactly one variable changed, adjacent in space so the eye does the comparing.
 | `where-is-utc` | The shots are identical; only the frame differs, and the frame is what you do not have. | same page |
 | `resolution-ladder` | Coarse resolution does not limit precision, it counterfeits it. | *Relating timing accuracy with measurement resolution* |
 | `agreement-vs-truth` | The ensemble that is worse against UTC is better at everything the application computes. | *"It matters more that my clocks agree…"* |
+| `averaging-arrow` | Averaging shrinks the group and never moves its centre. | *Contrasting timing accuracy and precision*; *Don't let the receiver survey itself* |
 
 `agreement-vs-truth` carries the statistics bridge Bob asked for: the same two
 ensembles as targets on top and as normal curves with μ and σ below, to the same
@@ -40,10 +41,6 @@ own notation without the target being dumbed down for them.
 
 ## Worth drawing next
 
-- **The averaging arrow.** Two panels: a loose group, then the same group
-  tightened, with the centre marked in both to show it has not moved. Currently
-  the strongest idea not yet drawn, because it converts the static grid into the
-  claim that actually matters.
 - **Deferred truth.** Three marks — your group, the UTC(k) you steer to, and UTC
   arriving later — with the third drawn as *not yet present*. Possibly two
   panels: at the moment of measurement, and after Circular T. This is the
@@ -58,6 +55,22 @@ own notation without the target being dumbed down for them.
 - **Compensated versus uncompensated path.** T1's diagram already exists as a
   slide; it wants redrawing to this house style and is the natural opener for
   *Transferring Time*.
+
+## Notes from drawing the averaging arrow
+
+Two decisions worth keeping.
+
+**The right-hand panel is not collapsed to a single dot**, tempting as the limit
+is. The resolution ladder already ends on a lone dot meaning something else
+entirely — scatter that cannot be *seen*, rather than scatter that has been
+*averaged away*. Two figures in one set must not use the same image for two
+different ideas.
+
+**The claim is made checkable rather than asserted.** Bullseye and group centre
+sit at identical coordinates in both panels, the centre is marked with a cross,
+and a dashed guide carries the position across the gap. The reader confirms "it
+has not moved" with their own eye; the caption only points at it. That is the
+difference between a diagram and an illustration.
 
 ## Rejected
 

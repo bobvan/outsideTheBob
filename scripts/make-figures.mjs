@@ -240,4 +240,71 @@ mkdirSync(OUT, { recursive: true });
 	writeFileSync(`${OUT}/agreement-vs-truth.svg`, svg(W, H, b));
 }
 
-console.error(`wrote 4 figures to ${OUT}/`);
+// ---------------------------------------------------------------------------
+// 5. The averaging arrow. The claim the static 2×2 cannot make: averaging
+//    shrinks the group and never moves its centre.
+//
+//    Both panels put the bullseye AND the group centre at identical
+//    coordinates, so "it has not moved" is something the reader verifies rather
+//    than something the caption asserts. The dashed guides exist for exactly
+//    that: they let the eye carry a position across the gap.
+//
+//    Deliberately NOT collapsed to a single dot in the right-hand panel, even
+//    though the limit is tempting — the resolution ladder already ends on a
+//    lone dot meaning something else entirely (scatter that cannot be seen,
+//    rather than scatter that has been averaged away), and two figures in the
+//    same set should not use one image for two different ideas.
+// ---------------------------------------------------------------------------
+{
+	const R = 76, W = 560, H = 300;
+	const A = { cx: 150, cy: 128 }, B = { cx: 410, cy: 128 };
+	const OFF = { x: 36, y: -24 }; // identical in both panels. That is the point.
+	let b = '';
+
+	const arrow = (x1, y1, x2, y2, col, wid = 1.6) => {
+		const a = Math.atan2(y2 - y1, x2 - x1), h = 7;
+		const p1 = `${x2},${y2}`;
+		const p2 = `${x2 - h * Math.cos(a - 0.4)},${y2 - h * Math.sin(a - 0.4)}`;
+		const p3 = `${x2 - h * Math.cos(a + 0.4)},${y2 - h * Math.sin(a + 0.4)}`;
+		return (
+			`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${wid}"/>` +
+			`<polygon points="${p1} ${p2} ${p3}" fill="${col}"/>`
+		);
+	};
+
+	for (const [p, sig, seed, label] of [
+		[A, 25, 61, 'each shot: a 1-hour survey'],
+		[B, 8, 67, 'each shot: a 24-hour survey'],
+	]) {
+		const gx = p.cx + OFF.x, gy = p.cy + OFF.y;
+		b += rings(p.cx, p.cy, [R, R * 0.66, R * 0.33]);
+		b += dots(shots(seed, gx, gy, sig, 22, { cx: p.cx, cy: p.cy, r: R * 0.97 }));
+		// The group's own centre, marked so the two panels can be compared. It gets
+		// a white halo because it has to stay visible exactly where the shots are
+		// densest — in the right-hand panel it would otherwise be swallowed by the
+		// very cluster whose position it is there to prove.
+		b += `<circle cx="${gx}" cy="${gy}" r="9" fill="#fff"/>`;
+		b += `<line x1="${gx - 7}" y1="${gy - 7}" x2="${gx + 7}" y2="${gy + 7}" stroke="${INK}" stroke-width="2"/>`;
+		b += `<line x1="${gx - 7}" y1="${gy + 7}" x2="${gx + 7}" y2="${gy - 7}" stroke="${INK}" stroke-width="2"/>`;
+		b += arrow(p.cx, p.cy, gx - 9, gy + 6, INK, 1.4);
+		b += text(p.cx, p.cy + R + 26, label, { size: 12, weight: 600 });
+	}
+
+	// Guides carrying the group centre across the gap, so the claim is checkable.
+	const gyA = A.cy + OFF.y;
+	b += `<line x1="${A.cx + OFF.x}" y1="${gyA}" x2="${B.cx + OFF.x}" y2="${gyA}" stroke="${MUTED}" stroke-width="0.8" stroke-dasharray="3 4"/>`;
+	b += text((A.cx + B.cx) / 2 + OFF.x, gyA - 10, 'same centre', { size: 11, fill: MUTED, style: 'italic' });
+
+	b += arrow(A.cx + R + 14, 40, B.cx - R - 14, 40, MUTED, 1.2);
+	b += text((A.cx + B.cx) / 2, 32, 'longer averaging', { size: 12, fill: MUTED });
+
+	b += text(30, H - 26, 'The scatter collapses. The bias does not move — the arrow from the', {
+		size: 12, anchor: 'start', fill: MUTED, style: 'italic',
+	});
+	b += text(30, H - 10, 'bullseye to the group is the same length in both panels.', {
+		size: 12, anchor: 'start', fill: MUTED, style: 'italic',
+	});
+	writeFileSync(`${OUT}/averaging-arrow.svg`, svg(W, H, b));
+}
+
+console.error(`wrote 5 figures to ${OUT}/`);

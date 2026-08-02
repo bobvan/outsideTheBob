@@ -1,0 +1,92 @@
+---
+title: "Questions to ask when designing a clock"
+description: "The decisions that determine which of your errors can be corrected later, and which are permanent the moment you make them."
+section: "questions"
+order: 30
+updatedDate: 2026-08-02
+coverage: "H"
+tags: ["design", "timing", "GNSS", "oscillators"]
+draft: true
+---
+
+Building your own is where the vocabulary stops being vocabulary. Every term in
+the [glossary](/timekeeping/glossary/) turns into a decision, and the decisions
+divide sharply into two kinds: errors you can correct later, and errors you are
+choosing to live with permanently.
+
+That division is the through-line of this page.
+
+## 1. Which of your errors are compensable?
+
+Some paths have their delay measured and subtracted — that is what NTP and PTP
+do across a network. Others do not: the pulse-per-second line and the antenna
+feed line carry delay that nothing corrects for but you. Knowing which region a
+wire is in decides whether a mistake there is a nuisance or a permanent offset.
+
+## 2. What are you steering to, and what is *it* steering to?
+
+You cannot steer to [UTC](/timekeeping/glossary/#utc), because it does not exist
+yet. You steer to a realisation — GNSS, a lab's
+[UTC(k)](/timekeeping/glossary/#utc-k), a house standard — and inherit its
+error. Decide deliberately which one, and know what its published offset history
+looks like.
+
+## 3. What is your oscillator's stability at the interval your loop cares about?
+
+Not its headline figure — its [stability](/timekeeping/glossary/#stability) at
+the averaging interval where your control loop actually lives. Below that
+interval the oscillator is carrying you alone; above it the reference is. The
+crossover is a design parameter, not a datasheet number.
+
+## 4. How often do you observe, and how often do you actuate?
+
+These are separate decisions and conflating them is a common way to build a
+worse clock than the parts deserve. Observing more often buys information;
+actuating more often injects your own noise into the output. The interval that
+is right for one is rarely right for the other.
+
+## 5. What resolution does your timestamping need?
+
+Your [resolution](/timekeeping/glossary/#resolution) has to be finer than the
+precision you are trying to achieve, or you cannot see your own performance —
+and worse, you will appear to have achieved it. Decide the number you need
+before choosing the counter, not after.
+
+## 6. Where is your uncompensated path, physically?
+
+Trace it: antenna, feed line, connectors, PPS cable, and everything between. Its
+length is a fixed offset in your output, and the arithmetic is unforgiving —
+[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/antennas/feed-line/).
+This is the error most likely to survive every other thing you get right.
+
+## 7. How will you know your position, and how will you know it is right?
+
+If you are disciplining from GNSS, your antenna's surveyed position is an input
+to the time solution, and
+[a receiver's own survey is biased](/timekeeping/antennas/receiver-self-survey/).
+Decide now whether you will accept that bias, post-process a better answer, or
+have the position surveyed — because it is not something averaging will fix
+after the fact.
+
+## 8. What will you do when the reference disappears?
+
+[Holdover](/timekeeping/glossary/#holdover) is not a feature you add later; it
+is the oscillator you already chose, plus whatever you learned about it while
+the reference was present. Decide what error threshold matters and for how long,
+and check whether your oscillator can honour it.
+
+## 9. How will somebody benchmark this?
+
+Design for measurability: bring out a clean PPS, document the delays you have
+compensated and the ones you have not, and say what reference you steered to. A
+clock that cannot be
+[independently measured](/timekeeping/questions/benchmarking-clocks/) is a clock
+nobody can trust, including you.
+
+[[? This page leans hardest on your unpublished expertise, so it is the one most likely to be subtly wrong.
+
+1) Question 4 (observe vs actuate) is drawn from the "Goldilocks actuation interval" item in the topic doc, which came from the PePPAR-Fix review. I have stated it generically — does the general form hold, or is it specific to that plant?
+
+2) Have I missed a whole category? Temperature control and its compensation is the obvious candidate; I left it out because I have never heard you talk about it, which is weak evidence either way.
+
+3) Should this page exist at all, or is "designing a clock" too far from the datacenter audience the topic is aimed at? ?]]

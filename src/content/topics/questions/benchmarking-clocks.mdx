@@ -1,0 +1,92 @@
+---
+title: "Questions to ask when benchmarking clocks"
+description: "You have the hardware and you want to compare it. Most of the traps are in the comparison, not the clocks."
+section: "questions"
+order: 20
+updatedDate: 2026-08-02
+coverage: "H"
+tags: ["benchmarking", "timing", "metrology"]
+draft: true
+---
+
+You have two or more clocks and you want to know which is better. The awkward
+part is that a comparison is itself a measurement, and it can be wrong in all
+the ways the clocks can be wrong — quietly, and in your favour.
+
+## 1. Is your reference better than the things you are measuring?
+
+You cannot measure a clock with a worse clock. Whatever you compare against
+contributes its own error to every number you produce, so the first question is
+whether your reference is enough better that you can neglect it — and by how
+much. If it is not, you are not benchmarking the clocks, you are benchmarking
+the reference.
+
+## 2. Are you measuring trueness or precision?
+
+They want different setups and answer different questions.
+[Precision](/timekeeping/glossary/#precision) you can measure against any stable
+reference, even a wrong one. [Trueness](/timekeeping/glossary/#trueness) needs a
+reference you believe, which in this field means a
+[traceable](/timekeeping/glossary/#traceability) one — and, because
+[UTC arrives later](/timekeeping/glossary/#utc), possibly a wait.
+
+## 3. Is your counter's resolution finer than the differences you care about?
+
+If it is not, every clock will look identical and excellent. This is the
+[counterfeit precision](/timekeeping/glossary/#resolution) trap and it is
+especially easy to walk into here, because the instrument reports a confident
+number either way.
+
+## 4. Over what averaging interval — and are you comparing the same one?
+
+[Stability](/timekeeping/glossary/#stability) is a curve. Two clocks can trade
+places depending on where you read it: the one that wins at 1 s may lose at
+10,000 s. Comparing single numbers taken at different intervals is not a
+comparison at all.
+
+## 5. Common reference, or pairwise?
+
+Measuring everything against one reference is simple and puts the reference's
+error into every result equally. Measuring pairwise lets you separate the units
+from the reference — the three-cornered hat — but needs three and assumes their
+errors are uncorrelated, which is exactly what a shared environment breaks.
+
+## 6. Have you separated the device under test from the measuring system?
+
+Cables, connectors, the counter's own trigger noise and any distribution
+amplifier are all in the loop. Measure the loop with the device replaced by a
+short, and subtract. Whatever you find is the floor beneath which none of your
+results mean anything.
+
+## 7. Are cable delays calibrated out?
+
+The same arithmetic that makes a
+[feed line matter](/timekeeping/antennas/feed-line/) applies to every cable on
+the bench. A metre of unaccounted coax is several nanoseconds of systematic
+error assigned to whichever clock happened to be on the long side.
+
+## 8. Is anything else different between the units?
+
+Temperature, supply, load, position in the rack, time of day. A systematic
+difference in conditions produces a systematic difference in results, and it
+will look exactly like one clock being better. Swap the units between positions
+and re-run — if the ranking follows the position rather than the unit, you have
+learned something more useful than the ranking.
+
+## 9. How long did you run?
+
+Long enough to tell a bias from a drift, which is a question about the shortest
+timescale you care about and the longest you can afford. Short runs
+systematically flatter clocks whose errors are slow.
+
+---
+
+If the answers start raising questions about *why* a clock behaves the way it
+does rather than *whether* it does, you have crossed into
+[designing one](/timekeeping/questions/designing-a-clock/).
+
+[[? Section 5 (three-cornered hat) and section 6 are the two I am least sure of at your level of practice.
+
+On 5: is the three-cornered hat something you actually use in timelab, or is it a textbook technique you would not bother with at this scale? I would rather cut it than have it read as borrowed.
+
+On 6: "measure the loop with the device replaced by a short" is the general instrument-metrology move. Is there a standard way this is done for time-interval counters specifically that I should name instead? ?]]

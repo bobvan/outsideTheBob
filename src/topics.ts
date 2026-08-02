@@ -16,6 +16,11 @@ const includeDrafts = import.meta.env.DEV;
  * the URL: /timekeeping/<section>/<page>/.
  */
 export const SECTIONS = [
+	// PROVISIONAL placement, pending Bob's hierarchy work. These three pages are
+	// the practical front door: they ask the reader's question rather than
+	// teaching a vocabulary, and pick the vocabulary up in passing. Moving the
+	// section is one line here plus a frontmatter edit per page.
+	{ key: 'questions', title: 'Asking the Right Questions' },
 	{ key: 'datacenters', title: 'Timekeeping in Datacenters' },
 	{ key: 'acquiring', title: 'Acquiring Time' },
 	{ key: 'antennas', title: 'Antennas' },

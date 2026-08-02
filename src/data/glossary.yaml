@@ -34,12 +34,12 @@
   term: Trueness
   definition: >-
     How close the *average* of infinitely many repeated measurements sits to the
-    reference value. It is inversely related to systematic error and entirely
-    unrelated to random error — which is the formal way of saying that no amount
-    of averaging will ever fix a bias. In datacenter timing the reference value
-    is UTC, and that has a peculiarity worth sitting with: UTC is a
-    deferred-time scale, so the thing your measurement is being judged against
-    does not exist yet at the moment you take it.
+    reference value — in datacenter timing, to UTC. It is inversely related to
+    systematic error and unrelated to random error, which is the formal way of
+    saying that no amount of averaging will ever fix a bias. Mind the grammar:
+    your offset from UTC is the *systematic error*, a quantity you can state and
+    defend; trueness is the property of that offset being small, and is not
+    itself a number.
   authority:
     label: "VIM 2.14, measurement trueness"
     url: "https://jcgm.bipm.org/vim/en/2.14.html"

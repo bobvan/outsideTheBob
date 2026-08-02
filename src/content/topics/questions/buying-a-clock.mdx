@@ -1,0 +1,92 @@
+---
+title: "Questions to ask a clock vendor"
+description: "Nine questions whose answers tell you whether a vendor understands their own product — no test equipment required."
+section: "questions"
+order: 10
+updatedDate: 2026-08-02
+coverage: "H"
+tags: ["datacenter", "timing", "buying"]
+draft: true
+---
+
+You are buying a clock for a datacenter. You are not going to build a lab and
+measure it yourself, and you should not have to. What you need is a short list
+of questions whose *answers* tell you whether the person selling it understands
+what they are selling.
+
+These are ordered roughly by how much they reveal per second spent asking.
+
+## 1. "Accurate to 15 ns" — accurate in which sense?
+
+[Accuracy](/timekeeping/glossary/#accuracy) is two things combined:
+[trueness](/timekeeping/glossary/#trueness) and
+[precision](/timekeeping/glossary/#precision). A box that is reliably 15 ns
+*late* and a box that scatters ±15 ns *around* the right answer both get
+described as "accurate to 15 ns", and they behave completely differently in
+your estate. Ask which.
+
+## 2. Against what reference?
+
+"Accurate to UTC" needs a follow-up, because
+[UTC is not available in real time](/timekeeping/glossary/#utc). In practice
+the answer is a GNSS-derived estimate, or a lab's
+[UTC(k)](/timekeeping/glossary/#utc-k), or the vendor's own house standard.
+Those are not equivalent claims, and a vendor who does not distinguish them has
+not thought about it.
+
+## 3. Is that a specification, a typical, or a measured distribution?
+
+A spec is a promise about the worst unit. A typical is a story about a good one.
+A distribution is evidence. Ask which you are being shown, and how many units it
+came from.
+
+## 4. Over what averaging interval?
+
+[Stability](/timekeeping/glossary/#stability) is a curve, not a number — it
+depends on how long you watch. A single figure with no interval attached is
+either shorthand for a curve the vendor has, or a sign that they do not have
+one.
+
+## 5. What is the holdover figure, and against what threshold?
+
+A [holdover](/timekeeping/glossary/#holdover) number is meaningless without two
+companions: the error threshold it is measured to, and the oscillator it
+assumes. "Twenty-four hours of holdover" answers nothing until you know whether
+that means 1 µs or 1 ms, and whether it is the OCXO or the rubidium option.
+
+## 6. What is the resolution of the number you are quoting me?
+
+[Resolution](/timekeeping/glossary/#resolution) bounds what can be *seen*, not
+what is *true*. Worse, resolution coarser than the real scatter conceals the
+scatter — an instrument that reports the same value every time may be perfectly
+repeatable or may simply be unable to see its own noise. Ask, and ask how they
+know which it is.
+
+## 7. Does that figure include the antenna feed line?
+
+Usually it does not: the number was measured at a connector, and your cable is
+in the uncompensated path. Ask whether the vendor compensates feed-line delay,
+whether they expect you to configure it, and what happens if you get it wrong.
+That last answer is often the most revealing thing in the conversation.
+
+## 8. What is the traceability chain?
+
+[Traceability](/timekeeping/glossary/#traceability) is a documented, unbroken
+chain of calibrations with uncertainty accounted at each step — not a logo. Ask
+who calibrated the reference they measured against, and when. If the answer is
+"we use GPS", that is a statement about a signal, not a chain.
+
+## 9. How would I verify any of this myself?
+
+The best question, kept for last, because the answer is almost never technical.
+A vendor confident in their numbers will tell you what to measure and what you
+should expect to see. One who is not will explain why you cannot.
+
+If you want to take them up on it, that is a
+[different set of questions](/timekeeping/questions/benchmarking-clocks/).
+
+[[? Two things I am guessing at and you are not.
+
+1) Is there a tenth question about **regulatory traceability** specifically — MiFID II or similar — that a trading buyer would always ask and I have missed? The topic doc leaves "which regulations to name" open, so I have deliberately not named any.
+
+2) Question 3 (spec vs typical vs distribution) is a general hardware-buying instinct rather than something I have seen you say about clocks. Does it hold up in this market, or do clock vendors genuinely publish distributions? ?]]

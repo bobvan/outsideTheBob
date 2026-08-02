@@ -3,25 +3,35 @@ import { render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
 import TagList from '../../../components/TagList.astro';
-import { publishedTopics, sectionTitle, topicSlug } from '../../../topics';
+import { sectionsWithPages, sectionTitle, topicPath } from '../../../topics';
 
+// Neighbours are resolved here rather than in the page body because this is the
+// one place the whole ordered set is already in hand. Working within the
+// section, not across the garden, so the last page of Antennas does not dump
+// you into Benchmarking.
 export async function getStaticPaths() {
-	const pages = await publishedTopics();
-	return pages.map((page) => ({
-		params: { section: page.data.section, slug: topicSlug(page) },
-		props: { page },
-	}));
+	const sections = await sectionsWithPages();
+	return sections.flatMap((section) =>
+		section.pages.map((page, i) => ({
+			params: { section: section.key, slug: page.data.slug ?? page.id.split('/').pop() },
+			props: {
+				page,
+				prev: section.pages[i - 1] ?? null,
+				next: section.pages[i + 1] ?? null,
+			},
+		})),
+	);
 }
 
-const { page } = Astro.props;
+const { page, prev, next } = Astro.props;
 const { Content } = await render(page);
+const section = sectionTitle(page.data.section);
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>
 	<article>
 		<p class="post-meta breadcrumb">
-			<a href="/timekeeping/">Topics In Timekeeping</a> ·
-			{sectionTitle(page.data.section)}
+			<a href="/timekeeping/">Topics In Timekeeping</a> · {section}
 		</p>
 
 		<h1>{page.data.title}</h1>
@@ -35,9 +45,64 @@ const { Content } = await render(page);
 
 		<Content />
 	</article>
+
+	{/* Headed "More in <section>" rather than "Next / Previous" on purpose. The
+	    pages have an order, but the topic's own rule is that any page is a valid
+	    place to start — so these are offered as neighbours, not as the next
+	    chapter you are obliged to read. */}
+	<nav class="neighbours" aria-label={`More in ${section}`}>
+		<p class="heading">More in {section}</p>
+		<div class="links">
+			<span class="back">
+				{prev ? (
+					<a href={topicPath(prev)} rel="prev">
+						<span class="arrow" aria-hidden="true">←</span> {prev.data.title}
+					</a>
+				) : (
+					<a href="/timekeeping/">
+						<span class="arrow" aria-hidden="true">←</span> All topics
+					</a>
+				)}
+			</span>
+			<span class="fwd">
+				{next && (
+					<a href={topicPath(next)} rel="next">
+						{next.data.title} <span class="arrow" aria-hidden="true">→</span>
+					</a>
+				)}
+			</span>
+		</div>
+	</nav>
 </BaseLayout>
 
 <style>
 	.breadcrumb { margin-bottom: 0.75rem; }
 	article > :global(h1) { margin-bottom: 0.25rem; }
+
+	.neighbours {
+		margin-top: 2rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--border);
+	}
+	.neighbours .heading {
+		margin: 0 0 0.6rem;
+		font-size: 0.85rem;
+		color: var(--muted);
+	}
+	/* Two columns so the forward link sits right even when there is no backward
+	   one, which keeps the arrows where the eye expects them page to page. */
+	.links {
+		display: flex;
+		gap: 1.5rem;
+		justify-content: space-between;
+	}
+	.fwd { text-align: right; }
+	.links a { text-decoration: none; }
+	.links a:hover { text-decoration: underline; }
+	.arrow { color: var(--muted); }
+
+	@media (max-width: 34rem) {
+		.links { flex-direction: column; gap: 0.6rem; }
+		.fwd { text-align: left; }
+	}
 </style>

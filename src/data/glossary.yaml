@@ -122,3 +122,23 @@
     zero point, and a count of ticks since. UTC and TAI are timescales; so,
     absurdly but perfectly validly, is *years since Victoria's reign*.
   draft: true
+
+- id: resolution
+  term: Resolution
+  definition: >-
+    The smallest change in the measured quantity that produces a perceptible
+    change in what the instrument reports. It bounds what you can *see*, not
+    what is *true* — a reading with twelve digits can be twelve digits of
+    confidently reported nonsense. And resolution coarser than your actual
+    scatter conceals that scatter: a counter ticking every 10 ns, watching a
+    source that jitters by 1 ns, returns the same number every time and looks
+    flawless.
+  authority:
+    label: "VIM 4.14, resolution"
+    url: "https://jcgm.bipm.org/vim/en/4.14.html"
+  seeAlso:
+    - label: "Precision"
+      href: "#precision"
+    - label: "Trueness"
+      href: "#trueness"
+  draft: true

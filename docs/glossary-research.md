@@ -88,6 +88,57 @@ It also earns the third term. **Traceability is how you find the bullseye** — 
 unbroken chain to a reference is the only thing that says where the centre was.
 Three glossary entries carried by one picture.
 
+### The blob — Bob's refinement, and how to make it bite
+
+Bob's instinct: drop the rings entirely and draw an amorphous blob, so precision
+is visible and trueness is not. That is right, and there is a version of it that
+does more than illustrate — it argues.
+
+**Draw the same blob twice, side by side. Then reveal a different bullseye in
+each.** Identical observations; two incompatible truths. Nothing about the blob
+changed, because nothing about the blob *could* have told you. That converts
+"trueness is unobservable" from a claim into something the reader works out for
+themselves in about two seconds.
+
+The blob has one property the ringed target lacks: **there is no coordinate
+frame at all.** A target with rings but no visible centre still implies a centre
+exists somewhere on the page. A blob on blank paper does not even offer that,
+which is the honest depiction of the epistemics — you have a spread and no
+origin.
+
+Worth keeping the ringed target for the four-quadrant relabelling and using the
+blob for the reveal. They are doing different jobs: the grid names the axes, the
+blob says which axis you can actually observe.
+
+### Resolution: pixelate, do not re-space the rings
+
+📌 **Verified.** VIM 4.14 *resolution*: "smallest change in a quantity being
+measured that causes a perceptible change in the corresponding indication."
+Neighbours are 4.15 *resolution of a displaying device* and 4.16 *discrimination
+threshold*, both with their own stable URLs.
+
+Bob offered two visual options — ring spacing, or pixelation. **Pixelation is the
+better one**, because resolution quantises the *report*, not the shot. Ring
+spacing suggests the arrow landed on a ring; a grid says the arrow landed
+wherever it landed and you are only told which cell.
+
+So: overlay a grid on the shots. Every shot in a cell reports as that cell.
+
+And then the demonstration that makes it a page rather than a definition —
+**make the grid coarser than the group.** All the shots fall in one cell, the
+blob collapses to a single point, and the instrument now reports the same number
+every time. It looks like perfect precision. It is the absence of information.
+
+That is the trap worth naming, and it lands squarely on the topic doc's existing
+item *"quantization with digital clocks at reasonable speeds"*: a counter ticking
+every 10 ns, watching a source that jitters by 1 ns, is flawlessly repeatable and
+tells you nothing. Coarse resolution does not merely limit precision — it
+*counterfeits* it.
+
+Which also gives the trio its ordering. Resolution bounds what you can see;
+precision is what you see once resolution stops hiding it; trueness is what no
+amount of seeing will reveal.
+
 ### Concrete examples, best first for this audience
 
 1. **A watch that keeps perfect time but is set three minutes fast.** Stability
@@ -120,6 +171,7 @@ can deep-link to exactly the definition rather than at a PDF and a page number.
 | Stability | ⚠️ NIST SP 1065 (Riley, 2008) | **Link out, plus a page eventually.** See below. |
 | Holdover | — none found | **Ours by default.** No canonical definition exists. |
 | Timescale | — | **Ours.** Already an H page under *Timekeeping in Datacenters*. |
+| Resolution | 📌 VIM 4.14 | **Link out**, but the *counterfeit-precision* trap is ours — see below. |
 
 ### Why traceability is the strongest own-page candidate
 

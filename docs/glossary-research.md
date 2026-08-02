@@ -44,6 +44,66 @@ recurs across the whole garden.
 "bias" and mention trueness once in the glossary? Adopting it is more precise and
 slightly more demanding of the reader.
 
+## Visualising it: the archery target is already right, and mislabelled
+
+Bob asked how to extend the usual archery-target picture to cover trueness. The
+answer is that it does not need extending, it needs relabelling — which is a
+better page than an extension would have been.
+
+The classic 2×2 varies exactly two things:
+
+- **how tight the group is** — precision, i.e. random error;
+- **where the group's centre sits relative to the bullseye** — *trueness*,
+  i.e. systematic error.
+
+Those are the axes. Accuracy is not a third dimension; in the VIM's scheme it is
+the **verdict** when both are good — the top-left cell. So the diagram everyone
+has seen is a trueness × precision grid with one axis misnamed, and saying so is
+the whole contribution. Rule 4 is satisfied not by drawing a new picture but by
+correcting the caption on the most-drawn picture in metrology.
+
+### What does need adding: motion
+
+Four static quadrants cannot express the argument. One arrow can:
+
+> **Averaging shrinks the group. It never moves the group's centre.**
+
+An arrow that travels only along the precision axis, never sideways. That is the
+GNSS survey story exactly — 24 h runs converge tidily and converge to the wrong
+answer — and it is what the static grid has no way to say.
+
+### The panel that makes it honest
+
+The analogy quietly lies, and naming the lie is the strongest part of the page:
+**on a real target you can see the bullseye; in measurement you cannot.** You see
+your arrows and nothing else. From inside the picture a tight group offset by a
+metre and a tight group dead centre are indistinguishable.
+
+So a fourth panel — the same arrows, target removed — is the punchline. It is why
+NIST could measure their bias and not explain it, and why the restart-the-survey
+-fourteen-times diagnostic works at all: it is a way of interrogating your own
+group when you cannot see the board.
+
+It also earns the third term. **Traceability is how you find the bullseye** — an
+unbroken chain to a reference is the only thing that says where the centre was.
+Three glossary entries carried by one picture.
+
+### Concrete examples, best first for this audience
+
+1. **A watch that keeps perfect time but is set three minutes fast.** Stability
+   flawless, trueness three minutes out. Comparing it with itself forever never
+   reveals it.
+2. **A bathroom scale reading 2 kg heavy.** Ten weighings, one number, ten times.
+   More weighings never find the 2 kg.
+3. **The feed line.** Every timestamp late by the same amount; a million
+   timestamps will not show it, only a TDR or a marking on the jacket will.
+
+Lead with the watch, because it lands a bonus: **time and frequency already makes
+this distinction under other names.** Stability versus accuracy *is* precision
+versus trueness, in the field's own vocabulary. So the garden is not importing a
+foreign idea — it is pointing out that two communities named the same distinction
+differently, and that the metrology pair generalises.
+
 ## Verdicts
 
 The VIM is close to an ideal link-out target: free, authoritative, and with a

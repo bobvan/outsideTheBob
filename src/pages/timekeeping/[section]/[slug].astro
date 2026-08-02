@@ -5,27 +5,37 @@ import FormattedDate from '../../../components/FormattedDate.astro';
 import TagList from '../../../components/TagList.astro';
 import { sectionsWithPages, sectionTitle, topicPath } from '../../../topics';
 
-// Neighbours are resolved here rather than in the page body because this is the
-// one place the whole ordered set is already in hand. Working within the
-// section, not across the garden, so the last page of Antennas does not dump
-// you into Benchmarking.
+// Neighbours are resolved here because this is the one place the whole ordered
+// set is in hand.
+//
+// The list is flattened across sections rather than kept per-section, so the
+// last page of a section leads into the first page of the next one instead of
+// dead-ending. Crossing a boundary is called out on the link itself — the
+// reader should be able to see they are about to leave Antennas before they
+// click, not after.
 export async function getStaticPaths() {
 	const sections = await sectionsWithPages();
-	return sections.flatMap((section) =>
-		section.pages.map((page, i) => ({
-			params: { section: section.key, slug: page.data.slug ?? page.id.split('/').pop() },
-			props: {
-				page,
-				prev: section.pages[i - 1] ?? null,
-				next: section.pages[i + 1] ?? null,
-			},
-		})),
-	);
+	const flat = sections.flatMap((s) => s.pages.map((page) => ({ page, section: s.key })));
+
+	return flat.map((entry, i) => ({
+		params: {
+			section: entry.section,
+			slug: entry.page.data.slug ?? entry.page.id.split('/').pop(),
+		},
+		props: { page: entry.page, prev: flat[i - 1] ?? null, next: flat[i + 1] ?? null },
+	}));
 }
 
 const { page, prev, next } = Astro.props;
 const { Content } = await render(page);
 const section = sectionTitle(page.data.section);
+
+// A neighbour in another section gets a parenthetical; one in this section does
+// not need it, and saying "(in Antennas)" on every link would be noise.
+const away = (n: typeof prev) =>
+	n && n.section !== page.data.section ? sectionTitle(n.section) : null;
+const prevAway = away(prev);
+const nextAway = away(next);
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>
@@ -46,30 +56,37 @@ const section = sectionTitle(page.data.section);
 		<Content />
 	</article>
 
-	{/* Headed "More in <section>" rather than "Next / Previous" on purpose. The
-	    pages have an order, but the topic's own rule is that any page is a valid
-	    place to start — so these are offered as neighbours, not as the next
+	{/* Headed for where the reader currently is. The pages have an order and
+	    these links honour it, but the topic's rule is that any page is a valid
+	    place to start — so they are offered as neighbours, not as the next
 	    chapter you are obliged to read. */}
 	<nav class="neighbours" aria-label={`More in ${section}`}>
 		<p class="heading">More in {section}</p>
 		<div class="links">
 			<span class="back">
-				{prev ? (
-					<a href={topicPath(prev)} rel="prev">
-						<span class="arrow" aria-hidden="true">←</span> {prev.data.title}
-					</a>
-				) : (
-					<a href="/timekeeping/">
-						<span class="arrow" aria-hidden="true">←</span> All topics
-					</a>
-				)}
+				{
+					prev ? (
+						<a href={topicPath(prev.page)} rel="prev">
+							<span class="arrow" aria-hidden="true">←</span> {prev.page.data.title}
+							{prevAway && <span class="away">(in {prevAway})</span>}
+						</a>
+					) : (
+						<a href="/timekeeping/">
+							<span class="arrow" aria-hidden="true">←</span> All topics
+						</a>
+					)
+				}
 			</span>
 			<span class="fwd">
-				{next && (
-					<a href={topicPath(next)} rel="next">
-						{next.data.title} <span class="arrow" aria-hidden="true">→</span>
-					</a>
-				)}
+				{
+					next && (
+						<a href={topicPath(next.page)} rel="next">
+							{next.page.data.title}
+							{nextAway && <span class="away">(in {nextAway})</span>}
+							<span class="arrow" aria-hidden="true">→</span>
+						</a>
+					)
+				}
 			</span>
 		</div>
 	</nav>
@@ -89,20 +106,40 @@ const section = sectionTitle(page.data.section);
 		font-size: 0.85rem;
 		color: var(--muted);
 	}
-	/* Two columns so the forward link sits right even when there is no backward
-	   one, which keeps the arrows where the eye expects them page to page. */
+
+	/* Each side claims half and is allowed to wrap onto its own line, so two long
+	   titles never end up touching. flex-basis rather than plain space-between:
+	   space-between alone keeps them on one line and lets them meet in the middle
+	   once the titles are long enough, which is exactly the case that matters
+	   here — real page titles are sentences. The row gap is what separates them
+	   once they do wrap. */
 	.links {
 		display: flex;
-		gap: 1.5rem;
+		flex-wrap: wrap;
+		gap: 0.9rem 2rem;
 		justify-content: space-between;
 	}
+	.back,
+	.fwd {
+		flex: 1 1 15rem;
+		min-width: 0;
+	}
 	.fwd { text-align: right; }
+
 	.links a { text-decoration: none; }
 	.links a:hover { text-decoration: underline; }
 	.arrow { color: var(--muted); }
+	/* The section change reads as an aside, not as part of the title. */
+	.away {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--muted);
+	}
 
+	/* Stacked, both sides read better left-aligned — a lone right-aligned line
+	   under a left-aligned one looks like a mistake rather than a column. */
 	@media (max-width: 34rem) {
-		.links { flex-direction: column; gap: 0.6rem; }
+		.links { flex-direction: column; gap: 0.7rem; }
 		.fwd { text-align: left; }
 	}
 </style>

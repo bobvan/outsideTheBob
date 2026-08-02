@@ -1,5 +1,5 @@
 import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 
 const blog = defineCollection({
 	// Load Markdown and MDX files in the `src/content/blog/` directory.
@@ -52,4 +52,27 @@ const topics = defineCollection({
 		}),
 });
 
-export const collections = { blog, topics };
+// The glossary is one YAML file rather than a file per term, because entries
+// are two or three sentences and a directory of eight-line files would be all
+// ceremony. It is a data collection, not content: there is no body to render,
+// so nothing here goes through Markdown.
+//
+// An entry earns its place by pointing somewhere — `authority` out to a
+// canonical definition, `seeAlso` in to one of our own pages. One with neither
+// is a dead end, and the page it sits on becomes the 1001st glossary on the web.
+const glossary = defineCollection({
+	loader: file('src/data/glossary.yaml'),
+	schema: z.object({
+		term: z.string(),
+		definition: z.string(),
+		// Stable external definition. Prefer sources with a per-term URL — the
+		// VIM gives one per clause — over a good article you would have to
+		// deep-link by anchor and hope.
+		authority: z.object({ label: z.string(), url: z.string().url() }).optional(),
+		// Internal links. A bare "#anchor" points within the glossary itself.
+		seeAlso: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
+		draft: z.boolean().default(true),
+	}),
+});
+
+export const collections = { blog, topics, glossary };

@@ -1,0 +1,124 @@
+# Topics In Timekeeping — glossary.
+#
+# House rules for an entry:
+#   - Two or three sentences. If it needs more, it needs a page, and this entry
+#     should link to that page instead of growing.
+#   - `authority` is the canonical external definition. Prefer a source with a
+#     stable per-term URL (the VIM has one per clause) over a good blog post.
+#   - `seeAlso` points into our own pages. An entry with neither an authority
+#     nor a seeAlso is a dead end and has not earned its place.
+#   - `draft: true` until reviewed, same as everywhere else on this site.
+#
+# Which terms deserve a page of our own rather than a link out is tracked
+# separately in docs/glossary-research.md.
+
+- id: accuracy
+  term: Accuracy
+  definition: >-
+    How close a measured value is to the true value. In the metrologist's
+    vocabulary this is not one axis but two combined — **trueness** (freedom
+    from systematic error) and **precision** (freedom from random error) — which
+    is why "accurate to 15 ns" is ambiguous until you say which of the two you
+    are claiming.
+  authority:
+    label: "VIM 2.13, measurement accuracy"
+    url: "https://jcgm.bipm.org/vim/en/2.13.html"
+  seeAlso:
+    - label: "Trueness"
+      href: "#trueness"
+    - label: "Precision"
+      href: "#precision"
+  draft: true
+
+- id: trueness
+  term: Trueness
+  definition: >-
+    How close the *average* of infinitely many repeated measurements sits to the
+    reference value. It is inversely related to systematic error and entirely
+    unrelated to random error — which is the formal way of saying that no amount
+    of averaging will ever fix a bias.
+  authority:
+    label: "VIM 2.14, measurement trueness"
+    url: "https://jcgm.bipm.org/vim/en/2.14.html"
+  seeAlso:
+    - label: "Why averaging a GNSS position hits a floor"
+      href: "/timekeeping/antennas/receiver-self-survey/"
+  draft: true
+
+- id: precision
+  term: Precision
+  definition: >-
+    How closely repeated measurements agree with each other, whether or not they
+    agree with the truth. Averaging improves precision, and that is the whole of
+    what averaging does — a tight cluster in the wrong place is precise and
+    untrue.
+  authority:
+    label: "VIM 2.15, measurement precision"
+    url: "https://jcgm.bipm.org/vim/en/2.15.html"
+  seeAlso:
+    - label: "Trueness"
+      href: "#trueness"
+  draft: true
+
+- id: repeatability
+  term: Repeatability
+  definition: >-
+    Precision measured under conditions held as constant as you can manage: the
+    same procedure, operator, instrument and location, over a short enough
+    period that nothing drifts. Its counterpart, reproducibility, deliberately
+    varies those things — so a result that repeats well but reproduces badly is
+    telling you something about your setup rather than about the measurand.
+  authority:
+    label: "VIM 2.21, measurement repeatability"
+    url: "https://jcgm.bipm.org/vim/en/2.21.html"
+  seeAlso:
+    - label: "Precision"
+      href: "#precision"
+  draft: true
+
+- id: traceability
+  term: Traceability
+  definition: >-
+    The property of a result that it can be related to a stated reference
+    through a documented, unbroken chain of calibrations, each one contributing
+    to the total uncertainty. Traceable is not a synonym for accurate: it means
+    the path back to the definition is known and its uncertainty accounted for,
+    not that the number is good.
+  authority:
+    label: "VIM 2.41, metrological traceability"
+    url: "https://jcgm.bipm.org/vim/en/2.41.html"
+  draft: true
+
+- id: stability
+  term: Stability
+  definition: >-
+    In time and frequency, how well an oscillator holds its output over a given
+    averaging interval — conventionally characterised by Allan deviation rather
+    than by a single number, because the answer depends on how long you watch.
+    A clock can be superbly stable and still be wrong, which is why stability
+    and accuracy are quoted separately.
+  authority:
+    label: "VIM 4.19, stability of a measuring instrument (the general sense)"
+    url: "https://jcgm.bipm.org/vim/en/4.19.html"
+  draft: true
+
+- id: holdover
+  term: Holdover
+  definition: >-
+    What a clock does once its reference disappears: it free-runs on its own
+    oscillator and accumulates error. A holdover specification is really a
+    statement about time — how long until the error exceeds some threshold you
+    care about — so it is meaningless without both the threshold and the
+    oscillator.
+  seeAlso:
+    - label: "Stability"
+      href: "#stability"
+  draft: true
+
+- id: timescale
+  term: Timescale
+  definition: >-
+    A way of naming instants, built from three things: the length of a tick, a
+    zero point, and a count of ticks since. UTC and TAI are timescales; so,
+    absurdly but perfectly validly, is *years since Victoria's reign*.
+  draft: true

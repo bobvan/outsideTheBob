@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Drafts render in dev and vanish from the build, matching every other page.
+const includeDrafts = import.meta.env.DEV;
+const terms = (await getCollection('glossary', (t) => includeDrafts || !t.data.draft)).sort((a, b) =>
+	a.data.term.localeCompare(b.data.term),
+);
+
+// Definitions carry light inline markup (*emphasis*, **strong**) because a
+// couple of these turn on a distinction that wants weight. Rendering the whole
+// thing through Markdown would be overkill for two constructs, so they are
+// converted here — deliberately narrow, and deliberately after escaping, so a
+// definition can never inject markup.
+const escape = (s: string) =>
+	s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const inline = (s: string) =>
+	escape(s)
+		.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+		.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+---
+
+<BaseLayout
+	title="Glossary"
+	description="Short definitions for the vocabulary of precision timekeeping, each pointing at somewhere fuller."
+	noindex={terms.length === 0}
+>
+	<h1>Glossary</h1>
+
+	<p>
+		Two or three sentences each. Where a term deserves more than that, the entry
+		links to the page that gives it more — here if we have written one, and out
+		to the canonical definition where somebody has already done it properly.
+	</p>
+
+	{
+		terms.length === 0 ? (
+			<p class="muted">Nothing published here yet.</p>
+		) : (
+			<dl>
+				{terms.map((t) => (
+					<div class="entry" id={t.id}>
+						<dt>
+							<a href={`#${t.id}`} class="anchor" aria-hidden="true">#</a>
+							{t.data.term}
+						</dt>
+						<dd>
+							<p set:html={inline(t.data.definition)} />
+							<p class="links">
+								{t.data.seeAlso.map((s) => (
+									<a href={s.href}>{s.label}</a>
+								))}
+								{t.data.authority && (
+									<a href={t.data.authority.url} class="authority" rel="external">
+										{t.data.authority.label}
+									</a>
+								)}
+							</p>
+						</dd>
+					</div>
+				))}
+			</dl>
+		)
+	}
+</BaseLayout>
+
+<style>
+	dl { margin: 2rem 0 0; }
+	.entry {
+		padding: 1.1rem 0;
+		border-bottom: 1px solid var(--border);
+		/* So a #term link from another page does not land under the header. */
+		scroll-margin-top: 1rem;
+	}
+	dt {
+		font-weight: 600;
+		font-size: 1.1rem;
+		margin-bottom: 0.35rem;
+	}
+	dd { margin: 0; }
+	dd p { margin: 0; }
+
+	/* Visible on hover or keyboard focus only, so the column of hashes does not
+	   compete with the terms themselves. */
+	.anchor {
+		float: left;
+		margin-left: -1.1rem;
+		text-decoration: none;
+		color: var(--muted);
+		opacity: 0;
+	}
+	.entry:hover .anchor,
+	.anchor:focus-visible { opacity: 1; }
+
+	.links {
+		margin-top: 0.45rem !important;
+		font-size: 0.9rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1.1rem;
+	}
+	.authority { color: var(--muted); }
+</style>

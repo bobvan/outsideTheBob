@@ -1,0 +1,47 @@
+---
+title: "Relating timing accuracy with measurement resolution"
+description: "Coarse resolution does not merely limit precision. It counterfeits it — and the instrument reports a confident number either way."
+section: "metrology"
+order: 20
+updatedDate: 2026-08-02
+coverage: "H"
+tags: ["metrology", "timing", "figures", "resolution"]
+draft: true
+---
+
+[Resolution](/timekeeping/glossary/#resolution) is the smallest change that
+produces a perceptible change in what the instrument reports. It is easy to
+treat as a minor spec, and it has a failure mode that is anything but.
+
+<figure class="diagram">
+	<img src="/figures/resolution-ladder.svg" alt="Four identical targets showing the same scatter of shots, with progressively coarser square grids overlaid. In the fourth panel the grid is coarser than the group and every shot has collapsed to a single point at the centre." />
+	<figcaption>
+		The same shots in every panel. Only the reporting grid changes — and by the
+		fourth, the instrument returns one value every time.
+	</figcaption>
+</figure>
+
+Read left to right and nothing about the clock changes. What changes is how
+finely you are allowed to be told about it.
+
+The first three panels behave as expected: coarser reporting, less detail. The
+fourth is the one worth stopping at. When the grid is coarser than the group,
+every shot lands in the same cell and the instrument returns **the same number
+every time**.
+
+That does not look like a limitation. It looks like a flawless clock.
+
+**Coarse resolution does not merely limit precision — it counterfeits it.** A
+counter ticking every 10 ns, watching a source that jitters by 1 ns, is
+perfectly repeatable and tells you nothing at all. Repeatability that comes from
+an inability to see is indistinguishable, from the outside, from repeatability
+that comes from a good oscillator.
+
+Which gives the three terms their natural order:
+
+> **Resolution** bounds what you can see.
+> **[Precision](/timekeeping/glossary/#precision)** is what you see once resolution stops hiding it.
+> **[Trueness](/timekeeping/glossary/#trueness)** is what no amount of seeing will reveal.
+
+See also: [contrasting accuracy and
+precision](/timekeeping/metrology/accuracy-and-precision-in-pictures/).

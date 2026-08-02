@@ -28,6 +28,8 @@
       href: "#trueness"
     - label: "Precision"
       href: "#precision"
+    - label: "Seen side by side"
+      href: "/timekeeping/metrology/accuracy-and-precision-in-pictures/"
   draft: true
 
 - id: trueness
@@ -146,6 +148,8 @@
       href: "#precision"
     - label: "Trueness"
       href: "#trueness"
+    - label: "What coarse resolution hides"
+      href: "/timekeeping/metrology/accuracy-and-resolution-in-pictures/"
   draft: true
 
 - id: utc

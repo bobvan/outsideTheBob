@@ -1,0 +1,66 @@
+---
+title: "Contrasting timing accuracy and precision"
+description: "The most-drawn diagram in metrology, with the axis everyone mislabels put right — and the panel that shows why it flatters us."
+section: "metrology"
+order: 10
+updatedDate: 2026-08-02
+coverage: "H"
+tags: ["metrology", "timing", "figures"]
+draft: true
+---
+
+Everyone has seen the archery target. Almost everyone has seen it labelled
+wrongly, and the wrong label is not a pedantic quibble — it hides the single
+most useful fact about averaging.
+
+## The axes are trueness and precision. Accuracy is the corner.
+
+<figure class="diagram">
+	<img src="/figures/trueness-precision.svg" alt="Four archery targets in a two-by-two grid. Columns are labelled precise and not precise; rows are labelled true and not true. The top-left panel, tight and centred, is outlined with a dashed box." />
+	<figcaption>
+		The usual version labels the rows “accurate”. They are not — they are
+		<strong>true</strong>. Accuracy is the boxed corner where both are good, and
+		calling one axis by the name of the whole thing is what makes “accurate to
+		15&nbsp;ns” ambiguous.
+	</figcaption>
+</figure>
+
+Two things vary here and only two: how tight the group is
+([precision](/timekeeping/glossary/#precision)) and where its centre sits
+([trueness](/timekeeping/glossary/#trueness)).
+[Accuracy](/timekeeping/glossary/#accuracy) is not a third dimension. It is the
+verdict when both are good.
+
+Once the axes are named correctly, the thing everybody wants to know falls out
+of the picture: **averaging moves you up the precision axis and never sideways
+along trueness.** A group can be tightened forever and its centre will not
+budge.
+
+## The panel that makes it honest
+
+<figure class="diagram">
+	<img src="/figures/where-is-utc.svg" alt="Two panels showing identical scatters of shots. The left has no rings, only a dashed amorphous outline, with several question-marked UTC labels floating at different positions. The right has concentric rings with UTC at the centre." />
+	<figcaption>
+		The shots are <em>identical</em> in both panels. Only the frame differs — and
+		the frame is the thing you do not have.
+	</figcaption>
+</figure>
+
+Here is where the target quietly lies. On a real one you can see the bullseye.
+In measurement you cannot: you see your own results and nothing else, and from
+inside, a tight group offset by a metre and a tight group dead centre are
+indistinguishable.
+
+Worse in this field than in most, because
+[UTC is a deferred-time scale](/timekeeping/glossary/#utc) — the centre is not
+merely unobservable, it does not exist yet when you fire. It is settled
+afterwards and published in arrears.
+
+Which gives [traceability](/timekeeping/glossary/#traceability) its job.
+An unbroken, documented chain to a reference is the only thing that ever tells
+you where the centre was.
+
+See also: [relating accuracy to
+resolution](/timekeeping/metrology/accuracy-and-resolution-in-pictures/), and
+[what happens when you would rather your clocks agreed than were
+right](/timekeeping/two-clock/agreement-is-not-accuracy/).

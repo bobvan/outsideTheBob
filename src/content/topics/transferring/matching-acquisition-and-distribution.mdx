@@ -10,6 +10,8 @@ draft: true
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+import secaucus from "../../../assets/SecaucusCampus.jpg";
 
 Getting accurate time into a datacenter is two problems, not one.
 
@@ -47,20 +49,49 @@ good is the *chain*?" — and a chain has no more accuracy than its worst link.
 
 ## The matching table
 
-[[? Bob — this is where the four-row table from your SubNano presentation goes.
+Each row pairs an acquisition method with a transfer method of comparable
+capability. Read across, not down — the point is that both columns have to
+arrive at the same place.
 
-I have sketched the shape below from the argument, but I do not have the slide and I would rather use yours than invent one that half-matches. Send it (or the four rows as text) and I will set it properly.
-
-My guess at what it does: rows are accuracy tiers, columns are what acquisition and distribution each need to deliver at that tier — so a reader can find their row and see both requirements together rather than shopping for one at a time. Correct me. ?]]
-
-| Target accuracy | Acquisition typically | Distribution typically |
+| Time acquisition | Time transfer | Accuracy / precision |
 |---|---|---|
-| *milliseconds* | NTP over the internet | NTP | 
-| *tens of microseconds* | GNSS receiver | PTP, software timestamping |
-| *sub-microsecond* | GNSS timing receiver | PTP with hardware timestamping, boundary clocks |
-| *nanoseconds* | GNSS timing receiver, calibrated | White Rabbit, or PPS over short calibrated runs |
+| Internet | NTP | millisecond |
+| GNSS SPP | PTP | ~15 ns |
+| GNSS Float PPP | PPS | ~1 ns |
+| GNSS PPP-AR | White Rabbit | sub-nanosecond |
 
-*Placeholder, pending Bob's table.*
+Two things fall out of reading it as pairs.
+
+**Buying up one column alone buys you nothing.** Pair GNSS PPP-AR with NTP and
+you have spent real money establishing a position solution good to
+sub-nanosecond, then delivered it over a protocol good to milliseconds. The
+result is milliseconds.
+
+**The acquisition column is the harder one.** Every row after the first requires
+a better GNSS solution — SPP, then float PPP, then PPP-AR — and each step there
+costs more work than the corresponding step in the transfer column.
+
+## Which side is actually limiting you
+
+Usually acquisition, and by a wide margin. Here is a real campus:
+
+<ZoomableImage
+	src={secaucus}
+	alt="Aerial photograph of the Equinix campus in Secaucus, New Jersey, with data center buildings NY2 through NY6 labeled. Overlaid text reads: sync any pair of 7130 ports to 200 ps over half-mile campus, but sync to UTC only plus or minus 15 ns RMS."
+	caption="Distribution across half a mile: 200 ps. Acquisition of UTC: ±15 ns RMS. The two differ by a factor of about seventy-five."
+/>
+
+Time can be moved across that entire campus — half a mile, building to
+building — to within **200 picoseconds**. Getting UTC *into* the campus in the
+first place is good to about **±15 nanoseconds RMS**.
+
+That is the state of the art in miniature: **distribution has run well ahead of
+acquisition.** Moving time around a site is close to a solved problem. Knowing
+what time it is, to the accuracy the distribution could carry, is not.
+
+Which is worth knowing before you spend anything. If your distribution is
+already seventy-five times better than your source, another switch upgrade
+changes nothing at all.
 
 ## What matching looks like in practice
 

@@ -10,6 +10,8 @@ draft: true
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+import ranges from "../../../assets/UtcDistributionAccuracy.png";
 
 Three names for the same job, depending on who you ask:
 
@@ -81,11 +83,23 @@ unforgiving.
 
 ## The range each protocol covers
 
-[[? Bob — the bar-graph image from the lastNs2Utc talk goes here, showing the accuracy range each protocol covers.
+<ZoomableImage
+	src={ranges}
+	alt="Horizontal bar chart titled UTC Distribution Accuracy, one sigma, on a logarithmic time axis from one second to one hundred picoseconds. Bars for NTP, PTP (IEEE 1588-2008), PPS and White Rabbit (IEEE 1588-2019) each extend rightward and fade out rather than ending abruptly. The PPS bar starts short of the left edge, with a note reading No Epoch. An arrow at lower right marks the network-only timestamps region."
+	caption="Ten orders of magnitude, log scale. The bars fade rather than stop — because where a protocol runs out depends on your hardware, your network and your patience, and a hard edge would be a claim nobody could defend."
+/>
 
-I do not have it. src/assets/ only has lastNs2utcLondon.jpg, which is the photo of you presenting. Send the bar graph as PDF or PNG and I will set it as a figure with a caption.
+Two features of that chart are worth pointing at.
 
-It would sit better than the table above, honestly — a range is exactly the thing a table renders badly and a bar chart renders well, because these overlap and the overlaps are the interesting part. Happy to keep both, with the table as the detail and the chart as the shape. ?]]
+**The bars fade rather than stop.** Where a protocol runs out is not a property
+of the protocol — it depends on timestamping hardware, network topology, and how
+much effort you are willing to spend. A hard right edge would be a number
+somebody could argue with, and the argument would not be productive.
+
+**PPS starts short of the left edge**, marked *No Epoch*. Every other bar can
+tell you which second it is. PPS cannot: it marks a moment without naming it, so
+it has no top end at all in the sense the others do. It is remarkable at saying
+*now* and incapable of saying *when*.
 
 ## Choosing
 

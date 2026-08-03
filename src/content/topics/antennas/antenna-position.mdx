@@ -1,0 +1,168 @@
+---
+title: "Configuring GNSS antenna position for datacenter receivers"
+description: "If a receiver has the antenna position wrong, it has the time wrong — about a nanosecond for every foot of vertical error. Here is how to get it right."
+section: "antennas"
+order: 40
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["GNSS", "antennas", "timing", "datacenter"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+If a GNSS receiver has the antenna position wrong, it has the time wrong.
+**Every foot of vertical error is about a nanosecond of time error**, and the
+receiver will report that wrong time with complete confidence, because from
+where it sits nothing looks amiss.
+
+So this page is not really about position. It is about how to get the time
+right.
+
+## Your phone is solving a harder problem than you need solved
+
+The GNSS receiver in your phone expects to be moving with you. It has no idea
+where it is from one moment to the next, so it solves continuously for **four
+unknowns** — three of position and one of time — and needs at least four
+satellites in view to do it.
+
+A datacenter antenna is bolted to a roof. It moves only with the smooth rotation
+of the Earth, which is to say it does not move at all in any sense the receiver
+cares about. So you can simply tell the receiver where it is, and let it solve
+for **one unknown instead of four**.
+
+That buys two things:
+
+- **A better time solution**, because the arithmetic has less to do and fewer
+  ways to go wrong.
+- **Time from as little as one satellite in view**, instead of the four a moving
+  receiver needs. In a datacenter, where the sky view is usually whatever the
+  roof and the neighboring buildings left you, that can be the difference
+  between having time and not having it.
+
+## What a national lab does
+
+A national lab would likely hire a professional surveyor to establish the exact
+position of a new antenna mount *before it was ever connected to a timing
+receiver*. They are working down in the double-digit picoseconds, where
+millimeters of antenna position error matter.
+
+The receiver is then configured with that surveyed position and never solves for
+position at all. The question "where is the antenna?" gets answered once, by
+somebody whose job it is, with instruments built for it.
+
+## What datacenters actually do
+
+Accuracy requirements are not usually that stringent for datacenter timing, so
+it is common — and reasonable — to let the receiver work out its own position.
+
+The important question is **how long that goes on**.
+
+Watching the sky for longer produces a more accurate fix, because some of the
+error is random and
+[averages down over time](/timekeeping/metrology/limits-of-averaging/). But the
+benefit does not continue indefinitely: the geometry of the satellite orbits
+limits what averaging can buy after a couple of days.
+
+So the optimal behavior is fairly clear. Spend a couple of days solving for the
+position of a new antenna, then switch to solving only for time.
+
+## Why that is seldom the default
+
+Because it leaves a vulnerability, and the vulnerability is silent.
+
+If the antenna moves while the receiver is assuming it is fixed, the time is
+wrong and nothing says so. No alarm, no degraded status, no obviously bad
+number — just a steady offset that arrived the day somebody adjusted a mount or
+a storm shifted a bracket.
+
+Manufacturers default to the safe behavior rather than the accurate one, which
+is the right call for a product that has to work in installations nobody
+supervises.
+
+<CalloutBox type="tip" title="Fixed position trades accuracy against procedure">
+	If you want the benefits of solving only for time, you accept the burden of
+	telling the receiver whenever the antenna position changes.
+
+	I recommend configuring timing receivers with a fixed position **for those who
+	can build the operational safeguards** — the procedures that guarantee the
+	configured position always matches the actual one. If you cannot commit to
+	that, you should not take the accuracy.
+</CalloutBox>
+
+## If you would rather not commit to that
+
+There is usually a middle path, and an easier one.
+
+**Survey-in.** The receiver initially solves for position, then switches
+automatically to fixed-position mode once a time or accuracy threshold is
+reached. Most of the benefit, none of the paperwork.
+
+**Always solve for position.** The receiver never stops. Simplest of all, and
+never silently wrong about a moved antenna.
+
+Both have costs worth knowing before choosing:
+
+- A receiver **always solving for position** is less likely to produce stable
+  time output, because the position solution wanders and the time solution
+  wanders with it.
+- A receiver that **switches to fixed mode after a threshold** will very likely
+  restart its position search after every power failure — and arrive at a
+  different answer each time. NIST measured exactly this: repeated cold-start
+  surveys on one antenna landed within about half a meter of each other, and the
+  results were consistently *biased high* relative to a properly computed
+  solution, for reasons they could not identify.
+
+That last point is the one people do not expect. A survey-in receiver does not
+converge on an answer and keep it. It converges on a slightly different answer
+every time it is asked.
+
+## The limits of position accuracy
+
+Two separate things make the vertical axis the problem.
+
+**It matters most.** Vertical error contributes most directly to time error,
+because of the geometry between an antenna and the satellites above it.
+
+**It is hardest to measure.** GNSS resolves height less accurately than
+horizontal position, because the inclination of the satellite orbits means a
+receiver never sees the geometry from below. The axis you most need is the one
+the constellation is worst at.
+
+### And there are more ways to misread it
+
+Height is quietly ambiguous in a way latitude and longitude are not:
+
+- **Above ground level (AGL)** is what a building drawing usually means. It is
+  not a geodetic quantity at all.
+- **Above mean sea level (AMSL)**, or orthometric height, is referenced to the
+  **geoid** — the equipotential surface approximating sea level, which is bumpy
+  because the Earth's mass is not evenly distributed.
+- **Ellipsoidal height** is what GNSS natively computes: height above a smooth
+  mathematical ellipsoid that approximates the Earth's shape.
+
+The geoid and the ellipsoid differ by **tens of meters**, varying with location.
+Reading one as though it were the other is a tens-of-meters error — a hundred
+nanoseconds or so, vastly larger than anything else on this page. Different
+reference frames and datums add a meter or two on top of that.
+
+And do not expect the GPS or compass app on your phone to give you elevation to
+the nearest foot. It is lucky to be right within ten.
+
+### What is actually achievable
+
+With reasonable care and a dual-frequency receiver, you can get the time error
+contributed by configured antenna position **below 15 ns**. Into the low single
+digits is a great deal harder.
+
+NIST's own measurements make the point. Evaluating a low-cost dual-frequency
+timing receiver's built-in survey mode, they wanted height good to 30 cm — one
+nanosecond — and the survey did not deliver it. The results were biased high by
+an amount they could not explain, and their recommendation is the one this page
+opened with: compute the position properly, and configure it in.
+
+[[? Two open items.
+
+1) I have put the "biased high, cause not identified" result from Montare et al. in my own words rather than quoting, since the page is prose-led. Want the direct quote in a callout instead? It is verified and sitting in docs/references.md.
+
+2) The Lombardi single-frequency figure — height wrong by 10–15 m, timing error approaching 50 ns — would be the ideal contrast against the dual-frequency numbers above. I hunted the original today and could not get free full text; the 2016 citation is confirmed but its abstract does not mention height or surveys, so it may be the 2014 paper instead. Details in docs/references.md. Do you have NCSLI Measure access, or a contact at NIST Time & Frequency? ?]]

@@ -1,0 +1,109 @@
+---
+title: "The limits of averaging"
+description: "Averaging buys you improvement that stops. What is left when it stops is bias — and the same story plays out in position, in time, and in frequency."
+section: "metrology"
+order: 5
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["metrology", "GNSS", "timing", "oscillators"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Averaging is the first thing anyone reaches for, and it works. Watch for longer,
+take more measurements, and the number settles down. The question this page
+exists to answer is what it settles *on*.
+
+## What averaging can and cannot do
+
+Averaging removes random error. It does not remove bias.
+
+If half your measurements are 30 cm too far east and half are too far west, that
+averages out. If all of them are 1 m too far north, that never goes away, no
+matter how long you watch — because there is nothing about the measurements
+themselves that disagrees.
+
+In the vocabulary this topic uses elsewhere: averaging improves
+[precision](/timekeeping/glossary/#precision) and never improves
+[trueness](/timekeeping/glossary/#trueness).
+
+<figure class="diagram">
+	<img src="/figures/averaging-arrow.svg" alt="Two targets side by side. In the left, points from one-hour averages scatter widely; in the right, points from twenty-four-hour averages cluster tightly. In both, a red X marks the group center at the same offset from the bullseye, connected by a dashed guide, and a red arrow of identical length runs from bullseye to group center in each." />
+	<figcaption>
+		Longer averaging buys the tighter group and nothing else. The bullseye and
+		the red X sit at identical coordinates in both panels, and the dashed guide
+		is there so you can check that rather than take my word for it.
+	</figcaption>
+</figure>
+
+## The same shape in three places
+
+This is not a GNSS quirk. It is what averaging does, and it shows up wherever
+you average.
+
+**Position.** A receiver working out where its own antenna is gets a better
+answer for a while, then stops getting better. NIST measured a receiver's
+built-in survey converging tidily — and converging to an answer biased high,
+for reasons they could not explain. Their 24-hour results were far more
+*repeatable* than their 1-hour results, and no more *correct*. See
+[configuring antenna position](/timekeeping/antennas/antenna-position/).
+
+**Time.** Averaging phase measurements against a reference tightens the estimate
+of your offset, and does nothing at all about an uncompensated cable delay
+sitting in every one of those measurements identically.
+
+**Frequency.** This one is the most instructive, because the limit is drawn for
+you. Plot [Allan deviation](/timekeeping/glossary/#adev) against averaging
+interval and the curve falls as you average longer — and then it stops falling.
+The flat part is the flicker floor, and past it the curve turns and rises. The
+picture the frequency world has been drawing for decades *is* this page: a
+region where averaging pays, a floor where it stops paying, and a region beyond
+where averaging actively hurts.
+
+<CalloutBox type="warn" title="Every averaging process has a floor">
+	The improvement is real, it is bounded, and the bound is set by whatever part
+	of the error is systematic rather than random. When the curve flattens, you
+	are no longer measuring your patience — you are measuring your bias.
+</CalloutBox>
+
+## How to find your own floor
+
+You do not need a reference better than the thing you are measuring to discover
+that you have hit the floor. You need to **restart**.
+
+Average for your chosen interval, record the answer, throw the state away and do
+it again. Fourteen times over fourteen days is plenty.
+
+- If the answers cluster tightly, the random part is averaged out and you are
+  looking at your floor. Averaging longer will not move it.
+- If they scatter, you have not averaged enough yet and there is still
+  improvement to buy.
+
+Either way you have learned where you are, using only the equipment you already
+own. What the test cannot tell you is whether that floor sits on the right
+answer — for that you need something
+[traceable](/timekeeping/glossary/#traceability) to compare against.
+
+## Why the benefit stops when it does
+
+For GNSS position specifically, the ceiling has a cause worth knowing: the
+satellites repeat. Their orbital geometry cycles on roughly a sidereal day, so
+after a couple of days of watching you have largely seen the geometry you are
+going to see, and further averaging re-samples conditions you have already
+sampled. Multipath from a nearby wall does not average away, because tomorrow
+the satellite will be in the same place doing the same thing.
+
+That is the practical reason the recommendation on the antenna page is "a couple
+of days" rather than "as long as possible."
+
+## Sources
+
+- **Montare, Novick & Sherman (NIST, 2024)**, *Evaluating Common-View Time
+  Transfer Using a Low-Cost Dual-Frequency GNSS Receiver* — the measured case of
+  a survey converging on a biased answer.
+  [https://tf.nist.gov/general/pdf/3280.pdf](https://tf.nist.gov/general/pdf/3280.pdf)
+- **Lombardi (NIST)** on single-frequency height determination, which is the
+  same story with the numbers an order of magnitude worse.
+
+[[? The Lombardi entry above is deliberately vague because I could not verify it — see docs/references.md. Either we get the original, or that bullet should be cut rather than left as a citation-shaped object. ?]]

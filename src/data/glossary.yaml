@@ -48,8 +48,8 @@
   seeAlso:
     - label: "UTC"
       href: "#utc"
-    - label: "Why averaging a GNSS position hits a floor"
-      href: "/timekeeping/antennas/receiver-self-survey/"
+    - label: "The limits of averaging"
+      href: "/timekeeping/metrology/limits-of-averaging/"
   draft: true
 
 - id: precision
@@ -65,6 +65,8 @@
   seeAlso:
     - label: "Trueness"
       href: "#trueness"
+    - label: "The limits of averaging"
+      href: "/timekeeping/metrology/limits-of-averaging/"
   draft: true
 
 - id: repeatability

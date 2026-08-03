@@ -84,10 +84,22 @@ Cited within the Montare paper for the single-frequency comparison:
 > determination is generally accurate within 10 m, but is sometimes greater than
 > 15 m, leading to a **timing error that approaches 50 ns**.
 
-Not yet read in the original. Track down the Lombardi (2016) and Lombardi et al.
-(2014) citations from the Montare bibliography before quoting directly — the
-number above is quoted here at second hand and should be attributed that way
-until then.
+**Hunted 2026-08-03, not found.** The 2016 citation is confirmed as Lombardi,
+M., *Evaluating the Frequency and Time Uncertainty of GPS Disciplined
+Oscillators and Clocks*, **Measure: The Journal of Measurement Science**, 2016
+(<https://www.nist.gov/publications/evaluating-frequency-and-time-uncertainty-gps-disciplined-oscillators-and-clocks>).
+But its abstract does not mention antenna height, survey periods or
+single-frequency receivers at all, so either the figure is in the body or it
+comes from the 2014 paper instead. No free full text located; NCSLI *Measure* is
+paywalled and NIST's page carries no PDF.
+
+⚠️ **Still second hand.** Keep it attributed as "quoted in Montare et al." until
+someone reads the original. Do not let it drift into being cited as Lombardi
+directly — the number is plausible and unverified, and this is exactly the case
+this file exists to catch.
+
+Next place to try: the NCSLI *Measure* archive, or ask NIST's Time and Frequency
+Division, who have historically sent PDFs on request.
 
 **Use in:** Antennas → *Don't let the receiver survey itself*, as the
 "single-frequency is far worse" contrast.

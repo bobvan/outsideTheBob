@@ -1,6 +1,6 @@
 ---
-title: "Your feed line is likely your largest source of error"
-description: "The delay down the antenna cable is uncompensated, frequently unmeasured, and usually larger than the errors people spend their time worrying about."
+title: "An uncalibrated antenna feed line is likely your largest source of error to UTC"
+description: "Your phone never made you think about this. Separating the antenna from the receiver is what creates the problem — and measuring the delay is what solves it."
 section: "antennas"
 order: 50
 updatedDate: 2026-08-02
@@ -14,13 +14,41 @@ import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 import byLength from "../../../assets/CableDelayByLength.png";
 import byDelay from "../../../assets/CableDelayByDelay.png";
 
-Signals take time to travel down the antenna cable, and nothing in your system
-corrects for it. That delay lands directly in your offset from UTC, and in a
-typical datacenter installation it is larger than the errors people spend their
-attention on.
+## Why you have this problem at all
 
-This is not usually anybody's mistake. It is a reasonable assumption that has
-stopped being reasonable.
+The GPS in your phone is a single integrated unit: antenna and receiver
+millimeters apart. Whatever delay exists between them is tiny, fixed, and dealt
+with at the factory. You have never had to think about it, because you have
+never had a reason to.
+
+That integration does not survive a datacenter. GNSS signals do not usefully
+reach the inside of a building, so the antenna goes outside and the receiver
+stays in the rack — and the two are now joined by tens of meters of coax that
+belong to you.
+
+Splitting the phone in half is what creates this problem. Everything below is a
+consequence of that split.
+
+## What the antenna knows, and what your clock needs
+
+Signals from many satellites combine **at the antenna**. What falls out of that
+combination is the position of the antenna, and the time at the antenna.
+
+Your clock is not at the antenna. The marker that defines the top of the second
+arrives up there first, then spends the length of the feed line travelling down
+to the receiver. A receiver that treats *when I saw it* as *when it happened*
+ticks late — by exactly the delay of the cable, every second, forever.
+
+The fix is to make the receiver **anticipate**. Knowing the delay, it can work
+out when the next top of second will occur at the antenna and emit its own tick
+at that instant — which is *before* it will see the corresponding signal arrive.
+
+That is worth sitting with, because it inverts how people assume compensation
+works. It is not a correction applied after the fact. It is the receiver
+deliberately running ahead of its own input, by an amount you have to tell it.
+
+Tell it wrong and it runs ahead by the wrong amount. That error lands directly
+in your offset from UTC and stays there.
 
 ## Why it goes wrong even when everyone is competent
 
@@ -90,23 +118,51 @@ carefully entering a correct number.**
 	assumption in the middle.
 </CalloutBox>
 
-## Getting the number
+## The gold standard is to measure it
 
-Two things to find out, and neither needs test equipment.
+Everything up to here computes the delay. Better to measure it.
+
+The instrument is a cable tester with a **time domain reflectometer** (TDR)
+function. It sends a pulse down the cable and times the reflection off the far
+end, which means it is measuring the actual delay of the actual cable — not a
+published velocity factor, not a length you estimated, not a service loop you
+forgot. Temperature, age, the connectors, the bit that got kinked during
+installation: all of it is in the answer, because all of it is in the cable.
+
+You will probably have to disconnect the antenna at one end and your clock at
+the other, so this is a maintenance-window job rather than a five-minute one.
+
+<CalloutBox type="warn" title="Ask the TDR for delay, not length">
+	Many cable testers will happily report a length. To do that they have to
+	assume a velocity factor — and now you are back in exactly the trap you bought
+	the instrument to escape, with the assumption buried one level deeper where
+	you cannot see it.
+
+	Take the reading in nanoseconds. The delay is the quantity that offsets your
+	clock from UTC; the length was only ever a way of guessing at it.
+</CalloutBox>
+
+While you are there, check whether the instrument is reporting one-way or
+round-trip time — a TDR measures a there-and-back journey, and different tools
+present that differently. A factor of two is a large error to inherit from a
+menu setting.
+
+## If you cannot measure it
+
+Two things to look up, and neither needs test equipment.
 
 **The velocity factor** comes from the coax manufacturer. Identify the cable
-type — it is usually printed on the jacket along with everything else — and look
-up its published velocity factor. This is a datasheet lookup, not a measurement.
+type — usually printed on the jacket along with everything else — and look up
+its published figure. This is a datasheet lookup, not a measurement.
 
-**The length**, if you must derive delay from it, is often printed on the jacket
-too. Most coax carries sequential length markers every foot or meter. If the run
-is already installed, you can frequently read the marker at each end and
-subtract, without pulling anything or owning a TDR. The cable has been telling
-you its length the whole time.
+**The length** is often printed on the jacket too. Most coax carries sequential
+length markers every foot or meter, so for an installed run you can frequently
+read the marker at each end and subtract, without pulling anything. The cable
+has been telling you its length the whole time.
 
 Add a little for the service loop you cannot see, be honest that it is an
-estimate, and remember that the estimate is being multiplied by a velocity
-factor you should also have looked up.
+estimate, and remember the estimate is being multiplied by a velocity factor
+that is itself a published typical rather than a measurement of your cable.
 
 ## What this is worth
 
@@ -117,5 +173,5 @@ typing one number.
 
 It ends in the same place as
 [not letting the receiver survey itself](/timekeeping/antennas/receiver-self-survey/):
-measure it, or look it up, and configure the result. Do not accept a default and
-do not guess.
+measure it if you can, look it up if you cannot, and configure the result. Do
+not accept a default and do not guess.

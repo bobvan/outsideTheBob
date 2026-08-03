@@ -14,15 +14,16 @@ Anyone who has run timing in a datacenter has heard it, and most have said it:
 > It's more important that my clocks agree with each other than that they're
 > right.
 
-Pressed for numbers, the same person will happily quantify the trade:
+Pressed for numbers, the same person will happily quantify the tradeoff:
 
 > I'd rather have my clocks off by 100 ns on average while agreeing to 10 ns,
 > than have zero average error while only agreeing to 25 ns.
 
 This is usually offered slightly sheepishly, as though it were a confession of
-low standards. It is not. It is a precise engineering preference, and it is
-almost always the correct one. What it lacks is the vocabulary to say so
-without sounding like an excuse.
+low standards. It is not. It is a precise engineering preference, and for a
+great many datacenter applications it is the right one. What it lacks is the
+vocabulary to say so without sounding like an excuse — and a clear statement of
+what it costs, because it does cost something.
 
 ## What they are actually saying
 
@@ -32,18 +33,18 @@ The two statements are not about the same measurand.
 [trueness](/timekeeping/glossary/#trueness) claim about each clock individually,
 against an external reference.
 
-"Agree" means the spread *within the ensemble* — how far your clocks are from
+"Agree" means the spread *within the clock ensemble* — how far your clocks are from
 each other, which is a claim about dispersion and says nothing about where the
 group sits.
 
 So the sentiment translates to: **I will trade a common-mode offset for a
-smaller differential error.** And the reason that is a good trade is arithmetic
+smaller differential error.** And the reason that is a good tradeoff is arithmetic
 rather than taste.
 
 <figure class="diagram">
-	<img src="/figures/agreement-vs-truth.svg" alt="Top row: two archery targets. The left has a tight group well off centre; the right has a loose group centred on the bullseye. Bottom row: the same two ensembles drawn as normal distributions against a UTC axis — one offset with small sigma, one centred with large sigma." />
+	<img src="/figures/agreement-vs-truth.svg" alt="Top row: two archery targets. The left has a tight group well off center; the right has a loose group centerd on the bullseye. Bottom row: the same two clock ensembles drawn as normal distributions against a UTC axis — one offset with small sigma, one centerd with large sigma." />
 	<figcaption>
-		The trade, in both languages. Top: the two ensembles as targets. Bottom: the
+		The tradeoff, in both languages. Top: the two clock ensembles as targets. Bottom: the
 		same two as distributions, for readers who would rather see μ and σ. The
 		left-hand option is worse against UTC and better at everything the
 		application actually computes.
@@ -52,7 +53,7 @@ rather than taste.
 
 ## Why the 100 ns is free
 
-Take the trade at face value. Every clock is 100 ns late, and they agree with
+Take the tradeoff at face value. Every clock is 100 ns late, and they agree with
 one another to 10 ns.
 
 Now compute anything your application actually computes: the interval between
@@ -64,13 +65,17 @@ It is not that the 100 ns is small. It is that it is *common-mode*, and every
 internal calculation you perform is a differential measurement that rejects it
 entirely. The error that survives the subtraction is the 10 ns of disagreement.
 
-Run the other option and the survivor is 25 ns. The preference is not a
-compromise; on this measurand the second configuration is two and a half times
-worse.
+Run the other option and the survivor is 25 ns. On this measurand the second
+configuration is two and a half times worse.
+
+Put plainly: **when you prioritize your clocks agreeing with each other over
+agreeing with UTC, you are prioritizing the correctness of elapsed-time
+measurements between your own clocks.** For a great deal of trading and
+datacenter work that is exactly the right priority.
 
 ## The boundary where it stops being free
 
-Common-mode error cancels within the ensemble. It cancels *only* within the
+Common-mode error cancels within the clock ensemble. It cancels *only* within the
 ensemble.
 
 The moment a timestamp is compared with one that did not come from your clocks,
@@ -90,7 +95,7 @@ rarely where people assume — it is usually much closer than the building.
 
 Notice which half of the problem the preference is about.
 
-Agreement within an ensemble is a property of how you *distribute* time from a
+Agreement within a clock ensemble is a property of how you *distribute* time from a
 common source: the switches, the protocol, the cabling, the asymmetries.
 Trueness against UTC is a property of how you *acquire* it: the antenna, the
 receiver, the survey, the feed line.
@@ -98,25 +103,19 @@ receiver, the survey, the feed line.
 Someone saying "agreement matters more" is saying they will spend on
 distribution before acquisition. Given the trade above, and given that
 distribution errors are differential and acquisition errors are largely
-common-mode, that is the right order — until the ensemble boundary is crossed,
+common-mode, that is the right order — until the clock ensemble boundary is crossed,
 at which point the spending they deferred is the whole of their error.
 
 ## Saying it rigorously
 
 The version to use when it matters:
 
-> Within an ensemble, common-mode offset cancels in every differential
-> measurement, so the ensemble's internal error is governed by its dispersion,
-> not by its offset from UTC. Only measurements that cross the ensemble boundary
-> are exposed to the offset.
+> Within a clock ensemble, [common-mode](/timekeeping/glossary/#common-mode)
+> offset cancels in every differential measurement, so the ensemble's internal
+> error is governed by its dispersion rather than by its offset from UTC. Only
+> measurements crossing the ensemble boundary are exposed to that offset.
 
 That says the same thing as the sheepish version, commits to where it stops
 being true, and does not sound like an apology.
 
-[[? Three checks, all on my side rather than yours.
-
-1) I have assumed the trading applications are overwhelmingly differential — intervals, orderings, latencies. Is there a routine trading calculation that is genuinely absolute and that I am ignoring?
-
-2) The regulatory case is the obvious boundary, but the topic doc leaves "which regulations to name" open, so I have described the situation without naming MiFID II. Say the word and I will name it.
-
-3) Is "common-mode" the term your audience uses? I have leaned on it hard because it makes the argument in one word, but it is borrowed from electronics and I have not heard you use it. ?]]
+[[? One left. "Common-mode" now has a glossary entry and every use links to it, so a reader who has not met the term gets it in one hop. But the page still leans on it hard — four uses. Worth keeping, or should the prose carry "an error that hits every clock equally" and let the term appear once? ?]]

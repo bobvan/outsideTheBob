@@ -99,11 +99,13 @@
 - id: stability
   term: Stability
   definition: >-
-    In time and frequency, how well an oscillator holds its output over a given
-    averaging interval — conventionally characterised by Allan deviation rather
-    than by a single number, because the answer depends on how long you watch.
-    A clock can be superbly stable and still be wrong, which is why stability
-    and accuracy are quoted separately.
+    In time and frequency, how well a source holds its output over a given
+    averaging interval — always a function of that interval, never a single
+    number, because the answer depends on how long you watch. Two families,
+    depending on what you are holding steady: **frequency** stability by
+    [ADEV or MDEV](#adev), **time** stability by [TDEV](#tdev). A clock can be
+    superbly stable and still be wrong, which is why stability and accuracy are
+    quoted separately.
   authority:
     label: "VIM 4.19, stability of a measuring instrument (the general sense)"
     url: "https://jcgm.bipm.org/vim/en/4.19.html"
@@ -137,9 +139,9 @@
     change in what the instrument reports. It bounds what you can *see*, not
     what is *true* — a reading with twelve digits can be twelve digits of
     confidently reported nonsense. And resolution coarser than your actual
-    scatter conceals that scatter: a counter ticking every 10 ns, watching a
-    source that jitters by 1 ns, returns the same number every time and looks
-    flawless.
+    scatter conceals that scatter: a counter that cannot measure intervals
+    smaller than 10 ns, watching a clock that jitters by 1 ns, may see no jitter
+    at all.
   authority:
     label: "VIM 4.14, resolution"
     url: "https://jcgm.bipm.org/vim/en/4.14.html"
@@ -156,11 +158,13 @@
   term: UTC
   aliases: ["Coordinated Universal Time"]
   definition: >-
-    The world's civil timescale, computed by the BIPM from the clocks of about
-    eighty contributing institutes and published monthly in *Circular T*. It is
+    The world's civil timescale, computed by the [BIPM](https://www.bipm.org/)
+    (the international bureau that keeps the world's measurement standards) from
+    the clocks of about eighty contributing institutes, and published monthly in
+    *Circular T*. It is
     a **deferred-time** scale: nobody can tell you what UTC reads right now,
     because this month's answer is settled next month. Everything that claims to
-    distribute UTC in real time is in fact distributing a realisation or a
+    distribute UTC in real time is in fact distributing a realization or a
     prediction of it.
   authority:
     label: "BIPM — Circular T"
@@ -175,7 +179,7 @@
 - id: utc-k
   term: UTC(k)
   definition: >-
-    A national institute's own real-time realisation of UTC — the thing you can
+    A national institute's own real-time realization of UTC — the thing you can
     actually steer to, since UTC itself is not available live. *Circular T*
     publishes the difference [UTC − UTC(k)] every five days, so how far your
     reference sat from the truth is knowable, but only in arrears. BIPM's weekly
@@ -186,4 +190,100 @@
   seeAlso:
     - label: "UTC"
       href: "#utc"
+  draft: true
+
+- id: measurement-ratio
+  term: "The 10:1 rule"
+  aliases: ["test accuracy ratio", "TAR", "test uncertainty ratio", "TUR"]
+  definition: >-
+    The rule of thumb that your measuring equipment should be about ten times
+    better than the error you are chasing, so its own contribution can be
+    ignored rather than budgeted. Beware the folklore: the ratio the standards
+    actually require is **4:1**, not 10:1 — ANSI/NCSL Z540-1 caps the
+    measurement standard's uncertainty at 25% of the tolerance — and modern
+    practice has replaced the accuracy ratio (TAR) with the *uncertainty* ratio
+    (TUR), which accounts for the whole measurement process rather than a
+    headline spec.
+  seeAlso:
+    - label: "Resolution"
+      href: "#resolution"
+    - label: "Traceability"
+      href: "#traceability"
+  draft: true
+
+- id: common-mode
+  term: "Common-mode error"
+  definition: >-
+    An error that affects every measurement in a set equally, and therefore
+    cancels exactly when you take a difference between any two of them. A clock
+    ensemble that is uniformly 100 ns late has a 100 ns common-mode error and
+    still measures intervals *between its own clocks* perfectly. The cancelling
+    stops the moment you compare against a clock outside the set.
+  seeAlso:
+    - label: "Why agreement can matter more than being right"
+      href: "/timekeeping/two-clock/agreement-is-not-accuracy/"
+    - label: "Trueness"
+      href: "#trueness"
+  draft: true
+
+- id: velocity-factor
+  term: "Velocity factor"
+  aliases: ["VF", "propagation velocity"]
+  definition: >-
+    The speed at which a signal travels down a cable, as a fraction of the speed
+    of light in vacuum — typically about 0.66 for solid-polyethylene coax and
+    0.85 for foam. It is the number that converts a cable's *length* into its
+    *delay*, which is the thing that actually matters, and it differs enough
+    between coax types that assuming the wrong one is worth tens of nanoseconds
+    on an ordinary run.
+  seeAlso:
+    - label: "Why the feed line is likely your largest error"
+      href: "/timekeeping/antennas/feed-line/"
+  draft: true
+
+- id: nmi
+  term: "NMI"
+  aliases: ["national metrology institute"]
+  definition: >-
+    A national metrology institute — the body that maintains a country's
+    measurement standards, such as NIST in the United States or NPL in the
+    United Kingdom. Worth knowing when reading about timekeeping, but note that
+    **not every contributor of a UTC(k) is an NMI**: the BIPM says "institutes",
+    and the list includes observatories and designated laboratories as well.
+  authority:
+    label: "BIPM — member states and institutes"
+    url: "https://www.bipm.org/"
+  seeAlso:
+    - label: "UTC(k)"
+      href: "#utc-k"
+  draft: true
+
+- id: adev
+  term: "Allan deviation (ADEV)"
+  aliases: ["MDEV", "modified Allan deviation"]
+  definition: >-
+    The standard measure of **frequency** stability, written ADEV(τ) because it
+    is a function of the averaging interval τ rather than a single number — a
+    source can be excellent at 1 s and poor at 10,000 s. MDEV(τ), the modified
+    form, is used where you need to distinguish white phase noise from flicker
+    phase noise, which plain ADEV cannot separate.
+  seeAlso:
+    - label: "Stability"
+      href: "#stability"
+    - label: "Time deviation"
+      href: "#tdev"
+  draft: true
+
+- id: tdev
+  term: "Time deviation (TDEV)"
+  definition: >-
+    The counterpart of ADEV for **time** rather than frequency stability, also a
+    function of averaging interval, written TDEV(τ). It is derived from the
+    modified Allan deviation — TDEV(τ) = τ·MDEV(τ)/√3 — so the two describe the
+    same underlying noise in the units you happen to care about.
+  seeAlso:
+    - label: "Allan deviation"
+      href: "#adev"
+    - label: "Stability"
+      href: "#stability"
   draft: true

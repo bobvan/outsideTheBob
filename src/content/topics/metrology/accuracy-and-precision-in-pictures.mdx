@@ -9,14 +9,14 @@ tags: ["metrology", "timing", "figures"]
 draft: true
 ---
 
-Everyone has seen the archery target. Almost everyone has seen it labelled
+Everyone has seen the archery target. Almost everyone has seen it labeled
 wrongly, and the wrong label is not a pedantic quibble — it hides the single
 most useful fact about averaging.
 
 ## The axes are trueness and precision. Accuracy is the corner.
 
 <figure class="diagram">
-	<img src="/figures/trueness-precision.svg" alt="Four archery targets in a two-by-two grid. Columns are labelled precise and not precise; rows are labelled true and not true. The top-left panel, tight and centred, is outlined with a dashed box." />
+	<img src="/figures/trueness-precision.svg" alt="Four archery targets in a two-by-two grid. Columns are labeled precise and not precise; rows are labeled true and not true. The top-left panel, tight and centerd, is outlined with a dashed box." />
 	<figcaption>
 		The usual version labels the rows “accurate”. They are not — they are
 		<strong>true</strong>. Accuracy is the boxed corner where both are good, and
@@ -26,7 +26,7 @@ most useful fact about averaging.
 </figure>
 
 Two things vary here and only two: how tight the group is
-([precision](/timekeeping/glossary/#precision)) and where its centre sits
+([precision](/timekeeping/glossary/#precision)) and where its center sits
 ([trueness](/timekeeping/glossary/#trueness)).
 [Accuracy](/timekeeping/glossary/#accuracy) is not a third dimension. It is the
 verdict when both are good.
@@ -36,9 +36,9 @@ of the picture: **averaging moves you up the precision axis and never sideways
 along trueness.**
 
 <figure class="diagram">
-	<img src="/figures/averaging-arrow.svg" alt="Two targets side by side. In the left, shots from one-hour surveys scatter widely; in the right, shots from twenty-four-hour surveys cluster tightly. In both, a cross marks the group centre at the same offset from the bullseye, connected by a dashed guide, and an arrow of identical length runs from bullseye to group centre in each." />
+	<img src="/figures/averaging-arrow.svg" alt="Two targets side by side. In the left, shots from one-hour surveys scatter widely; in the right, shots from twenty-four-hour surveys cluster tightly. In both, a cross marks the group center at the same offset from the bullseye, connected by a dashed guide, and an arrow of identical length runs from bullseye to group center in each." />
 	<figcaption>
-		The bullseye and the group centre are at identical coordinates in both
+		The bullseye and the group center are at identical coordinates in both
 		panels, and the dashed guide is there so you can check that rather than take
 		my word for it. Longer averaging buys the tighter group and nothing else.
 	</figcaption>
@@ -51,7 +51,7 @@ beautifully, on the wrong one.
 ## The panel that makes it honest
 
 <figure class="diagram">
-	<img src="/figures/where-is-utc.svg" alt="Two panels showing identical scatters of shots. The left has no rings, only a dashed amorphous outline, with several question-marked UTC labels floating at different positions. The right has concentric rings with UTC at the centre." />
+	<img src="/figures/where-is-utc.svg" alt="Two panels showing identical scatters of shots. The left has no rings, only a dashed amorphous outline, with several question-marked UTC labels floating at different positions. The right has concentric rings with UTC at the center." />
 	<figcaption>
 		The shots are <em>identical</em> in both panels. Only the frame differs — and
 		the frame is the thing you do not have.
@@ -60,17 +60,27 @@ beautifully, on the wrong one.
 
 Here is where the target quietly lies. On a real one you can see the bullseye.
 In measurement you cannot: you see your own results and nothing else, and from
-inside, a tight group offset by a metre and a tight group dead centre are
+inside, a tight group offset by a meter and a tight group dead center are
 indistinguishable.
 
 Worse in this field than in most, because
-[UTC is a deferred-time scale](/timekeeping/glossary/#utc) — the centre is not
+[UTC is a deferred-time scale](/timekeeping/glossary/#utc) — the center is not
 merely unobservable, it does not exist yet when you fire. It is settled
 afterwards and published in arrears.
 
+<figure class="diagram">
+	<img src="/figures/deferred-truth.svg" alt="Two panels. Left: a cluster of points with a red X at its center, a dot below labeled UTC(k), and a dashed empty circle where UTC would be, labeled not computed yet. Right: the identical points, with concentric rings now drawn around the revealed UTC position and a red arrow running from the X to it." />
+	<figcaption>
+		The points are identical in both panels. Nothing about the clock changed —
+		the target got painted. At the moment of measurement only the offset from
+		UTC(k) is knowable; the red arrow, which is the trueness you actually care
+		about, can only be drawn in arrears.
+	</figcaption>
+</figure>
+
 Which gives [traceability](/timekeeping/glossary/#traceability) its job.
 An unbroken, documented chain to a reference is the only thing that ever tells
-you where the centre was.
+you where the center was.
 
 See also: [relating accuracy to
 resolution](/timekeeping/metrology/accuracy-and-resolution-in-pictures/), and

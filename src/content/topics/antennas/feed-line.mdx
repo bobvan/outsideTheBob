@@ -1,42 +1,121 @@
 ---
-title: "Your feed line is probably wrong"
-description: "Two compounding errors — an unmeasured cable length and an assumed velocity factor — that together cost far more than the antenna survey everyone worries about."
+title: "Your feed line is likely your largest source of error"
+description: "The delay down the antenna cable is uncompensated, frequently unmeasured, and usually larger than the errors people spend their time worrying about."
 section: "antennas"
 order: 50
-updatedDate: 2026-08-01
+updatedDate: 2026-08-02
 coverage: "H"
 tags: ["GNSS", "antennas", "timing", "datacenter"]
 draft: true
 ---
 
-**STUB.** Material and verified arithmetic are in
-`docs/topics-in-timekeeping.md` (Antennas → *Your feed line is probably wrong*).
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+import byLength from "../../../assets/CableDelayByLength.png";
+import byDelay from "../../../assets/CableDelayByDelay.png";
 
-The claim the page exists to make: feedline compensation is likely the largest
-single source of timing bias in typical datacenter deployments — which makes
-the natural reading order of this topic counter-intuitive, and that is worth
-saying out loud. People agonise over a survey wrong by tens of centimetres
-while a cable quietly costs them tens of nanoseconds.
+Signals take time to travel down the antenna cable, and nothing in your system
+corrects for it. That delay lands directly in your offset from UTC, and in a
+typical datacenter installation it is larger than the errors people spend their
+attention on.
 
-Two independent errors that compound, and the fixes differ:
+This is not usually anybody's mistake. It is a reasonable assumption that has
+stopped being reasonable.
 
-1. **Wrong length.** The markings are usually printed on the jacket. The
-   failure is not that the information is unavailable — it is that nobody walks
-   the cable.
-2. **Wrong velocity factor.** Worse, because it is silent. Nothing about the
-   install tells you the assumption was wrong.
+## Why it goes wrong even when everyone is competent
 
-Worked numbers, verified — ⚠️ still check against real datasheets before this
-publishes. The algebra is just *length ÷ (VF × c)*:
+You may not have run the feed line. You may not own it. In a datacenter, quite
+possibly somebody ran it years ago on a work order, and did a perfectly good job
+by every standard that applied to them.
 
-| | VF 0.66 (solid PE) | VF 0.85 (foam) |
+And here is the thing they would have had no reason to think about: **for
+almost every cable in the building, length does not matter.** Ethernet, fiber,
+power — you run what you need, within limits, and nothing downstream cares
+whether it was 12 meters or 30. That instinct is correct nearly everywhere. It
+happens to be wrong for exactly one cable in the room.
+
+So the number is often unrecorded, because nobody recording it knew it was a
+number worth recording.
+
+## What actually matters is the delay, not the length
+
+Worth being precise here, because the distinction turns out to be the whole
+practical problem.
+
+The quantity your clock needs is the **delay** — how long the signal takes to
+get from the antenna to the receiver. Length is not that quantity. Length is one
+input to calculating it, and the other input is the
+[velocity factor](/timekeeping/glossary/#velocity-factor) of the specific coax:
+the fraction of the speed of light at which a signal moves down it.
+
+That fraction varies more than you might expect. Solid-polyethylene coax runs
+about 0.66; foam dielectric about 0.85. In delay terms:
+
+| Coax dielectric | Velocity factor | Delay |
 |---|---|---|
-| Delay down a 30 m run | ≈ 152 ns | ≈ 118 ns |
+| Solid polyethylene | 0.66 | 5.05 ns/m |
+| Foam | 0.85 | 3.92 ns/m |
 
-So ≈ 34 ns from one wrong assumption about a cable, on a run length a
-datacenter would think unremarkable. A length error is gentler but not gentle:
-at VF 0.8, every metre costs ≈ 4.2 ns.
+Same length, and nearly 30% different delay.
 
-Ends on the same conclusion as
-[Don't let the receiver survey itself](/timekeeping/antennas/receiver-self-survey/):
-measure it and configure it. Do not accept a default and do not guess.
+## Which is why "by length" is a trap
+
+Here is the same clock, configured both ways. It offers a choice of
+compensation method:
+
+<ZoomableImage
+	src={byLength}
+	alt="A clock's configuration page. Cable Delay Compensation Method is set to By Length. Antenna Cable Length is editable and reads 10 m; Compensation Time is greyed out and reads 50 ns."
+	caption="By Length: you type 10 m, and it derives 50 ns."
+/>
+
+<ZoomableImage
+	src={byDelay}
+	alt="The same configuration page with Cable Delay Compensation Method set to By Delay. Antenna Cable Length is greyed out at 20 m; Compensation Time is editable and reads 100 ns."
+	caption="By Delay: you type 100 ns, and it shows 20 m as the equivalent."
+/>
+
+Look at the ratio in both screenshots: 10 m ↔ 50 ns, 20 m ↔ 100 ns. **Five
+nanoseconds per meter, fixed.** That is a velocity factor of 0.66 baked in — a
+perfectly sensible default, and the correct one for solid-polyethylene coax.
+
+If your cable is foam dielectric, its real delay is 3.92 ns/m. Configure 20 m
+"by length" and the clock applies 101 ns of compensation to a cable that
+actually delays by 78 ns. **You have just introduced 23 ns of error while
+carefully entering a correct number.**
+
+<CalloutBox type="tip" title="Configure by delay when you are offered the choice">
+	Entering a length asks the equipment to guess your velocity factor. Entering a
+	delay does not — it is the quantity that matters, stated directly, with no
+	assumption in the middle.
+</CalloutBox>
+
+## Getting the number
+
+Two things to find out, and neither needs test equipment.
+
+**The velocity factor** comes from the coax manufacturer. Identify the cable
+type — it is usually printed on the jacket along with everything else — and look
+up its published velocity factor. This is a datasheet lookup, not a measurement.
+
+**The length**, if you must derive delay from it, is often printed on the jacket
+too. Most coax carries sequential length markers every foot or meter. If the run
+is already installed, you can frequently read the marker at each end and
+subtract, without pulling anything or owning a TDR. The cable has been telling
+you its length the whole time.
+
+Add a little for the service loop you cannot see, be honest that it is an
+estimate, and remember that the estimate is being multiplied by a velocity
+factor you should also have looked up.
+
+## What this is worth
+
+A 30 m run misjudged by one velocity factor is about 34 ns. A run whose length
+is wrong by 3 m is about 15 ns. Both are large compared with the survey errors
+that occupy far more attention, and both are fixed by reading two labels and
+typing one number.
+
+It ends in the same place as
+[not letting the receiver survey itself](/timekeeping/antennas/receiver-self-survey/):
+measure it, or look it up, and configure the result. Do not accept a default and
+do not guess.

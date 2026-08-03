@@ -5,7 +5,7 @@ import FormattedDate from '../../../components/FormattedDate.astro';
 import TagList from '../../../components/TagList.astro';
 import { sectionsWithPages, sectionTitle, topicPath } from '../../../topics';
 
-// Neighbours are resolved here because this is the one place the whole ordered
+// Neighbors are resolved here because this is the one place the whole ordered
 // set is in hand.
 //
 // The list is flattened across sections rather than kept per-section, so the
@@ -30,7 +30,7 @@ const { page, prev, next } = Astro.props;
 const { Content } = await render(page);
 const section = sectionTitle(page.data.section);
 
-// A neighbour in another section gets a parenthetical; one in this section does
+// A neighbor in another section gets a parenthetical; one in this section does
 // not need it, and saying "(in Antennas)" on every link would be noise.
 const away = (n: typeof prev) =>
 	n && n.section !== page.data.section ? sectionTitle(n.section) : null;
@@ -57,10 +57,10 @@ const nextAway = away(next);
 	</article>
 
 	{/* Headed for where the reader currently is. The pages have an order and
-	    these links honour it, but the topic's rule is that any page is a valid
-	    place to start — so they are offered as neighbours, not as the next
+	    these links honor it, but the topic's rule is that any page is a valid
+	    place to start — so they are offered as neighbors, not as the next
 	    chapter you are obliged to read. */}
-	<nav class="neighbours" aria-label={`More in ${section}`}>
+	<nav class="neighbors" aria-label={`More in ${section}`}>
 		<p class="heading">More in {section}</p>
 		<div class="links">
 			<span class="back">
@@ -96,12 +96,12 @@ const nextAway = away(next);
 	.breadcrumb { margin-bottom: 0.75rem; }
 	article > :global(h1) { margin-bottom: 0.25rem; }
 
-	.neighbours {
+	.neighbors {
 		margin-top: 2rem;
 		padding-top: 1rem;
 		border-top: 1px solid var(--border);
 	}
-	.neighbours .heading {
+	.neighbors .heading {
 		margin: 0 0 0.6rem;
 		font-size: 0.85rem;
 		color: var(--muted);

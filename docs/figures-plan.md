@@ -41,10 +41,6 @@ own notation without the target being dumbed down for them.
 
 ## Worth drawing next
 
-- **Deferred truth.** Three marks — your group, the UTC(k) you steer to, and UTC
-  arriving later — with the third drawn as *not yet present*. Possibly two
-  panels: at the moment of measurement, and after Circular T. This is the
-  field-specific one nobody else can draw.
 - **Stability versus accuracy.** The watch that keeps perfect time and is set
   three minutes fast: even tick spacing, wrong origin. A tick-mark timeline
   rather than a target, which usefully breaks the visual monotony.
@@ -71,6 +67,21 @@ sit at identical coordinates in both panels, the centre is marked with a cross,
 and a dashed guide carries the position across the gap. The reader confirms "it
 has not moved" with their own eye; the caption only points at it. That is the
 difference between a diagram and an illustration.
+
+## Two colors, and what red means
+
+Red is reserved for exactly two things: the **X that marks a group's center**,
+and the **arrow that measures from truth to it**. Nothing else uses it.
+
+That constraint is what makes it work. Readers already expect X-marks-the-spot
+to be red, so the convention costs nothing to learn; and because red appears
+only on those two marks, a caption can say "the red arrow" and be unambiguous
+across every figure in the set. A second accent color would buy nothing and
+start competing.
+
+It also removed a hack. The center X used to need a white disc behind it to stay
+visible in dense clusters, and the disc punched a visible hole in the data.
+A heavier red X reads straight through the cluster with nothing removed.
 
 ## Rejected
 

@@ -1,14 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import TagList from '../../components/TagList.astro';
-import { tagIndex, hasOwnPage, postSlug, type Tag } from '../../tags';
+import { tagIndex, hasOwnPage, type Tag } from '../../tags';
 
-// One page per tag that groups more than one post. Single-post tags link
-// straight to their post from everywhere, so a page here would be unreachable -
+// One page per tag that groups more than one thing. Single-item tags link
+// straight to that thing from everywhere, so a page here would be unreachable —
 // and a page nothing links to, still listed in the sitemap, is worse than no
-// page at all. The posts travel as props, so each page is built from the index
-// that already grouped them rather than re-querying the collection.
+// page at all. Items travel as props, so each page is built from the index that
+// already grouped them rather than re-querying the collections.
 export async function getStaticPaths() {
 	const tags = await tagIndex();
 	return tags.filter(hasOwnPage).map((tag) => ({ params: { tag: tag.slug }, props: { tag } }));
@@ -19,30 +18,62 @@ interface Props {
 }
 
 const { tag } = Astro.props;
-const count = tag.posts.length;
+const posts = tag.items.filter((i) => i.kind === 'post');
+const topics = tag.items.filter((i) => i.kind === 'topic');
+const count = tag.items.length;
 ---
 
 <BaseLayout
 	title={`Tagged ${tag.label}`}
-	description={`${count} post${count === 1 ? '' : 's'} tagged ${tag.label} on Think Outside The Bob.`}
+	description={`${count} page${count === 1 ? '' : 's'} tagged ${tag.label} on Think Outside The Bob.`}
 >
 	<h1>Tagged “{tag.label}”</h1>
 	<p class="muted">
-		{count} post{count === 1 ? '' : 's'} · <a href="/tags/">all tags</a>
+		{count} page{count === 1 ? '' : 's'} · <a href="/tags/">all tags</a>
 	</p>
 
+	{/* Grouped rather than interleaved: posts are dated events and topics are
+	    evergreen reference, so a single date-sorted list would keep burying the
+	    reference under whatever was written most recently. */}
 	{
-		tag.posts.map((post) => (
-			<article>
-				<h2>
-					<a href={`/blog/${postSlug(post)}/`}>{post.data.title}</a>
-				</h2>
-				<p class="post-meta">
-					<FormattedDate date={post.data.pubDate} />
-					<TagList tags={post.data.tags} />
-				</p>
-				{post.data.description && <p>{post.data.description}</p>}
-			</article>
-		))
+		topics.length > 0 && (
+			<section>
+				<h2 class="group">Topics In Timekeeping</h2>
+				{topics.map((item) => (
+					<article>
+						<h3><a href={item.href}>{item.title}</a></h3>
+						<p class="post-meta">Updated <FormattedDate date={item.date} /></p>
+						<p>{item.description}</p>
+					</article>
+				))}
+			</section>
+		)
+	}
+
+	{
+		posts.length > 0 && (
+			<section>
+				{topics.length > 0 && <h2 class="group">From the blog</h2>}
+				{posts.map((item) => (
+					<article>
+						<h3><a href={item.href}>{item.title}</a></h3>
+						<p class="post-meta"><FormattedDate date={item.date} /></p>
+						<p>{item.description}</p>
+					</article>
+				))}
+			</section>
+		)
 	}
 </BaseLayout>
+
+<style>
+	.group {
+		margin: 2rem 0 0.5rem;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--muted);
+	}
+	article h3 { margin: 0 0 0.2rem; }
+	article p { margin: 0.15rem 0 0; }
+</style>

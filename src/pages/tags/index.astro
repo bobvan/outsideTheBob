@@ -23,14 +23,14 @@ const total = tags.length;
 						<a
 							href={links.get(tag.slug)}
 							title={
-								tag.posts.length === 1
-									? `One post: ${tag.posts[0].data.title}`
-									: `${tag.posts.length} posts tagged ${tag.label}`
+								tag.items.length === 1
+									? `One page: ${tag.items[0].title}`
+									: `${tag.items.length} pages tagged ${tag.label}`
 							}
 						>
 							{tag.label}
 						</a>
-						<span class="muted">{tag.posts.length}</span>
+						<span class="muted">{tag.items.length}</span>
 					</li>
 				))}
 			</ul>

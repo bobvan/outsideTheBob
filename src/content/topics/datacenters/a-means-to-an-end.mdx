@@ -1,0 +1,59 @@
+---
+title: "Nobody wants precise time"
+description: "Precise time is never the goal. It is the price of admission for something else — which is why the requirement usually arrives from outside engineering."
+section: "datacenters"
+order: 10
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "trading"]
+draft: true
+---
+
+Nobody wants precise time.
+
+People want a trade to be provably ahead of another trade. They want a
+distributed database to agree with itself about what happened first. They want a
+log they can hand to somebody who is entitled to ask. Precise time is what those
+things cost — never the thing anybody set out to buy.
+
+That sounds like a pedantic distinction and it is not, because it decides
+several things that follow.
+
+## It explains where the requirement comes from
+
+Timing requirements in a datacenter usually do not originate in engineering.
+They arrive from a regulator, a counterparty, an auditor, or a contract — and
+they arrive as a number, without the reasoning that produced it.
+
+Which means the number is often the wrong question to start from. "We need 100
+microseconds" is an answer to something, and the useful move is to find out what.
+Whether the answer is *ordering*, *elapsed time*, or *a defensible record*
+changes what you should build, and those three have very different costs.
+
+## It explains why "how accurate?" is the wrong first question
+
+If precise time is a means, the first question is what it is a means *to*. Two
+systems quoting the same accuracy figure can need entirely different things:
+
+- A system that must **order** events needs its clocks to agree with each other.
+  It may not care much where the group sits relative to UTC — see
+  [when agreement matters more than being right](/timekeeping/two-clock/agreement-is-not-accuracy/).
+- A system that must **produce a defensible record** needs
+  [traceability](/timekeeping/glossary/#traceability) to a reference, which is a
+  paperwork problem as much as an engineering one.
+- A system that must **measure durations** needs frequency stability and
+  possibly no timescale at all — see [elapsed time](/timekeeping/datacenters/elapsed-time/).
+
+Those are three different purchases. Asking "how accurate do we need to be?"
+before asking "accurate at what?" is how organizations buy the wrong one.
+
+## It explains why the work is invisible when it goes well
+
+Nothing about a correctly timestamped trade looks like anything. The entire
+return on this work is the absence of a problem: an audit that goes quietly, a
+reconciliation that matches, an incident timeline that makes sense.
+
+That is worth knowing before you go asking for budget, and it is why the
+questions on this site are framed the way they are — as
+[what to ask a vendor](/timekeeping/questions/buying-a-clock/) rather than as
+what to admire about a clock.

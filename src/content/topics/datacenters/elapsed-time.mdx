@@ -1,0 +1,82 @@
+---
+title: "Elapsed time needs no timescale"
+description: "Measuring how long something took is a different and much easier problem than knowing what time it is. Knowing which one you have saves a great deal of money."
+section: "datacenters"
+order: 50
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "trading", "oscillators"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+A [timescale](/timekeeping/datacenters/timescales/) needs a unit, an origin, and
+a count. Measuring a *duration* needs only the first and the last.
+
+You do not need to know what time it is to know how long something took. You need
+a tick of known length and something to count ticks with. No origin, no agreement
+with anybody else, no reference to UTC.
+
+That makes elapsed time a fundamentally cheaper problem, and it is worth knowing
+when you have that problem rather than the expensive one.
+
+## How much cheaper
+
+Consider a trader measuring the interval between a market data tick arriving and
+an order going out — say 2.5 µs.
+
+The only thing that can corrupt that measurement is the counter running at the
+wrong rate. Suppose it is off by 1 part per million, which is a poor oscillator
+by timing standards:
+
+> 2.5 µs × 1 ppm = **2.5 picoseconds** of error.
+
+Two and a half picoseconds. Under a hundredth of a millimeter in
+[distance terms](/timekeeping/datacenters/how-big-is-a-nanosecond/). A mediocre
+oscillator measures a microsecond-scale interval essentially perfectly, because
+frequency error scales with the interval — and the interval is short.
+
+Meanwhile, that same clock could be a full millisecond away from UTC and this
+measurement would not notice, because the offset appears at both ends of the
+subtraction and cancels.
+
+<CalloutBox type="tip" title="Short intervals forgive bad clocks">
+	Frequency error contributes in proportion to the duration measured. Over
+	microseconds, almost any oscillator is fine. The expensive requirements come
+	from needing to agree with somebody else about <em>when</em> — not from needing
+	to know <em>how long</em>.
+</CalloutBox>
+
+## Where it stops being true
+
+The forgiveness above has limits, and they are worth stating because that is
+where the reasoning breaks:
+
+**Long intervals.** The same 1 ppm that costs 2.5 ps over 2.5 µs costs 86 ms
+over a day. Frequency error scales with duration, so an interval long enough
+eventually needs a good oscillator after all.
+
+**Intervals measured by two different clocks.** The cancellation above depends on
+both timestamps coming from the same counter. Start on one clock and stop on
+another and you are no longer measuring elapsed time — you are measuring elapsed
+time *plus* the offset between two clocks, which is the
+[expensive problem](/timekeeping/two-clock/agreement-is-not-accuracy/) in
+disguise.
+
+**Anything that must be compared with somebody else's record.** A duration you
+report to a regulator or a counterparty has to be anchored to a shared timescale
+to mean anything to them, at which point you need the origin after all.
+
+## Which is the useful question
+
+Before buying accuracy, work out which of these you actually have:
+
+- **How long did it take?** — one clock, short interval, cheap.
+- **In what order did these happen?** — several clocks that must agree with each
+  other, moderately expensive.
+- **When exactly did this happen?** — agreement with UTC, most expensive.
+
+Organizations routinely buy the third when they needed the first. The
+[questions to ask a vendor](/timekeeping/questions/buying-a-clock/) start here for
+exactly that reason.

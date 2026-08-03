@@ -1,0 +1,75 @@
+---
+title: "How big is a nanosecond?"
+description: "A nanosecond is about a foot. Once the units are physical rather than numerical, most timing arguments get easier to have."
+section: "datacenters"
+order: 20
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Nanoseconds are hard to argue about because nobody has any intuition for them.
+Fortunately there is a conversion that gives you one, and it is worth committing
+to memory before anything else on this site.
+
+**Light travels about 30 cm in a nanosecond.** About a foot.
+
+That single fact turns a great many timing questions from abstract into
+physical:
+
+| Time | Distance |
+|---|---|
+| 1 ns | ≈ 30 cm — about a foot |
+| 100 ps | ≈ 3 cm — a little over an inch |
+| 30 ps | ≈ 9 mm — the width of a little finger |
+| 1 ps | ≈ 0.3 mm — about the thickness of a business card |
+
+## Why this is the most useful thing here
+
+Because it makes errors comparable to objects.
+
+A foot of extra antenna cable is a nanosecond. A GNSS antenna surveyed a meter
+too high is three nanoseconds. The difference between two ends of a rack is
+under a nanosecond, and the difference between two buildings on a campus is
+not.
+
+And it works in the other direction, which is where it earns its keep in
+arguments: if somebody claims a system holds a hundred picoseconds, they are
+claiming to control something to about an inch. That is a claim you can inspect
+by looking at the room.
+
+## The picosecond trap
+
+Small units are easy to mis-convert, and one mis-conversion in particular
+catches people who know exactly what they are doing.
+
+A picosecond is 0.3 mm — genuinely tiny, easy to dismiss as unphysical. But
+timing specifications are rarely for one picosecond. **Thirty** picoseconds is
+9 mm, which is a perfectly ordinary distance you could point at.
+
+<CalloutBox type="warn" title="Convert the number you were given, not the unit">
+	The instinct is to convert "a picosecond" and judge plausibility from that. The
+	quantity that matters is whatever multiple of it is actually being claimed, and
+	the difference between 0.3 mm and 9 mm is the difference between "impossible"
+	and "the width of your little finger".
+</CalloutBox>
+
+## What it looks like across a real site
+
+From a talk on getting to the last nanoseconds of UTC:
+
+> We do lose a little bit of precision when we get to a half-mile campus like
+> this one in New Jersey — maybe only within 200 picoseconds over a half-mile
+> campus. But that's two orders of magnitude better than the accuracy of our
+> clocks.
+
+Two things worth extracting from that. Distributing time across half a mile
+costs you about 6 cm of equivalent distance error — small. And it is *two orders
+of magnitude* below what the clocks themselves manage, which tells you where the
+money should go, and it is not the cabling.
+
+That ratio is the useful shape: once you can convert time to distance, you can
+see which term in your error budget dominates without measuring anything.

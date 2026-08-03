@@ -1,0 +1,64 @@
+---
+title: "Every timestamp is taken against a timescale"
+description: "A timescale is three things: how long a tick is, when tick zero was, and how many ticks since. Anything with those three is a valid timescale — including some absurd ones."
+section: "datacenters"
+order: 40
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "UTC"]
+draft: true
+---
+
+A timestamp is not a fact about the universe. It is a count, and a count is
+meaningless until you say what you were counting and from when.
+
+A **timescale** supplies exactly three things:
+
+1. **How long a tick is** — the unit.
+2. **When tick zero was** — the origin.
+3. **How many ticks have elapsed since** — the count.
+
+That is the whole definition. Anything providing all three is a valid timescale,
+and anything missing one is not a timescale at all, however time-like it looks.
+
+## Some examples, one of them ridiculous
+
+**UTC** is the world's civil timescale — the one nearly everything is
+ultimately answerable to, and the one with a peculiarity worth knowing about,
+since [it is not available in real time](/timekeeping/glossary/#utc).
+
+**TAI** counts SI seconds continuously with no leap seconds, which makes it well
+behaved for arithmetic and useless for telling somebody what time to be
+somewhere.
+
+**Years since Victoria's reign** is also a valid timescale. The unit is a year,
+the origin is 1837, and you can count. It is absurd, nobody would use it, and it
+is entirely legitimate under the definition.
+
+<figure class="diagram">
+	<img src="/images/victorian-timescale.png" alt="An illustration of a timescale measured in years since the beginning of Queen Victoria's reign." />
+	<figcaption>
+		Valid, useless, and worth a moment — an unfamiliar example makes it much
+		harder to skate past the definition.
+	</figcaption>
+</figure>
+
+The absurd one earns its place. UTC is so familiar that it is easy to read
+"timestamp" as meaning something absolute, when it means a count against a
+convention that people had to agree on and could have agreed differently.
+
+## Why this matters in practice
+
+**Two timestamps are only comparable if they share a timescale**, or if you know
+the offset between theirs. Reconciling records across organizations is largely
+this problem wearing other clothes.
+
+**A timescale can be realized well or badly.** UTC is a definition; what your
+clock actually produces is a realization of it, and the gap between them is
+everything this site is about. See [UTC(k)](/timekeeping/glossary/#utc-k) for who
+maintains those realizations and how far they sit from the definition.
+
+**Some things you time do not need a timescale at all.** Measuring how long
+something took needs a unit and a counter, but no origin and no agreement with
+anybody — which is a genuinely different and much easier problem. That is
+[elapsed time](/timekeeping/datacenters/elapsed-time/).

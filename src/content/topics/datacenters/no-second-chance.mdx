@@ -1,0 +1,67 @@
+---
+title: "No second chance"
+description: "The archer gets ten arrows and can average them. A trade happens once, and its timestamp is taken once. That difference decides which errors you can tolerate."
+section: "datacenters"
+order: 30
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "trading", "metrology"]
+draft: true
+---
+
+Most measurement thinking assumes you can measure again.
+
+The archer shoots ten arrows and the group tells you something the single arrow
+could not. The metrologist repeats a reading and quotes a mean. Nearly every
+technique on this site — [averaging](/timekeeping/metrology/limits-of-averaging/),
+[precision](/timekeeping/glossary/#precision), the whole idea of a distribution —
+assumes repetition is available.
+
+Timestamping a trade is not like that.
+
+The event happens once. The timestamp is taken once. There is no second
+observation to average with, no group to draw, and no opportunity to notice from
+the spread that something was off. You get one number and you keep it forever.
+
+## What that changes
+
+**Precision stops being a statistical comfort.** A system whose timestamps
+scatter by ±50 ns does not give you a nice tight distribution around the truth;
+it gives you *one* sample from that distribution, and you will never know which
+one you got. The spread that would have averaged away is, for this single event,
+simply your error.
+
+**Bias and scatter become equally bad.** Elsewhere the distinction matters
+enormously — bias survives averaging and scatter does not. With one shot there is
+no averaging, so both land in the answer with equal weight. The careful
+separation of [trueness from precision](/timekeeping/glossary/#trueness) is still
+the right way to *diagnose* a system, but it stops being a way to *escape* one of
+them.
+
+**The error is unfalsifiable after the fact.** Nothing in the record says which
+timestamps were the good ones. A trade recorded 80 ns late looks exactly like a
+trade recorded on time, forever, and no amount of later analysis separates them.
+
+## Which is why the work happens beforehand
+
+Everything you can do about single-shot error has to be done before the shot.
+
+You cannot average away a systematic offset in a timestamp you have already
+taken — but you *can* have measured your [feed line](/timekeeping/antennas/feed-line/)
+last month, so the offset was never there. You cannot improve the precision of a
+record you already have, but you can have chosen a clock whose scatter was small
+before you ever wrote to it.
+
+This is the underlying reason the questions on this site are shaped as
+[things to ask before buying](/timekeeping/questions/buying-a-clock/) and
+[things to decide before building](/timekeeping/questions/designing-a-clock/).
+In a repeated-measurement world, characterizing the instrument afterwards is a
+reasonable plan. Here, afterwards is too late by construction.
+
+<div class="muted">
+	The archer's target is still the right picture for understanding the *kinds* of
+	error — it is used throughout
+	[the metrology pages](/timekeeping/metrology/accuracy-and-precision-in-pictures/).
+	Just remember that in this application you are looking at a target with exactly
+	one arrow in it, and no way to tell whether it was a representative one.
+</div>

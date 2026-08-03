@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import { SECTIONS, sectionsWithPages, topicPath } from '../../../topics';
+
+// A section index exists mostly because readers trim URLs. Somebody on
+// /timekeeping/antennas/feed-line/ will delete the last segment to see what else
+// is there, and a 404 for that guess is a bad answer to a reasonable question.
+//
+// Only sections that have pages get one — an index promising a section that is
+// empty is worse than the 404 it replaces.
+export async function getStaticPaths() {
+	const sections = await sectionsWithPages();
+	return sections.map((s) => ({ params: { section: s.key }, props: { section: s } }));
+}
+
+const { section } = Astro.props;
+const others = SECTIONS.filter((s) => s.key !== section.key);
+---
+
+<BaseLayout
+	title={section.title}
+	description={`${section.pages.length} page${section.pages.length === 1 ? '' : 's'} on ${section.title}, part of Topics In Timekeeping.`}
+>
+	<p class="post-meta"><a href="/timekeeping/">Topics In Timekeeping</a></p>
+	<h1>{section.title}</h1>
+
+	<ul class="list-unstyled">
+		{
+			section.pages.map((page) => (
+				<li>
+					<a href={topicPath(page)}>{page.data.title}</a>
+					<p class="post-meta">Updated <FormattedDate date={page.data.updatedDate} /></p>
+					<p>{page.data.description}</p>
+				</li>
+			))
+		}
+	</ul>
+</BaseLayout>
+
+<style>
+	li { padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
+	li p { margin: 0.15rem 0 0; }
+	h1 { margin-top: 0.2rem; }
+</style>

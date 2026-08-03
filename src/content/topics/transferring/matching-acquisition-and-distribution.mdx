@@ -1,0 +1,90 @@
+---
+title: "Matching acquisition and distribution"
+description: "Two distinct problems that both have to be solved. Their errors sum, so the accurate one is paying for accuracy the other cannot deliver."
+section: "transferring"
+order: 5
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "PTP", "NTP", "UTC"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Getting accurate time into a datacenter is two problems, not one.
+
+**[Acquisition](/timekeeping/acquiring/)** is getting time into the building from
+somewhere authoritative — a GNSS antenna on the roof, a fiber from a national
+lab, a service delivered over a dedicated link, NTP over the internet.
+
+**[Distribution](/timekeeping/transferring/distribution/)** is getting that time
+from wherever it arrives to every host that needs it — the switches, the
+protocol, the cabling, the network asymmetries.
+
+These are not in competition. You do not choose between them, you do not trade
+one against the other, and neither is more important. **Both have to be solved,
+and your result is what the worse of the two allows.**
+
+## Why they cannot be considered separately
+
+Because the errors add, and once added they cannot be pulled apart again.
+
+A host reading 60 ns from UTC does not come with a breakdown of how much of that
+was the antenna survey, the feed line, the grandmaster, the switch chain, and
+the last cable to the rack. You get one number. The contributions are gone.
+
+Which means the useful question is never "how good is my grandmaster?" but "how
+good is the *chain*?" — and a chain has no more accuracy than its worst link.
+
+<CalloutBox type="warn" title="Mismatched precision is wasted money">
+	Precision acquisition feeding sloppy distribution is money spent on accuracy
+	that never reaches a host. Sloppy acquisition feeding precision distribution is
+	money spent delivering an error faithfully to every rack in the building.
+
+	Whichever is worse sets what you actually have. The better one is paying for
+	performance it cannot deliver.
+</CalloutBox>
+
+## The matching table
+
+[[? Bob — this is where the four-row table from your SubNano presentation goes.
+
+I have sketched the shape below from the argument, but I do not have the slide and I would rather use yours than invent one that half-matches. Send it (or the four rows as text) and I will set it properly.
+
+My guess at what it does: rows are accuracy tiers, columns are what acquisition and distribution each need to deliver at that tier — so a reader can find their row and see both requirements together rather than shopping for one at a time. Correct me. ?]]
+
+| Target accuracy | Acquisition typically | Distribution typically |
+|---|---|---|
+| *milliseconds* | NTP over the internet | NTP | 
+| *tens of microseconds* | GNSS receiver | PTP, software timestamping |
+| *sub-microsecond* | GNSS timing receiver | PTP with hardware timestamping, boundary clocks |
+| *nanoseconds* | GNSS timing receiver, calibrated | White Rabbit, or PPS over short calibrated runs |
+
+*Placeholder, pending Bob's table.*
+
+## What matching looks like in practice
+
+**Check the whole path before improving any part of it.** The instinct on
+discovering a 100 ns error is to buy a better grandmaster. Frequently the
+grandmaster was already ten times better than the switch chain carrying its
+output.
+
+**Errors in distribution are not only random.** It is tempting to think of
+acquisition as the source of bias and distribution as the source of jitter. Not
+so — an uncompensated pulse-per-second cable, an asymmetric network path, a
+switch that delays one direction more than the other, all put a *fixed offset*
+into distributed time. Distribution can be the dominant contributor to how far
+you sit from UTC.
+
+**Both halves have uncompensated regions.** This is the thread that connects the
+two pages: some delays are measured and subtracted by the protocol, and some are
+not. Knowing which is which decides where a mistake costs you nothing and where
+it costs you permanently.
+
+## Where to go next
+
+- **[Acquiring time](/timekeeping/acquiring/)** — the ways time gets into a
+  building, and why GNSS so often lands in the sweet spot.
+- **[Distributing time](/timekeeping/transferring/distribution/)** — the
+  protocols, what each is capable of, and which of them compensate for path
+  length.

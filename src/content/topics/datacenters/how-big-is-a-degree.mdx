@@ -1,0 +1,86 @@
+---
+title: "How big is a degree?"
+description: "Each decimal place of latitude and longitude buys a factor of ten. Knowing where the useful digits stop saves arguing about the ones that cannot mean anything."
+section: "datacenters"
+order: 25
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["GNSS", "timing", "datacenter", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+[A nanosecond is about a foot](/timekeeping/datacenters/how-big-is-a-nanosecond/),
+which makes time physical. Coordinates need the same treatment, because a
+latitude with nine decimal places looks authoritative and most of it is noise.
+
+A degree of latitude is about **111 km** anywhere on Earth. A degree of longitude
+is 111 km at the equator and shrinks with the cosine of latitude — at Chicago it
+is about **82.8 km**. Every decimal place after that divides by ten.
+
+## The ladder
+
+| Digits | Step | Δ lat | Δ lon (Chicago) | Light-time | Scale |
+|---|---|---|---|---|---|
+| 0 | 1° | 111 km | 82.8 km | 371 µs | state / country |
+| 1 | 0.1° | 11.1 km | 8.28 km | 37.1 µs | city |
+| 2 | 0.01° | 1.11 km | 828 m | 3.71 µs | neighborhood |
+| 3 | 10⁻³° | 111 m | 82.8 m | 371 ns | city block |
+| 4 | 10⁻⁴° | 11.1 m | 8.28 m | 37.1 ns | building |
+| 5 | 10⁻⁵° | 1.11 m | 828 mm | 3.71 ns | room |
+| 6 | 10⁻⁶° | 111 mm | 82.8 mm | 371 ps | hand |
+| 7 | 10⁻⁷° | 11.1 mm | 8.28 mm | 37.1 ps | fingernail |
+| 8 | 10⁻⁸° | 1.11 mm | 828 µm | 3.71 ps | pencil tip |
+| 9 | 10⁻⁹° | 111 µm | 82.8 µm | 371 fs | hair width |
+| 10 | 10⁻¹⁰° | 11.1 µm | 8.28 µm | 37.1 fs | red blood cell |
+| 11 | 10⁻¹¹° | 1.11 µm | 828 nm | 3.71 fs | visible light wavelength |
+| 12 | 10⁻¹²° | 111 nm | 82.8 nm | 371 as | virus |
+| 13 | 10⁻¹³° | 11.1 nm | 8.28 nm | 37.1 as | small protein |
+| 14 | 10⁻¹⁴° | 1.11 nm | 828 pm | 3.71 as | DNA helix width |
+| 15 | 10⁻¹⁵° | 111 pm | 82.8 pm | 371 zs | single atom |
+
+The light-time column is the point of putting this on a timekeeping site: it is
+how much clock error that much position error is worth, using the same
+foot-per-nanosecond conversion.
+
+## Where the digits stop being real
+
+Three thresholds worth knowing, because they mark where extra digits change from
+information into decoration:
+
+- **Six decimal places — about 10 cm.** The practical sweet spot for
+  centimeter-class navigation. This is as far as most people ever need to go.
+- **Eight decimal places — about 1 mm.** Roughly the limit of a clean PPP-AR
+  solution with 24 hours of observations. Getting here is real work.
+- **Beyond nine — under 100 µm.** Past the actual physical stability of any
+  antenna mount. Thermal expansion of the mast moves the antenna further than
+  this between morning and afternoon.
+
+<CalloutBox type="warn" title="Digits are free; meaning is not">
+	Software will happily print fifteen decimal places, and the last six of them
+	describe a position smaller than the daily flex of the pole the antenna is
+	bolted to. A coordinate is only as good as the thing holding it still.
+</CalloutBox>
+
+## What it is worth in time
+
+Read the light-time column against the accuracy you are chasing:
+
+- Getting position to a **building** (4 digits) leaves ~37 ns on the table —
+  already too coarse if you care about UTC to better than that.
+- Getting it to a **room** (5 digits) is 3.7 ns — fine for most datacenter work.
+- Getting it to a **hand** (6 digits) is 371 ps, and at that point your
+  [feed line](/timekeeping/antennas/feed-line/) and your survey method dominate
+  by a wide margin.
+
+Which is the useful takeaway: past about six decimal places, position stops
+being your limiting error and something else takes over. See
+[configuring antenna position](/timekeeping/antennas/antenna-position/) for what
+that something else usually is.
+
+## The obligatory reference
+
+There is a well-known xkcd on exactly this — coordinate precision versus what it
+can possibly mean — and it makes the point faster than this page does:
+[xkcd 2170, "Coordinate Precision"](https://xkcd.com/2170/).

@@ -1,72 +1,114 @@
 ---
 title: "Elapsed time needs no timescale"
-description: "Measuring how long something took is a different and much easier problem than knowing what time it is. Knowing which one you have saves a great deal of money."
+description: "Measuring how long something took is a different and much easier problem than knowing what time it is. Short intervals forgive both ways a clock can be wrong."
 section: "datacenters"
 order: 50
 updatedDate: 2026-08-03
 coverage: "H"
-tags: ["datacenter", "timing", "trading", "oscillators"]
+tags: ["datacenter", "timing", "trading", "oscillators", "UTC"]
 draft: true
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-A [timescale](/timekeeping/datacenters/timescales/) needs a unit, an origin, and
-a count. Measuring a *duration* needs only the first and the last.
+A [timescale](/timekeeping/datacenters/timescales/) defines three things: the
+duration of one tick, a time when the first tick happened, and a count of
+elapsed ticks since then.
 
-You do not need to know what time it is to know how long something took. You need
-a tick of known length and something to count ticks with. No origin, no agreement
-with anybody else, no reference to UTC.
+Measuring a *duration* needs only the first and the last. You do not need to know
+what time it is to know how long something took — you need a tick of known
+length and something to count ticks with. No origin, no agreement with anybody
+else, no reference to UTC.
 
-That makes elapsed time a fundamentally cheaper problem, and it is worth knowing
-when you have that problem rather than the expensive one.
+That makes elapsed time a fundamentally cheaper problem, and knowing when you
+have it rather than the expensive one saves real money.
 
-## How much cheaper
+## Two independent ways for a clock to be wrong
+
+Worth separating before going further, because they are genuinely different
+faults and people routinely say "the clock is off" meaning either one.
+
+**A clock can run fast or slow.** Its ticks are the wrong length. This is a
+**frequency** error — the clock is *off frequency* — and it accumulates. A clock
+running slow falls further behind every hour it runs.
+
+**A clock can be ahead or behind.** Its ticks are the right length but it started
+counting from the wrong place. This is an **offset** error, and it does not
+accumulate at all. A clock set three minutes fast that otherwise keeps perfect
+time is three minutes fast forever — no worse tomorrow than today.
+
+These map exactly onto the two parameters relating
+[any pair of timescales](/timekeeping/datacenters/timescales/): frequency error
+is the **slope**, offset error is the **intercept**. A clock can have either,
+both, or neither, and the fixes are unrelated — you correct an offset by setting
+the clock once, and a frequency error by disciplining it continuously.
+
+<CalloutBox type="tip" title="Short intervals forgive both">
+	Measuring a short elapsed interval is insensitive to <em>both</em> kinds of
+	error. The offset appears at the start and the end of the subtraction and
+	cancels exactly. The frequency error contributes in proportion to a duration
+	that is, by assumption, very short.
+</CalloutBox>
+
+## How forgiving, exactly
 
 Consider a trader measuring the interval between a market data tick arriving and
 an order going out — say 2.5 µs.
 
-The only thing that can corrupt that measurement is the counter running at the
-wrong rate. Suppose it is off by 1 part per million, which is a poor oscillator
-by timing standards:
+Suppose the counter is off frequency by 1 part per million, which is poor by
+timing standards:
 
 > 2.5 µs × 1 ppm = **2.5 picoseconds** of error.
 
 Two and a half picoseconds. Under a hundredth of a millimeter in
-[distance terms](/timekeeping/datacenters/how-big-is-a-nanosecond/). A mediocre
-oscillator measures a microsecond-scale interval essentially perfectly, because
-frequency error scales with the interval — and the interval is short.
+[distance terms](/timekeeping/datacenters/how-big-is-a-nanosecond/). Meanwhile
+that same clock could be a full millisecond from UTC and this measurement would
+not notice, because the offset cancels in the subtraction.
 
-Meanwhile, that same clock could be a full millisecond away from UTC and this
-measurement would not notice, because the offset appears at both ends of the
-subtraction and cancels.
+## How bad does a clock have to be before anyone objects?
 
-<CalloutBox type="tip" title="Short intervals forgive bad clocks">
-	Frequency error contributes in proportion to the duration measured. Over
-	microseconds, almost any oscillator is fine. The expensive requirements come
-	from needing to agree with somebody else about <em>when</em> — not from needing
-	to know <em>how long</em>.
+NTP is the most error-tolerant of the common time distribution protocols, and it
+gives up on a host whose clock is off frequency by more than about **500 ppm** —
+that is the ceiling on how much frequency correction it can apply.
+
+500 ppm is an enormous frequency error: 0.05%. Put it in a wristwatch and
+
+- it loses **43 seconds a day**, and
+- after a week you are **five minutes late** for everything.
+
+Nobody would tolerate that watch. And yet, returning to the 2.5 µs tick-to-trade
+measurement:
+
+> 2.5 µs × 500 ppm = **1.25 nanoseconds**.
+
+A clock so bad that the internet's most forgiving time protocol refuses to work
+with it still measures a microsecond-scale interval to about a nanosecond. That
+gap is the whole argument of this page.
+
+<CalloutBox type="warn" title="One caveat on the 500 ppm figure">
+	500 ppm is the hard bound on frequency correction. The <em>capture</em> range —
+	how much error the discipline can pull in from a standing start — is narrower
+	at longer poll intervals, roughly halving each time the poll doubles. So a host
+	can sit inside the hard limit and still fail to discipline at a long poll.
 </CalloutBox>
 
-## Where it stops being true
+## Where the forgiveness runs out
 
-The forgiveness above has limits, and they are worth stating because that is
-where the reasoning breaks:
+Three places, worth naming because that is where the reasoning breaks:
 
-**Long intervals.** The same 1 ppm that costs 2.5 ps over 2.5 µs costs 86 ms
-over a day. Frequency error scales with duration, so an interval long enough
-eventually needs a good oscillator after all.
+**Long intervals.** Frequency error scales with duration. The same 1 ppm that
+costs 2.5 ps over 2.5 µs costs 86 ms over a day. Measure something long enough
+and you need a good oscillator after all.
 
-**Intervals measured by two different clocks.** The cancellation above depends on
-both timestamps coming from the same counter. Start on one clock and stop on
-another and you are no longer measuring elapsed time — you are measuring elapsed
-time *plus* the offset between two clocks, which is the
-[expensive problem](/timekeeping/two-clock/agreement-is-not-accuracy/) in
-disguise.
+**Intervals measured by two different clocks.** The cancellation depends on both
+timestamps coming from the same counter. Start on one clock and stop on another
+and you are measuring elapsed time *plus* the offset between two clocks — which
+is the [expensive problem](/timekeeping/two-clock/agreement-is-not-accuracy/)
+wearing a disguise.
 
-**Anything that must be compared with somebody else's record.** A duration you
-report to a regulator or a counterparty has to be anchored to a shared timescale
-to mean anything to them, at which point you need the origin after all.
+**Anything compared with somebody else's record.** A duration reported to a
+regulator or a counterparty has to be anchored to a shared timescale to mean
+anything to them, at which point you need the origin after all.
 
 ## Which is the useful question
 
@@ -78,5 +120,5 @@ Before buying accuracy, work out which of these you actually have:
 - **When exactly did this happen?** — agreement with UTC, most expensive.
 
 Organizations routinely buy the third when they needed the first. The
-[questions to ask a vendor](/timekeeping/questions/buying-a-clock/) start here for
-exactly that reason.
+[questions to ask a vendor](/timekeeping/questions/buying-a-clock/) start here
+for exactly that reason.

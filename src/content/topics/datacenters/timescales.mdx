@@ -47,6 +47,33 @@ The absurd one earns its place. UTC is so familiar that it is easy to read
 "timestamp" as meaning something absolute, when it means a count against a
 convention that people had to agree on and could have agreed differently.
 
+## Every pair of timescales is related by a straight line
+
+Because a timescale is only a tick length and an origin, any two of them are
+related by the simplest relationship there is. Plot one against the other and you
+get a straight line:
+
+<figure class="diagram">
+	<img src="/figures/timescale-relation.svg" alt="A plot with UTC year on the horizontal axis and ticks on another timescale on the vertical. A solid line labeled years since Victoria rises with slope one from an origin marked in red at 1837. A dashed line labeled half-decades since 1900 rises more shallowly from an origin marked at 1900." />
+	<figcaption>
+		Two timescales against UTC. The red dots are the origins — the intercept
+		<em>b</em>. The steepness is the ratio of tick lengths — the slope <em>m</em>.
+	</figcaption>
+</figure>
+
+**y = mx + b**, where:
+
+- **m**, the slope, is the ratio of tick lengths. Two timescales counting the
+  same-length tick have a slope of 1, and their lines are parallel.
+- **b**, the intercept, is the difference in origins.
+
+That is the entire relationship between any two timescales, and it is worth
+knowing because it tells you exactly what can differ. If two clocks disagree,
+the disagreement decomposes into those two parameters and nothing else: a
+difference in how fast they tick, and a difference in where they started. See
+[elapsed time](/timekeeping/datacenters/elapsed-time/), where those two turn out
+to have very different consequences.
+
 ## Why this matters in practice
 
 **Two timestamps are only comparable if they share a timescale**, or if you know

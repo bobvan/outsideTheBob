@@ -1,0 +1,95 @@
+---
+title: "Distributing time: the protocols"
+description: "Time distribution, clock sync and time transfer are three names for one job. Here is what each protocol can do, and which of them account for the length of the wire."
+section: "transferring"
+order: 20
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["datacenter", "timing", "PTP", "NTP", "White Rabbit"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Three names for the same job, depending on who you ask:
+
+- **Time distribution** — what datacenter engineers usually call it.
+- **Clock sync** — what application people usually call it.
+- **Time transfer** — the metrologist's term, and the one you will meet in the
+  literature and in national lab publications.
+
+They mean the same thing: moving time from where you have it to where you need
+it, and keeping track of what the journey cost.
+
+## The protocols
+
+| Protocol | Typical accuracy | Compensates for path delay? |
+|---|---|---|
+| **NTP** over the internet | milliseconds | Yes — round-trip estimate, assumes symmetry |
+| **NTP** on a LAN | hundreds of µs to ms | Yes — same mechanism, shorter path |
+| **PTP** (IEEE 1588), software timestamps | tens of µs | Yes — measured, but timestamps are taken late |
+| **PTP**, hardware timestamps | sub-µs to tens of ns | Yes — measured at the wire |
+| **White Rabbit** | sub-nanosecond | Yes — measured, plus phase tracking on fiber |
+| **PPS** | limited by cable, not protocol | **No** |
+
+Links out, because each of these is documented far better elsewhere than a page
+of this length could manage:
+[NTP](https://www.ntp.org/),
+[PTP / IEEE 1588](https://standards.ieee.org/ieee/1588/6825/),
+[White Rabbit](https://white-rabbit.web.cern.ch/).
+
+## The column that matters most
+
+**Which protocols compensate for the length of the wire**, and which leave it to
+you.
+
+NTP, PTP and White Rabbit all *measure* the path. They exchange timestamps in
+both directions, work out the delay, and subtract it. Add fifty meters of fiber
+and they notice, adjust, and carry on. Path length is their problem, not yours.
+
+**PPS does not.** A pulse-per-second signal is a wire with an edge on it. There
+is no exchange, no round trip, nothing to measure with — the pulse arrives when
+it arrives, and every nanosecond the cable adds is a nanosecond of error you own.
+
+That is the same distinction the
+[feed line page](/timekeeping/antennas/feed-line/) is built on, and it is worth
+carrying between them: a delay that is measured is a nuisance, and a delay that
+is assumed is a permanent offset.
+
+<CalloutBox type="warn" title="Compensated protocols still assume symmetry">
+	NTP and PTP compute path delay from a round trip and split it in half, which is
+	only correct if the two directions take equally long. An asymmetric path — a
+	different route each way, a queue that fills in one direction, a
+	wavelength-division link — puts half the asymmetry straight into your offset,
+	and no amount of protocol conformance detects it.
+</CalloutBox>
+
+## PPS is barely a protocol, and belongs here anyway
+
+A pulse per second carries no information beyond *now*. It does not say which
+second it is, cannot be routed, and needs something else alongside it to supply
+the numbering.
+
+It earns a place in this table because it does the same *job* — moving a moment
+in time from one box to another — and because at the accurate end of the range
+it is what everything else falls back on. The last hop into a grandmaster, or
+between a reference and a counter on a bench, is very often a PPS cable.
+
+The trade is stark: no protocol overhead and no timestamp exchange, which makes
+it very good, and no path compensation whatsoever, which makes it very
+unforgiving.
+
+## The range each protocol covers
+
+[[? Bob — the bar-graph image from the lastNs2Utc talk goes here, showing the accuracy range each protocol covers.
+
+I do not have it. src/assets/ only has lastNs2utcLondon.jpg, which is the photo of you presenting. Send the bar graph as PDF or PNG and I will set it as a figure with a caption.
+
+It would sit better than the table above, honestly — a range is exactly the thing a table renders badly and a bar chart renders well, because these overlap and the overlaps are the interesting part. Happy to keep both, with the table as the detail and the chart as the shape. ?]]
+
+## Choosing
+
+The honest guidance is short. Work out what you need from
+[matching acquisition and distribution](/timekeeping/transferring/matching-acquisition-and-distribution/),
+then take the least complicated protocol that reaches it. Every step up this
+table costs hardware, configuration, and people who understand it.

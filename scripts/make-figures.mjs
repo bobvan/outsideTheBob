@@ -413,4 +413,55 @@ mkdirSync(OUT, { recursive: true });
 	writeFileSync(`${OUT}/deferred-truth.svg`, svg(W, H, b));
 }
 
-console.error(`wrote 6 figures to ${OUT}/`);
+// ---------------------------------------------------------------------------
+// 7. Any two timescales are related by a straight line. Plot one against the
+//    other and you get y = mx + b, where the slope is the ratio of tick lengths
+//    and the intercept is the difference in origins.
+//
+//    Two lines, because one parameter each would take two figures: the solid
+//    line differs from UTC only in origin (slope 1), the dashed one only in tick
+//    length (slope != 1). Between them the reader sees which parameter does what.
+// ---------------------------------------------------------------------------
+{
+	const W = 560, H = 350;
+	const x0 = 78, x1 = 500, y0 = 268, y1 = 44;
+	const X = (yr) => x0 + ((yr - 1800) / 250) * (x1 - x0);   // UTC years 1800..2050
+	const Y = (v) => y0 - (v / 220) * (y0 - y1);              // ticks 0..220
+	let b = '';
+
+	b += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}" stroke="${INK}" stroke-width="1.2"/>`;
+	b += `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}" stroke="${INK}" stroke-width="1.2"/>`;
+	for (const yr of [1800, 1850, 1900, 1950, 2000, 2050]) {
+		b += `<line x1="${X(yr)}" y1="${y0}" x2="${X(yr)}" y2="${y0 + 4}" stroke="${INK}" stroke-width="1"/>`;
+		b += text(X(yr), y0 + 18, String(yr), { size: 10, fill: MUTED });
+	}
+	for (const v of [0, 50, 100, 150, 200]) {
+		b += `<line x1="${x0 - 4}" y1="${Y(v)}" x2="${x0}" y2="${Y(v)}" stroke="${INK}" stroke-width="1"/>`;
+		b += text(x0 - 9, Y(v) + 3.5, String(v), { size: 10, fill: MUTED, anchor: 'end' });
+	}
+	b += text((x0 + x1) / 2, y0 + 36, 'UTC (year)', { size: 12, weight: 600 });
+	b += text(20, (y0 + y1) / 2, 'ticks on the other timescale', { size: 12, weight: 600 })
+		.replace('<text', `<text transform="rotate(-90 20 ${(y0 + y1) / 2})"`);
+
+	// Victoria: same tick (a year), different origin. Slope 1, intercept -1837.
+	b += `<line x1="${X(1837)}" y1="${Y(0)}" x2="${X(2050)}" y2="${Y(213)}" stroke="${INK}" stroke-width="2"/>`;
+	b += `<circle cx="${X(1837)}" cy="${Y(0)}" r="4" fill="${RED}"/>`;
+	b += text(X(1837) + 8, Y(0) - 10, 'b — origin, 1837', { size: 11, weight: 600, fill: RED, anchor: 'start' });
+	b += text(X(1980), Y(160), 'years since Victoria', { size: 11, weight: 600, anchor: 'start' });
+	b += text(X(1980), Y(146), 'm = 1 (same tick)', { size: 10, fill: MUTED, anchor: 'start' });
+
+	// A timescale whose tick is longer: same origin idea, shallower slope.
+	b += `<line x1="${X(1900)}" y1="${Y(0)}" x2="${X(2050)}" y2="${Y(75)}" stroke="${INK}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+	b += `<circle cx="${X(1900)}" cy="${Y(0)}" r="4" fill="${RED}"/>`;
+	b += text(X(1902), Y(0) - 12, 'b — origin, 1900', { size: 11, weight: 600, fill: RED, anchor: 'start' });
+	b += text(X(1955), Y(38) + 20, 'half-decades since 1900', { size: 11, weight: 600, anchor: 'start' });
+	b += text(X(1955), Y(38) + 33, 'm = 0.2 (longer tick)', { size: 10, fill: MUTED, anchor: 'start' });
+
+	b += text(x0, 24, 'y = mx + b', { size: 13, weight: 700, anchor: 'start' });
+	b += text(x0 + 78, 24, '— slope is the ratio of tick lengths, intercept is the difference in origins', {
+		size: 11, fill: MUTED, anchor: 'start', style: 'italic',
+	});
+	writeFileSync(`${OUT}/timescale-relation.svg`, svg(W, H, b));
+}
+
+console.error(`wrote 7 figures to ${OUT}/`);

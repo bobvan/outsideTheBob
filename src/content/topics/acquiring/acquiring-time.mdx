@@ -1,0 +1,101 @@
+---
+title: "Ways to get time into a building"
+description: "GNSS, a fiber from a national lab, a commercial delivery service, or NTP from the internet. Why GNSS usually wins below 100 ns, and why you want more than one."
+section: "acquiring"
+order: 10
+updatedDate: 2026-08-03
+coverage: "H"
+tags: ["GNSS", "datacenter", "timing", "UTC", "White Rabbit"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Time has to get into the building from somewhere. There are more options than
+most people realize, and none of them are exotic.
+
+## The options
+
+**GNSS.** An antenna with a view of the sky, a receiver, and a cable between
+them. The signals carry time traceable to UTC, and the equipment is
+commodity — this is the route most datacenters take, for reasons below.
+
+**A commercial time service over a dedicated link.** Increasingly available and
+increasingly good. Quincy Data, for instance,
+[announced a sub-nanosecond synchronization service in 2024](https://www.businesswire.com/news/home/20241112721920/en/Quincy-Data-Announces-Sub-Nanosecond-Time-Synchronization-Service),
+delivered over the same low-latency infrastructure the trading industry already
+buys. If somebody is already selling you a fiber, they may be able to sell you
+time down it.
+
+**Fiber from a national lab.** Several NMIs will deliver a traceable timescale
+over dedicated fiber to institutions near enough to reach. Superb accuracy, and
+a short list of eligible addresses.
+
+**NTP over the internet.** Free, universal, good to milliseconds. Worth naming
+rather than dismissing — for a great many applications it is genuinely
+sufficient, and organizations spend money escaping it before establishing that
+they needed to.
+
+Every one of these arrives through
+[a distribution protocol](/timekeeping/transferring/distribution/). Acquisition
+and distribution are the same technology pointed in different directions: what
+makes something *acquisition* is that the source is outside your control and
+authoritative, not that the mechanism differs.
+
+## Why GNSS usually wins below 100 ns
+
+Not because it is the most accurate — it is not — but because of where it sits
+on the cost curve.
+
+Below about 100 ns, and beyond what NTP can reach, GNSS occupies a sweet spot
+that is hard to argue with:
+
+- **The signal is free and available everywhere** with a view of the sky, which
+  is a sentence no other option can claim.
+- **The equipment is commodity.** Timing receivers are a competitive market with
+  well-understood products.
+- **It is directly traceable to UTC** through the constellation operators — no
+  contract, no provider, nobody to depend on commercially.
+- **Its error budget is well documented**, which matters more than it sounds:
+  you can find out what your accuracy actually is, and much of this site is about
+  how.
+
+The alternatives beat it on accuracy or on independence, and cost considerably
+more, or are unavailable at your address, or both.
+
+<CalloutBox type="tip" title="This site focuses on GNSS, without apology">
+	Most of what is written here concerns acquiring time from GNSS, because that is
+	what most datacenters do and what I have most experience of. That is a focus,
+	not a claim of superiority — the other methods are complementary, and as the
+	next section argues, you probably want at least two.
+</CalloutBox>
+
+## Why you want more than one
+
+GNSS is a single point of failure with a large blast radius. A failed antenna, a
+cut cable, a jammer in the parking lot, a receiver firmware bug or a
+constellation problem takes out everything downstream at once — and, as the
+*silently wrong* theme running through this site keeps demonstrating, timing
+failures are frequently quiet.
+
+Two arguments for a second source. The second is much stronger than the first:
+
+**Availability.** If one source fails, the other carries you. Standard resilience
+reasoning, and the argument people make first.
+
+**Comparison.** Two sources let you *check*. A single source can be wrong with
+complete confidence and nothing in the system will disagree with it. Two sources
+that ought to agree, and do not, are telling you something no single source ever
+could.
+
+Which is why the useful thing is not merely a spare but **a mechanism for
+comparing sources against each other**, and something that complains when they
+diverge. A backup nobody compares against inherits exactly the same silence as
+the primary.
+
+## Where to go next
+
+- **[Matching acquisition and distribution](/timekeeping/transferring/matching-acquisition-and-distribution/)**
+  — how much of each you need, and why buying one without the other wastes money.
+- **[Configuring antenna position](/timekeeping/antennas/antenna-position/)** —
+  if you take the GNSS route, this is where the accuracy is won or lost.

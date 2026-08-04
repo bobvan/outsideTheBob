@@ -47,7 +47,7 @@ of this length could manage:
 **Which protocols compensate for the length of the wire**, and which leave it to
 you.
 
-NTP, PTP and White Rabbit all *measure* the path. They exchange timestamps in
+NTP, PTP, and White Rabbit all *measure* the path. They exchange timestamps in
 both directions, work out the delay, and subtract it. Add fifty meters of fiber
 and they notice, adjust, and carry on. Path length is their problem, not yours.
 
@@ -114,7 +114,7 @@ range to expect. The low end takes care; the high end is what you get for free.
 <ZoomableImage
 	src={ranges}
 	alt="Horizontal bar chart titled UTC Distribution Accuracy, one sigma, on a logarithmic time axis from one second to one hundred picoseconds. Bars for NTP, PTP (IEEE 1588-2008), PPS and White Rabbit (IEEE 1588-2019) each extend rightward and fade out rather than ending abruptly. The PPS bar starts short of the left edge, with a note reading No Epoch. An arrow at lower right marks the network-only timestamps region."
-	caption="Ten orders of magnitude, log scale. The bars fade rather than stop, because where a protocol runs out depends on hardware, network and patience — a hard edge would be a claim nobody could defend. Note that PPS and White Rabbit both reach the right-hand end. From <a href='/blog/last-nanoseconds-to-utc/'>The Last Nanoseconds to UTC</a>."
+	caption="Ten orders of magnitude, log scale. The bars fade rather than stop, because where a protocol runs out depends on hardware, network, and patience — a hard edge would be a claim nobody could defend. Note that PPS and White Rabbit both reach the right-hand end. From <a href='/blog/last-nanoseconds-to-utc/'>The Last Nanoseconds to UTC</a>."
 />
 
 Two features of that chart are worth pointing at.

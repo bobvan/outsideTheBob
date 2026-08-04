@@ -20,7 +20,7 @@ That division is the through-line of this page.
 
 Some paths have their delay measured and subtracted — that is what NTP and PTP
 do across a network. Others do not: the pulse-per-second line and the antenna
-feed line carry delay that nothing corrects for but you. Knowing which region a
+feedline carry delay that nothing corrects for but you. Knowing which region a
 wire is in decides whether a mistake there is a nuisance or a permanent offset.
 
 ## 2. What are you steering to, and what is *it* steering to?
@@ -54,9 +54,9 @@ before choosing the counter, not after.
 
 ## 6. Where is your uncompensated path, physically?
 
-Trace it: antenna, feed line, connectors, PPS cable, and everything between. Its
+Trace it: antenna, feedline, connectors, PPS cable, and everything between. Its
 length is a fixed offset in your output, and the arithmetic is unforgiving —
-[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/antennas/feed-line/).
+[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/antennas/feedline/).
 This is the error most likely to survive every other thing you get right.
 
 ## 7. How will you know your position, and how will you know it is right?

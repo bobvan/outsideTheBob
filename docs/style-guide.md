@@ -46,9 +46,14 @@ These are one word, everywhere, with no hyphen:
 - **timescale** (not *time scale*)
 - **timestamp**, **grandmaster**, **holdover**, **multipath**
 
+- **feedline** — settled 2026-08-04. Bob is a ham and an RF guy, where one word
+  is standard, and it parses fine for everyone else. The published *Last
+  Nanoseconds to UTC* already used it, so this brought the garden into line
+  rather than the other way round. Page title and slug moved with it, while
+  nothing was published and it was still free.
+
 And these stay two words:
 
-- **feed line** — see the open question below
 - **sky view**, **error budget**, **service loop**
 
 ## Units and numbers
@@ -104,20 +109,44 @@ Use the precise word when the page is about the distinction, and gloss it once:
   distribution* and applications call *clock sync*. All three appear; the
   distribution page names them as synonyms once.
 
+### An oscillator with nothing steering it
+
+Four words get used for this and they are not interchangeable.
+
+- **free-running** — the adjective, hyphenated by the compound-modifier rule
+  above: *a free-running oscillator*, *the satellites are free-running*.
+- **runs free** — the verb form. *It runs free and drifts.* Not *free-runs*,
+  which reads as jargon for no gain.
+- **undisciplined** — use when the contrast with *disciplined* is the actual
+  point, which in the GPSDO world it usually is. It is the more precise word
+  because it says what is absent rather than what is happening.
+- **`freerun`** — only when naming a state a device actually reports, in code
+  font, quoting the device's own vocabulary. Never in prose.
+
+**And keep [holdover](/timekeeping/glossary/#holdover) separate from all of
+them**, because the difference is real and load-bearing. A holdover clock is
+free-running *after having been disciplined*, so it knows its own frequency
+offset and can correct for it. A clock that was never disciplined does not, and
+drifts much faster. Writing *free-running* where *holdover* is meant throws that
+distinction away — and it is the distinction that decides whether a specification
+means anything.
+
 Link a term to its glossary entry **on first use per page**, not every use.
 
 ---
 
 ## Open questions
 
-**`feed line` or `feedline`?** Currently split, and it is a genuine fork:
+*None currently.* When one appears, it goes here rather than being resolved
+silently in one file and contradicted in the next.
 
-- The garden uses **feed line** (two words), 13 uses, and the page slug is
-  `/timekeeping/antennas/feed-line/`.
-- The published post *The Last Nanoseconds to UTC* uses **feedline** (one word),
-  5 uses. That is Bob's own voice, in public, and predates the garden.
+## A note on sweeping
 
-Both are attested — *feedline* is standard in amateur radio and RF, *feed line*
-is more common in general technical writing. **Bob's call**, and whichever way it
-goes, the other should be swept. If *feedline* wins, the page title and slug
-change too, which is free while nothing is published but not later.
+Two of these decisions were applied by bulk replacement, and both bit:
+
+- `centre → center` turned *centred* into *centerd*.
+- The `feed line → feedline` sweep rewrote this file's own open-question section
+  into *"feedline or feedline?"*, which is not a question.
+
+**Always read the diff after a sweep**, and be wary of running one over a
+document that discusses the very strings being replaced.

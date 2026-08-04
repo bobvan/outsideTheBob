@@ -196,7 +196,7 @@ amount of seeing will reveal.
    reveals it.
 2. **A bathroom scale reading 2 kg heavy.** Ten weighings, one number, ten times.
    More weighings never find the 2 kg.
-3. **The feed line.** Every timestamp late by the same amount; a million
+3. **The feedline.** Every timestamp late by the same amount; a million
    timestamps will not show it, only a TDR or a marking on the jacket will.
 
 Lead with the watch, because it lands a bonus: **time and frequency already makes

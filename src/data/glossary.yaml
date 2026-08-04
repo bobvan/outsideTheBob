@@ -119,11 +119,12 @@
 - id: holdover
   term: Holdover
   definition: >-
-    What a clock does once its reference disappears: it free-runs on its own
-    oscillator and accumulates error. A holdover specification is really a
-    statement about time — how long until the error exceeds some threshold you
-    care about — so it is meaningless without both the threshold and the
-    oscillator.
+    What a clock does once its reference disappears: it runs free on its own
+    oscillator and accumulates error. Not the same as merely *undisciplined* — a
+    clock in holdover was disciplined until recently, so it knows its own
+    frequency offset and can correct for it, which one that never had a reference
+    cannot. A holdover figure is meaningless without both the error threshold and
+    the oscillator it assumes.
   seeAlso:
     - label: "Stability"
       href: "#stability"
@@ -246,8 +247,8 @@
     between coax types that assuming the wrong one is worth tens of nanoseconds
     on an ordinary run.
   seeAlso:
-    - label: "Why the feed line is likely your largest error"
-      href: "/timekeeping/antennas/feed-line/"
+    - label: "Why the feedline is likely your largest error"
+      href: "/timekeeping/antennas/feedline/"
   draft: true
 
 - id: nmi

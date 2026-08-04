@@ -1,5 +1,5 @@
 ---
-title: "Ways to get time into a building"
+title: "Ways to get time into a datacenter"
 description: "GNSS, a fiber from a national lab, a commercial delivery service, or NTP from the internet. Why GNSS usually wins below 100 ns, and why you want more than one."
 section: "acquiring"
 order: 10
@@ -11,7 +11,7 @@ draft: true
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-Time has to get into the building from somewhere. There are more options than
+Time has to get into the datacenter from somewhere. There are more options than
 most people realize, and none of them are exotic.
 
 ## The options
@@ -92,6 +92,35 @@ Which is why the useful thing is not merely a spare but **a mechanism for
 comparing sources against each other**, and something that complains when they
 diverge. A backup nobody compares against inherits exactly the same silence as
 the primary.
+
+## Can you trust the time you acquired?
+
+Accuracy and authenticity are different questions, and the second one is easier
+to forget. A spoofed source can be exquisitely precise and completely wrong,
+and nothing about the accuracy figures on this page detects that.
+
+Both major routes now have a free answer.
+
+**On the network side: [NTS](/timekeeping/transferring/distribution/).** Network
+Time Security is NTP with cryptographic authentication — same protocol, same
+accuracy, with assurance the time came from who it claims and was not altered on
+the way. Plain NTP is trivially spoofable by anyone able to inject packets.
+
+**On the GNSS side: OSNMA.** Galileo's Open Service Navigation Message
+Authentication signs the navigation message, so a receiver can tell an authentic
+Galileo signal from a fabricated one. It is broadcast free alongside the ordinary
+open service; receiver support is uneven but growing, and it is worth asking
+about when buying.
+
+Neither defends against everything. OSNMA authenticates the navigation message
+rather than the ranging signal, so it raises the cost of spoofing without
+eliminating it, and neither helps at all against plain jamming — which denies
+service rather than falsifying it. But both are free, and the alternative is
+trusting an unauthenticated broadcast.
+
+This is also the strongest practical argument for the two-source setup above.
+Authentication tells you a source is genuine; a *second* source tells you it is
+right.
 
 ## Where to go next
 

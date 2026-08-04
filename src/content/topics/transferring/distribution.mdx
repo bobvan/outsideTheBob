@@ -25,18 +25,20 @@ it, and keeping track of what the journey cost.
 
 ## The protocols
 
-| Protocol | Typical accuracy | Compensates for path delay? |
-|---|---|---|
-| **NTP** over the internet | milliseconds | Yes — round-trip estimate, assumes symmetry |
-| **NTP** on a LAN | hundreds of µs to ms | Yes — same mechanism, shorter path |
-| **PTP** (IEEE 1588), software timestamps | tens of µs | Yes — measured, but timestamps are taken late |
-| **PTP**, hardware timestamps | sub-µs to tens of ns | Yes — measured at the wire |
-| **White Rabbit** | sub-nanosecond | Yes — measured, plus phase tracking on fiber |
-| **PPS** | limited by cable, not protocol | **No** |
+| Protocol | Standard | Typical accuracy | Compensates for path delay? |
+|---|---|---|---|
+| **NTP** over the internet | RFC 5905 | milliseconds | Yes — round-trip estimate, assumes symmetry |
+| **NTP** on a LAN | RFC 5905 | hundreds of µs to ms | Yes — same mechanism, shorter path |
+| **NTS** | RFC 8915 | as NTP | Yes — NTP, with authentication added |
+| **PTP**, software timestamps | IEEE **1588-2008** | tens of µs | Yes — measured, but timestamps taken late |
+| **PTP**, hardware timestamps | IEEE **1588-2008** | sub-µs to tens of ns | Yes — measured at the wire |
+| **White Rabbit** | IEEE **1588-2019** | sub-nanosecond | Yes — and it handles *asymmetry* too |
+| **PPS** | — | ~50 ps to 1 ns | **No** |
 
 Links out, because each of these is documented far better elsewhere than a page
 of this length could manage:
 [NTP](https://www.ntp.org/),
+[NTS (RFC 8915)](https://datatracker.ietf.org/doc/html/rfc8915),
 [PTP / IEEE 1588](https://standards.ieee.org/ieee/1588/6825/),
 [White Rabbit](https://white-rabbit.web.cern.ch/).
 
@@ -58,13 +60,22 @@ That is the same distinction the
 carrying between them: a delay that is measured is a nuisance, and a delay that
 is assumed is a permanent offset.
 
-<CalloutBox type="warn" title="Compensated protocols still assume symmetry">
-	NTP and PTP compute path delay from a round trip and split it in half, which is
-	only correct if the two directions take equally long. An asymmetric path — a
-	different route each way, a queue that fills in one direction, a
-	wavelength-division link — puts half the asymmetry straight into your offset,
-	and no amount of protocol conformance detects it.
+<CalloutBox type="warn" title="Most compensated protocols still assume symmetry">
+	NTP and PTP (IEEE 1588-2008) compute path delay from a round trip and split it
+	in half, which is only correct if the two directions take equally long. An
+	asymmetric path — a different route each way, a queue that fills in one
+	direction — puts half the asymmetry straight into your offset, and no amount of
+	protocol conformance detects it.
 </CalloutBox>
+
+**White Rabbit is the exception**, and the way it gets there is worth knowing.
+IEEE 1588-2019 explicitly accounts for asymmetric links rather than assuming they
+are symmetric — and White Rabbit removes the largest practical source of
+asymmetry at the physical layer, by running both directions down **a single fiber
+strand on different wavelengths** instead of over a duplex pair. Two fibers are
+never quite the same length; one fiber cannot disagree with itself. What
+asymmetry remains comes from the wavelengths propagating at slightly different
+speeds, which is a calculable quantity rather than an unknown one.
 
 ## PPS is barely a protocol, and belongs here anyway
 
@@ -81,12 +92,29 @@ The trade is stark: no protocol overhead and no timestamp exchange, which makes
 it very good, and no path compensation whatsoever, which makes it very
 unforgiving.
 
+### PPS is better than it is usually given credit for
+
+It is often quoted as good to "about a nanosecond", and that undersells it. In
+PePPAR-Fix testing we have repeatedly measured the single-shot resolution of a
+TAPR TICC at **60 ps or a little better** — which is an existence proof that the
+pulse itself is not what limits you at the nanosecond level.
+
+Worth being careful about what that number is, since this site makes a point of
+the distinction: 60 ps is a
+[resolution](/timekeeping/glossary/#resolution) figure, not an accuracy one. It
+says the edges can be *seen* that finely. Turning that into accuracy still
+requires the cable delay to be calibrated, because nothing in PPS will do it for
+you.
+
+Given a calibrated cable and a well-behaved trigger, **50 ps to 1 ns** is a fair
+range to expect. The low end takes care; the high end is what you get for free.
+
 ## The range each protocol covers
 
 <ZoomableImage
 	src={ranges}
 	alt="Horizontal bar chart titled UTC Distribution Accuracy, one sigma, on a logarithmic time axis from one second to one hundred picoseconds. Bars for NTP, PTP (IEEE 1588-2008), PPS and White Rabbit (IEEE 1588-2019) each extend rightward and fade out rather than ending abruptly. The PPS bar starts short of the left edge, with a note reading No Epoch. An arrow at lower right marks the network-only timestamps region."
-	caption="Ten orders of magnitude, log scale. The bars fade rather than stop — because where a protocol runs out depends on your hardware, your network and your patience, and a hard edge would be a claim nobody could defend."
+	caption="Ten orders of magnitude, log scale. The bars fade rather than stop, because where a protocol runs out depends on hardware, network and patience — a hard edge would be a claim nobody could defend. Note that PPS and White Rabbit both reach the right-hand end. From <a href='/blog/last-nanoseconds-to-utc/'>The Last Nanoseconds to UTC</a>."
 />
 
 Two features of that chart are worth pointing at.
@@ -97,9 +125,30 @@ much effort you are willing to spend. A hard right edge would be a number
 somebody could argue with, and the argument would not be productive.
 
 **PPS starts short of the left edge**, marked *No Epoch*. Every other bar can
-tell you which second it is. PPS cannot: it marks a moment without naming it, so
-it has no top end at all in the sense the others do. It is remarkable at saying
-*now* and incapable of saying *when*.
+tell you which second it is. PPS cannot: it marks a moment without naming it. It
+is remarkable at saying *now* and incapable of saying *when*, which is why it
+always travels alongside something else that supplies the numbering.
+
+**PPS and White Rabbit both reach the right-hand end.** They get there very
+differently — one by being a wire with nothing in the way, the other by measuring
+everything in the way very carefully — but the achievable floor is similar.
+
+## NTS: NTP with the spoofing fixed
+
+[Network Time Security](https://datatracker.ietf.org/doc/html/rfc8915) (RFC 8915)
+is NTP with authentication. Same protocol, same accuracy, same servers — with
+cryptographic assurance that the time came from who it claims to have come from
+and was not altered in transit.
+
+That matters because plain NTP is trivially spoofable. Anyone who can inject
+packets can hand your fleet whatever time they like, and nothing in NTP objects.
+NTS closes that, and it costs nothing: the specification is open, public NTS
+servers exist, and support is in the common implementations.
+
+There is no accuracy argument here — NTS is not more accurate than NTP. It is the
+same accuracy that you can trust, which is a different axis and frequently the
+one that matters. See [acquiring time](/timekeeping/acquiring/) for the same
+question on the GNSS side, where the answer is OSNMA.
 
 ## Choosing
 

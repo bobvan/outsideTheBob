@@ -1,6 +1,6 @@
 ---
 title: "GNSS time is a prediction"
-description: "Your receiver is not reading UTC. It is tracking a constellation's forecast of what UTC will turn out to have been — a forecast that goes stale in seconds and is continuously corrected from the ground."
+description: "Your receiver is not reading time out of the sky. It is applying corrections, computed on the ground, to signals from clocks that nobody is steering."
 section: "utc"
 order: 30
 updatedDate: 2026-08-04
@@ -10,71 +10,124 @@ draft: true
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+import approximations from "../../../assets/GnssApproximations.png";
+import corrections from "../../../assets/RealTimeCorrections.png";
 
-A GNSS receiver looks like it is reading time out of the sky. It is not.
+Almost everybody starts with the same mental model of GNSS, and it is wrong in an
+interesting way. Getting from it to what actually happens takes two steps, and
+each one moves the intelligence further from the satellite.
 
-Each constellation runs its own timescale — GPS Time, Galileo System Time — and
-each of those is steered to track UTC as closely as its operator can manage. What
-your receiver recovers is that timescale, plus a broadcast offset telling it how
-far the operator believes their timescale currently sits from UTC.
+<ZoomableImage
+	src={approximations}
+	alt="Three panels. First Order Approximation: a satellite labeled Master Clocks sends an orange signal arrow down to a User. Second Order Approximation: a ground segment sends a blue Clock Steering arrow up to Sat Clocks, which sends an orange arrow down to a User. Best Approximation: a ground segment sends blue Clock Corrections up to the satellite's Bent Pipe, which sends them back down to the user, while the satellite's Free-Running Clocks send an orange signal directly; the user box is labeled in magenta, Receiver Applies Corrections."
+	caption="The same picture three times, with the intelligence moving further from the satellite each time. From an updated <a href='/blog/sub-nanosecond-at-home-with-gnss-and-ai/'>Sub-Nanosecond at Home</a>."
+/>
 
-Which makes GPS Time, in the phrase that stuck with me:
+## First order: the satellite knows what time it is
 
-> A real-time prediction of what USNO will eventually define as UTC(USNO).
+The intuitive model. There are atomic clocks up there, they are excellent, and
+the satellite tells you what they read.
 
-Prediction, because [UTC has not been computed
-yet](/timekeeping/utc/what-utc-is/). Real-time, because you need an answer now.
-And *eventually*, because the definitive one arrives about a month later in
-Circular T.
+Everything in that sentence is true except the last clause, and the last clause
+is the one everyone relies on.
 
-## The satellites are free-running, and drifting
+## Second order: the ground steers the satellite's clocks
 
-The clocks aboard the satellites are excellent and they are not steered
-continuously. They run free and drift, and the ground segment tracks that drift
-and broadcasts corrections for it — where the satellite really is, and what its
-clock really reads, against the prediction.
+A better model, and the one most people arrive at next. If the satellite clocks
+drift, presumably somebody on the ground measures the drift and steers them back.
 
-So the signal you receive is a free-running clock plus a correction computed on
-Earth. **Everything that separates a hundred-nanosecond consumer fix from a
-sub-nanosecond disciplined clock lives in those corrections**, not in the raw
-observations, which are what they are regardless of what you spend.
+This is not wholly wrong — occasional adjustments do happen — but it is not the
+mechanism that gets you accuracy, and believing it leaves you unable to explain
+why correction streams exist at all.
+
+## Best: the clocks free-run, and *your receiver* does the correcting
+
+The satellites' clocks are superb and **nobody is steering them continuously**.
+They run free and drift. The ground segment measures that drift and uploads
+corrections, the satellite relays them — a bent pipe, not a brain — and the
+correction is applied **in your receiver**.
+
+That last part is the piece that took me longest to internalize, and it is the
+one worth carrying away. Your box is not receiving the time. It is receiving a
+signal from a drifting clock, plus a separately delivered estimate of how wrong
+that clock is, and doing the arithmetic itself.
+
+<CalloutBox type="tip" title="Which makes GNSS time a prediction, by construction">
+	The correction was computed on the ground, from observations taken earlier, and
+	describes what the satellite clock <em>will</em> read. It is a forecast of a
+	drifting quantity, and it was already slightly stale when it left the ground.
+
+	So GPS Time is, in the phrase that stuck with me, <em>a real-time prediction of
+	what USNO will eventually define as UTC(USNO)</em> — prediction because
+	<a href="/timekeeping/utc/what-utc-is/">UTC has not been computed yet</a>, and
+	eventually because the definitive answer arrives about a month later.
+</CalloutBox>
+
+## The corrections are not one thing
+
+Expand that third panel and the single arrow labeled *clock corrections* turns
+out to be three quite different paths, arriving by different routes, at different
+freshness, enabling different things.
+
+<ZoomableImage
+	src={corrections}
+	alt="A diagram of real-time GNSS corrections. Blue arrows carry data: ground segment up to the satellite's bent pipe, then coarse broadcast corrections down to an SPP user and Galileo HAS corrections down to a float PPP user; GNSS analysis centers send internet corrections to a PPP-AR user. Orange arrows carry signals from the satellite's free-running clocks: ranging signals to the SPP user, and carrier phase signals to the float PPP user, the PPP-AR user, and monitoring stations. Black arrows return from monitoring stations, NMIs and master clocks to both the ground segment and the analysis centers."
+	caption="The third panel in full. Orange is signal from a free-running clock; blue is data computed on the ground. Note that every blue path begins at a clock on Earth."
+/>
+
+Read it by color and the argument is immediate. **Orange comes from space and is
+raw. Blue comes from the ground and is computed.** Nothing the satellite knows
+about itself is authoritative.
+
+The three blue correction paths differ in ways that decide what you can do:
+
+**Coarse broadcast corrections** ride in the navigation message every satellite
+already sends. Free, global, no internet — and refreshed on the order of ten
+minutes to two hours, which is why they are coarse. Enough for
+[SPP](/timekeeping/glossary/#accuracy)-class work.
+
+**Galileo HAS** is broadcast as a separate signal-in-space on E6-B. Still free,
+still global, still no internet needed, and far fresher — but its first phase
+carries no phase biases, which makes it a **float PPP** source rather than an
+ambiguity-resolving one.
+
+**Internet corrections** come from a GNSS analysis center over a network link,
+with registration or a subscription. The fastest and most accurate of the three,
+and — when they come from a *single* self-consistent analysis center — they carry
+the phase biases that make **PPP-AR** possible.
+
+That maps directly onto the acquisition column of
+[the matching table](/timekeeping/transferring/matching-acquisition-and-distribution/):
+SPP, float PPP, and PPP-AR are not three grades of receiver so much as three
+grades of correction.
 
 <CalloutBox type="warn" title="Corrections have a shelf life">
-	This is the part that makes the prediction framing concrete rather than
-	philosophical. Precise correction streams are re-issued <strong>every five
-	seconds</strong>, and a stream that hands you a five-second-old correction is
-	meaningfully worse than its interval suggests.
+	Precise streams are re-issued <strong>every five seconds</strong>, and a stream
+	that hands you a five-second-old correction is meaningfully worse than its
+	interval suggests.
 
-	Something that needed refreshing that often was never a measurement of the
+	Something needing refreshment that often was never a measurement of the
 	present. It was a forecast, and forecasts decay.
 </CalloutBox>
 
-The ladder of correction sources runs from the coarse broadcast navigation
-message, through free signal-in-space services like Galileo HAS, to
-subscription streams from individual analysis centers — each fresher or more
-accurate than the last, and each still a prediction.
+[[? Delta's correction-stream landscape figure belongs here, closing the sequence: intuition, then topology, then measurement. It is the one that puts numbers on "how fresh" and "how good".
 
-[[? Bob — this is where Delta's correction-stream landscape figure goes, from ~/git/PePPAR-Fix-delta/docs/correction-stream-landscape.svg.
-
-I have not pulled it in, because you said the work is not done. Two questions:
-
-1) Ready enough to embed as-is? The axes make the argument this page is making — the x-axis alone (2 s to 6 h between re-issues) says "this is a forecast" better than my prose does.
-
-2) If yes, it wants trimming for a general reader. The caption source lists five caveats and an open/filled marker convention that matter enormously in the lab and would sink a blog page. My instinct is to embed the figure as-is with a short caption pointing at the one message — fresher and lower is better — and let the detail live in PePPAR-Fix rather than here. ?]]
+Still waiting on you — last word was that the work was in progress. When it is ready I would embed it as-is with a short caption pointing at the single message (fresher and lower is better) and leave the five caveats and the open/filled marker convention in PePPAR-Fix, where they matter and where a reader can find them. ?]]
 
 ## Why you cannot get below a few nanoseconds *to UTC*
 
 Everything above compounds into a floor. Between the constellation's own
-prediction error, the broadcast offset's granularity, and the delay before UTC is
-defined at all, aligning to **UTC** in real time runs out of road at a few
-nanoseconds.
+prediction error, the granularity of the broadcast offset to UTC, and the fact
+that UTC will not be defined for another month, aligning to **UTC** in real time
+runs out of road at a few nanoseconds.
 
 But that is a statement about UTC, not about clocks.
 
 ## When you can just call it GPS Time
 
-If your requirement is that your clocks agree with *each other*, and you do not
-need to hand a timestamp to somebody outside your estate, then the constellation's
+If your requirement is that your clocks agree with *each other*, and no timestamp
+has to be handed to anybody outside your estate, then the constellation's own
 timescale is a perfectly good reference — and you can align to **GPS Time or
 Galileo System Time specifically, far below the floor that applies to UTC.**
 

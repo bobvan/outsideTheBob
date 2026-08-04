@@ -1,0 +1,98 @@
+---
+title: "What \"traceable to UTC\" actually requires"
+description: "Traceability is not a logo, a certificate, or a GPS antenna. It is a documented unbroken chain with uncertainty accounted at every step — and it is mostly a paperwork problem."
+section: "utc"
+order: 40
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "timing", "metrology", "datacenter"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+"Traceable to UTC" appears in a great many specifications and rather fewer
+systems.
+
+The formal definition is exact and unhelpful:
+[metrological traceability](/timekeeping/glossary/#traceability) is the property
+of a result that it can be related to a stated reference through a **documented,
+unbroken chain of calibrations**, each contributing to the measurement
+uncertainty.
+
+Every word of that is doing work.
+
+## Unpacking it
+
+**Documented.** Not merely true — *recorded*. A chain that exists in reality and
+not on paper is not traceable, because the point is that somebody else can check
+it. This is the requirement most systems fail.
+
+**Unbroken.** Every link, from your timestamp back to the definition of the
+second. One undocumented hop and the chain ends there.
+
+**Chain of calibrations.** Each link is a comparison somebody made, with a
+result. "We use GPS" names a signal, not a comparison, and not a result.
+
+**Each contributing to the uncertainty.** You must be able to state a number and
+defend where it came from. Traceability without an uncertainty budget is a claim
+with no content.
+
+<CalloutBox type="warn" title="Traceable does not mean accurate">
+	These are independent. A traceable measurement can be poor — traceability tells
+	you the path back to the definition is known and its uncertainty accounted for,
+	not that the number is good.
+
+	Conversely, an excellent measurement with no documentation is not traceable at
+	all, however right it is. This surprises engineers, because it is a claim about
+	evidence rather than about performance.
+</CalloutBox>
+
+## What this means when your reference is a constellation
+
+Here is where datacenter reality bites.
+
+A GNSS receiver gives you [a prediction of
+UTC](/timekeeping/utc/gnss-time-is-a-prediction/), broadcast by a constellation
+operator who steers their timescale toward UTC and publishes how they did. That
+*can* anchor a traceability chain — the operators' relationship to UTC is
+documented and monitored.
+
+But the chain only reaches as far as your documentation does. The links you own
+are the ones that break:
+
+- **The antenna position** you configured, and how you established it.
+- **The feed line delay** you configured, and how you measured it.
+- **The distribution path** from receiver to host, and its uncertainty.
+- **The record** that all of the above was true on the day in question, not
+  merely today.
+
+That last one is the one that catches people. Traceability is a claim about a
+*past* measurement. If somebody adjusted the antenna mount in March and nobody
+wrote it down, your chain has a gap in March, regardless of how good the system
+is now.
+
+## The practical shape of it
+
+Traceability is mostly a records problem wearing an engineering costume. Three
+things make it real:
+
+1. **A calibration record for every configured constant** — the position, the
+   cable delay, the compensation values — with when it was established and how.
+2. **An uncertainty budget** that adds up, in which each term traces to a
+   measurement rather than to an assumption. This is where the
+   [matching](/timekeeping/transferring/matching-acquisition-and-distribution/)
+   argument becomes concrete: you cannot budget for a term you never measured.
+3. **A monitoring record** showing the system stayed within that budget over the
+   period being claimed — not merely that it was configured correctly once.
+
+None of that is exotic. All of it is boring, and being boring is exactly why it
+tends not to get done until somebody asks for it, at which point it cannot be
+reconstructed retrospectively.
+
+<CalloutBox type="tip" title="The cheapest time to build a chain is while you have one">
+	Every fact traceability needs is easy to record on the day and impossible to
+	recover later. The delay you measured with a TDR, the survey you had done, the
+	firmware version, the date the mount was last touched — all trivial now, all
+	unrecoverable in two years.
+</CalloutBox>

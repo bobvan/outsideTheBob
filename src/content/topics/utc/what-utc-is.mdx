@@ -1,0 +1,94 @@
+---
+title: "How UTC is actually made"
+description: "UTC is not broadcast, computed live, or held anywhere. It is a weighted average of hundreds of clocks, calculated after the fact — which is why nobody can synchronize to it today."
+section: "utc"
+order: 10
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Most people picture UTC as something that exists — a signal, a master clock in a
+vault somewhere, a number you could in principle go and read.
+
+None of that is true, and the way it is actually made explains almost everything
+awkward about precision timekeeping.
+
+## Nobody has it
+
+UTC is a **paper timescale**. It is computed, monthly, by the
+[BIPM](https://www.bipm.org/) in Paris, as a weighted average of the readings of
+several hundred atomic clocks held at about eighty institutes worldwide. No
+single one of those clocks is UTC. The average is.
+
+And the average is worked out afterwards. From a talk on getting to the last
+nanoseconds:
+
+> Labs worldwide compare their clocks to the satellites, report to BIPM in Paris,
+> and literally weeks to months after they report what they saw, BIPM defines
+> what UTC was in the past. That's the reason you really can't synchronize to
+> UTC today.
+
+That is not a limitation of your equipment. It is what UTC *is*. The thing you
+want to synchronize to will not have been decided for another month.
+
+## The BIPM's own framing
+
+> The attitude the BIPM guys have is that everybody else on Earth is predicting
+> UTC, while we at the BIPM are defining what it is.
+
+Worth sitting with, because it reorganizes the whole subject. Every clock you
+have ever used, every time server, every GNSS constellation, every national
+laboratory's output — all of it is **prediction**. There is exactly one body
+doing definition, and it works in arrears.
+
+<CalloutBox type="warn" title="You cannot synchronize to UTC. You can only predict it.">
+	Every real-time timekeeping system on Earth is estimating a quantity that has
+	not been computed yet. The estimates are extremely good — but the distinction
+	between predicting and knowing is the reason a page like
+	[the limits of averaging](/timekeeping/metrology/limits-of-averaging/) exists,
+	and the reason your trueness is
+	<a href="/timekeeping/metrology/accuracy-and-precision-in-pictures/">knowable only in arrears</a>.
+</CalloutBox>
+
+## What is published, and when
+
+Two documents matter.
+
+**Circular T**, monthly, gives the differences [UTC − UTC(k)] at five-day
+intervals for each contributing institute. This is the definitive record: it
+tells a laboratory, after the fact, exactly how far its own realization sat from
+UTC.
+
+**UTCr**, weekly since 2013, is BIPM's *rapid* UTC — explicitly published as a
+prediction, narrowing the wait without closing it.
+
+So even the definitive answer arrives at five-day granularity, a month late. If
+you want to know what time it was at 14:32:07 last Tuesday, to the nanosecond,
+the honest answer is that nobody will ever know precisely — only what UTC was
+doing across that five-day window.
+
+## Why it is built this way
+
+It would be simpler to nominate one clock and call it UTC. The reason nobody does
+is that no single clock is trustworthy enough.
+
+An ensemble is more stable than any of its members. Individual clocks drift, are
+taken down for maintenance, get replaced, occasionally misbehave. An average
+weighted by demonstrated stability rides over all of that, and no one
+laboratory — or country — owns the result.
+
+The price of that robustness is exactly the awkwardness above: an average cannot
+be computed until the readings are in, and the readings come from all over the
+world.
+
+## Where to go next
+
+- **[UTC(k), and who defines yesterday](/timekeeping/utc/utc-k/)** — the
+  realizations you can actually reach in real time, and how the weighting works.
+- **[GNSS time is a prediction](/timekeeping/utc/gnss-time-is-a-prediction/)** —
+  what your receiver is really tracking, and why it needs correcting every few
+  seconds.

@@ -96,6 +96,9 @@
   authority:
     label: "VIM 2.41, metrological traceability"
     url: "https://jcgm.bipm.org/vim/en/2.41.html"
+  seeAlso:
+    - label: "What \"traceable to UTC\" actually requires"
+      href: "/timekeeping/utc/traceability/"
   draft: true
 
 - id: stability
@@ -172,6 +175,8 @@
     label: "BIPM — Circular T"
     url: "https://www.bipm.org/en/time-ftp/circular-t"
   seeAlso:
+    - label: "How UTC is actually made"
+      href: "/timekeeping/utc/what-utc-is/"
     - label: "UTC(k)"
       href: "#utc-k"
     - label: "Traceability"
@@ -192,6 +197,8 @@
   seeAlso:
     - label: "UTC"
       href: "#utc"
+    - label: "Who defines yesterday"
+      href: "/timekeeping/utc/utc-k/"
   draft: true
 
 - id: measurement-ratio

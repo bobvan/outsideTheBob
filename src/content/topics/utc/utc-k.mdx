@@ -1,0 +1,83 @@
+---
+title: "UTC(k), and who defines yesterday"
+description: "The realizations you can actually reach in real time — and why the laboratories with the best clocks get the most say in what UTC turns out to have been."
+section: "utc"
+order: 20
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+[UTC itself is a paper timescale computed after the fact](/timekeeping/utc/what-utc-is/),
+so it cannot be the thing you steer to. What you steer to is a **realization**:
+one institute's live, physical best guess at UTC, running in hardware you could
+in principle go and look at.
+
+These are written **UTC(k)**, where k names the institute — UTC(NIST),
+UTC(USNO), UTC(PTB), UTC(NPL). Each is a real clock ensemble producing a real
+signal, right now.
+
+## The relationship, and how you learn it
+
+Each institute steers its realization to track UTC as closely as it can, and each
+month *Circular T* publishes how well it did: the value of [UTC − UTC(k)] at
+five-day intervals.
+
+So the chain is:
+
+1. Your clock follows some UTC(k), directly or through a distribution protocol.
+2. That UTC(k) follows UTC, imperfectly, in real time.
+3. A month later, you can look up exactly how imperfectly.
+
+Every step of that is knowable. None of it is knowable *at the time*, which is
+the recurring shape of this whole topic.
+
+## Not every contributor is an NMI
+
+A useful correction to an assumption people make: BIPM's own word for the
+contributing institutions is **"institutes"**, not
+[NMIs](/timekeeping/glossary/#nmi). Some are national metrology institutes, some
+are observatories, some are designated laboratories. UTC(USNO), for example,
+comes from the US Naval Observatory, which is not the United States' NMI —
+that is NIST, which separately maintains UTC(NIST).
+
+## Who defines yesterday
+
+Here is the part that surprises people. The clocks in the ensemble are not
+weighted equally. BIPM weights them by demonstrated stability, so a laboratory
+with better clocks pulls the average further toward its own reading.
+
+Which produces a genuinely odd consequence:
+
+> The winners define exactly when yesterday was.
+
+The institutes with the best clocks do not merely *measure* UTC more accurately
+than everyone else. They contribute more to *what UTC turns out to have been*.
+Their reading is more nearly correct partly because correctness is defined, in
+part, by their reading.
+
+<CalloutBox type="tip" title="This is not circular reasoning, it is ensemble design">
+	It sounds like a paradox and it is not. Weighting by stability is what makes
+	the ensemble more reliable than any member — an unstable clock that got equal
+	say would drag the average around. The consequence is simply that
+	<em>authority follows performance</em>, continuously and automatically, with
+	nobody voting on it.
+</CalloutBox>
+
+## What this means for you
+
+**Pick your UTC(k) deliberately.** If you are steering to a national laboratory,
+its published [UTC − UTC(k)] history tells you what you are inheriting. They are
+not all equally close, and the record is free.
+
+**A GNSS constellation is a realization too**, of a sort — one steered by its
+operator rather than by a metrology institute. That is the subject of
+[the next page](/timekeeping/utc/gnss-time-is-a-prediction/).
+
+**The offset you inherit is common-mode.** Every clock in your estate that
+follows the same UTC(k) inherits the same error, which
+[cancels in every measurement you make between them](/timekeeping/two-clock/agreement-is-not-accuracy/)
+and survives in every measurement you make against anybody else.

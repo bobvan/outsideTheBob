@@ -1,0 +1,104 @@
+---
+title: "GNSS time is a prediction"
+description: "Your receiver is not reading UTC. It is tracking a constellation's forecast of what UTC will turn out to have been — a forecast that goes stale in seconds and is continuously corrected from the ground."
+section: "utc"
+order: 30
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "GNSS", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+A GNSS receiver looks like it is reading time out of the sky. It is not.
+
+Each constellation runs its own timescale — GPS Time, Galileo System Time — and
+each of those is steered to track UTC as closely as its operator can manage. What
+your receiver recovers is that timescale, plus a broadcast offset telling it how
+far the operator believes their timescale currently sits from UTC.
+
+Which makes GPS Time, in the phrase that stuck with me:
+
+> A real-time prediction of what USNO will eventually define as UTC(USNO).
+
+Prediction, because [UTC has not been computed
+yet](/timekeeping/utc/what-utc-is/). Real-time, because you need an answer now.
+And *eventually*, because the definitive one arrives about a month later in
+Circular T.
+
+## The satellites are free-running, and drifting
+
+The clocks aboard the satellites are excellent and they are not steered
+continuously. They run free and drift, and the ground segment tracks that drift
+and broadcasts corrections for it — where the satellite really is, and what its
+clock really reads, against the prediction.
+
+So the signal you receive is a free-running clock plus a correction computed on
+Earth. **Everything that separates a hundred-nanosecond consumer fix from a
+sub-nanosecond disciplined clock lives in those corrections**, not in the raw
+observations, which are what they are regardless of what you spend.
+
+<CalloutBox type="warn" title="Corrections have a shelf life">
+	This is the part that makes the prediction framing concrete rather than
+	philosophical. Precise correction streams are re-issued <strong>every five
+	seconds</strong>, and a stream that hands you a five-second-old correction is
+	meaningfully worse than its interval suggests.
+
+	Something that needed refreshing that often was never a measurement of the
+	present. It was a forecast, and forecasts decay.
+</CalloutBox>
+
+The ladder of correction sources runs from the coarse broadcast navigation
+message, through free signal-in-space services like Galileo HAS, to
+subscription streams from individual analysis centers — each fresher or more
+accurate than the last, and each still a prediction.
+
+[[? Bob — this is where Delta's correction-stream landscape figure goes, from ~/git/PePPAR-Fix-delta/docs/correction-stream-landscape.svg.
+
+I have not pulled it in, because you said the work is not done. Two questions:
+
+1) Ready enough to embed as-is? The axes make the argument this page is making — the x-axis alone (2 s to 6 h between re-issues) says "this is a forecast" better than my prose does.
+
+2) If yes, it wants trimming for a general reader. The caption source lists five caveats and an open/filled marker convention that matter enormously in the lab and would sink a blog page. My instinct is to embed the figure as-is with a short caption pointing at the one message — fresher and lower is better — and let the detail live in PePPAR-Fix rather than here. ?]]
+
+## Why you cannot get below a few nanoseconds *to UTC*
+
+Everything above compounds into a floor. Between the constellation's own
+prediction error, the broadcast offset's granularity, and the delay before UTC is
+defined at all, aligning to **UTC** in real time runs out of road at a few
+nanoseconds.
+
+But that is a statement about UTC, not about clocks.
+
+## When you can just call it GPS Time
+
+If your requirement is that your clocks agree with *each other*, and you do not
+need to hand a timestamp to somebody outside your estate, then the constellation's
+timescale is a perfectly good reference — and you can align to **GPS Time or
+Galileo System Time specifically, far below the floor that applies to UTC.**
+
+Everyone tracking the same constellation shares its prediction error. It is
+[common-mode](/timekeeping/glossary/#common-mode), and it cancels in every
+comparison you make internally.
+
+<CalloutBox type="tip" title="This resolves an apparent contradiction on this site">
+	The <a href="/timekeeping/transferring/matching-acquisition-and-distribution/">matching
+	table</a> shows sub-nanosecond as achievable, and this page says you cannot get
+	below a few nanoseconds. Both are true, because they are about different
+	things.
+
+	Sub-nanosecond <em>agreement</em> with a constellation timescale: achievable.
+	Sub-nanosecond <em>trueness</em> against UTC: not, in real time, by anyone.
+</CalloutBox>
+
+So the useful question is not "how close to UTC can I get?" but "does anything I
+do actually require UTC?" For a great deal of datacenter work the answer is no,
+and knowing that is worth a lot of money.
+
+## Where to go next
+
+- **[Traceability](/timekeeping/utc/traceability/)** — what it takes to make a
+  claim about UTC that somebody else has to accept.
+- **[When agreement matters more than being right](/timekeeping/two-clock/agreement-is-not-accuracy/)**
+  — the same argument from the application's side.

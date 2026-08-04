@@ -76,6 +76,57 @@ Possibly **S** from Acquiring Time and The Datacenter Problem.
 
 ---
 
+## 📌 Circular T Section 4 — UTC vs the GNSS broadcast prediction
+
+**Found 2026-08-04, partially verified.** BIPM *Circular T* carries a **Section 4**
+giving [UTC − bUTC_GNSS]: the difference between UTC as computed by the BIPM and
+the **prediction of UTC broadcast by the satellites**, for GPS, GLONASS, Galileo
+and BeiDou, **daily** for every day of the monthly reporting period. Derived from
+a robust combination of four multi-GNSS calibrated receivers in group-G1 UTC
+laboratories.
+
+Figures reported for a July 2022 – January 2023 study period:
+
+| Constellation | [UTC − bUTC] | stated uncertainty |
+|---|---|---|
+| GPS | −5 to +5 ns | 4.1 ns |
+| Galileo | −5 to +5 ns | 3.7 ns |
+| BeiDou | 5 to 20 ns | 4.1 ns |
+| GLONASS | 30 to 50 ns | 6.6 ns |
+
+**Why this matters to the garden.** It converts "GNSS time is a prediction of
+UTC" from a philosophical claim into one with a published track record, per
+constellation, updated monthly. It is the bridge between the slow BIPM loop and
+the fast correction loop — the slow loop cannot correct anything in real time,
+but it *calibrates the prior*.
+
+⚠️ **Three caveats to carry into any prose.**
+
+1. **The measurement floor is close to the signal.** For GPS and Galileo the
+   uncertainty (≈4 ns) is comparable to the offset (±5 ns), so Circular T bounds
+   those constellations without resolving them. The bound is sharpest where the
+   error is largest, which is the opposite of convenient.
+2. **It bounds the constellation-to-UTC term only** — the common-mode offset all
+   users of that constellation share. Antenna position, feedline, receiver and
+   multipath are not in it.
+3. **It measures the *broadcast* prediction.** A receiver using HAS or SSR
+   corrections is not on that path, so this does not bound it.
+
+**Not yet read in the original.** The numbers above come from secondary sources
+describing Section 4. Before citing them directly, read either an actual Circular
+T (the interactive HTML version exposes the sections) or:
+
+> *Monitoring of the offset between UTC and its prediction broadcast by the
+> GNSS* — <https://arxiv.org/abs/2503.02914>, and apparently also in *Metrologia*
+> (<https://doi.org/10.1088/1681-7575/ad0562>). ⚠️ The arXiv ID and the DOI were
+> found together in search results and may be different papers with the same
+> title; confirm before citing both as one.
+
+**Use in:** What Is UTC → a new page on what the slow loop is good for; and
+Acquiring Time, where it is evidence rather than folklore for preferring Galileo.
+
+---
+
 ## ❌ Lombardi (NIST) — position error and timing — DROPPED
 
 Cited within the Montare paper for the single-frequency comparison: height

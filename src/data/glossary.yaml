@@ -359,3 +359,24 @@
     - label: "Matching acquisition and distribution"
       href: "/timekeeping/transferring/matching-acquisition-and-distribution/"
   draft: true
+
+- id: baseline
+  term: "Baseline"
+  aliases: ["zero baseline", "short baseline", "long baseline"]
+  definition: >-
+    The distance between two GNSS stations whose observations are being
+    compared. It matters because every differential technique works by
+    cancelling the errors the two stations *share*, and sharing decays with
+    distance: at **zero baseline** — two receivers on one antenna through a
+    splitter — everything cancels except the receivers themselves, which is what
+    makes it the sharpest way to characterize a receiver. Over a few tens of
+    kilometers the atmosphere still largely cancels; over thousands, only the
+    satellite's own errors do, and the ionosphere becomes the limit.
+  seeAlso:
+    - label: "Common-mode error"
+      href: "#common-mode"
+    - label: "Building your own link to UTC(NIST)"
+      href: "/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/"
+    - label: "PPP"
+      href: "#ppp"
+  draft: true

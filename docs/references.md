@@ -440,3 +440,116 @@ neither averaging nor common view can touch.
 **Use in:** UTC → *Choosing a GNSS timescale* (the TMAS section). Possibly its
 own page — "can I build my own link to UTC(NIST)?" is a good reader question and
 we now have a sourced answer.
+
+---
+
+## 📌 Ricardo Píriz (GMV) — the F9T calibration series
+
+**Verified 2026-08-05.** Four LinkedIn articles by Ricardo Píriz of GMV, who
+calibrates mass-market timing receivers against GMV's own UTC realization
+(*WANTime*, based on passive hydrogen masers). Bob supplied part 2; the series
+is more useful than the one article.
+
+| article | date | what it gives us |
+|---|---|---|
+| [Ublox F9T: testing in the lab](https://www.linkedin.com/pulse/f9t-testing-lab-ricardo-p%C3%ADriz/) | 2019-09-09 | the limiting-error finding, below |
+| [Testing the new ublox F9T (part 2)](https://www.linkedin.com/pulse/testing-new-ublox-f9t-part-2-ricardo-p%C3%ADriz) | 2019-08-23 | **F9T internal delay = 28 ns** |
+| [Ublox F9T: adding Galileo](https://www.linkedin.com/pulse/ublox-f9t-adding-galileo-ricardo-p%C3%ADriz) | — | not yet read |
+| [Calibrating mass-market GNSS timing receivers](https://www.linkedin.com/pulse/calibrating-mass-market-gnss-timing-receivers-ricardo-p%C3%ADriz) | 2020-04-05 | the method, and the uncertainty floor |
+
+### The number Bob wanted
+
+Part 2 decomposes a measured 96 ns total against UTC, using a Keysight 53230A
+TIC over 24 h:
+
+> We had calibrated beforehand the delay of the antenna (**16 ns**) and the delay
+> of the 10-meter antenna cable (**52 ns**). This leaves a delay of **28 ns** for
+> the F9T device.
+
+— "a value similar to other ublox receiver models that we have calibrated in the
+past." Compare NIST's PolaRx5TR at **INT DLY 28.8 ns (P1)**: the same order, which
+is a quietly encouraging thing for anyone building on an F9T.
+
+### The method, and what it costs
+
+The 2020 article gives the recipe. Run the receiver's 1 PPS against a reference
+UTC realization on a TIC for several days while a **calibrated time-transfer
+receiver** collects CGGTTS on the same antenna, then subtract:
+
+> TIC − CGGTTS = **D**
+
+which removes any dependence on the stability of UTC or GPS time. Results:
+
+| receiver | calibration value | day-to-day repeatability |
+|---|---|---|
+| u-blox F9T | 93.9 ns | **0.3 ns** (1σ) |
+| Septentrio mosaic | 77.9 ns | **0.28 ns** (1σ) |
+
+Same antenna; the 16 ns difference is the receivers'.
+
+### Two caveats that answer "what is still missing?"
+
+1. **The uncertainty floor is not yours to set.** Calibration uncertainty is
+   > ultimately limited by the calibration uncertainty of the co-located
+   > time-transfer receiver chain, normally at the level of **1–2 ns**.
+
+   So even a perfectly executed home calibration inherits somebody else's 1–2 ns,
+   and BIPM's own campaign uncertainty is 0.9 ns. Repeatability of 0.3 ns is
+   *precision*, not trueness.
+
+2. **A calibration is per constellation and per signal combination.** Values
+   "apply exclusively to specific GNSS constellations and signal combinations;
+   different configurations require recalibration." There is no such thing as
+   "the F9T delay" — only the F9T delay for GPS L1/L2 P3, or for E1/E5a.
+
+Also worth carrying: part 1 moved the F9T from an office with a low-cost Harxon
+antenna to a temperature-stabilized server room with a Leica AR20, and found
+
+> the results are very similar… This seems to indicate that the F9T timing
+> accuracy is limited by GNSS orbit and clock errors and by the **local multipath
+> error**, and not by thermal stability or antenna quality.
+
+Which is a useful corrective to the instinct that a better antenna is the next
+upgrade.
+
+**Use in:** UTC → *Can I build my own link to UTC(NIST)?*; Antennas →
+*feedline*. Part 3 (Galileo) still unread.
+
+---
+
+## 📌 US IGS stations with atomic frequency standards
+
+**Verified 2026-08-05** by fetching all 72 `*00USA` IGS site logs and parsing
+§6.1. Distances are from a generic Chicago reference point, for baseline
+shortlisting only.
+
+| station | km | standard | referenced to |
+|---|---|---|---|
+| NLIB00USA | 327 | H-maser | *no note* — free-running VLBA maser |
+| MRC100USA | 948 | H-maser | *no note* — NRL Midway Research Center |
+| USN700USA / USN800USA / USN900USA | 952 | H-maser | **USNO Master Clock MC2, "the primary realization of UTC(USNO)"** |
+| WDC500USA / WDC600USA | 952 | H-maser | USNO MC2 |
+| GODE00USA | 967 | H-maser | Goddard GGAO |
+| WES200USA | 1329 | H-maser | Westford |
+| AMC400USA | 1470 | H-maser | **USNO Alternate Master Clock #1, backup UTC(USNO)** |
+| NIST00USA | 1493 | H-maser | **UTC(NIST)** |
+| PIE100USA | 1975 | H-maser | Pie Town VLBA |
+| BREW00USA | 2593 | H-maser | Brewster VLBA |
+| GOLD/GOL200USA | 2626 | H-maser | Goldstone |
+| JPLM00USA | 2791 | rubidium | JPL Mesa |
+| STFU00USA | 2978 | rubidium | Stanford |
+| EIL300USA / EIL400USA | 4457 | cesium (HP 5071A) | Alaska NGA |
+| MKEA / KOKB / KOKV | 6741–6932 | H-maser | Hawaii |
+
+**The distinction that matters:** a station with an H-maser and *no note* has a
+free-running maser. Superb short-term stability, no defined relationship to any
+UTC(k) — useful for testing a method or characterizing stability, useless for
+anchoring a claim. Only NIST, the USN\* group, WDC5/6 and AMC4 name a
+realization.
+
+⚠️ Site logs are a snapshot; equipment sections carry effective dates and
+several of these stations have changed standards over time. Re-read §6.1 before
+relying on any row.
+
+**Use in:** UTC → *Can I build my own link to UTC(NIST)?* (a shorter-baseline
+sidebar), and the PePPAR-Fix dayplan item I-114801-blog.

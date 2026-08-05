@@ -10,6 +10,7 @@ draft: true
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 
 Averaging is the first thing anyone reaches for, and it works. Watch for longer,
 take more measurements, and the number settles down. The question this page
@@ -28,14 +29,14 @@ In the vocabulary this topic uses elsewhere: averaging improves
 [precision](/timekeeping/glossary/#precision) and never improves
 [trueness](/timekeeping/glossary/#trueness).
 
-<figure class="diagram">
-	<img src="/figures/averaging-arrow.svg" alt="Two targets side by side. In the left, points from one-hour averages scatter widely; in the right, points from twenty-four-hour averages cluster tightly. In both, a red X marks the group center at the same offset from the bullseye, connected by a dashed guide, and a red arrow of identical length runs from bullseye to group center in each." />
-	<figcaption>
-		Longer averaging buys the tighter group and nothing else. The bullseye and
+<ZoomableImage
+	plate
+	src="/figures/averaging-arrow.svg"
+	alt="Two targets side by side. In the left, points from one-hour averages scatter widely; in the right, points from twenty-four-hour averages cluster tightly. In both, a red X marks the group center at the same offset from the bullseye, connected by a dashed guide, and a red arrow of identical length runs from bullseye to group center in each."
+	caption="Longer averaging buys the tighter group and nothing else. The bullseye and
 		the red X sit at identical coordinates in both panels, and the dashed guide
-		is there so you can check that rather than take my word for it.
-	</figcaption>
-</figure>
+		is there so you can check that rather than take my word for it."
+/>
 
 ## The same shape in three places
 

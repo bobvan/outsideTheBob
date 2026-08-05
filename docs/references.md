@@ -146,8 +146,8 @@ T (the interactive HTML version exposes the sections) or:
 > found together in search results and may be different papers with the same
 > title; confirm before citing both as one.
 
-**Use in:** What Is UTC → a new page on what the slow loop is good for; and
-Acquiring Time, where it is evidence rather than folklore for preferring Galileo.
+**Use in:** *BIPM publishes a GNSS prediction scorecard*; and Acquiring Time,
+where it is evidence rather than folklore about which constellation to prefer.
 
 ---
 

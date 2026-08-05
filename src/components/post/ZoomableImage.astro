@@ -5,39 +5,54 @@ import type { ImageMetadata } from 'astro';
 interface Props {
 	/** An imported image, e.g. `import shot from "../../assets/shot.png"`.
 	    It must be imported rather than a /public path, because only images
-	    Astro can see at build time get resized. */
-	src: ImageMetadata;
+	    Astro can see at build time get resized.
+
+	    A plain string is also accepted, for the generated SVGs in
+	    `public/figures/`. Those need no resizing — the browser scales them —
+	    so they are emitted as an ordinary <img> and zoom to themselves. */
+	src: ImageMetadata | string;
 	alt: string;
 	/** Width of the inline thumbnail that Astro generates. The zoomed view
-	    always shows the original at full resolution. */
+	    always shows the original at full resolution. Ignored for string src. */
 	width?: number;
-	/** When given, the image is wrapped in a figure with this caption. */
+	/** When given, the image is wrapped in a figure with this caption.
+	    Rendered as HTML, so a caption may contain a link. */
 	caption?: string;
+	/** Overrides what the zoomed view shows. Use it to open a vector original
+	    behind a raster thumbnail. */
+	zoomSrc?: string;
+	/** Line-art diagrams authored on white get the light plate from BaseLayout
+	    in both themes, rather than being blown out in dark mode. */
+	plate?: boolean;
 }
 
-const { src, alt, width = 720, caption } = Astro.props;
+const { src, alt, width = 720, caption, zoomSrc, plate = false } = Astro.props;
+
+const isPath = typeof src === 'string';
+const zoomHref = zoomSrc ?? (isPath ? src : src.src);
 
 // Each instance needs its own id so several zoomable images can share a page.
 const id = `zoom-${crypto.randomUUID()}`;
+const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 ---
 
 {
 	caption ? (
-		<figure class="zoom-figure">
+		<figure class={figureClass}>
 			<button type="button" class="zoom-thumb" popovertarget={id} aria-label={`Enlarge: ${alt}`}>
-				<Image src={src} alt={alt} width={width} loading="lazy" />
+				{isPath ? <img src={src} alt={alt} loading="lazy" /> : <Image src={src} alt={alt} width={width} loading="lazy" />}
 			</button>
-			<figcaption>{caption}</figcaption>
+			<figcaption set:html={caption} />
 		</figure>
 	) : (
 		<button type="button" class="zoom-thumb" popovertarget={id} aria-label={`Enlarge: ${alt}`}>
-			<Image src={src} alt={alt} width={width} loading="lazy" />
+			{isPath ? <img src={src} alt={alt} loading="lazy" /> : <Image src={src} alt={alt} width={width} loading="lazy" />}
 		</button>
 	)
 }
 
-<div id={id} popover class="zoom-overlay">
-	<img src={src.src} width={src.width} height={src.height} alt={alt} />
+<div id={id} popover class:list={['zoom-overlay', { vector: zoomHref.endsWith('.svg') }]}>
+	<img src={zoomHref} alt={alt} />
 </div>
 
 <style>
@@ -49,6 +64,11 @@ const id = `zoom-${crypto.randomUUID()}`;
 		font-size: 0.9rem;
 		color: var(--muted, #666);
 		text-align: center;
+	}
+	/* The plate variant inherits figure.diagram from BaseLayout, which styles
+	   its caption as an inset rule rather than centered small print. */
+	.zoom-figure.diagram figcaption {
+		text-align: left;
 	}
 
 	/* The thumbnail is a button so it is keyboard focusable and announces
@@ -66,6 +86,9 @@ const id = `zoom-${crypto.randomUUID()}`;
 		width: 100%;
 		height: auto;
 		border-radius: 0.5rem;
+	}
+	.zoom-figure.diagram .zoom-thumb img {
+		border-radius: 0;
 	}
 	.zoom-thumb:focus-visible {
 		outline: 2px solid var(--link, #0b5fff);
@@ -92,5 +115,17 @@ const id = `zoom-${crypto.randomUUID()}`;
 	.zoom-overlay img {
 		display: block;
 		max-width: none;
+	}
+	/* A vector has no natural size worth respecting — its viewBox is whatever
+	   the generator chose, often smaller than the thumbnail. Fill the viewport
+	   instead, which is the whole reason to zoom into one. */
+	.zoom-overlay.vector {
+		width: 96vw;
+		max-height: 96vh;
+	}
+	.zoom-overlay.vector img {
+		width: 100%;
+		height: auto;
+		max-width: 100%;
 	}
 </style>

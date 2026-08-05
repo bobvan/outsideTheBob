@@ -9,17 +9,19 @@ tags: ["metrology", "timing", "figures", "resolution"]
 draft: true
 ---
 
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+
 [Resolution](/timekeeping/glossary/#resolution) is the smallest change that
 produces a perceptible change in what the instrument reports. It is easy to
 treat as a minor spec, and it has a failure mode that is anything but.
 
-<figure class="diagram">
-	<img src="/figures/resolution-ladder.svg" alt="Four identical targets showing the same scatter of shots, with progressively coarser square grids overlaid. In the fourth panel the grid is coarser than the group and every shot has collapsed to a single point at the center." />
-	<figcaption>
-		The same shots in every panel. Only the reporting grid changes — and by the
-		fourth, the instrument returns one value every time.
-	</figcaption>
-</figure>
+<ZoomableImage
+	plate
+	src="/figures/resolution-ladder.svg"
+	alt="Four identical targets showing the same scatter of shots, with progressively coarser square grids overlaid. In the fourth panel the grid is coarser than the group and every shot has collapsed to a single point at the center."
+	caption="The same shots in every panel. Only the reporting grid changes — and by the
+		fourth, the instrument returns one value every time."
+/>
 
 Read left to right and nothing about the clock changes. What changes is how
 finely you are allowed to be told about it.

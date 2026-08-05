@@ -475,15 +475,22 @@ mkdirSync(OUT, { recursive: true });
 //
 //    Okabe-Ito palette, which is the colorblind-safe qualitative standard and
 //    keeps faith with the two-color scheme used elsewhere in the garden.
+//
+//    Four thin lines is more than hue alone can carry, even for a reader with
+//    ordinary color vision: the first cut used blue/green for GPS/Galileo and
+//    purple/vermillion for BeiDou/GLONASS, and each pair read as one line at
+//    1 px in the upper panel. So each series now differs in three ways at once
+//    — hue, lightness, and dash — and the four hues chosen are as far apart as
+//    the palette allows. Never distinguish series by hue alone at this weight.
 // ---------------------------------------------------------------------------
 {
 	const d = JSON.parse(readFileSync('src/data/circular-t-section4.json', 'utf8'));
 	const S = d.series;
 	const CONST = [
-		{ k: 'GPS', label: 'GPS', color: '#0072B2' },
-		{ k: 'GAL', label: 'Galileo', color: '#009E73' },
-		{ k: 'BDS', label: 'BeiDou', color: '#CC79A7' },
-		{ k: 'GLO', label: 'GLONASS', color: '#D55E00' },
+		{ k: 'GPS', label: 'GPS', color: '#0072B2', dash: '', w: 1.4 },
+		{ k: 'GAL', label: 'Galileo', color: '#E69F00', dash: '6 3', w: 1.5 },
+		{ k: 'BDS', label: 'BeiDou', color: '#CC79A7', dash: '1.6 2.4', w: 1.8 },
+		{ k: 'GLO', label: 'GLONASS', color: '#111111', dash: '', w: 1.4 },
 	];
 	const stat = (k) => {
 		const v = S.map((r) => r[k]);
@@ -529,7 +536,7 @@ mkdirSync(OUT, { recursive: true });
 				return `${X(r.mjd).toFixed(1)},${Y(v).toFixed(1)}`;
 			});
 			b += `<clipPath id="clip-${c.k}-${y0}"><rect x="${L}" y="${y0}" width="${W - L - R}" height="${y1 - y0}"/></clipPath>`;
-			b += `<polyline points="${pts.join(' ')}" fill="none" stroke="${c.color}" stroke-width="1.1" clip-path="url(#clip-${c.k}-${y0})"/>`;
+			b += `<polyline points="${pts.join(' ')}" fill="none" stroke="${c.color}" stroke-width="${c.w}"${c.dash ? ` stroke-dasharray="${c.dash}"` : ''} stroke-linecap="round" clip-path="url(#clip-${c.k}-${y0})"/>`;
 		}
 	}
 
@@ -553,7 +560,9 @@ mkdirSync(OUT, { recursive: true });
 	ly += 18;
 	for (const c of CONST) {
 		const st = stat(c.k);
-		b += `<line x1="${W - R + 12}" y1="${ly - 4}" x2="${W - R + 30}" y2="${ly - 4}" stroke="${c.color}" stroke-width="2.4"/>`;
+		// The swatch carries the dash pattern too, or the legend would be a
+		// hue-only key to a chart that is deliberately not hue-only.
+		b += `<line x1="${W - R + 12}" y1="${ly - 4}" x2="${W - R + 30}" y2="${ly - 4}" stroke="${c.color}" stroke-width="${c.w + 1}"${c.dash ? ` stroke-dasharray="${c.dash}"` : ''} stroke-linecap="round"/>`;
 		b += text(W - R + 36, ly, c.label, { size: 11, weight: 600, anchor: 'start' });
 		b += text(W - R + 36, ly + 14, `${st.mean >= 0 ? '+' : ''}${st.mean.toFixed(2)} ± ${st.sd.toFixed(2)} ns`, {
 			size: 10.5, anchor: 'start', fill: MUTED,

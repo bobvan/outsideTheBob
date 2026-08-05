@@ -1,0 +1,106 @@
+---
+title: "The fast loop and the slow loop"
+description: "Two control loops run in GNSS timekeeping, one in minutes and one in weeks. Telling them apart explains why nobody can steer to UTC and why UTC is still the thing worth measuring against."
+section: "utc"
+order: 35
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "GNSS", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+import loops from "../../../assets/FastLoopSlowLoop.png";
+
+There are two loops in this business and they run at wildly different speeds.
+
+The **fast loop** is the one that keeps your clock honest:
+[corrections computed on the ground](/timekeeping/utc/gnss-time-is-a-prediction/),
+uploaded, broadcast, and applied in your receiver — refreshed anywhere from
+every five seconds to every couple of hours.
+
+The **slow loop** runs through the BIPM. Laboratories compare their clocks,
+report to Paris, and weeks later
+[UTC is defined for a period already past](/timekeeping/utc/what-utc-is/).
+
+<ZoomableImage
+	src={loops}
+	alt="A diagram with a satellite at top. A red loop labeled Fast Loop, minutes, runs from a ground segment dish up to the satellite and down to monitoring stations, NMIs and master clocks, and back to the ground segment. Blue arrows labeled corrections, also known as UTC predictions, run from the ground segment up to the satellite's bent pipe and down to a real-time user, and from GNSS analysis centers directly to the same user. Orange arrows labeled ranging and carrier phase signals run from the satellite's free-running clocks down to the real-time user and to the monitoring stations. Black arrows run from the monitoring stations to BIPM and back, through a purple circle labeled Slow Loop, weeks, with UTC defined in magenta, and onward to the ground segment and the analysis centers."
+	caption="Both loops on one page. Red is the fast loop and closes in minutes; black is the slow
+		loop and closes in weeks. They share the same monitoring stations at the bottom right,
+		which is the only place the two ever touch."
+/>
+
+Read the figure as two circuits sharing one set of sensors. The red loop leaves
+the ground segment, passes through the satellite, is observed by the monitoring
+stations, and comes straight back to the ground segment to be uploaded again.
+The black loop starts from those same monitoring stations, goes to Paris, and
+returns as *UTC defined* — a value, not a correction, and a value about a period
+that has already ended.
+
+The obvious thing to say about the slow loop is that you cannot steer to it, and
+that is true. It is also the least interesting thing about it, because the slow
+loop is where the fast loop's homework gets marked. That marking is published,
+and it has a page of its own:
+[the GNSS prediction scorecard](/timekeeping/utc/gnss-prediction-scorecard/).
+
+## The cadences, which are easy to conflate
+
+Three different clocks tick here, on different axes.
+
+**Monthly is the batch size, not merely the publication schedule.** BIPM's
+algorithm processes one month of data at a time, because weighting each clock by
+its demonstrated stability requires a month of it to look at. The publication
+cadence follows the algorithm, not the other way round.
+
+**Five days is the sample spacing** for [UTC − UTC(k)] in Section 1 of
+*Circular T* — quoted at "standard dates", the MJDs ending in 4 and 9, at 0 h
+UTC. So one *Circular T* carries about six samples per laboratory, not one.
+
+**One day is the sample spacing** for the GNSS comparison in Section 4, and for
+UTCr below. Anything varying faster than its sample spacing is invisible,
+whichever section you are reading.
+
+And a fourth product for when a month is too long to wait:
+
+**UTCr**, rapid UTC, published **weekly** since July 2013 with **daily** values.
+Participation is voluntary and requires labs to submit data every day. It agrees
+with *Circular T* to within a few nanoseconds.
+
+<CalloutBox type="tip" title="But only Circular T confers traceability">
+	UTCr is faster and nearly as close. It is still not the reference —
+	<em>Circular T remains the unique source of traceability to UTC.</em>
+
+	Which is the distinction the
+	<a href="/timekeeping/utc/traceability/">traceability page</a> turns on:
+	being nearly as accurate and being the thing others must accept are separate
+	properties, and only one of them is decided by measurement.
+</CalloutBox>
+
+## Latency, measured
+
+Across fourteen consecutive issues of *Circular T*, the delay from a measurement
+to its publication runs:
+
+- **newest point in an issue: 8–16 days**, median 13
+- **oldest point in an issue: 39–45 days**, median 42
+
+So a fresh *Circular T* tells you about a period that ended about two weeks ago
+and began about six weeks ago — during which your clock has already done
+whatever it was going to do.
+
+That is the whole shape of it. **The fast loop tells you what to do. The slow
+loop tells you how you have been doing.** Neither substitutes for the other, and
+a timing programme that consults only the first has no way of knowing whether any
+of it worked.
+
+## Where to go next
+
+- **[BIPM publishes a GNSS prediction scorecard](/timekeeping/utc/gnss-prediction-scorecard/)**
+  — what the slow loop actually reports about the fast loop, with fourteen
+  months of it plotted.
+- **[GNSS time is a prediction](/timekeeping/utc/gnss-time-is-a-prediction/)** —
+  the fast loop in detail, and why the correcting happens in your receiver.
+- **[How UTC is actually made](/timekeeping/utc/what-utc-is/)** — the slow loop
+  from the inside.

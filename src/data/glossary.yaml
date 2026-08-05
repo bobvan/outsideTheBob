@@ -297,3 +297,65 @@
     - label: "Stability"
       href: "#stability"
   draft: true
+
+- id: spp
+  term: "SPP (Single Point Positioning)"
+  aliases: ["single point positioning", "standard positioning"]
+  definition: >-
+    The baseline GNSS solution: pseudoranges from four or more satellites,
+    corrected only by what the satellites themselves broadcast. It needs no
+    internet connection, no subscription and no convergence time, and it is what
+    every receiver falls back to. The price is that its accuracy is capped by
+    the freshness of the broadcast orbit and clock corrections — refreshed every
+    ten minutes to two hours — which puts it in the tens of nanoseconds.
+  authority:
+    label: "Navipedia, Code Based Positioning (SPS)"
+    url: "https://gssc.esa.int/navipedia/index.php/Code_Based_Positioning_(SPS)"
+  seeAlso:
+    - label: "Why GNSS time is a prediction"
+      href: "/timekeeping/utc/gnss-time-is-a-prediction/"
+    - label: "PPP"
+      href: "#ppp"
+  draft: true
+
+- id: ppp
+  term: "PPP (Precise Point Positioning)"
+  aliases: ["float PPP", "precise point positioning"]
+  definition: >-
+    A single-receiver solution that adds the carrier phase to the pseudorange
+    and replaces the broadcast corrections with precise orbit and clock
+    corrections from an analysis center. The carrier is a far quieter
+    observable, but it carries an unknown whole number of cycles, and plain PPP
+    estimates that unknown as a *real* number — hence **float** PPP — which is
+    why it needs tens of minutes to converge.
+  authority:
+    label: "Navipedia, Precise Point Positioning"
+    url: "https://gssc.esa.int/navipedia/index.php/Precise_Point_Positioning"
+  seeAlso:
+    - label: "SPP"
+      href: "#spp"
+    - label: "PPP-AR"
+      href: "#ppp-ar"
+    - label: "Where the corrections come from"
+      href: "/timekeeping/utc/gnss-time-is-a-prediction/"
+  draft: true
+
+- id: ppp-ar
+  term: "PPP-AR (ambiguity resolution)"
+  aliases: ["ambiguity resolution", "integer PPP", "fixed PPP"]
+  definition: >-
+    PPP in which the carrier-phase ambiguity is fixed to the integer it
+    physically is, rather than estimated as a float. Doing so needs satellite
+    **phase biases** as well as orbits and clocks, and those are only
+    self-consistent when they come from a *single* analysis center — mixing
+    correction sources destroys the property that makes fixing possible. The
+    payoff is faster convergence and a better solution from the same antenna.
+  authority:
+    label: "Navipedia, Carrier Phase Ambiguity Fixing"
+    url: "https://gssc.esa.int/navipedia/index.php/Carrier_Phase_Ambiguity_Fixing"
+  seeAlso:
+    - label: "PPP"
+      href: "#ppp"
+    - label: "Matching acquisition and distribution"
+      href: "/timekeeping/transferring/matching-acquisition-and-distribution/"
+  draft: true

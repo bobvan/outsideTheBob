@@ -135,6 +135,29 @@ Link a term to its glossary entry **on first use per page**, not every use.
 
 ---
 
+## Figures
+
+**Never distinguish series by hue alone.** The first cut of the UTC prediction
+scorecard used four Okabe-Ito hues at 1.1 px, and Bob — who is not colorblind —
+read GPS/Galileo as one line and BeiDou/GLONASS as another. Four thin traces
+need **hue, weight, and dash varying together**, and the legend swatch has to
+carry the dash too or it is a hue-only key to a chart that deliberately is not.
+Colorblind-safe is the floor, not the goal.
+
+**Do not trim Bob's slide exports.** His Keynote figures come in at 1920×1080
+with margins he drew on purpose. A `sharp.trim()` was added once to strip the
+white letterboxing of a 16:9 slide exported onto US Letter, and it then quietly
+shaved the margins off every PNG that followed, leaving each figure jammed
+against its own frame. `scripts/import-figure.mjs` defaults to no trim; pass
+`--trim` only for a genuinely letterboxed export, and look at the result.
+
+**Every figure should zoom.** Diagrams and plots go through
+`ZoomableImage`, which opens the original — the `.svg` for generated figures, so
+zooming into a plot is resolution-free. Pass `plate` for line art authored on
+white, which keeps its light background in dark mode.
+
+---
+
 ## Open questions
 
 *None currently.* When one appears, it goes here rather than being resolved

@@ -1,0 +1,117 @@
+---
+title: "BIPM publishes a GNSS prediction scorecard"
+description: "Buried in Circular T is a daily, per-constellation measurement of how well each GNSS has been predicting UTC. It turns folklore into evidence, and the evidence surprises."
+section: "utc"
+order: 50
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "GNSS", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+
+BIPM cannot correct your clock. The answer arrives weeks late, which is the
+whole point of [the slow loop](/timekeeping/utc/fast-loop-and-slow-loop/).
+
+But buried in *Circular T* is a section that measures something more useful than
+where UTC was. It measures **how well each constellation predicted it.**
+
+Every GNSS satellite broadcasts its operator's estimate of the offset between
+that constellation's timescale and UTC. BIPM checks that estimate against the
+UTC it later computes, and publishes the difference — **daily**, per
+constellation. That is a scorecard on the fast loop, kept by the body that
+defines the answer.
+
+<ZoomableImage
+	plate
+	src="/figures/utc-prediction-scoreboard.svg"
+	alt="Two stacked line charts sharing a date axis from April 2025 to June 2026. The upper panel plots UTC minus each constellation's broadcast prediction of UTC, in nanoseconds: GPS, Galileo and BeiDou stay near zero while GLONASS wanders and plunges to about minus 57 nanoseconds in mid-2026 before recovering. The lower panel zooms to plus or minus 5 nanoseconds and shows only GPS, Galileo and BeiDou. A legend gives mean and standard deviation for each constellation over the whole period."
+	caption="426 daily values from fourteen consecutive issues of Circular T. Each series differs in
+		hue, weight and dash, because four thin lines is more than hue alone can carry. Regenerate
+		with <code>npm run circular-t</code> then <code>npm run figures</code>."
+/>
+
+| Constellation | mean | standard deviation | worst excursion |
+|---|---|---|---|
+| GPS | +0.59 ns | 1.17 ns | +4.9 ns |
+| Galileo | +0.62 ns | 1.95 ns | +5.0 ns |
+| BeiDou | −0.10 ns | 1.04 ns | −4.8 ns |
+| GLONASS | −6.36 ns | 9.50 ns | **−56.9 ns** |
+
+*426 daily values, 2025-04-29 to 2026-06-28.*
+
+## Which turns folklore into evidence — and the evidence surprises
+
+"Galileo is better for timing" circulates as received wisdom. Section 4 lets you
+check, and on *this* measure it does not hold up.
+
+Over fourteen months, **BeiDou has the smallest mean error and the tightest
+spread**, GPS is close behind, and Galileo is marginally the loosest of the
+three — all of them under a nanosecond of mean bias, which is the more important
+finding. On predicting UTC, three of the four constellations are effectively
+tied.
+
+This does not make the folklore wrong, it makes it *about something else*.
+Galileo genuinely leads on broadcast orbit and clock accuracy, and refreshes its
+ephemeris every ten minutes against GPS's two hours. Those are different
+measurements, and a constellation can win one and not another. What Section 4
+settles is narrower and worth stating precisely: **for the broadcast UTC offset
+specifically, GPS, Galileo and BeiDou are equivalent, and GLONASS is not.**
+
+GLONASS is the real result here. A mean of −6.4 ns, a standard deviation of
+9.5 ns, and an excursion to **−57 ns** in mid-2026 — visible in the chart as the
+plunge nobody else has. BIPM's own stated uncertainty for GLONASS tracked it:
+7 ns for most of the period, then 10, then 30 in the issue covering the
+excursion.
+
+More usefully than any ranking, this lets you set an expectation with a track
+record behind it. Pull the last few months for your constellation and you have an
+empirical answer to *how close is my time source likely to be to UTC right now* —
+not from a datasheet, not from a vendor, but from the body that defines the
+answer.
+
+## The awkward part, stated plainly
+
+<CalloutBox type="warn" title="The bound is sharpest where the error is largest">
+	BIPM states an uncertainty per edition — 5 ns for GPS, Galileo and BeiDou
+	throughout the period charted. That is larger than the day-to-day scatter of
+	all three, so Circular T can tell you those constellations sit within a few
+	nanoseconds of UTC, and cannot tell you where inside that.
+
+	For GLONASS, running to −57 ns against a stated 7–30 ns, the measurement
+	resolves the behaviour easily.
+
+	So you get the crispest information about the constellation you would least
+	like to depend on, and the vaguest about the ones you would choose. That is
+	inconvenient and it is not a flaw — it is what happens when a measurement
+	approaches its own floor.
+</CalloutBox>
+
+## What it does not bound
+
+Three things, and forgetting them turns a useful number into a false comfort.
+
+**Your local error budget.** Section 4 bounds the constellation-to-UTC term — the
+[common-mode](/timekeeping/glossary/#common-mode) offset every user of that
+constellation shares. Your
+[antenna position](/timekeeping/antennas/antenna-position/), your
+[feedline](/timekeeping/antennas/feedline/), your receiver and your multipath are
+not in it and never were.
+
+**Anything faster than a day.** Daily samples cannot show sub-daily variation.
+
+**The path you are actually on.** Section 4 measures the *broadcast* UTC
+prediction. If you are applying
+[HAS or SSR corrections](/timekeeping/utc/gnss-time-is-a-prediction/) you are not
+using that broadcast offset, so this bounds a path you are not travelling.
+
+## Where to go next
+
+- **[The fast loop and the slow loop](/timekeeping/utc/fast-loop-and-slow-loop/)**
+  — where this measurement comes from, and how late it is.
+- **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
+  — the other thing *Circular T* is for, and the one nothing else substitutes for.
+- **[Choosing a way to acquire time](/timekeeping/acquiring/acquiring-time/)** —
+  where these numbers land in a real decision.

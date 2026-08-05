@@ -9,6 +9,8 @@ tags: ["datacenter", "timing", "UTC"]
 draft: true
 ---
 
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+
 A timestamp is not a fact about the universe. It is a count, and a count is
 meaningless until you say what you were counting and from when.
 
@@ -35,13 +37,13 @@ somewhere.
 the origin is 1837, and you can count. It is absurd, nobody would use it, and it
 is entirely legitimate under the definition.
 
-<figure class="diagram">
-	<img src="/images/victorian-timescale.png" alt="An illustration of a timescale measured in years since the beginning of Queen Victoria's reign." />
-	<figcaption>
-		Valid, useless, and worth a moment — an unfamiliar example makes it much
-		harder to skate past the definition.
-	</figcaption>
-</figure>
+<ZoomableImage
+	plate
+	src="/images/victorian-timescale.png"
+	alt="An illustration of a timescale measured in years since the beginning of Queen Victoria's reign."
+	caption="Valid, useless, and worth a moment — an unfamiliar example makes it much
+		harder to skate past the definition."
+/>
 
 The absurd one earns its place. UTC is so familiar that it is easy to read
 "timestamp" as meaning something absolute, when it means a count against a
@@ -53,13 +55,13 @@ Because a timescale is only a tick length and an origin, any two of them are
 related by the simplest relationship there is. Plot one against the other and you
 get a straight line:
 
-<figure class="diagram">
-	<img src="/figures/timescale-relation.svg" alt="A plot with UTC year on the horizontal axis and ticks on another timescale on the vertical. A solid line labeled years since Victoria rises with slope one from an origin marked in red at 1837. A dashed line labeled half-decades since 1900 rises more shallowly from an origin marked at 1900." />
-	<figcaption>
-		Two timescales against UTC. The red dots are the origins — the intercept
-		<em>b</em>. The steepness is the ratio of tick lengths — the slope <em>m</em>.
-	</figcaption>
-</figure>
+<ZoomableImage
+	plate
+	src="/figures/timescale-relation.svg"
+	alt="A plot with UTC year on the horizontal axis and ticks on another timescale on the vertical. A solid line labeled years since Victoria rises with slope one from an origin marked in red at 1837. A dashed line labeled half-decades since 1900 rises more shallowly from an origin marked at 1900."
+	caption="Two timescales against UTC. The red dots are the origins — the intercept
+		<em>b</em>. The steepness is the ratio of tick lengths — the slope <em>m</em>."
+/>
 
 **y = mx + b**, where:
 

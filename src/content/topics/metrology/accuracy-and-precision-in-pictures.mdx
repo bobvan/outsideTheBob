@@ -9,21 +9,23 @@ tags: ["metrology", "timing", "figures"]
 draft: true
 ---
 
+import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+
 Everyone has seen the archery target. Almost everyone has seen it labeled
 wrongly, and the wrong label is not a pedantic quibble — it hides the single
 most useful fact about averaging.
 
 ## The axes are trueness and precision. Accuracy is the corner.
 
-<figure class="diagram">
-	<img src="/figures/trueness-precision.svg" alt="Four archery targets in a two-by-two grid. Columns are labeled precise and not precise; rows are labeled true and not true. The top-left panel, tight and centered, is outlined with a dashed box." />
-	<figcaption>
-		The usual version labels the rows “accurate”. They are not — they are
+<ZoomableImage
+	plate
+	src="/figures/trueness-precision.svg"
+	alt="Four archery targets in a two-by-two grid. Columns are labeled precise and not precise; rows are labeled true and not true. The top-left panel, tight and centered, is outlined with a dashed box."
+	caption="The usual version labels the rows “accurate”. They are not — they are
 		<strong>true</strong>. Accuracy is the boxed corner where both are good, and
 		calling one axis by the name of the whole thing is what makes “accurate to
-		15&nbsp;ns” ambiguous.
-	</figcaption>
-</figure>
+		15&nbsp;ns” ambiguous."
+/>
 
 Two things vary here and only two: how tight the group is
 ([precision](/timekeeping/glossary/#precision)) and where its center sits
@@ -41,13 +43,13 @@ where the same shape turns up in position, in time, and in frequency.
 
 ## The panel that makes it honest
 
-<figure class="diagram">
-	<img src="/figures/where-is-utc.svg" alt="Two panels showing identical scatters of shots. The left has no rings, only a dashed amorphous outline, with several question-marked UTC labels floating at different positions. The right has concentric rings with UTC at the center." />
-	<figcaption>
-		The shots are <em>identical</em> in both panels. Only the frame differs — and
-		the frame is the thing you do not have.
-	</figcaption>
-</figure>
+<ZoomableImage
+	plate
+	src="/figures/where-is-utc.svg"
+	alt="Two panels showing identical scatters of shots. The left has no rings, only a dashed amorphous outline, with several question-marked UTC labels floating at different positions. The right has concentric rings with UTC at the center."
+	caption="The shots are <em>identical</em> in both panels. Only the frame differs — and
+		the frame is the thing you do not have."
+/>
 
 Here is where the target quietly lies. On a real one you can see the bullseye.
 In measurement you cannot: you see your own results and nothing else, and from
@@ -59,15 +61,15 @@ Worse in this field than in most, because
 merely unobservable, it does not exist yet when you fire. It is settled
 afterwards and published in arrears.
 
-<figure class="diagram">
-	<img src="/figures/deferred-truth.svg" alt="Two panels. Left: a cluster of points with a red X at its center, a dot below labeled UTC(k), and a dashed empty circle where UTC would be, labeled not computed yet. Right: the identical points, with concentric rings now drawn around the revealed UTC position and a red arrow running from the X to it." />
-	<figcaption>
-		The points are identical in both panels. Nothing about the clock changed —
+<ZoomableImage
+	plate
+	src="/figures/deferred-truth.svg"
+	alt="Two panels. Left: a cluster of points with a red X at its center, a dot below labeled UTC(k), and a dashed empty circle where UTC would be, labeled not computed yet. Right: the identical points, with concentric rings now drawn around the revealed UTC position and a red arrow running from the X to it."
+	caption="The points are identical in both panels. Nothing about the clock changed —
 		the target got painted. At the moment of measurement only the offset from
 		UTC(k) is knowable; the red arrow, which is the trueness you actually care
-		about, can only be drawn in arrears.
-	</figcaption>
-</figure>
+		about, can only be drawn in arrears."
+/>
 
 Which gives [traceability](/timekeeping/glossary/#traceability) its job.
 An unbroken, documented chain to a reference is the only thing that ever tells

@@ -86,16 +86,39 @@ against Fugro's own realization, and the looser one is against the thing the
 regulator cares about. A separate *UTCk* tier is sold specifically to close that
 gap by tying the service to UTC(NIST) and UTC(PTB).
 
-<CalloutBox type="tip" title="A correction to something I had assumed">
-	I had this filed as the clean example of choice (b), and it is a good example
-	of <em>ending up on a provider's timescale</em>. But whether AtomiChron
-	resolves carrier-phase ambiguities is <strong>not publicly documented</strong>
-	— the receiver-side manuals describe applying a "Fugro composite bias" and say
-	nothing about ambiguity fixing. Fugro's positioning products do PPP-AR, so it
-	would be reasonable to guess, and a guess is all it would be.
+Whether AtomiChron resolves carrier-phase ambiguities is **not publicly
+documented**. The receiver-side manuals describe applying a "Fugro composite
+bias" and say nothing about ambiguity fixing, and Fugro's marine positioning
+products do PPP-AR, so guessing either way would be easy.
 
-	The honest summary: AtomiChron is a commercial provider-datum service. Which
-	side of the b/c line it sits on is a question for Fugro.
+The hardware argues against it, though, and it is worth walking through because
+the reasoning generalizes to any correction service that will not tell you what
+it does.
+
+<CalloutBox type="tip" title="What the power budget implies">
+	The AtomiChron solution runs on a CPU inside a <strong>Septentrio mosaic-T</strong>
+	— a 31 × 31 mm LGA module, 6.8 g, single 3.3 V supply, and <em>no heatsink</em>.
+
+	Septentrio's own power table gives <strong>760 mW</strong> for the row that
+	matches this application exactly: "GPS/GLONASS L1/L2 + L-band, PPP (1 Hz)."
+	Nothing anywhere in that table exceeds 1080 mW. And that budget is not the
+	CPU's — it covers the RF front ends, the correlators for every constellation,
+	Ethernet, USB and the SD card as well. Whatever is left for computation is a
+	fraction of three quarters of a watt.
+
+	<strong>Ambiguity resolution is not a cheap computation.</strong> Fixing
+	integers means decorrelating and searching an integer lattice across many
+	satellites and frequencies, on top of a much larger filter state. That is
+	vector floating-point work, and it is not what a passively cooled sub-watt
+	module with an RF chain to feed looks like it is doing.
+
+	The correction feed points the same way. It arrives over L-band at a couple of
+	kilobits per second — a channel sized for a modest correction product, not for
+	the per-satellite phase biases that make fixing possible.
+
+	<strong>So: my hunch is that AtomiChron is not PPP-AR.</strong> That is an
+	inference from a power table and a link budget, not a fact from Fugro, and it
+	is labelled as one. But it is the way to bet.
 </CalloutBox>
 
 Galileo **HAS** is the free counterpart, broadcast as a signal-in-space on E6-B
@@ -145,6 +168,30 @@ tells you how far your clock is from UTC(NIST), with time uncertainty under 5 ns
 and frequency uncertainty near 1×10⁻¹⁴ at one day, and leaves the correcting to
 you. NIST sells a disciplined-clock tier separately for customers who want the
 loop closed.
+
+<CalloutBox type="warn" title="The deployed TMAS network is single-frequency">
+	NIST's own 2024 evaluation of a low-cost dual-frequency receiver describes
+	installing "a single-frequency common-view unit (as part of the TMAS
+	network)" at each site as the comparison. The current program page describes
+	a tri-band receiver, so this is presumably being replaced — but the fleet the
+	paper measured was <strong>L1 only</strong>.
+
+	That matters because an L1-only receiver has to <em>model</em> the ionosphere
+	rather than <em>measure</em> it, and common view only cancels the part both
+	ends have in common. NIST quantified the gap: over a 5314 km baseline the
+	single-frequency common-view difference ranged up to <strong>50 ns in a
+	day</strong> against about 10 ns for dual-frequency, a factor-of-nine
+	improvement in TDEV below one day. At 78 km the improvement was a factor of
+	two. Beyond two to three days of averaging the two converge — which is exactly
+	why the service can quote a frequency uncertainty at one day and not be
+	embarrassed by any of this.
+
+	There is a second, separate L1 penalty that has nothing to do with the
+	baseline: a 24-hour self-survey on a single-frequency receiver determines
+	height to within about 10 m, and sometimes worse than 15 m. At 3.3 ns per
+	meter of vertical error, that alone
+	<a href="/timekeeping/antennas/antenna-position/">approaches 50 ns</a>.
+</CalloutBox>
 
 If the question behind your project is *how do I prove this to an auditor*
 rather than *how do I get closer*, this row deserves a serious look before any

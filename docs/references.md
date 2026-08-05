@@ -71,8 +71,77 @@ Also useful: their reference and PPP solutions agreed to **2.4 cm**, so the
 yardstick was sound; and the 3.3 ns/m figure is 1/*c*, i.e. the same worst-case
 bound *The Last Nanoseconds to UTC* arrives at from the other direction.
 
+### The other half of the paper: what L1-only costs a common-view link
+
+**Verified 2026-08-05**, on a second read, chasing Bob's recollection that the
+paper says TMAS is single-frequency. It does, and more usefully than remembered
+— the whole paper is a measured L1-vs-L1/L2 comparison:
+
+> At all three locations, **a single-frequency common-view unit (as part of the
+> TMAS network)** was either already available or was installed to provide a
+> comparison for the dual-frequency prototype system.
+
+So the deployed TMAS fleet the paper measured is L1 only, even though the current
+NIST program page describes a tri-band receiver. Presumably mid-replacement;
+worth re-checking before stating either as current.
+
+The root cause of every difference below is that an L1-only receiver must
+**model** the ionospheric delay, where a dual-frequency receiver forms the
+ionosphere-free combination and **measures** it. Common view then cancels only
+the part both ends share — so the penalty grows with baseline:
+
+| baseline | single-frequency | dual-frequency |
+|---|---|---|
+| 2.4 m | lower TDEV at every τ for dual; converge after ~1 week | — |
+| 78 km | — | up to **2×** better TDEV below 1 day; converge at 2–3 d |
+| 5314 km | range up to **50 ns in a single day** | ~10 ns; up to **9×** better TDEV below 1 day |
+
+Two things worth keeping straight when citing this:
+
+1. **Averaging rescues it.** Single and dual converge after two to three days. A
+   service quoting *frequency* uncertainty at one day of averaging is barely
+   penalized by L1; a *time transfer* application that cares about the next hour
+   is penalized heavily.
+2. **The survey penalty is separate and additive.** A 24 h self-survey on a
+   single-frequency receiver gets height "generally accurate within 10 m, but is
+   sometimes greater than 15 m, leading to a timing error that approaches 50 ns."
+   That is a position error, not an ionospheric one, and it does not average away.
+
 **Use in:** Antennas → *Don't let the receiver survey itself* (Home, footnote).
-Possibly **S** from Acquiring Time and The Datacenter Problem.
+UTC → *Choosing a GNSS timescale* (the TMAS callout). Possibly **S** from
+Acquiring Time and The Datacenter Problem.
+
+---
+
+## 📌 Septentrio mosaic-T power table — the AtomiChron inference
+
+**Verified 2026-08-05.** *Mosaic Hardware Manual* v1.3.0, §2.5 Power Consumption
+(also §2.1–2.2 for the physical spec).
+<https://media.digikey.com/pdf/Data%20Sheets/Septentrio%20PDFs/Mosaic_Hardware_Manual_v1.3.0.pdf>
+
+- 31 × 31 mm LGA, 239 pads, **6.8 g**, single 3.3 V supply, −40 to +85 °C.
+- The row matching AtomiChron exactly: **"GPS/GLONASS L1/L2 + L-band,
+  PPP (1 Hz) — 760 mW, 230 mA."**
+- Ceiling anywhere in the table: **1080 mW** (all signals + L-band, 100 Hz).
+- Nothing in the manual about heatsinking; the module carries none.
+
+**Why it is here:** Bob's argument that AtomiChron is *not* PPP-AR. Integer
+ambiguity resolution means decorrelating and searching an integer lattice over
+many satellites and frequencies, on top of a much larger filter state — real
+vector floating-point work. A passively cooled module whose entire sub-watt
+budget also feeds the RF chain, correlators, Ethernet, USB and SD card is not
+shaped like a machine doing that.
+
+⚠️ **The L-band data rate is Bob's figure, not a cited one.** He gives 1200 or
+2400 baud; searching turned up no Septentrio or Fugro spec for the AtomiChron
+channel, only a 2000 bps figure for the unrelated Japanese CLAS service as an
+order-of-magnitude comparator. The page says "a couple of kilobits per second"
+for that reason. If the exact number matters to an argument later, it still
+needs a source.
+
+**Use in:** UTC → *Choosing a GNSS timescale*, the "What the power budget
+implies" callout. Explicitly labelled on the page as an inference rather than a
+statement from Fugro.
 
 ---
 

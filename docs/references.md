@@ -493,14 +493,29 @@ Same antenna; the 16 ns difference is the receivers'.
    > ultimately limited by the calibration uncertainty of the co-located
    > time-transfer receiver chain, normally at the level of **1–2 ns**.
 
-   So even a perfectly executed home calibration inherits somebody else's 1–2 ns,
-   and BIPM's own campaign uncertainty is 0.9 ns. Repeatability of 0.3 ns is
-   *precision*, not trueness.
+   ⚠️ Read that carefully: **"normally at the level of" is a general statement
+   about such chains, not a measurement of GMV's own.** He is naming the routine
+   level for a lab-calibrated reference chain, and it is the floor any home
+   calibration inherits — BIPM's own campaign 1001-2022 does better, at 0.9 ns,
+   because it ships a golden receiver. Repeatability of 0.3 ns is *precision*,
+   not trueness, and the two are not interchangeable.
 
 2. **A calibration is per constellation and per signal combination.** Values
    "apply exclusively to specific GNSS constellations and signal combinations;
    different configurations require recalibration." There is no such thing as
    "the F9T delay" — only the F9T delay for GPS L1/L2 P3, or for E1/E5a.
+
+   **And his numbers are GPS-only, L1/L2.** Verified 2026-08-05:
+
+   > The user receiver (e.g., F9T) is configured to use **GPS only (L1 and L2
+   > signals)**
+
+   with the reference chain on the P1/P2 combination — "daily CGGTTS files from
+   a calibrated time-transfer receiver connected to UTCgmv are recorded (the GPS
+   P1/P2 combination is used)". Part 2, where the 28 ns comes from, does not
+   state the configuration but closes with "I have now added Galileo to the
+   solution", so it was GPS-only too. **Quote 28 ns as a GPS L1/L2 figure, not as
+   "the" F9T delay.**
 
 Also worth carrying: part 1 moved the F9T from an office with a low-cost Harxon
 antenna to a temperature-stabilized server room with a Leica AR20, and found
@@ -553,3 +568,67 @@ relying on any row.
 
 **Use in:** UTC → *Can I build my own link to UTC(NIST)?* (a shorter-baseline
 sidebar), and the PePPAR-Fix dayplan item I-114801-blog.
+
+
+---
+
+## 📌 ANTEX carries no delay — the antenna's own nanoseconds are separate
+
+**Verified 2026-08-05** against the ANTEX 1.4 format specification,
+<https://files.igs.org/pub/data/format/antex14.txt>.
+
+Per antenna and frequency, ANTEX stores exactly two kinds of number:
+
+> Eccentricities of the mean antenna phase center relative to the antenna
+> reference point (ARP). North, east and up component (**in millimeters**).
+
+> Phase pattern values **in millimeters** from 'ZEN1' to 'ZEN2'.
+
+**There is no field of any kind for group delay, LNA delay, or internal cable
+delay.** ANTEX is geometry in millimeters; the antenna's electrical delay is
+electronics in nanoseconds, and the format does not model it.
+
+Which is why Píriz had to calibrate **16 ns** for his antenna separately, on top
+of 52 ns of cable and 28 ns of receiver — for an antenna that certainly had an
+ANTEX entry.
+
+**The deeper reason it cannot be in there.** A delay common to every direction
+of arrival is mathematically indistinguishable from a receiver clock offset in a
+geodetic solution. A PCO estimate can only see the part of the delay that
+*varies* with direction. So even a perfect robot calibration cannot recover the
+common part — it is absorbed into the clock and has to be measured by a
+time-transfer method instead.
+
+**Consequence for us:** "we surveyed with calibrated antenna models and kept ARP
+and APC separate" is necessary and does not retire this term. It is the
+difference between knowing *where* the antenna is to a millimeter and knowing
+*how long the signal takes to get out of it* to a nanosecond.
+
+**Use in:** UTC → *Can I build my own link to UTC(NIST)?*; Antennas → *feedline*
+and *antenna position*. Raised with the PePPAR-Fix agents under dayplan item
+`I-114801-blog`, since `docs/antenna-calibration-plan.md` carries the cable and
+receiver terms but not this one.
+
+---
+
+## 📌 The EVK-F9T timepulse SMA is buffered
+
+**Verified 2026-08-05.** *EVK-F9T User Guide*, UBX-21040453,
+<https://content.u-blox.com/sites/default/files/documents/EVK-F9T_UserGuide_UBX-21040453.pdf>
+
+> An SMA female jack is available on the rear side of the evaluation unit which
+> provides a **buffered** timepulse1 signal for driving laboratory equipment.
+
+The board component list (Table 7) names the parts: **NC7SZ125 / NC7SZ126**
+"TinyLogic UHS" buffers (U3, U4, U8, U9, U13, U14), plus a 74LVC3G07.
+
+So the module pin and the rear SMA are separated by a logic buffer, not merely
+by a centimeter of trace. A few centimeters of FR4 microstrip is a few hundred
+picoseconds; a TinyLogic buffer is **single-digit nanoseconds**, and it drifts
+with temperature and supply voltage. It deserves its own line in an error budget
+and it must be measured in situ at the module pin versus the SMA rather than
+taken from a datasheet.
+
+**Use in:** the answer to "what is still missing?" — this is Píriz's "possible
+additional delay between the internal 1PPS generation and the receiver output
+1PPS port", made concrete for the board Bob actually owns.

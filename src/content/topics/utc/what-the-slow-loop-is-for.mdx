@@ -1,0 +1,145 @@
+---
+title: "What the slow loop is good for"
+description: "BIPM cannot correct your clock — the answer arrives weeks late. But it publishes a scoreboard showing how well each constellation has been predicting UTC, and that calibrates your expectations."
+section: "utc"
+order: 50
+updatedDate: 2026-08-04
+coverage: "H"
+tags: ["UTC", "GNSS", "timing", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+There are two loops in this business and they run at wildly different speeds.
+
+The **fast loop** is the one that keeps your clock honest:
+[corrections computed on the ground](/timekeeping/utc/gnss-time-is-a-prediction/),
+uploaded, broadcast, and applied in your receiver — refreshed anywhere from
+every five seconds to every couple of hours.
+
+The **slow loop** runs through the BIPM. Laboratories compare their clocks, report
+to Paris, and weeks later
+[UTC is defined for a period already past](/timekeeping/utc/what-utc-is/).
+
+The obvious thing to say about the slow loop is that you cannot steer to it, and
+that is true. It is also the least interesting thing about it.
+
+## Section 4 is a scoreboard
+
+Buried in *Circular T* is a section that measures something more useful than
+where UTC was. It measures **how well each constellation predicted it.**
+
+Every GNSS satellite broadcasts its operator's estimate of the offset between
+that constellation's timescale and UTC. BIPM checks that estimate against the
+UTC it later computes, and publishes the difference — **daily**, per
+constellation.
+
+| Constellation | [UTC − broadcast prediction] | stated uncertainty |
+|---|---|---|
+| GPS | −5 to +5 ns | 4.1 ns |
+| Galileo | −5 to +5 ns | 3.7 ns |
+| BeiDou | 5 to 20 ns | 4.1 ns |
+| GLONASS | 30 to 50 ns | 6.6 ns |
+
+*Figures from a July 2022 – January 2023 study period. Your month will differ;
+the point is that there is a published number at all.*
+
+## Which turns folklore into evidence
+
+"Galileo is better for timing" circulates as received wisdom. Section 4 makes it
+a measurement — and the gap is not subtle. GLONASS's broadcast prediction runs
+roughly an order of magnitude further from UTC than Galileo's.
+
+More usefully, it lets you set an expectation with a track record behind it.
+Pull the last few months for your constellation and you have an empirical answer
+to *how close is my time source likely to be to UTC right now* — not from a
+datasheet, not from a vendor, but from the body that defines the answer.
+
+That is what the slow loop is for. It cannot correct you. It can tell you what
+sort of error you are probably carrying, and that is a different and genuinely
+useful thing.
+
+## The awkward part, stated plainly
+
+<CalloutBox type="warn" title="The bound is sharpest where the error is largest">
+	For GPS and Galileo, the stated uncertainty (about 4 ns) is comparable to the
+	offset being measured (±5 ns). Circular T can tell you those constellations sit
+	within a few nanoseconds of UTC; it cannot tell you where inside that.
+
+	For GLONASS, at 30–50 ns against 6.6 ns of uncertainty, the measurement
+	resolves the offset easily.
+
+	So you get the crispest information about the constellation you would least
+	like to depend on, and the vaguest about the ones you would choose. That is
+	inconvenient and it is not a flaw — it is what happens when a measurement
+	approaches its own floor.
+</CalloutBox>
+
+## What it does not bound
+
+Three things, and forgetting them turns a useful number into a false comfort.
+
+**Your local error budget.** Section 4 bounds the constellation-to-UTC term — the
+[common-mode](/timekeeping/glossary/#common-mode) offset every user of that
+constellation shares. Your
+[antenna position](/timekeeping/antennas/antenna-position/), your
+[feedline](/timekeeping/antennas/feedline/), your receiver and your multipath are
+not in it and never were.
+
+**Anything faster than a day.** Daily samples cannot show sub-daily variation.
+
+**The path you are actually on.** Section 4 measures the *broadcast* UTC
+prediction. If you are applying HAS or SSR corrections you are not using that
+broadcast offset, so this bounds a path you are not travelling.
+
+## The cadences, which are easy to conflate
+
+Three different clocks tick here, on different axes.
+
+**Monthly is the batch size, not merely the publication schedule.** BIPM's
+algorithm processes one month of data at a time, because weighting each clock by
+its demonstrated stability requires a month of it to look at. The publication
+cadence follows the algorithm, not the other way round.
+
+**Five days is the sample spacing** for [UTC − UTC(k)] in Section 1 — quoted at
+"standard dates", the MJDs ending in 4 and 9, at 0 h UTC. So one Circular T
+carries about six samples per laboratory, not one.
+
+**One day is the sample spacing** for the GNSS comparison in Section 4, and for
+UTCr below. Anything varying faster than its sample spacing is invisible,
+whichever section you are reading.
+
+And a fourth product for when a month is too long to wait:
+
+**UTCr**, rapid UTC, published **weekly** since July 2013 with **daily** values.
+Participation is voluntary and requires labs to submit data every day. It agrees
+with Circular T to within a few nanoseconds.
+
+<CalloutBox type="tip" title="But only Circular T confers traceability">
+	UTCr is faster and nearly as close. It is still not the reference —
+	<em>Circular T remains the unique source of traceability to UTC.</em>
+
+	Which is the distinction the
+	<a href="/timekeeping/utc/traceability/">traceability page</a> turns on:
+	being nearly as accurate and being the thing others must accept are separate
+	properties, and only one of them is decided by measurement.
+</CalloutBox>
+
+## Latency, in practical terms
+
+A Circular T covering some month appears in the following one. So the newest
+figure in a fresh issue is a couple of weeks old, and the oldest is over a month
+old — and both refer to a period during which your clock has already been doing
+whatever it was going to do.
+
+That is the whole shape of it. **The fast loop tells you what to do. The slow
+loop tells you how you have been doing.** Neither substitutes for the other, and
+a timing programme that consults only the first has no way of knowing whether any
+of it worked.
+
+[[? Two things I could not pin down and would rather not guess at.
+
+1) Why five days rather than daily for [UTC − UTC(k)], when Section 4 manages daily? My assumption is that the inter-laboratory time links need averaging to get their uncertainty down, and five days is what that historically took — but BIPM's own materials describe the standard dates without explaining the choice, so I have left the reasoning out rather than invent it. Do you know?
+
+2) The exact publication latency. I have written "a couple of weeks" for the newest figure, which matches the pattern of issues appearing early in the following month, but I have not confirmed a stated commitment anywhere. ?]]

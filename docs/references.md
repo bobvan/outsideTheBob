@@ -632,3 +632,98 @@ taken from a datasheet.
 **Use in:** the answer to "what is still missing?" — this is Píriz's "possible
 additional delay between the internal 1PPS generation and the receiver output
 1PPS port", made concrete for the board Bob actually owns.
+
+---
+
+## ✅ Circular T Section 5 — what technique every TAI link actually uses
+
+**Verified 2026-08-05** by parsing `cirt.462` (June 2026), which
+`npm run circular-t` already downloads. Section 5 is titled *"Time links used
+for the computation of TAI, calibrations information and corresponding
+uncertainties"* and names the technique for all 86 links.
+
+| technique | links | typical uStb |
+|---|---|---|
+| GPSPPP | **48** | 0.3 ns |
+| GPS P3 | 16 | 0.7 ns |
+| GPS MC | 10 | 1.5–3.0 ns |
+| TWGPPP | 7 | 0.3 ns |
+| TWSDRR | 2 | 0.3 ns |
+| TWSTFT | 1 | 0.5 ns |
+| NL (no data this period) | 2 | — |
+
+**Zero common-view links.** And that is not an accident of vocabulary — the
+[Explanatory supplement to BIPM Circular T v0.8](https://webtai.bipm.org/ftp/pub/tai/other-products/notes/explanatory_supplement_v0.8.pdf)
+defines the codes, and only one of them is common view at all:
+
+> GPS MC for GPS **all-in-view** multi-channel C/A data,
+> GPS P3 for GPS **all-in-view** multi-channel dual-frequency P code data,
+> GPSPPP for GPS Precise Point Positioning technique,
+> **GLN MC for GLONASS common-view** multi-channel C/A data,
+> GPSGLN for the combination of GPS MC and GLN MC.
+
+So the only surviving common-view code is a GLONASS one, and no link used it.
+Every GPS technique BIPM lists is all-in-view or PPP.
+
+**NIST's own link into TAI is `TWGPPP`** — two-way satellite time transfer
+combined with GPS PPP, `NIST/PTB TWGPPP NIST01/PTB05 0593-2024 0.3 2.1 0.5`.
+Not common view.
+
+**Use in:** UTC → *How do you compare two clocks a thousand miles apart?* This
+is the citation Bob wanted, and the best part is that it is a source we already
+fetch monthly rather than a paper somebody has to trust us about.
+
+---
+
+## ✅ BIPM/CCTF, "GPS All in View Time Transfer for TAI" (Sept 2006)
+
+CCTF-TAI working document, BIPM.
+<https://www.bipm.org/documents/20126/48884810/working-document-ID-9414/78c908a4-d088-30f6-a560-6697ae22e722>
+
+**Verified 2026-08-05.** The document that retired common view for TAI, and it
+is unusually candid about why.
+
+**Common view, as BIPM saw it:**
+
+> Advantages — Common errors are partly canceled: GPS time signals, **for ex.
+> S.A.**; Satellite orbits; Atmosphere delays.
+> Disadvantages (**especially long baselines**): Observed satellite number
+> reduced; Low satellites, low S/N ratio; Multi-Bridge System of TAI Network.
+
+**The slide that explains the whole history** — "Evolution of Errors in GPS
+Signals", a single axis with three rungs:
+
+| era | error in the GPS signal | technique |
+|---|---|---|
+| 1991 | ~30 ns, "GPS Time S.A. on" | **cv** |
+| 2000 | ~6 ns, "GPS Time S.A. off" | |
+| 2005 | ~1 ns, "IGS Time" | **av** |
+
+Common view was cancelling a ~30 ns error that Selective Availability created.
+SA was switched off in May 2000, and precise products then took the residual to
+~1 ns — at which point what CV cancels is worth less than what it costs.
+
+**All in view:** "Observes Satellites All in View; High satellites and high
+quality; No bridge lab for long distance ⇒ Improved TAI time transfer stability
+**without any new investment** — No hardware updating required, No change the
+current TAI procedure." Sole disadvantage listed: "More rigorous data processing
+than CV."
+
+**And the gain is baseline-shaped**, from their own comparison against TW and
+PPP links over Oct 2005 – May 2006:
+
+| baseline | km | CV → AV gain |
+|---|---|---|
+| OP–PTB | 600 | ~1–4 % |
+| NPL–PTB | 700 | ~0 % |
+| NPL–USNO | 6500 | ~10–20 % |
+| USNO–PTB | 7000 | ~4–9 % |
+| KRIS–AUS | 7000 | ~20–50 % |
+| OP–USNO | 7400 | ~15 % |
+| **NIST–PTB** | **10 000** | **~28–35 %** |
+| NICT–PTB | 10 600 | ~11–20 % |
+
+Short baselines gain nothing; long ones gain a third. Which is the same
+statement as "common view cancels only what both ends share", in numbers.
+
+**Use in:** UTC → *How do you compare two clocks a thousand miles apart?*

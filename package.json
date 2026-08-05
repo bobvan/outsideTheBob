@@ -12,7 +12,8 @@
 		"banner": "node scripts/make-banner.mjs",
 		"astro": "astro",
 		"banner:404": "BANNER_INSIDE=404 BANNER_WORD=OutsideTheSite BANNER_OUT=public/images/outsideTheSite.svg BANNER_LABEL=\"404 — Outside The Site\" BANNER_INSIDE_CENTER=1 node scripts/make-banner.mjs",
-		"figures": "node scripts/make-figures.mjs"
+		"figures": "node scripts/make-figures.mjs",
+		"circular-t": "node scripts/fetch-circular-t.mjs"
 	},
 	"dependencies": {
 		"@astrojs/mdx": "^7.0.3",

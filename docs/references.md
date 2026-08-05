@@ -112,8 +112,32 @@ but it *calibrates the prior*.
 3. **It measures the *broadcast* prediction.** A receiver using HAS or SSR
    corrections is not on that path, so this does not bound it.
 
-**Not yet read in the original.** The numbers above come from secondary sources
-describing Section 4. Before citing them directly, read either an actual Circular
+📌 **Now read in the original, 2026-08-04.** Fourteen consecutive issues fetched
+and parsed by `scripts/fetch-circular-t.mjs`, cached at
+`src/data/circular-t-section4.json`. **Two corrections to the secondary-source
+figures above.**
+
+*The stated uncertainties are per edition and differ from the study figures.*
+Circular T gives 5 ns for GPS, Galileo and BeiDou throughout the period, and for
+GLONASS 7 ns rising to 10 and then 30 as its behaviour deteriorated — not the
+4.1 / 3.7 / 4.1 / 6.6 above, which belong to that particular study.
+
+*And the ranking is different.* Over 426 daily values, 2025-04-29 to 2026-06-28:
+
+| | mean | sd | worst |
+|---|---|---|---|
+| GPS | +0.59 ns | 1.17 | +4.9 |
+| Galileo | +0.62 ns | 1.95 | +5.0 |
+| BeiDou | −0.10 ns | 1.04 | −4.8 |
+| GLONASS | −6.36 ns | 9.50 | **−56.9** |
+
+BeiDou is marginally the best on this measure and Galileo marginally the loosest
+of the three good ones — so "Galileo is better for timing" is not supported *by
+this metric*, though it remains true of broadcast orbit and clock accuracy, which
+is a different measurement. Publication latency, measured: newest point in an
+issue 8–16 days old (median 13), oldest 39–45 (median 42).
+
+**The older secondary figures below are left for provenance.** They come from Before citing them directly, read either an actual Circular
 T (the interactive HTML version exposes the sections) or:
 
 > *Monitoring of the offset between UTC and its prediction broadcast by the

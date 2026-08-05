@@ -16,7 +16,7 @@
 //
 // Point positions come from a seeded PRNG so a rebuild is byte-identical and a
 // diff means something changed on purpose.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const OUT = 'public/figures';
 const INK = '#111';
@@ -464,4 +464,114 @@ mkdirSync(OUT, { recursive: true });
 	writeFileSync(`${OUT}/timescale-relation.svg`, svg(W, H, b));
 }
 
-console.error(`wrote 7 figures to ${OUT}/`);
+// ---------------------------------------------------------------------------
+// 8. How well each constellation predicts UTC — real BIPM Circular T Section 4
+//    data, 426 daily values cached by scripts/fetch-circular-t.mjs.
+//
+//    Two panels sharing one x-axis, because GLONASS excursions past -55 ns
+//    would flatten the other three into a single line. Top shows everything;
+//    bottom zooms to ±5 ns, where the other three actually live. Reading them
+//    together is the point: one constellation is playing a different game.
+//
+//    Okabe-Ito palette, which is the colorblind-safe qualitative standard and
+//    keeps faith with the two-color scheme used elsewhere in the garden.
+// ---------------------------------------------------------------------------
+{
+	const d = JSON.parse(readFileSync('src/data/circular-t-section4.json', 'utf8'));
+	const S = d.series;
+	const CONST = [
+		{ k: 'GPS', label: 'GPS', color: '#0072B2' },
+		{ k: 'GAL', label: 'Galileo', color: '#009E73' },
+		{ k: 'BDS', label: 'BeiDou', color: '#CC79A7' },
+		{ k: 'GLO', label: 'GLONASS', color: '#D55E00' },
+	];
+	const stat = (k) => {
+		const v = S.map((r) => r[k]);
+		const mean = v.reduce((a, b) => a + b, 0) / v.length;
+		const sd = Math.sqrt(v.reduce((a, b) => a + (b - mean) ** 2, 0) / (v.length - 1));
+		return { mean, sd };
+	};
+
+	const W = 900, H = 600;
+	const L = 66, R = 168, TOP = 62, MID = 300, GAP = 58, BOT = 512;
+	const mjd0 = S[0].mjd, mjd1 = S.at(-1).mjd;
+	const X = (m) => L + ((m - mjd0) / (mjd1 - mjd0)) * (W - L - R);
+
+	// Top: full range. Bottom: the ±5 ns window.
+	const yTop = (v) => MID - ((v - -60) / 70) * (MID - TOP);
+	const yBot = (v) => BOT - ((v - -5) / 10) * (BOT - (MID + GAP));
+
+	let b = '';
+	const axis = (y0, y1, ticks, Y, label) => {
+		let o = `<line x1="${L}" y1="${y0}" x2="${L}" y2="${y1}" stroke="${INK}" stroke-width="1"/>`;
+		for (const t of ticks) {
+			o += `<line x1="${L - 4}" y1="${Y(t)}" x2="${W - R}" y2="${Y(t)}" stroke="${t === 0 ? MUTED : '#e8e8e8'}" stroke-width="${t === 0 ? 1 : 0.7}"${t === 0 ? ' stroke-dasharray="4 3"' : ''}/>`;
+			o += text(L - 8, Y(t) + 3.5, String(t), { size: 10, fill: MUTED, anchor: 'end' });
+		}
+		o += text(18, (y0 + y1) / 2, label, { size: 11, weight: 600 })
+			.replace('<text', `<text transform="rotate(-90 18 ${(y0 + y1) / 2})"`);
+		return o;
+	};
+
+	b += axis(TOP, MID, [10, 0, -20, -40, -60], yTop, 'UTC − broadcast prediction  (ns)');
+	b += axis(MID + GAP, BOT, [5, 2.5, 0, -2.5, -5], yBot, 'detail, ±5 ns  (ns)');
+
+	for (const c of CONST) {
+		// GLONASS is deliberately absent from the lower panel. It spends most of
+		// the period outside ±5 ns, so it would enter and leave the frame
+		// constantly and obscure the three constellations the panel exists to
+		// show — while adding nothing, since its behaviour is already the whole
+		// story of the panel above.
+		const panels = c.k === 'GLO' ? [[yTop, TOP, MID]] : [[yTop, TOP, MID], [yBot, MID + GAP, BOT]];
+		for (const [Y, y0, y1] of panels) {
+			const pts = S.map((r) => {
+				const v = Math.max(Math.min(r[c.k], Y === yTop ? 10 : 5), Y === yTop ? -60 : -5);
+				return `${X(r.mjd).toFixed(1)},${Y(v).toFixed(1)}`;
+			});
+			b += `<clipPath id="clip-${c.k}-${y0}"><rect x="${L}" y="${y0}" width="${W - L - R}" height="${y1 - y0}"/></clipPath>`;
+			b += `<polyline points="${pts.join(' ')}" fill="none" stroke="${c.color}" stroke-width="1.1" clip-path="url(#clip-${c.k}-${y0})"/>`;
+		}
+	}
+
+	// x-axis: month ticks along the bottom panel.
+	b += `<line x1="${L}" y1="${BOT}" x2="${W - R}" y2="${BOT}" stroke="${INK}" stroke-width="1"/>`;
+	let last = '';
+	for (const r of S) {
+		const mo = r.date.slice(0, 7);
+		if (mo === last) continue;
+		last = mo;
+		const x = X(r.mjd);
+		b += `<line x1="${x}" y1="${BOT}" x2="${x}" y2="${BOT + 4}" stroke="${INK}" stroke-width="1"/>`;
+		if (mo.endsWith('-01') || mo.endsWith('-04') || mo.endsWith('-07') || mo.endsWith('-10')) {
+			b += text(x, BOT + 17, mo, { size: 9.5, fill: MUTED });
+		}
+	}
+
+	// Legend doubles as the statistics table — the numbers people actually want.
+	let ly = TOP + 6;
+	b += text(W - R + 12, ly, 'mean ± sd, whole period', { size: 10, weight: 600, anchor: 'start', fill: MUTED });
+	ly += 18;
+	for (const c of CONST) {
+		const st = stat(c.k);
+		b += `<line x1="${W - R + 12}" y1="${ly - 4}" x2="${W - R + 30}" y2="${ly - 4}" stroke="${c.color}" stroke-width="2.4"/>`;
+		b += text(W - R + 36, ly, c.label, { size: 11, weight: 600, anchor: 'start' });
+		b += text(W - R + 36, ly + 14, `${st.mean >= 0 ? '+' : ''}${st.mean.toFixed(2)} ± ${st.sd.toFixed(2)} ns`, {
+			size: 10.5, anchor: 'start', fill: MUTED,
+		});
+		ly += 40;
+	}
+
+	b += text(L, 26, 'How well each constellation predicts UTC', { size: 15, weight: 700, anchor: 'start' });
+	b += text(L, 44, `BIPM Circular T Section 4 · ${S.length} daily values · ${S[0].date} to ${S.at(-1).date}`, {
+		size: 11, fill: MUTED, anchor: 'start',
+	});
+	b += text(L, H - 26, 'Each value is published weeks after the fact: the newest point in an issue is a median 13 days old, the oldest 42.', {
+		size: 10.5, fill: MUTED, anchor: 'start', style: 'italic',
+	});
+	b += text(L, H - 11, 'Upper panel is clipped at −60 ns; GLONASS reaches −56.9, and is omitted below because it rarely stays in frame.', {
+		size: 10.5, fill: MUTED, anchor: 'start', style: 'italic',
+	});
+	writeFileSync(`${OUT}/utc-prediction-scoreboard.svg`, svg(W, H, b));
+}
+
+console.error(`wrote 8 figures to ${OUT}/`);

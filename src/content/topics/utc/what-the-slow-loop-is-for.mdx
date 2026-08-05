@@ -35,40 +35,63 @@ that constellation's timescale and UTC. BIPM checks that estimate against the
 UTC it later computes, and publishes the difference — **daily**, per
 constellation.
 
-| Constellation | [UTC − broadcast prediction] | stated uncertainty |
-|---|---|---|
-| GPS | −5 to +5 ns | 4.1 ns |
-| Galileo | −5 to +5 ns | 3.7 ns |
-| BeiDou | 5 to 20 ns | 4.1 ns |
-| GLONASS | 30 to 50 ns | 6.6 ns |
+<figure class="diagram">
+	<img src="/figures/utc-prediction-scoreboard.svg" alt="Two stacked line charts sharing a date axis from April 2025 to June 2026. The upper panel plots UTC minus each constellation's broadcast prediction of UTC, in nanoseconds: GPS, Galileo and BeiDou stay near zero while GLONASS wanders and plunges to about minus 57 nanoseconds in mid-2026 before recovering. The lower panel zooms to plus or minus 5 nanoseconds and shows only GPS, Galileo and BeiDou. A legend gives mean and standard deviation for each constellation over the whole period." />
+	<figcaption>
+		426 daily values from fourteen consecutive issues of Circular T. Regenerate
+		with <code>npm run circular-t</code> then <code>npm run figures</code>.
+	</figcaption>
+</figure>
 
-*Figures from a July 2022 – January 2023 study period. Your month will differ;
-the point is that there is a published number at all.*
+| Constellation | mean | standard deviation | worst excursion |
+|---|---|---|---|
+| GPS | +0.59 ns | 1.17 ns | +4.9 ns |
+| Galileo | +0.62 ns | 1.95 ns | +5.0 ns |
+| BeiDou | −0.10 ns | 1.04 ns | −4.8 ns |
+| GLONASS | −6.36 ns | 9.50 ns | **−56.9 ns** |
 
-## Which turns folklore into evidence
+*426 daily values, 2025-04-29 to 2026-06-28.*
 
-"Galileo is better for timing" circulates as received wisdom. Section 4 makes it
-a measurement — and the gap is not subtle. GLONASS's broadcast prediction runs
-roughly an order of magnitude further from UTC than Galileo's.
+## Which turns folklore into evidence — and the evidence surprises
 
-More usefully, it lets you set an expectation with a track record behind it.
-Pull the last few months for your constellation and you have an empirical answer
-to *how close is my time source likely to be to UTC right now* — not from a
-datasheet, not from a vendor, but from the body that defines the answer.
+"Galileo is better for timing" circulates as received wisdom. Section 4 lets you
+check, and on *this* measure it does not hold up.
 
-That is what the slow loop is for. It cannot correct you. It can tell you what
-sort of error you are probably carrying, and that is a different and genuinely
-useful thing.
+Over fourteen months, **BeiDou has the smallest mean error and the tightest
+spread**, GPS is close behind, and Galileo is marginally the loosest of the
+three — all of them under a nanosecond of mean bias, which is the more important
+finding. On predicting UTC, three of the four constellations are effectively
+tied.
+
+This does not make the folklore wrong, it makes it *about something else*.
+Galileo genuinely leads on broadcast orbit and clock accuracy, and refreshes its
+ephemeris every ten minutes against GPS's two hours. Those are different
+measurements, and a constellation can win one and not another. What Section 4
+settles is narrower and worth stating precisely: **for the broadcast UTC offset
+specifically, GPS, Galileo and BeiDou are equivalent, and GLONASS is not.**
+
+GLONASS is the real result here. A mean of −6.4 ns, a standard deviation of
+9.5 ns, and an excursion to **−57 ns** in mid-2026 — visible in the chart as the
+plunge nobody else has. BIPM's own stated uncertainty for GLONASS tracked it:
+7 ns for most of the period, then 10, then 30 in the issue covering the
+excursion.
+
+More usefully than any ranking, this lets you set an expectation with a track
+record behind it. Pull the last few months for your constellation and you have an
+empirical answer to *how close is my time source likely to be to UTC right now* —
+not from a datasheet, not from a vendor, but from the body that defines the
+answer.
 
 ## The awkward part, stated plainly
 
 <CalloutBox type="warn" title="The bound is sharpest where the error is largest">
-	For GPS and Galileo, the stated uncertainty (about 4 ns) is comparable to the
-	offset being measured (±5 ns). Circular T can tell you those constellations sit
-	within a few nanoseconds of UTC; it cannot tell you where inside that.
+	BIPM states an uncertainty per edition — 5 ns for GPS, Galileo and BeiDou
+	throughout the period charted. That is larger than the day-to-day scatter of
+	all three, so Circular T can tell you those constellations sit within a few
+	nanoseconds of UTC, and cannot tell you where inside that.
 
-	For GLONASS, at 30–50 ns against 6.6 ns of uncertainty, the measurement
-	resolves the offset easily.
+	For GLONASS, running to −57 ns against a stated 7–30 ns, the measurement
+	resolves the behaviour easily.
 
 	So you get the crispest information about the constellation you would least
 	like to depend on, and the vaguest about the ones you would choose. That is
@@ -126,20 +149,21 @@ with Circular T to within a few nanoseconds.
 	properties, and only one of them is decided by measurement.
 </CalloutBox>
 
-## Latency, in practical terms
+## Latency, measured
 
-A Circular T covering some month appears in the following one. So the newest
-figure in a fresh issue is a couple of weeks old, and the oldest is over a month
-old — and both refer to a period during which your clock has already been doing
-whatever it was going to do.
+Across the fourteen issues charted above, the delay from a measurement to its
+publication runs:
+
+- **newest point in an issue: 8–16 days**, median 13
+- **oldest point in an issue: 39–45 days**, median 42
+
+So a fresh Circular T tells you about a period that ended about two weeks ago and
+began about six weeks ago — during which your clock has already done whatever it
+was going to do.
 
 That is the whole shape of it. **The fast loop tells you what to do. The slow
 loop tells you how you have been doing.** Neither substitutes for the other, and
 a timing programme that consults only the first has no way of knowing whether any
 of it worked.
 
-[[? Two things I could not pin down and would rather not guess at.
-
-1) Why five days rather than daily for [UTC − UTC(k)], when Section 4 manages daily? My assumption is that the inter-laboratory time links need averaging to get their uncertainty down, and five days is what that historically took — but BIPM's own materials describe the standard dates without explaining the choice, so I have left the reasoning out rather than invent it. Do you know?
-
-2) The exact publication latency. I have written "a couple of weeks" for the newest figure, which matches the pattern of issues appearing early in the following month, but I have not confirmed a stated commitment anywhere. ?]]
+[[? One left. Why five days rather than daily for [UTC − UTC(k)] in Section 1, when Section 4 manages daily? My assumption is that the inter-laboratory time links need averaging to get their uncertainty down, and five days is what that historically took — but BIPM documents the standard dates without explaining the choice, so I have kept the reasoning out rather than invent it. Do you know? ?]]

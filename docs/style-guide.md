@@ -87,6 +87,45 @@ institute: **UTC(NIST)**, **UTC(USNO)**, **UTC(PTB)**.
 - **Curly quotes** in prose, straight quotes in code. MDX handles this.
 - **Bare `<https://…>` autolinks do not work in MDX** — they parse as JSX tags
   and fail the build. Use `[text](url)`.
+- **Nor does a bare `<` before a digit**, for the same reason: `<5 ns` is read as
+  an opening tag and breaks the build with a message about JSX. Write `&lt;5 ns`
+  when quoting a vendor's specification verbatim, or reword to *under 5 ns*,
+  which is usually better prose anyway.
+
+## Titles: write for the person with the problem
+
+The rule that outranks every other rule in this file, and the one that decides
+what a garden page is called.
+
+**Write each page from inside the head of someone with a question to be
+answered. Assume they do not know the lingo of the field, and will describe the
+problem the way they experience it.** What words would they use for their
+situation, and for the way out of it? Those words are the title, and they are
+the story the page tells.
+
+Bob learned this attracting traffic to niche technical content in 2005. The
+search machinery has changed beyond recognition since; the principle has not,
+because it was never really about search engines. A page titled with a term of
+art can only be found by someone who already knows the term — which is precisely
+the reader who does not need the page.
+
+| instead of | write |
+|---|---|
+| How UTC is actually made | Can I sync my datacenter clocks to UTC? |
+| The fast loop and the slow loop | How does GNSS time relate to UTC? |
+
+Two corollaries:
+
+- **Lead with the answer, then earn it.** *Literally no, but practically yes* —
+  Bob's hook from the *Last Nanoseconds to UTC* talk — tells the reader in six
+  words that they are in the right place.
+- **Terms of art still belong in the body.** That is where a reader picks up the
+  vocabulary they arrived without. Gloss on first use, link the glossary, and
+  never make the jargon a precondition for arriving.
+
+**Blog posts are exempt.** They are allowed to be episodic and told from Bob's
+point of view — stories, not answers to questions somebody might be asking. This
+rule governs the garden.
 
 ## Headings
 

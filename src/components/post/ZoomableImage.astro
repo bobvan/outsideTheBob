@@ -52,7 +52,14 @@ const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 }
 
 <div id={id} popover class:list={['zoom-overlay', { vector: zoomHref.endsWith('.svg') }]}>
-	<img src={zoomHref} alt={alt} />
+	{/* A button rather than a bare <img>: popover light-dismiss only fires for
+	    clicks *outside* the popover, and this one covers the viewport, so a
+	    click on the picture — the obvious thing to do when the cursor is
+	    already zoom-out — did nothing at all. popovertargetaction="hide" closes
+	    it declaratively, with no JavaScript and no second Esc-only path. */}
+	<button type="button" class="zoom-close" popovertarget={id} popovertargetaction="hide" aria-label="Close enlarged view">
+		<img src={zoomHref} alt={alt} />
+	</button>
 </div>
 
 <style>
@@ -79,13 +86,20 @@ const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 		padding: 0;
 		border: 0;
 		background: none;
+		cursor: -webkit-zoom-in;
 		cursor: zoom-in;
 	}
+	/* Repeated on the image itself rather than left to inherit: BaseLayout's
+	   :global(figure.diagram img) rule reaches inside this component, and a
+	   cursor set on an ancestor button is easy to lose to any rule that touches
+	   the child. Stating it here is one declaration and removes the question. */
 	.zoom-thumb img {
 		display: block;
 		width: 100%;
 		height: auto;
 		border-radius: 0.5rem;
+		cursor: -webkit-zoom-in;
+		cursor: zoom-in;
 	}
 	.zoom-figure.diagram .zoom-thumb img {
 		border-radius: 0;
@@ -105,16 +119,27 @@ const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 		border-radius: 0.5rem;
 		overflow: auto;
 		background: #fff;
+		cursor: -webkit-zoom-out;
 		cursor: zoom-out;
 	}
 	.zoom-overlay::backdrop {
 		background: rgb(0 0 0 / 0.8);
+	}
+	.zoom-close {
+		display: block;
+		padding: 0;
+		border: 0;
+		background: none;
+		cursor: -webkit-zoom-out;
+		cursor: zoom-out;
 	}
 	/* Shown at natural size, not scaled to fit: the point of zooming is to read
 	   small type, so overflow scrolls rather than shrinking the image again. */
 	.zoom-overlay img {
 		display: block;
 		max-width: none;
+		cursor: -webkit-zoom-out;
+		cursor: zoom-out;
 	}
 	/* A vector has no natural size worth respecting — its viewBox is whatever
 	   the generator chose, often smaller than the thumbnail. Fill the viewport
@@ -123,6 +148,7 @@ const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 		width: 96vw;
 		max-height: 96vh;
 	}
+	.zoom-overlay.vector .zoom-close,
 	.zoom-overlay.vector img {
 		width: 100%;
 		height: auto;

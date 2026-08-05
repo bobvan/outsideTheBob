@@ -52,7 +52,10 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {/* An amber plate in dev, so a dev tab and a production tab are told apart
+        at a glance rather than by reading the URL. The branch is resolved at
+        build time, so the production bundle never references the dev mark. */}
+    <link rel="icon" type="image/svg+xml" href={import.meta.env.DEV ? "/favicon-dev.svg" : "/favicon.svg"} />
     <link rel="canonical" href={canonicalURL} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -95,10 +98,15 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       header, footer { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); }
       header .wrap, main .wrap, footer .wrap { max-width: 820px; margin: 0 auto; padding: 1rem; }
       /* Astro compresses whitespace between elements, so gaps between inline
-         links have to come from CSS rather than from source newlines. */
-      nav a { margin-right: 1rem; text-decoration: none; color: var(--link); }
+         links have to come from CSS rather than from source newlines. That has
+         a second consequence that cost a horizontal scrollbar on every phone:
+         an inline run with no whitespace in it has no break opportunity either,
+         so the nav could not wrap and forced the page wider than the viewport
+         while the prose beside it wrapped perfectly. Flex gives both the gaps
+         and the wrapping, and does not depend on source whitespace at all. */
+      nav { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 1rem; }
+      nav a { text-decoration: none; color: var(--link); }
       nav a:hover { text-decoration: underline; }
-      nav .sep { margin-right: 1rem; }
       /* The banner is inlined SVG, so its ink is currentColor and follows this.
          The halo behind the wordmark is a separate problem: it is there to punch
          a hole through the box wall, so it has to match what is actually behind
@@ -109,7 +117,6 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
       .banner { display: block; margin: 0 0 0.5rem; color: var(--text); }
       .banner :global(svg) { display: block; width: 100%; max-width: 620px; height: auto; }
       .banner :global(.wordmark) { stroke: var(--surface); }
-      footer a { margin-right: 1rem; }
       h1,h2,h3 { line-height:1.25; }
       article { padding: 1rem 0; border-bottom: 1px solid var(--border); }
       .post-meta { color: var(--muted); font-size: 0.9rem; margin-top: -0.5rem; }
@@ -254,8 +261,10 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
 
     <footer>
       <div class="wrap">
-        <a href="/about">About</a>
-        <a href="/rss.xml">RSS</a>
+        <nav>
+          <a href="/about">About</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
       </div>
     </footer>
 

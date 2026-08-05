@@ -1,9 +1,9 @@
 ---
-title: "The fast loop and the slow loop"
-description: "Two control loops run in GNSS timekeeping, one in minutes and one in weeks. Telling them apart explains why nobody can steer to UTC and why UTC is still the thing worth measuring against."
+title: "How does GNSS time relate to UTC?"
+description: "Not one relationship but two: a whole number of seconds you can look up, and a sub-nanosecond prediction that two control loops — one running in minutes, one in weeks — spend their lives maintaining."
 section: "utc"
-order: 35
-updatedDate: 2026-08-04
+order: 20
+updatedDate: 2026-08-05
 coverage: "H"
 tags: ["UTC", "GNSS", "timing", "metrology"]
 draft: true
@@ -13,7 +13,34 @@ import CalloutBox from "../../../components/post/CalloutBox.astro";
 import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 import loops from "../../../assets/FastLoopSlowLoop.png";
 
-There are two loops in this business and they run at wildly different speeds.
+Every satellite you can hear is running a clock that is **not** UTC, and knows
+it. The relationship between the two comes in two parts, and confusing them is
+the source of a great deal of muddle.
+
+**Part one is a whole number of seconds, and it is boring.** GPS Time, Galileo
+System Time and BeiDou Time are continuous scales that ignore leap seconds, so
+each sits an integer number of seconds away from UTC — 18 s for GPS and Galileo,
+4 s for BeiDou, as of today. Every constellation broadcasts that count, your
+receiver subtracts it, and nobody thinks about it again. GLONASS is the odd one
+out: it follows UTC(SU) and applies leap seconds, so it has no such offset.
+
+**Part two is the interesting part, and it is a prediction.** Underneath the
+integer, each constellation's timescale is steered toward UTC by way of a
+national laboratory's realization of it — GPS toward
+[UTC(USNO)](/timekeeping/glossary/#utc-k), BeiDou toward UTC(NTSC), GLONASS
+toward UTC(SU) — and every satellite broadcasts its operator's *estimate* of the
+residual offset. That estimate has to be an estimate, because
+[UTC will not be computed for another month](/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/).
+
+The published specifications for that residual are loose — 40 ns for GPS at 95%,
+50 ns for Galileo, 100 ns for BeiDou. The measured reality is roughly a hundred
+times better than that, about **a nanosecond of mean bias** for GPS, Galileo and
+BeiDou alike. We know the real figure rather than the specified one because
+somebody grades it, which is the whole subject of the rest of this page.
+
+## Two loops, at wildly different speeds
+
+Keeping that estimate good takes two control loops.
 
 The **fast loop** is the one that keeps your clock honest:
 [corrections computed on the ground](/timekeeping/utc/gnss-time-is-a-prediction/),
@@ -22,7 +49,7 @@ every five seconds to every couple of hours.
 
 The **slow loop** runs through the BIPM. Laboratories compare their clocks,
 report to Paris, and weeks later
-[UTC is defined for a period already past](/timekeeping/utc/what-utc-is/).
+[UTC is defined for a period already past](/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/).
 
 <ZoomableImage
 	src={loops}
@@ -102,5 +129,8 @@ of it worked.
   months of it plotted.
 - **[GNSS time is a prediction](/timekeeping/utc/gnss-time-is-a-prediction/)** —
   the fast loop in detail, and why the correcting happens in your receiver.
-- **[How UTC is actually made](/timekeeping/utc/what-utc-is/)** — the slow loop
-  from the inside.
+- **[Can I sync my datacenter clocks to UTC?](/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/)**
+  — the slow loop from the inside, and why the answer is *literally no, but
+  practically yes*.
+- **[Choosing a GNSS timescale for syncing datacenter clocks](/timekeeping/utc/choosing-a-gnss-timescale/)**
+  — having understood the relationship, the decision it leaves you with.

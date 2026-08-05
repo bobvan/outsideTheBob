@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"
+     role="img" aria-label="Think Outside The Bob (dev)">
+  <!--
+    The dev-server favicon. Served only when import.meta.env.DEV is true, so it
+    can never reach production: BaseLayout picks it, and `npm run build` takes
+    the other branch.
+
+    The production mark is transparent ink that follows the browser chrome's
+    light/dark state, which is exactly what makes it a poor tab discriminator -
+    it is designed to blend in. This one does the opposite and sits on a solid
+    amber plate, so a dev tab is obvious at 16px in either theme without having
+    to read the title. Amber rather than red: this is a "you are looking at the
+    dev server" signal, not an error.
+  -->
+  <rect x="0" y="0" width="64" height="64" rx="12" fill="#E69F00" />
+
+  <rect x="8" y="8" width="48" height="48" rx="8"
+        fill="none" stroke="#111" stroke-width="4" />
+
+  <!-- The word "Bob" intentionally extends beyond the box -->
+  <g transform="rotate(-8,154.56567,72.498837)"
+     font-family="Inter, system-ui, '-apple-system', 'Segoe UI', Roboto, Arial, sans-serif"
+     font-size="34px" font-weight="900" text-rendering="geometricPrecision">
+    <!-- Halo in the plate colour, clearing the wall from behind the glyphs -->
+    <text x="6" y="26" fill="#111" stroke="#E69F00" stroke-width="6"
+          style="paint-order: stroke fill;">Bob</text>
+    <text x="6" y="26" fill="#111">Bob</text>
+  </g>
+</svg>

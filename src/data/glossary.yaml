@@ -177,7 +177,7 @@
     url: "https://www.bipm.org/en/time-ftp/circular-t"
   seeAlso:
     - label: "How UTC is actually made"
-      href: "/timekeeping/utc/what-utc-is/"
+      href: "/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/"
     - label: "UTC(k)"
       href: "#utc-k"
     - label: "Traceability"

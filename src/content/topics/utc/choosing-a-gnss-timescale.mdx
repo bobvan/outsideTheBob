@@ -1,0 +1,184 @@
+---
+title: "Choosing a GNSS timescale for syncing datacenter clocks"
+description: "You are not choosing a receiver so much as choosing whose timescale you end up on. There are three ways to do it, they differ by a factor of a hundred in cost, and most datacenters should take the cheapest."
+section: "utc"
+order: 30
+updatedDate: 2026-08-05
+coverage: "M"
+tags: ["UTC", "GNSS", "timing", "datacenter", "buying"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Once you accept that
+[you cannot sync to UTC itself](/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/),
+a question appears that most people never realize they are answering: **whose
+prediction of UTC are your clocks actually on?**
+
+You always end up on somebody's timescale. The interesting part is that the
+answer is decided not by your receiver but by **where your corrections come
+from** — because a correction is computed against some datum, and applying it
+puts you on that datum. Choose the correction source and you have chosen the
+timescale, whether or not you meant to.
+
+There are three ways to do it.
+
+## The three choices
+
+| | you end up on | corrections from | typical cost | who this is for |
+|---|---|---|---|---|
+| **a. SPP** | a constellation's own timescale — GPS Time, GST, BDT | the navigation message, free | the price of the receiver | almost everyone |
+| **b. Float PPP** | the correction provider's timescale | a broadcast or commercial precise stream | subscription, or free via Galileo HAS | people who need to beat a few ns |
+| **c. PPP-AR** | one analysis center's datum, specifically | a *single* self-consistent analysis center | no commercial timing offering yet | research, and the frontier |
+
+Read down the "you end up on" column and the pattern is the whole page: each
+step buys accuracy by tying you to a narrower and more specific definition of
+what time it is.
+
+## a. SPP against a constellation timescale — and this is probably you
+
+[SPP](/timekeeping/glossary/#spp) uses only what the satellites already
+broadcast. No internet, no subscription, no convergence time, nothing to
+register for. Your clock lands on GPS Time or Galileo System Time or BeiDou
+Time, and the broadcast UTC parameters convert that to UTC for you.
+
+**Most readers should stop here**, for two reasons that are easy to miss.
+
+First, the constellation timescales are *good*. BIPM's
+[prediction scorecard](/timekeeping/utc/gnss-prediction-scorecard/) puts GPS,
+Galileo and BeiDou all within about a nanosecond of mean bias against UTC, over
+fourteen months of daily measurements. That is not a marketing figure; it is the
+body that defines UTC, marking the homework.
+
+Second, and more important: if your requirement is that your own clocks agree
+with *each other*, the constellation's prediction error is
+[common-mode](/timekeeping/glossary/#common-mode) and
+[cancels entirely](/timekeeping/two-clock/agreement-is-not-accuracy/). Everyone
+tracking GPS shares the same error, so it subtracts out of every comparison you
+make inside your estate. Paying to remove an error that already cancels is the
+most common way to waste money in this field.
+
+<CalloutBox type="warn" title="One real constraint: not GLONASS">
+	The same scorecard that clears GPS, Galileo and BeiDou finds GLONASS running
+	a mean of −6.4 ns with a standard deviation of 9.5 ns, and an excursion to
+	−57 ns in mid-2026. That is an order of magnitude worse than the other three,
+	and it is the one constellation choice that will actually cost you.
+
+	This is a statement about the <em>broadcast UTC offset</em> specifically, not
+	a general verdict on GLONASS as a ranging source.
+</CalloutBox>
+
+## b. Float PPP against a provider's timescale
+
+[Float PPP](/timekeeping/glossary/#ppp) adds the carrier phase and replaces the
+broadcast corrections with precise orbits and clocks from a correction service.
+The satellite's own error stops mattering, because you are no longer relying on
+the satellite's estimate of anything.
+
+What you gain in accuracy you pay for in *specificity*: you are now on the
+provider's datum, not the constellation's.
+
+Fugro's **AtomiChron** is the clearest commercial example, and its own
+specification sheet makes the tradeoff unusually legible. It quotes **&lt;1 ns to
+the "Fugro AtomiChron timescale"** and **&lt;5 ns to UTC** — the tight number is
+against Fugro's own realization, and the looser one is against the thing the
+regulator cares about. A separate *UTCk* tier is sold specifically to close that
+gap by tying the service to UTC(NIST) and UTC(PTB).
+
+<CalloutBox type="tip" title="A correction to something I had assumed">
+	I had this filed as the clean example of choice (b), and it is a good example
+	of <em>ending up on a provider's timescale</em>. But whether AtomiChron
+	resolves carrier-phase ambiguities is <strong>not publicly documented</strong>
+	— the receiver-side manuals describe applying a "Fugro composite bias" and say
+	nothing about ambiguity fixing. Fugro's positioning products do PPP-AR, so it
+	would be reasonable to guess, and a guess is all it would be.
+
+	The honest summary: AtomiChron is a commercial provider-datum service. Which
+	side of the b/c line it sits on is a question for Fugro.
+</CalloutBox>
+
+Galileo **HAS** is the free counterpart, broadcast as a signal-in-space on E6-B
+with no internet needed. Its first phase carries no phase biases, which pins it
+firmly in this row: it is a float-PPP source and cannot be anything else yet.
+
+## c. PPP-AR against one analysis center's datum
+
+[PPP-AR](/timekeeping/glossary/#ppp-ar) fixes the carrier-phase ambiguity to the
+integer it physically is. Doing so needs satellite **phase biases**, and those
+are only self-consistent when every product in the solution comes from the
+*same* analysis center. Mix two sources and the property that makes fixing
+possible is destroyed.
+
+Which means this row is the most specific of all: you are not on "a precise
+timescale", you are on **CNES's datum**, or CAS's, or WHU's, and switching
+analysis centers is a change of reference, not a change of supplier.
+
+As far as I know there is **no commercial timing service offering this today**.
+It is the path my own PePPAR-Fix work is on, and the reason it is interesting is
+exactly the reason it is not yet a product.
+
+## The fourth answer: don't choose a GNSS timescale at all
+
+Everything above treats GNSS as a *time source*. There is an entirely different
+posture, and for anyone whose real problem is traceability rather than accuracy
+it is often the right one: treat GNSS as a **transfer medium** and get your time
+from a national laboratory directly.
+
+NIST's **Time Measurement and Analysis Service (TMAS)** is the worked example.
+NIST installs a tri-band GNSS receiver at your site — the equipment stays NIST's
+property — takes the 1 PPS output of your own clock, and runs a **common-view**
+comparison against UTC(NIST). Both ends observe the same satellites at the same
+moment and difference the results, so the satellite's clock error appears on both
+sides and subtracts out. Data goes to NIST every ten minutes and you read the
+answer in a browser.
+
+The distinction is worth being precise about, because it is easy to file TMAS
+under choice (b) and it does not belong there:
+
+- **(a), (b) and (c) put you on a GNSS-derived timescale.** GNSS is the source.
+- **TMAS puts you on UTC(NIST)**, a real [UTC(k)](/timekeeping/glossary/#utc-k)
+  maintained by a national metrology institute. GNSS is only the wire.
+
+It is also a *measurement* service rather than a steering one — the base tier
+tells you how far your clock is from UTC(NIST), with time uncertainty under 5 ns
+and frequency uncertainty near 1×10⁻¹⁴ at one day, and leaves the correcting to
+you. NIST sells a disciplined-clock tier separately for customers who want the
+loop closed.
+
+If the question behind your project is *how do I prove this to an auditor*
+rather than *how do I get closer*, this row deserves a serious look before any
+of the three above. It is the shortest
+[traceability](/timekeeping/utc/traceability/) chain money can buy.
+
+## How to decide, in one pass
+
+1. **Do your clocks only need to agree with each other?** Then take (a), pick any
+   constellation but GLONASS, and spend the money on the
+   [antenna](/timekeeping/antennas/antenna-position/) and the
+   [feedline](/timekeeping/antennas/feedline/) instead — that is where your
+   error actually is.
+2. **Does somebody outside your estate have to accept your timestamps?** Then
+   your problem is traceability, and the fourth answer is on the table.
+3. **Do you genuinely need to beat a few nanoseconds to UTC?** Then (b), and read
+   the specification carefully for *which timescale* each quoted number is
+   against.
+4. **Are you doing research?** Then (c), and you already knew that.
+
+[[? Three things I would rather have from you than guess at.
+
+1) Is the (a)/(b)/(c) framing above yours as you meant it? I have written the distinguishing axis as **whose datum you land on**, which felt like the honest through-line, but you may have meant it primarily as an accuracy ladder.
+
+2) I could not confirm that AtomiChron does or does not do ambiguity resolution, and I have said so on the page rather than picking. If you know from the PePPAR work, I will replace the callout with the fact.
+
+3) TMAS turned out not to be an example of (b) at all — it is GPS common view against UTC(NIST), so GNSS is the transfer link rather than the source. I have given it its own section as a fourth answer. Does that earn its place here, or does it belong on the traceability page? ?]]
+
+## Where to go next
+
+- **[Questions to ask a clock vendor](/timekeeping/questions/buying-a-clock/)** —
+  once you know which row you are in, these are the questions that reveal whether
+  the vendor does.
+- **[GNSS time is a prediction](/timekeeping/utc/gnss-time-is-a-prediction/)** —
+  why the corrections exist at all, and why they are applied in your receiver.
+- **[Matching acquisition and distribution](/timekeeping/transferring/matching-acquisition-and-distribution/)**
+  — there is no point acquiring time this well and then distributing it badly.

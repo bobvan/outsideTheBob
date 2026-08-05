@@ -583,4 +583,141 @@ mkdirSync(OUT, { recursive: true });
 	writeFileSync(`${OUT}/utc-prediction-scoreboard.svg`, svg(W, H, b));
 }
 
-console.error(`wrote 8 figures to ${OUT}/`);
+// ---------------------------------------------------------------------------
+// 9. Three ways to dispose of the satellite clock.
+//
+//    Every technique here answers the same question — what is my clock's
+//    offset? — and they differ in exactly one respect: what they do about the
+//    satellite's own clock error, which is the biggest unknown in the way. One
+//    models it, one cancels it against a second station, one does both. The
+//    bottom band is the payoff: what each answer is referenced to, and whether
+//    that reference goes anywhere.
+//
+//    Deliberately schematic. This is a slide, not a plot: no data, three
+//    columns on one grammar, and the differences carried by what is present
+//    rather than by annotation.
+// ---------------------------------------------------------------------------
+{
+	const W = 960, H = 512;
+	const COLW = 300, GAP = 15, LEFT = 12;
+	const cx = (i) => LEFT + i * (COLW + GAP) + COLW / 2;
+	const BLUE = '#0072B2';   // computed on the ground, as everywhere else here
+	const ORANGE = '#E69F00'; // signal from space
+	const PANY = 34, PANH = 352, SATY = 112, STAY = 248, BANDY = 410;
+
+	let b = '';
+
+	const sat = (x, y, s = 1) =>
+		`<g transform="translate(${x} ${y}) scale(${s})">` +
+		`<rect x="-9" y="-7" width="18" height="14" rx="2" fill="${INK}"/>` +
+		`<rect x="-26" y="-4" width="14" height="8" fill="${INK}"/>` +
+		`<rect x="12" y="-4" width="14" height="8" fill="${INK}"/>` +
+		`</g>`;
+
+	const station = (x, y, label, sub) => {
+		let o = `<g transform="translate(${x} ${y})">` +
+			`<path d="M -11 0 A 11 11 0 0 1 11 0 Z" fill="${INK}" transform="rotate(-20)"/>` +
+			`<rect x="-1.5" y="0" width="3" height="13" fill="${INK}"/>` +
+			`<rect x="-9" y="13" width="18" height="3" fill="${INK}"/></g>`;
+		o += text(x, y + 33, label, { size: 12.5, weight: 700 });
+		if (sub) o += text(x, y + 48, sub, { size: 11, fill: MUTED });
+		return o;
+	};
+
+	const arrow = (x1, y1, x2, y2, color, dash = '') =>
+		`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2"` +
+		`${dash ? ` stroke-dasharray="${dash}"` : ''} marker-end="url(#ah-${color.slice(1)})"/>`;
+
+	// A struck-through claim, placed clear of the station labels so the rule
+	// never crosses a word it is not striking out.
+	const cancels = (x, y, label, halfWidth) =>
+		text(x, y, label, { size: 11.5, fill: RED, weight: 700 }) +
+		`<line x1="${x - halfWidth}" y1="${y - 4}" x2="${x + halfWidth}" y2="${y - 4}" stroke="${RED}" stroke-width="1.5"/>`;
+
+	b += '<defs>' +
+		[INK, BLUE, ORANGE, RED].map((c) =>
+			`<marker id="ah-${c.slice(1)}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">` +
+			`<path d="M 0 0 L 10 5 L 0 10 z" fill="${c}"/></marker>`).join('') +
+		'</defs>';
+
+	const TITLES = [
+		['PPP solution', 'model the satellite clock'],
+		['Common view', 'cancel it against one shared satellite'],
+		['PPP time transfer', 'model it, then cancel the model'],
+	];
+	for (let i = 0; i < 3; i++) {
+		b += `<rect x="${LEFT + i * (COLW + GAP)}" y="${PANY}" width="${COLW}" height="${PANH}" rx="6" fill="none" stroke="#dcdcdc"/>`;
+		b += text(cx(i), PANY + 26, TITLES[i][0], { size: 14.5, weight: 700 });
+		b += text(cx(i), PANY + 44, TITLES[i][1], { size: 11.5, fill: MUTED, style: 'italic' });
+	}
+
+	// --- Panel 1: one station, satellite clock supplied by a product ---------
+	b += sat(cx(0) - 68, SATY);
+	b += text(cx(0) - 22, SATY + 4, 'dtˢ = ?', { size: 11.5, fill: MUTED, anchor: 'start' });
+	b += arrow(cx(0) - 70, SATY + 14, cx(0) - 76, STAY - 22, ORANGE);
+	b += station(cx(0) - 78, STAY, 'YOU', null);
+	b += `<rect x="${cx(0) + 2}" y="${SATY + 30}" width="126" height="44" rx="4" fill="none" stroke="${BLUE}" stroke-width="1.6"/>`;
+	b += text(cx(0) + 65, SATY + 48, 'analysis center', { size: 11, fill: BLUE, weight: 700 });
+	b += text(cx(0) + 65, SATY + 63, 'product supplies dtˢ', { size: 10.5, fill: BLUE });
+	b += arrow(cx(0) + 20, SATY + 76, cx(0) - 60, STAY - 14, BLUE, '5 3');
+	b += text(cx(0), STAY + 76, 'one station, no second opinion', { size: 10.5, fill: MUTED, style: 'italic' });
+
+	// --- Panel 2: two stations, ONE satellite, dtˢ struck out ----------------
+	b += sat(cx(1), SATY);
+	b += text(cx(1), SATY - 22, 'dtˢ appears in both', { size: 11.5, fill: MUTED });
+	b += arrow(cx(1) - 10, SATY + 14, cx(1) - 74, STAY - 22, ORANGE);
+	b += arrow(cx(1) + 10, SATY + 14, cx(1) + 74, STAY - 22, ORANGE);
+	b += station(cx(1) - 84, STAY, 'YOU', null);
+	b += station(cx(1) + 84, STAY, 'NIST', 'UTC(NIST)');
+	b += text(cx(1), STAY + 8, '−', { size: 28, weight: 700 });
+	b += cancels(cx(1), STAY + 76, 'dtˢ cancels exactly', 62);
+	b += text(cx(1), STAY + 98, 'needs the same satellite,', { size: 10.5, fill: MUTED, style: 'italic' });
+	b += text(cx(1), STAY + 112, 'at the same instant', { size: 10.5, fill: MUTED, style: 'italic' });
+
+	// --- Panel 3: two stations, DIFFERENT satellites, ONE shared product -----
+	// Two visibly separate clusters, because "no shared satellite" is the whole
+	// difference from the middle panel and has to be carried by the picture.
+	b += sat(cx(2) - 108, SATY - 12, 0.78);
+	b += sat(cx(2) - 74, SATY + 8, 0.78);
+	b += sat(cx(2) + 74, SATY + 8, 0.78);
+	b += sat(cx(2) + 108, SATY - 12, 0.78);
+	b += arrow(cx(2) - 100, SATY + 22, cx(2) - 106, STAY - 20, ORANGE);
+	b += arrow(cx(2) + 100, SATY + 22, cx(2) + 106, STAY - 20, ORANGE);
+	// One product box feeding both, because the cancellation only works if the
+	// two solutions were computed against the SAME datum. That is the condition
+	// the panel exists to show, so it gets the center of the frame.
+	b += `<rect x="${cx(2) - 74}" y="${SATY + 34}" width="148" height="26" rx="4" fill="#fff" stroke="${BLUE}" stroke-width="1.6"/>`;
+	b += text(cx(2), SATY + 51, 'the same AC product', { size: 11, fill: BLUE, weight: 700 });
+	b += arrow(cx(2) - 62, SATY + 60, cx(2) - 82, STAY - 14, BLUE, '5 3');
+	b += arrow(cx(2) + 62, SATY + 60, cx(2) + 82, STAY - 14, BLUE, '5 3');
+	b += station(cx(2) - 92, STAY, 'YOU', 'own PPP');
+	b += station(cx(2) + 92, STAY, 'NIST', 'own PPP');
+	b += text(cx(2), STAY + 8, '−', { size: 28, weight: 700 });
+	b += cancels(cx(2), STAY + 76, 'the product datum cancels', 82);
+	b += text(cx(2), STAY + 98, 'no shared satellite needed —', { size: 10.5, fill: MUTED, style: 'italic' });
+	b += text(cx(2), STAY + 112, 'what BIPM uses for TAI', { size: 10.5, fill: MUTED, style: 'italic' });
+
+	// --- The band that is the actual argument -------------------------------
+	b += text(LEFT, BANDY - 12, 'and your answer is referenced to —', { size: 12, weight: 700, anchor: 'start' });
+	const LAND = [
+		['the analysis center’s datum', 'stable, but unpublished', 'the chain stops here', false],
+		['UTC(NIST)', 'a named realization', 'Circular T continues the chain', true],
+		['UTC(NIST)', 'a named realization', 'Circular T continues the chain', true],
+	];
+	for (let i = 0; i < 3; i++) {
+		const [a, c, d, ok] = LAND[i];
+		const col = ok ? BLUE : MUTED;
+		b += `<rect x="${LEFT + i * (COLW + GAP)}" y="${BANDY}" width="${COLW}" height="64" rx="6" fill="none" stroke="${col}" stroke-width="${ok ? 1.8 : 1}"${ok ? '' : ' stroke-dasharray="5 4"'}/>`;
+		b += text(cx(i), BANDY + 22, a, { size: 13, weight: 700, fill: ok ? BLUE : INK });
+		b += text(cx(i), BANDY + 38, c, { size: 10.5, fill: MUTED });
+		b += text(cx(i), BANDY + 54, d, { size: 10.5, fill: ok ? INK : MUTED, weight: ok ? 700 : 400 });
+	}
+
+	b += text(LEFT, 22, 'Three ways to dispose of the satellite clock', { size: 15, weight: 700, anchor: 'start' });
+	b += text(W - LEFT, 22, 'orange: signal from space  ·  blue: computed on the ground', {
+		size: 10.5, fill: MUTED, anchor: 'end',
+	});
+	writeFileSync(`${OUT}/time-transfer-techniques.svg`, svg(W, H, b));
+}
+
+console.error(`wrote 9 figures to ${OUT}/`);

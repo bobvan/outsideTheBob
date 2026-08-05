@@ -153,6 +153,58 @@ people who are best at this still find the wire is the hard part.
 
 You cannot download a travelling receiver.
 
+### What a home calibration actually resolves into
+
+The clearest published worked example on mass-market hardware is Ricardo Píriz's
+at GMV, who calibrates timing receivers against GMV's own UTC realization. He
+measured a **96 ns** total offset between a u-blox ZED-F9T's timepulse and UTC
+on a Keysight 53230A time interval counter over 24 hours, and took it apart:
+
+| term | value |
+|---|---|
+| antenna | 16 ns |
+| 10 m antenna cable | 52 ns |
+| **F9T itself** | **28 ns** |
+
+> We had calibrated beforehand the delay of the antenna (16 ns) and the delay of
+> the 10-meter antenna cable (52 ns). This leaves a delay of 28 ns for the F9T
+> device.
+
+His later and more rigorous method removes any dependence on the stability of
+UTC or GPS time by subtracting a co-located calibrated receiver's CGGTTS from
+the counter reading — `TIC − CGGTTS = D`. That gives 93.9 ns total for the F9T
+and 77.9 ns for a Septentrio mosaic **on the same antenna**, with day-to-day
+repeatability of 0.3 ns and 0.28 ns respectively. The 16 ns between them is the
+two receivers.
+
+<CalloutBox type="warn" title="Read the fine print on that 28 ns before reusing it">
+	<strong>It is a GPS L1/L2 number.</strong> The user receiver was "configured
+	to use GPS only (L1 and L2 signals)", with the reference chain on the GPS
+	P1/P2 combination. Píriz is explicit that calibration values apply only to the
+	constellations and signal combinations they were measured on, and that a
+	different configuration needs a new calibration. <strong>There is no such
+	thing as "the F9T delay"</strong> — only its delay for a stated signal
+	combination. Switch to E1/E5a and the number is not yours any more.
+
+	<strong>And 16 ns of it is the antenna, which no antenna model will give
+	you.</strong> The <a href="https://files.igs.org/pub/data/format/antex14.txt">ANTEX
+	format</a> stores phase center offsets and patterns in <em>millimeters</em>
+	relative to the ARP, and has no field for group delay of any kind. It cannot
+	have one, either: a delay common to every direction of arrival is
+	indistinguishable from a receiver clock offset in a geodetic solution, so even
+	a perfect robot calibration absorbs it into the clock. Knowing where your
+	antenna is to a millimeter and knowing how long the signal takes to get out of
+	it are separate problems with separate instruments.
+
+	<strong>And the floor is not yours to set.</strong> Píriz puts the uncertainty
+	of <em>D</em> as "ultimately limited by the calibration uncertainty of the
+	co-located time-transfer receiver chain, normally at the level of 1–2 ns" — a
+	statement about such chains generally, not a measurement of his own. That is
+	what a home calibration inherits. Repeatability of 0.3 ns is
+	<a href="/timekeeping/metrology/accuracy-and-precision-in-pictures/">precision,
+	not trueness</a>.
+</CalloutBox>
+
 ## Two more things TMAS sells that are not the measurement
 
 **Latency.** The BIPM files are monthly batches published weeks after the fact.

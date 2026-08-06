@@ -24,6 +24,25 @@ If the first problem is a LAN, this is the WAN — and as with networking, the
 techniques that work over the long haul look almost nothing like the ones that
 work in a building.
 
+## Two jobs that use the same techniques
+
+Worth separating up front, because the literature is written for one of them and
+most readers of this site want the other.
+
+**Peer comparison.** Two national laboratories compare their clocks. Neither is
+right, neither is steering to the other, and the output is simply a
+number — [UTC(NIST) − UTC(PTB)] — with no instruction attached. This is what
+BIPM's network is for and what every paper on the subject is written about.
+
+**Asymmetric sync.** One end is a national laboratory and the other end is you.
+The laboratory is not adjusting anything; **you** are. The output is not a
+result, it is a correction, and what you want from it is to pull your clock into
+line and keep it there.
+
+The techniques are identical. What differs is what you do with the answer — and
+that difference decides how much the *latency* below matters, which is the
+question that separates a one-time check from a control loop.
+
 ## The central bargain: a third clock, and its error
 
 With no wire between you, the only thing you and the distant laboratory have in
@@ -75,7 +94,7 @@ collapses into three options.
 Have a second station watch **the same satellite at the same instant**. It
 records the same `satellite_clock_error` you did. Subtract the two records and
 that term **cancels exactly** — not modelled, not estimated, gone. What is left
-is the difference between the two local clocks.
+is the difference between the clock at your end and the clock at theirs.
 
 It is a beautiful idea, and its beauty is that it needs nothing else. No
 correction stream, no internet, no subscription, nobody's analysis to trust. Two
@@ -230,6 +249,77 @@ vocabulary is all-in-view or PPP.
 Read the uncertainty column and the ladder is plain: **PPP links are 0.3 ns
 stable, dual-frequency code links 0.7 ns, single-frequency code links 1.5 to
 3 ns.** A factor of two to ten, for the same antennas on the same roofs.
+
+## How fast does any of this go?
+
+The honest headline: **none of these techniques is real-time, and the fastest of
+them is a ten-minute batch.** That is not a limitation anyone has failed to fix.
+It is what the techniques are.
+
+| technique | how quickly you get an answer |
+|---|---|
+| TMAS common view | data uploaded every 10 min; readable with about a 10 min delay |
+| CGGTTS tracks | historically 13 min per track, published in monthly files |
+| BIPM's own links | monthly, in *Circular T*, weeks after the fact |
+| a self-built PPP link | as fast as the correction stream and both sides' data — minutes at best |
+
+TMAS's ten minutes is close to the practical floor for a *published* comparison,
+and it is worth understanding why rather than hoping for better. Every technique
+here works by **averaging**: a single epoch of code measurement is nanoseconds of
+noise, and you need minutes of it before the number means anything. Then you have
+to wait for the far end's data to exist and arrive. Neither of those shortens
+much.
+
+### So: initial sync, or continuous discipline?
+
+**Both, but not the way a PTP grandmaster does it.** The distinction that matters
+is the one between the two ways a clock can be wrong.
+
+**As a one-time check, it is excellent** — and this is the obvious use. Stand up
+a clock, run a link for a few days, find out where you actually are.
+
+**As a continuous loop, it works for frequency and not for the seconds.** Ten
+minutes of latency is hopeless for chasing a clock that jumps, but it is
+perfectly adequate for steering a *rate*, because a good oscillator's frequency
+does not change meaningfully in ten minutes. This is exactly how a national
+laboratory uses its links: nobody is jerking UTC(NIST) around every ten minutes;
+they are nudging its rate over days.
+
+<CalloutBox type="warn" title="Which is why the local oscillator does the real work">
+	A time-transfer link is a slow, accurate reference. Your own oscillator is a
+	fast, drifting one. The link steers the oscillator; the oscillator carries
+	every second in between. Take the link away and the clock coasts on its
+	<a href="/timekeeping/glossary/#holdover">holdover</a> — which is fine for
+	hours and is the whole reason holdover figures are worth arguing about.
+
+	If you need a distant clock's time <em>right now</em>, to the nanosecond, none
+	of this helps. That job wants a fiber and
+	<a href="/timekeeping/transferring/distribution/">a protocol</a>, and it is a
+	different page.
+</CalloutBox>
+
+## Doing it with NIST at one end
+
+Everything above is written the way the field writes it: two peers. Here is the
+asymmetric version, concretely, with a national laboratory at one end and you at
+the other.
+
+**Common view with NIST** is what [TMAS](/timekeeping/glossary/#tmas) sells.
+NIST installs a receiver at your site, takes the PPS from your clock, compares
+against UTC(NIST), and reports every ten minutes. Their end is calibrated, yours
+is calibrated by them, and you get a report. It is the turnkey answer.
+
+**PPP time transfer with NIST** you can assemble yourself, because
+[NIST's observations are public](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/):
+their IGS station runs on UTC(NIST) itself, and its raw
+[RINEX](/timekeeping/glossary/#rinex) is anonymously downloadable. Run your PPP
+solution and theirs against the same correction stream, difference them, and you
+have the same measurement TMAS makes — by the technique BIPM prefers, at a
+better [baseline](/timekeeping/glossary/#baseline)-independence, for free.
+
+What you will not have is a calibrated end, which means you get frequency at full
+accuracy and no defensible time offset at all. That gap, and what closes it, is
+[its own page](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/).
 
 ## So what is your answer referenced to?
 

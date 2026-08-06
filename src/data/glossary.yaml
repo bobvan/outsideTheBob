@@ -462,3 +462,40 @@
     - label: "Traceability"
       href: "/timekeeping/utc/traceability/"
   draft: true
+
+- id: rinex
+  term: "RINEX"
+  aliases: ["Receiver Independent Exchange Format"]
+  definition: >-
+    The universal text format for raw GNSS observations — one epoch per block,
+    every satellite's code and carrier-phase measurement written out as the
+    receiver saw them, before any solution. Its whole value is in the name: a
+    RINEX file from any manufacturer's receiver can be processed by anybody's
+    software, which is what makes it possible to reprocess somebody else's
+    observations years later, or to compare two clocks whose owners never
+    agreed on anything but the format.
+  authority:
+    label: "IGS, RINEX 3.05 format specification"
+    url: "https://files.igs.org/pub/data/format/rinex305.pdf"
+  seeAlso:
+    - label: "CGGTTS, the time-transfer counterpart"
+      href: "#cggtts"
+    - label: "Comparing distant clocks"
+      href: "/timekeeping/utc/comparing-two-distant-clocks/"
+  draft: true
+
+- id: peppar-fix
+  term: "PePPAR-Fix"
+  definition: >-
+    My own research engine for real-time GNSS timing: it takes raw observations
+    and a single GNSS Analysis Center's correction stream and solves for the
+    receiver clock, pinning a surveyed antenna position rather than estimating
+    it. The name is for **Pe**rsistent **PPP-AR**. It is where the
+    ambiguity-resolving path on this site gets tested, and there is no
+    commercial product doing the same thing yet.
+  seeAlso:
+    - label: "PPP-AR"
+      href: "#ppp-ar"
+    - label: "Choosing a GNSS timescale"
+      href: "/timekeeping/utc/choosing-a-gnss-timescale/"
+  draft: true

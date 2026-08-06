@@ -1,0 +1,168 @@
+---
+title: "What makes an accurate GNSS timing receiver?"
+description: "Six traits, in the order they start to matter. The last one separates a box that wants to be your master clock from a box that knows you already have a better one."
+section: "acquiring"
+order: 20
+updatedDate: 2026-08-05
+coverage: "M"
+tags: ["GNSS", "timing", "datacenter", "buying", "oscillators"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Every GNSS receiver will hand you a
+[PPS](/timekeeping/glossary/#resolution) and a claim about how accurate it is.
+The claims cluster suspiciously close together, so they are not much use for
+choosing. The *capabilities* are far more revealing, because each one changes
+what you are able to do rather than what somebody is willing to assert.
+
+Here they are in roughly the order they start to matter. The interesting thing
+about the list is its shape: **the first few make the receiver a better clock,
+and the last two stop it from having to be your clock at all.**
+
+> A good timing receiver wants to be your master clock.
+> A great one knows you already have a better short-term clock, and that what
+> you actually want is to compare that clock against GNSS.
+
+## 1. Two frequency bands
+
+The single biggest jump, and the one to spend money on first.
+
+The ionosphere delays the signal by tens of nanoseconds, and it varies with the
+sun, the season and the hour. A single-frequency receiver has to **model** that
+delay from broadcast parameters. A dual-frequency receiver **measures** it, by
+comparing two signals that the ionosphere delayed by different amounts.
+
+NIST quantified the difference on their own hardware: over a long
+[baseline](/timekeeping/glossary/#baseline), single-frequency measurements
+ranged up to **50 ns in a day** where dual-frequency stayed within about 10 ns.
+Same antennas, same roofs.
+
+## 2. Carrier-phase smoothing
+
+The code measurement — the one that tells you unambiguously *which* nanosecond
+it is — is noisy. The carrier phase is exquisitely quiet but tells you only the
+fractional part of a cycle, with a whole number of cycles unknown.
+
+Smoothing the code with the carrier gets you most of the carrier's quietness
+without solving the ambiguity problem at all. It is nearly free in
+computation and it is the difference between a jittery PPS and a steady one.
+
+## 3. A PPS output, and honesty about it
+
+Table stakes — but ask two follow-ups.
+
+**Is it quantized, and does the receiver tell you by how much?** A PPS edge can
+only land on a tick of the receiver's internal clock, so it is systematically
+early or late by a sawtooth-shaped amount. A good receiver *reports* that
+quantization error so you can correct for it. A receiver that does not report it
+is not less quantized, only less forthcoming.
+
+**Where does the connector sit relative to the module?** On a u-blox EVK-F9T,
+the rear SMA carries a *buffered* timepulse — the board's parts list names
+NC7SZ125/126 logic buffers — so the connector is single-digit nanoseconds after
+the module pin, not the few hundred picoseconds a centimeter of trace would
+cost. That is a real term in an
+[error budget](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/), and it
+drifts with temperature.
+
+## 4. Raw observations out
+
+The difference between a box that gives you an *answer* and a box that gives you
+*evidence*.
+
+A receiver that emits raw code and carrier-phase measurements — as
+[RINEX](/timekeeping/glossary/#rinex), or a format you can convert — lets you
+reprocess the same day with better correction streams months later, run your own
+[PPP](/timekeeping/glossary/#ppp) solution, survey the antenna position properly
+rather than
+[letting the receiver guess](/timekeeping/antennas/antenna-position/), and
+[compare your clock against a national laboratory's](/timekeeping/utc/comparing-two-distant-clocks/).
+
+None of that is possible with a box that only ever tells you its conclusion. If
+you expect to care about this subject in two years, this trait is worth more
+than a nanosecond of specified accuracy.
+
+## 5. A time-mark input
+
+Now the flip. A time-mark or external-interrupt input lets the receiver
+**timestamp an edge you give it** — which means it can measure *your* clock
+against GNSS, instead of only reporting its own.
+
+That is a different instrument. The receiver stops being a source and starts
+being a comparator, and comparison is what you actually need if you already own
+something good. The ZED-F9T does this on its `EXTINT` pins and reports the
+result in its own messages.
+
+## 6. A reference frequency input — and this is the one
+
+The last trait is the one that changes the category, and it is the one most
+datasheets bury.
+
+**Without a reference input, every measurement the receiver makes is timed
+against a TCXO soldered to its own board.** Every pseudorange, every carrier
+phase, every PPS edge. That oscillator is a few dollars' worth of quartz in a
+can, and its short-term instability is baked into every observation the receiver
+will ever give you.
+
+<CalloutBox type="warn" title="Which puts a ceiling on what you can build">
+	GNSS gives you excellent <em>long-term</em> truth and poor short-term
+	stability. A good oscillator gives you the opposite. Combining them is the
+	entire art of a disciplined clock — you steer the oscillator slowly toward
+	GNSS and let it carry the seconds in between.
+
+	But if the receiver will not accept your oscillator as its own timebase, its
+	measurements are made against its TCXO, and <strong>you cannot build a clock
+	with better short-term stability than that TCXO out of them.</strong> You can
+	bolt the receiver's answer onto a better oscillator externally, and people do,
+	but the receiver's own measurement noise is then a floor you cannot get under.
+</CalloutBox>
+
+Which is why the receivers in national laboratories all have this input and all
+use it. NIST's IGS station runs a Septentrio PolaRx5TR whose site log records
+its frequency standard as **"EXTERNAL H-MASER, 5.0 MHz"**, with the note that
+the input signal *is* UTC(NIST). The receiver is not the clock. It is the
+instrument that compares the clock to the sky.
+
+The same split shows up in hardware you can actually buy. Septentrio's mosaic
+module says it plainly — "the module can use its internal TCXO as frequency
+reference, but **also accepts an external frequency reference on the REF_I
+pin**", 10 MHz, 0.5–1.7 Vp-p. The ZED-F9T's pinout has the time-mark inputs of
+trait 5 but no reference frequency input at all.
+
+## Reading the list backwards
+
+Work down from the bottom and the list sorts receivers into two kinds.
+
+**A receiver that wants to be your clock** takes a signal in and gives a PPS
+out. If its PPS is good enough, you are done, and for a great deal of datacenter
+work that is genuinely the right answer.
+
+**A receiver that expects you to have a clock** takes your 10 MHz *in*, times
+everything against it, and tells you how your clock compares to GNSS. That box
+is useless on its own and indispensable the moment you own a rubidium, a maser,
+or anything else whose short-term stability beats a TCXO.
+
+Knowing which one you are shopping for saves more money than any specification
+on the datasheet. And it is a question the
+[vendor questions page](/timekeeping/questions/buying-a-clock/) never quite asks,
+because it starts from the assumption that you are buying a clock rather than an
+instrument.
+
+[[? Three things I would rather have from you than guess.
+
+1) Is the six-trait order right? I have put dual-band first because it is the biggest single measured jump, but you might rank raw-observations-out higher for the kind of reader who will still be at this in two years.
+
+2) I have said carrier-phase smoothing is "nearly free in computation". That is my inference from what it involves, not something I have measured or read. Correct me if it is more expensive than I think on the small modules.
+
+3) Is there a seventh trait I have missed that you would not buy a receiver without? Antenna supervisor and open/short detection came to mind and felt like plumbing rather than accuracy, but you have actually lived with these boxes. ?]]
+
+## Where to go next
+
+- **[Ways to get time into a datacenter](/timekeeping/acquiring/acquiring-time/)**
+  — the layer above this one: whether GNSS is the right source at all.
+- **[Questions to ask a clock vendor](/timekeeping/questions/buying-a-clock/)** —
+  what to ask once you know which kind of box you want.
+- **[Configuring GNSS antenna position](/timekeeping/antennas/antenna-position/)**
+  — the setting that wastes the most of a good receiver's capability.

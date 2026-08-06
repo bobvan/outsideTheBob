@@ -29,7 +29,7 @@ There are three ways to do it.
 | | you end up on | corrections from | typical cost | who this is for |
 |---|---|---|---|---|
 | **a. SPP** | a constellation's own timescale — GPS Time, GST, BDT | the navigation message, free | the price of the receiver | almost everyone |
-| **b. Float PPP** | the correction provider's timescale | a broadcast or commercial precise stream | subscription, or free via Galileo HAS | people who need to beat a few ns |
+| **b. Float PPP** | the correction stream's datum | **Galileo HAS, free from the sky** — or a commercial stream | free, or a subscription | people who need to beat a few ns |
 | **c. PPP-AR** | one analysis center's datum, specifically | a *single* self-consistent analysis center | no commercial timing offering yet | research, and the frontier |
 
 Read down the "you end up on" column and the pattern is the whole page: each
@@ -77,9 +77,26 @@ The satellite's own error stops mattering, because you are no longer relying on
 the satellite's estimate of anything.
 
 What you gain in accuracy you pay for in *specificity*: you are now on the
-provider's datum, not the constellation's.
+correction stream's [datum](/timekeeping/glossary/#datum), not the
+constellation's.
 
-Fugro's **AtomiChron** is the clearest commercial example, and its own
+### Galileo HAS is the one most people will actually use
+
+**HAS** — the Galileo High Accuracy Service — is broadcast as a separate
+signal-in-space on E6-B. **Free, global, no internet, no subscription, no
+registration**, and far fresher than the broadcast navigation message. Its first
+phase carries no phase biases, which pins it firmly in this row: it is a
+float-PPP source and cannot be anything else yet.
+
+That combination is why I expect it to dominate this tier. Every argument
+against a commercial correction service — cost, a contract, a dependency on
+somebody's network, a datum you cannot inspect — evaporates when the corrections
+arrive from the sky for nothing. If you are considering row (b) at all, price
+HAS first and make the paid option justify itself against it.
+
+### And the commercial example, because its spec sheet is unusually honest
+
+Fugro's **AtomiChron** is worth reading even if you never buy it, because its own
 specification sheet makes the tradeoff unusually legible. It quotes **&lt;1 ns to
 the "Fugro AtomiChron timescale"** and **&lt;5 ns to UTC** — the tight number is
 against Fugro's own realization, and the looser one is against the thing the
@@ -121,10 +138,6 @@ it does.
 	is labelled as one. But it is the way to bet.
 </CalloutBox>
 
-Galileo **HAS** is the free counterpart, broadcast as a signal-in-space on E6-B
-with no internet needed. Its first phase carries no phase biases, which pins it
-firmly in this row: it is a float-PPP source and cannot be anything else yet.
-
 ## c. PPP-AR against one analysis center's datum
 
 [PPP-AR](/timekeeping/glossary/#ppp-ar) fixes the carrier-phase ambiguity to the
@@ -138,7 +151,8 @@ timescale", you are on **CNES's datum**, or CAS's, or WHU's, and switching
 analysis centers is a change of reference, not a change of supplier.
 
 As far as I know there is **no commercial timing service offering this today**.
-It is the path my own PePPAR-Fix work is on, and the reason it is interesting is
+It is the path my own [PePPAR-Fix](/timekeeping/glossary/#peppar-fix) work is
+on, and the reason it is interesting is
 exactly the reason it is not yet a product.
 
 ## The fourth answer: don't choose a GNSS timescale at all

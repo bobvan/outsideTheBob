@@ -11,19 +11,34 @@ draft: true
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-**Yes for the measurement. No for the number you can defend.**
+**A superb frequency reference, free. Not a time reference.**
 
-That split is worth understanding in detail, because the free half is a great
-deal more useful than people expect, and the part you have to buy is not the
-part most people assume.
+That is the honest one-line answer, and the gap between those two sentences is
+the whole page.
 
 NIST sells a bundle — hardware, a common-view service, optionally a rubidium —
-as the
-[Time Measurement and Analysis Service](/timekeeping/utc/choosing-a-gnss-timescale/).
-The obvious question is whether the service is welded to the hardware. It is
-not. NIST publishes its observations the same way PTB and the Royal Observatory
-of Belgium do, and anyone with a receiver and a network connection can difference
-against them.
+as [TMAS](/timekeeping/glossary/#tmas). The obvious question is whether the
+service is welded to the hardware. It is not: NIST publishes its observations
+the same way PTB and the Royal Observatory of Belgium do, and anyone with a
+receiver and a network connection can difference against them.
+
+<CalloutBox type="warn" title="Which question are you actually asking?">
+	This page answers "<strong>can I do my own common view, the way TMAS
+	does?</strong>" — because that is the technique TMAS is built on and the one
+	people picture when they imagine building their own link.
+
+	It is not the only way, and on the evidence it is not the best one.
+	<a href="/timekeeping/utc/comparing-two-distant-clocks/">Comparing distant
+	clocks</a> lays out the alternatives — all-in-view, and GPS PPP time
+	transfer, which is what BIPM and NIST actually use for their own links into
+	TAI. <strong>Those are free too</strong>, they use the same public
+	observations, and they transfer <em>both</em> frequency and time rather than
+	running into the wall below.
+
+	Everything on this page about calibration applies to all of them. The wall is
+	not a property of common view; it is a property of not knowing your own
+	delays.
+</CalloutBox>
 
 ## What NIST actually publishes
 
@@ -153,6 +168,13 @@ people who are best at this still find the wire is the hard part.
 
 You cannot download a travelling receiver.
 
+And this is the point at which the choice of technique stops mattering. A
+calibrated end is what turns *any* of these links into a number you can defend —
+common view,
+[all-in-view, or GPS PPP time transfer](/timekeeping/utc/comparing-two-distant-clocks/)
+alike. Pick the technique on its merits; the wall is in the same place for all
+three.
+
 ### What a home calibration actually resolves into
 
 The clearest published worked example on mass-market hardware is Ricardo Píriz's
@@ -220,8 +242,11 @@ that is a document, not a number you computed yourself.
 
 ## So what is the free path actually good for?
 
-More than the above might suggest, because **an unknown constant delay is an
-offset error, not a frequency error** — and those are
+More than the above might suggest, and the split is clean enough to state as a
+rule: **you get frequency for free and you do not get time at all.**
+
+The reason is that **an unknown constant delay is an offset error, not a
+frequency error** — and those are
 [two genuinely independent ways for a clock to be wrong](/timekeeping/datacenters/elapsed-time/).
 A fixed 300 ns you cannot account for ruins your claim about *what time it is*
 and does absolutely nothing to your claim about *how fast your clock runs*,

@@ -584,26 +584,29 @@ mkdirSync(OUT, { recursive: true });
 }
 
 // ---------------------------------------------------------------------------
-// 9. Three ways to dispose of the satellite clock.
+// 9. Three ways to remove satellite_clock_error.
 //
-//    Every technique here answers the same question — what is my clock's
-//    offset? — and they differ in exactly one respect: what they do about the
-//    satellite's own clock error, which is the biggest unknown in the way. One
-//    models it, one cancels it against a second station, one does both. The
-//    bottom band is the payoff: what each answer is referenced to, and whether
-//    that reference goes anywhere.
+//    Comparing two distant clocks means measuring both against a third clock
+//    they can both see — which drags that third clock's error into the answer.
+//    Every technique here is a different way of getting it back out. One models
+//    it, one cancels it against a second station, one does both. The bottom
+//    band is the payoff: what each answer is referenced to, and whether that
+//    reference continues anywhere.
+//
+//    Naming discipline: the figure and the prose use the SAME token,
+//    satellite_clock_error, so a reader can move between them without
+//    translating. No dt-superscript-s anywhere.
 //
 //    Deliberately schematic. This is a slide, not a plot: no data, three
-//    columns on one grammar, and the differences carried by what is present
-//    rather than by annotation.
+//    columns on one grammar, differences carried by what is present.
 // ---------------------------------------------------------------------------
 {
-	const W = 960, H = 512;
-	const COLW = 300, GAP = 15, LEFT = 12;
+	const W = 990, H = 524;
+	const COLW = 310, GAP = 15, LEFT = 12;
 	const cx = (i) => LEFT + i * (COLW + GAP) + COLW / 2;
 	const BLUE = '#0072B2';   // computed on the ground, as everywhere else here
 	const ORANGE = '#E69F00'; // signal from space
-	const PANY = 34, PANH = 352, SATY = 112, STAY = 248, BANDY = 410;
+	const PANY = 34, PANH = 360, SATY = 116, STAY = 252, BANDY = 418;
 
 	let b = '';
 
@@ -620,7 +623,7 @@ mkdirSync(OUT, { recursive: true });
 			`<rect x="-1.5" y="0" width="3" height="13" fill="${INK}"/>` +
 			`<rect x="-9" y="13" width="18" height="3" fill="${INK}"/></g>`;
 		o += text(x, y + 33, label, { size: 12.5, weight: 700 });
-		if (sub) o += text(x, y + 48, sub, { size: 11, fill: MUTED });
+		if (sub) o += text(x, y + 48, sub, { size: 10.5, fill: MUTED });
 		return o;
 	};
 
@@ -628,81 +631,97 @@ mkdirSync(OUT, { recursive: true });
 		`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2"` +
 		`${dash ? ` stroke-dasharray="${dash}"` : ''} marker-end="url(#ah-${color.slice(1)})"/>`;
 
-	// A struck-through claim, placed clear of the station labels so the rule
-	// never crosses a word it is not striking out.
-	const cancels = (x, y, label, halfWidth) =>
-		text(x, y, label, { size: 11.5, fill: RED, weight: 700 }) +
-		`<line x1="${x - halfWidth}" y1="${y - 4}" x2="${x + halfWidth}" y2="${y - 4}" stroke="${RED}" stroke-width="1.5"/>`;
+	// A dimension line between the two stations, because the quantity that
+	// separates them is the baseline and the baseline is what decides how well
+	// the middle panel works.
+	const dimension = (x, y, half, label) =>
+		`<line x1="${x - half}" y1="${y}" x2="${x + half}" y2="${y}" stroke="${MUTED}" stroke-width="1.2" ` +
+		`marker-start="url(#ah-777)" marker-end="url(#ah-777)"/>` +
+		`<rect x="${x - 30}" y="${y - 8}" width="60" height="16" fill="#fff"/>` +
+		text(x, y + 4, label, { size: 11, fill: MUTED, style: 'italic' });
+
+	// The term being removed, shown struck through — the strike is on the TERM,
+	// never on a sentence about it, or the reader cannot tell what is cancelled.
+	const removed = (x, y, term, note) => {
+		const w = term.length * 3.9;
+		return text(x, y, term, { size: 12, fill: RED, weight: 700 }) +
+			`<line x1="${x - w}" y1="${y - 4}" x2="${x + w}" y2="${y - 4}" stroke="${RED}" stroke-width="1.6"/>` +
+			text(x, y + 17, note, { size: 10.5, fill: RED });
+	};
 
 	b += '<defs>' +
-		[INK, BLUE, ORANGE, RED].map((c) =>
+		[INK, BLUE, ORANGE, RED, MUTED].map((c) =>
 			`<marker id="ah-${c.slice(1)}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">` +
 			`<path d="M 0 0 L 10 5 L 0 10 z" fill="${c}"/></marker>`).join('') +
 		'</defs>';
 
 	const TITLES = [
-		['PPP solution', 'model the satellite clock'],
-		['Common view', 'cancel it against one shared satellite'],
-		['PPP time transfer', 'model it, then cancel the model'],
+		['PPP solution', 'model satellite_clock_error'],
+		['Common view, with NIST', 'cancel satellite_clock_error'],
+		['PPP time transfer, with NIST', ['model satellite_clock_error,', 'then cancel the model’s datum']],
 	];
 	for (let i = 0; i < 3; i++) {
 		b += `<rect x="${LEFT + i * (COLW + GAP)}" y="${PANY}" width="${COLW}" height="${PANH}" rx="6" fill="none" stroke="#dcdcdc"/>`;
 		b += text(cx(i), PANY + 26, TITLES[i][0], { size: 14.5, weight: 700 });
-		b += text(cx(i), PANY + 44, TITLES[i][1], { size: 11.5, fill: MUTED, style: 'italic' });
+		// A subtitle may be two lines where naming the term in full beats an
+		// ambiguous "it" — which is the whole reason these read as they do.
+		const subs = Array.isArray(TITLES[i][1]) ? TITLES[i][1] : [TITLES[i][1]];
+		subs.forEach((line, k) => {
+			b += text(cx(i), PANY + 44 + k * 14, line, { size: 11.5, fill: MUTED, style: 'italic' });
+		});
 	}
 
-	// --- Panel 1: one station, satellite clock supplied by a product ---------
-	b += sat(cx(0) - 68, SATY);
-	b += text(cx(0) - 22, SATY + 4, 'dtˢ = ?', { size: 11.5, fill: MUTED, anchor: 'start' });
-	b += arrow(cx(0) - 70, SATY + 14, cx(0) - 76, STAY - 22, ORANGE);
-	b += station(cx(0) - 78, STAY, 'YOU', null);
-	b += `<rect x="${cx(0) + 2}" y="${SATY + 30}" width="126" height="44" rx="4" fill="none" stroke="${BLUE}" stroke-width="1.6"/>`;
-	b += text(cx(0) + 65, SATY + 48, 'analysis center', { size: 11, fill: BLUE, weight: 700 });
-	b += text(cx(0) + 65, SATY + 63, 'product supplies dtˢ', { size: 10.5, fill: BLUE });
-	b += arrow(cx(0) + 20, SATY + 76, cx(0) - 60, STAY - 14, BLUE, '5 3');
-	b += text(cx(0), STAY + 76, 'one station, no second opinion', { size: 10.5, fill: MUTED, style: 'italic' });
+	// --- Panel 1: one station, the error supplied by a correction stream -----
+	b += sat(cx(0) - 72, SATY);
+	b += text(cx(0) - 26, SATY + 4, 'satellite_', { size: 10.5, fill: MUTED, anchor: 'start' });
+	b += text(cx(0) - 26, SATY + 17, 'clock_error = ?', { size: 10.5, fill: MUTED, anchor: 'start' });
+	b += arrow(cx(0) - 74, SATY + 14, cx(0) - 80, STAY - 22, ORANGE);
+	b += station(cx(0) - 82, STAY, 'YOU', null);
+	b += `<rect x="${cx(0) + 6}" y="${SATY + 40}" width="140" height="44" rx="4" fill="#fff" stroke="${BLUE}" stroke-width="1.6"/>`;
+	b += text(cx(0) + 76, SATY + 58, 'correction stream', { size: 11, fill: BLUE, weight: 700 });
+	b += text(cx(0) + 76, SATY + 73, 'supplies the error', { size: 10.5, fill: BLUE });
+	b += arrow(cx(0) + 26, SATY + 86, cx(0) - 64, STAY - 14, BLUE, '5 3');
+	b += text(cx(0), STAY + 84, 'one station, no second opinion', { size: 10.5, fill: MUTED, style: 'italic' });
 
-	// --- Panel 2: two stations, ONE satellite, dtˢ struck out ----------------
+	// --- Panel 2: two stations, ONE satellite, the error struck out ----------
 	b += sat(cx(1), SATY);
-	b += text(cx(1), SATY - 22, 'dtˢ appears in both', { size: 11.5, fill: MUTED });
-	b += arrow(cx(1) - 10, SATY + 14, cx(1) - 74, STAY - 22, ORANGE);
-	b += arrow(cx(1) + 10, SATY + 14, cx(1) + 74, STAY - 22, ORANGE);
-	b += station(cx(1) - 84, STAY, 'YOU', null);
-	b += station(cx(1) + 84, STAY, 'NIST', 'UTC(NIST)');
-	b += text(cx(1), STAY + 8, '−', { size: 28, weight: 700 });
-	b += cancels(cx(1), STAY + 76, 'dtˢ cancels exactly', 62);
-	b += text(cx(1), STAY + 98, 'needs the same satellite,', { size: 10.5, fill: MUTED, style: 'italic' });
-	b += text(cx(1), STAY + 112, 'at the same instant', { size: 10.5, fill: MUTED, style: 'italic' });
+	b += text(cx(1), SATY - 20, 'both stations see the same error', { size: 10.5, fill: MUTED });
+	b += arrow(cx(1) - 10, SATY + 14, cx(1) - 78, STAY - 22, ORANGE);
+	b += arrow(cx(1) + 10, SATY + 14, cx(1) + 78, STAY - 22, ORANGE);
+	b += station(cx(1) - 88, STAY, 'YOU', null);
+	b += station(cx(1) + 88, STAY, 'NIST', 'UTC(NIST)');
+	b += dimension(cx(1), STAY + 4, 70, 'baseline');
+	b += removed(cx(1), STAY + 78, 'satellite_clock_error', 'subtracts out exactly');
+	b += text(cx(1), STAY + 112, 'needs the same satellite,', { size: 10.5, fill: MUTED, style: 'italic' });
+	b += text(cx(1), STAY + 125, 'at the same instant', { size: 10.5, fill: MUTED, style: 'italic' });
 
-	// --- Panel 3: two stations, DIFFERENT satellites, ONE shared product -----
-	// Two visibly separate clusters, because "no shared satellite" is the whole
-	// difference from the middle panel and has to be carried by the picture.
-	b += sat(cx(2) - 108, SATY - 12, 0.78);
-	b += sat(cx(2) - 74, SATY + 8, 0.78);
-	b += sat(cx(2) + 74, SATY + 8, 0.78);
-	b += sat(cx(2) + 108, SATY - 12, 0.78);
-	b += arrow(cx(2) - 100, SATY + 22, cx(2) - 106, STAY - 20, ORANGE);
-	b += arrow(cx(2) + 100, SATY + 22, cx(2) + 106, STAY - 20, ORANGE);
-	// One product box feeding both, because the cancellation only works if the
-	// two solutions were computed against the SAME datum. That is the condition
-	// the panel exists to show, so it gets the center of the frame.
-	b += `<rect x="${cx(2) - 74}" y="${SATY + 34}" width="148" height="26" rx="4" fill="#fff" stroke="${BLUE}" stroke-width="1.6"/>`;
-	b += text(cx(2), SATY + 51, 'the same AC product', { size: 11, fill: BLUE, weight: 700 });
-	b += arrow(cx(2) - 62, SATY + 60, cx(2) - 82, STAY - 14, BLUE, '5 3');
-	b += arrow(cx(2) + 62, SATY + 60, cx(2) + 82, STAY - 14, BLUE, '5 3');
-	b += station(cx(2) - 92, STAY, 'YOU', 'own PPP');
-	b += station(cx(2) + 92, STAY, 'NIST', 'own PPP');
-	b += text(cx(2), STAY + 8, '−', { size: 28, weight: 700 });
-	b += cancels(cx(2), STAY + 76, 'the product datum cancels', 82);
-	b += text(cx(2), STAY + 98, 'no shared satellite needed —', { size: 10.5, fill: MUTED, style: 'italic' });
-	b += text(cx(2), STAY + 112, 'what BIPM uses for TAI', { size: 10.5, fill: MUTED, style: 'italic' });
+	// --- Panel 3: two stations, DIFFERENT satellites, ONE shared stream ------
+	b += sat(cx(2) - 112, SATY - 12, 0.78);
+	b += sat(cx(2) - 78, SATY + 8, 0.78);
+	b += sat(cx(2) + 78, SATY + 8, 0.78);
+	b += sat(cx(2) + 112, SATY - 12, 0.78);
+	b += arrow(cx(2) - 104, SATY + 22, cx(2) - 108, STAY - 20, ORANGE);
+	b += arrow(cx(2) + 104, SATY + 22, cx(2) + 108, STAY - 20, ORANGE);
+	// One stream feeding both, because the cancellation only works if the two
+	// solutions were computed against the SAME datum. That is the condition the
+	// panel exists to show, so it gets the center of the frame.
+	b += `<rect x="${cx(2) - 82}" y="${SATY + 34}" width="164" height="26" rx="4" fill="#fff" stroke="${BLUE}" stroke-width="1.6"/>`;
+	b += text(cx(2), SATY + 51, 'the same correction stream', { size: 11, fill: BLUE, weight: 700 });
+	b += arrow(cx(2) - 66, SATY + 60, cx(2) - 86, STAY - 14, BLUE, '5 3');
+	b += arrow(cx(2) + 66, SATY + 60, cx(2) + 86, STAY - 14, BLUE, '5 3');
+	b += station(cx(2) - 94, STAY, 'YOU', 'own PPP');
+	b += station(cx(2) + 94, STAY, 'NIST', 'own PPP');
+	b += dimension(cx(2), STAY + 4, 62, 'baseline');
+	b += removed(cx(2), STAY + 78, 'the stream’s datum', 'subtracts out instead');
+	b += text(cx(2), STAY + 112, 'no shared satellite needed —', { size: 10.5, fill: MUTED, style: 'italic' });
+	b += text(cx(2), STAY + 125, 'what BIPM and NIST use for TAI', { size: 10.5, fill: MUTED, style: 'italic' });
 
 	// --- The band that is the actual argument -------------------------------
 	b += text(LEFT, BANDY - 12, 'and your answer is referenced to —', { size: 12, weight: 700, anchor: 'start' });
 	const LAND = [
-		['the analysis center’s datum', 'stable, but unpublished', 'the chain stops here', false],
-		['UTC(NIST)', 'a named realization', 'Circular T continues the chain', true],
-		['UTC(NIST)', 'a named realization', 'Circular T continues the chain', true],
+		['the correction stream’s datum', 'stable, but unpublished', 'the traceability chain stops here', false],
+		['UTC(NIST)', 'a named realization of UTC', 'Circular T continues the traceability chain', true],
+		['UTC(NIST)', 'a named realization of UTC', 'Circular T continues the traceability chain', true],
 	];
 	for (let i = 0; i < 3; i++) {
 		const [a, c, d, ok] = LAND[i];
@@ -710,10 +729,10 @@ mkdirSync(OUT, { recursive: true });
 		b += `<rect x="${LEFT + i * (COLW + GAP)}" y="${BANDY}" width="${COLW}" height="64" rx="6" fill="none" stroke="${col}" stroke-width="${ok ? 1.8 : 1}"${ok ? '' : ' stroke-dasharray="5 4"'}/>`;
 		b += text(cx(i), BANDY + 22, a, { size: 13, weight: 700, fill: ok ? BLUE : INK });
 		b += text(cx(i), BANDY + 38, c, { size: 10.5, fill: MUTED });
-		b += text(cx(i), BANDY + 54, d, { size: 10.5, fill: ok ? INK : MUTED, weight: ok ? 700 : 400 });
+		b += text(cx(i), BANDY + 54, d, { size: 10, fill: ok ? INK : MUTED, weight: ok ? 700 : 400 });
 	}
 
-	b += text(LEFT, 22, 'Three ways to dispose of the satellite clock', { size: 15, weight: 700, anchor: 'start' });
+	b += text(LEFT, 22, 'Three ways to remove satellite_clock_error', { size: 15, weight: 700, anchor: 'start' });
 	b += text(W - LEFT, 22, 'orange: signal from space  ·  blue: computed on the ground', {
 		size: 10.5, fill: MUTED, anchor: 'end',
 	});

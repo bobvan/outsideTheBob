@@ -1,6 +1,6 @@
 ---
-title: "How do you compare two clocks a thousand miles apart?"
-description: "You cannot run a cable, and neither clock can be the source for the other. The classic answer was GPS common view. BIPM's own records show it has been retired — and the reason is more interesting than the technique."
+title: "Comparing distant clocks"
+description: "You cannot run a cable, and neither clock can be the source for the other. So you both watch a third clock in the sky — which drags its error into your answer. Every technique here is a different way of removing it."
 section: "utc"
 order: 33
 updatedDate: 2026-08-05
@@ -24,51 +24,76 @@ If the first problem is a LAN, this is the WAN — and as with networking, the
 techniques that work over the long haul look almost nothing like the ones that
 work in a building.
 
-## What stands in the way is the satellite's own clock
+## The central bargain: a third clock, and its error
 
-Every technique here uses the same instrument: a GNSS receiver watching
-satellites, timestamping their signals against the local clock. For your
-receiver **r** watching satellite **s**, what you record is
+With no wire between you, the only thing you and the distant laboratory have in
+common is **a third clock that you can both see** — an atomic clock in a
+satellite passing overhead.
 
-> arrival time = geometry + (your clock error − **the satellite's clock error**)
-> + atmosphere + noise
+That is the bargain, and it comes with a bill. Measuring against a third clock
+drags *that clock's* error into your answer. So every technique on this page is
+a different way of **removing** it again.
 
-You want your clock error. The geometry you know, if you surveyed properly. The
-atmosphere you can measure or model. But
-[the satellite's clock is drifting and nobody is steering it](/timekeeping/utc/gnss-time-is-a-prediction/),
-and its error is far larger than the thing you are trying to measure.
+Write down what your receiver actually records when it timestamps a satellite
+signal, and the shape of the problem is immediate:
 
-**Every technique on this page is a different way of disposing of that one
-term.** Once you see that, the whole field collapses into three options.
+```
+what your receiver records  =   geometry
+                              + your_clock_error
+                              − satellite_clock_error
+                              + atmosphere_delay
+                              + noise
+```
+
+Those are all terms of one sum, and each has a different status:
+
+| term | where it comes from |
+|---|---|
+| `geometry` | known, if you surveyed the [antenna position](/timekeeping/antennas/antenna-position/) properly |
+| `your_clock_error` | **what you are solving for** |
+| `satellite_clock_error` | the problem — [drifting, and nobody is steering it](/timekeeping/utc/gnss-time-is-a-prediction/) |
+| `atmosphere_delay` | measured with a dual-frequency receiver, or modelled |
+| `noise` | averages down with time |
+
+One term is the answer. One term is in the way, and it is far larger than the
+thing you are trying to measure. **Every technique below is a different way of
+removing `satellite_clock_error` from that sum.** Once you see that, the field
+collapses into three options.
 
 <ZoomableImage
 	plate
 	src="/figures/time-transfer-techniques.svg"
-	alt="Three panels side by side. PPP solution: one satellite, one ground station labeled YOU, and a blue box labeled analysis center product supplies the satellite clock, feeding the station. Common view: one satellite seen by both YOU and NIST, with a minus sign between them and the struck-out claim that the satellite clock cancels exactly. PPP time transfer: two separate clusters of satellites, one over each station, a single shared analysis center product box feeding both, a minus sign between them, and the struck-out claim that the product datum cancels. Below, a band shows what each answer is referenced to: the analysis center's datum, where the chain stops, for the first, and UTC(NIST), where Circular T continues the chain, for the other two."
-	caption="Three ways to dispose of the satellite clock. Orange is signal from space, blue is
-		computed on the ground — the same color grammar as the rest of this section. The band
-		along the bottom is the part that decides what your answer is worth."
+	alt="Three panels side by side. PPP solution: one satellite, one ground station labeled YOU, and a blue box labeled correction stream supplies the error, feeding the station. Common view with NIST: one satellite seen by both YOU and NIST with a baseline dimension line between them, and satellite_clock_error struck through in red, marked subtracts out exactly. PPP time transfer with NIST: two separate clusters of satellites, one over each station, a single shared correction stream box feeding both, a baseline dimension line, and the stream's datum struck through in red. Below, a band shows what each answer is referenced to: the correction stream's datum, where the traceability chain stops, for the first, and UTC(NIST), where Circular T continues the traceability chain, for the other two."
+	caption="Three ways to remove satellite_clock_error. Orange is signal from space, blue is
+		computed on the ground — the same color grammar as the rest of this section. The struck-out
+		red term in each panel is the one that goes away. The band along the bottom is the part
+		that decides what your answer is worth."
 />
 
-## Common view: cancel it with a second measurement
+## Common view: remove it with a second measurement
 
 Have a second station watch **the same satellite at the same instant**. It
-records the same satellite clock error you did. Subtract the two records and
+records the same `satellite_clock_error` you did. Subtract the two records and
 that term **cancels exactly** — not modelled, not estimated, gone. What is left
 is the difference between the two local clocks.
 
 It is a beautiful idea, and its beauty is that it needs nothing else. No
-correction product, no internet, no subscription, no analysis center. Two
+correction stream, no internet, no subscription, nobody's analysis to trust. Two
 receivers, a shared satellite, and arithmetic. That is why it could be built in
 the 1980s, and why it carried international timekeeping for two decades.
 
 And if the far end's clock is a national laboratory's realization of UTC, the
 answer lands directly on **UTC(NIST)** or UTC(USNO) — a *named* timescale that
-somebody publishes, which turns out to be the thing that matters most.
+somebody publishes, which turns out to matter more than anything else here.
+
+The measurements are exchanged in a format called
+[CGGTTS](/timekeeping/glossary/#cggtts), which is worth a glance if only because
+its header states every delay in the chain. NIST sells the technique as a
+service, [TMAS](/timekeeping/glossary/#tmas).
 
 ## Then why has BIPM stopped using it?
 
-Because the error it was invented to cancel no longer exists.
+Because the error it was invented to remove no longer exists.
 
 BIPM's own 2006 working document to the CCTF puts it on one axis, and this is
 the single most clarifying thing I found while writing this page:
@@ -80,10 +105,15 @@ the single most clarifying thing I found while writing this page:
 | 2005 | **~1 ns** — "IGS Time" | all-in-view |
 
 **Selective Availability** was the deliberate dither the US applied to GPS
-satellite clocks, worth tens of nanoseconds. Common view cancelled it perfectly,
+satellite clocks, worth tens of nanoseconds. Common view removed it perfectly,
 which made common view worth a great deal. SA was switched off in May 2000.
-Precise orbit and clock products then took the residual to about a nanosecond —
-and at that point *what common view cancels is worth less than what it costs.*
+
+Then the second half of the story: **[GNSS Analysis Centers](/timekeeping/glossary/#gnss-analysis-center)**
+— thirteen of them, listed by the [IGS](https://igs.org/acc/), including CNES,
+JPL and the U.S. Naval Observatory — now produce precise orbit and clock
+**correction streams** that take the error in the GPS signal to about a
+nanosecond. At which point *what common view removes is worth less than what it
+costs.*
 
 ### What it costs is the part people skip
 
@@ -96,41 +126,72 @@ You throw away every satellite the far end cannot see, and you are pushed toward
 the low-elevation ones you can both barely reach — which are exactly the
 satellites with the worst signal-to-noise and the most atmosphere in the way.
 The longer the [baseline](/timekeeping/glossary/#baseline), the worse the deal.
-BIPM measured it:
 
-| baseline | length | gain from dropping common view |
-|---|---|---|
-| OP–PTB | 600 km | ~1–4 % |
-| NPL–PTB | 700 km | ~0 % |
-| NPL–USNO | 6500 km | ~10–20 % |
-| **NIST–PTB** | **10 000 km** | **~28–35 %** |
+BIPM measured it, and it is worth being precise about *what* they measured,
+because it is not signal-to-noise. Over eight months they compared each GPS link
+against an independent and more accurate link on the same pair of laboratories —
+two-way satellite transfer, or PPP — and took **the scatter of the difference**,
+in nanoseconds. That scatter is the GPS link's own noise. Then they asked how
+much it shrank when the same data was processed all-in-view instead of common
+view:
+
+| baseline | length | scatter, common view | scatter, all-in-view | gain |
+|---|---|---|---|---|
+| OP–PTB | 600 km | 0.869 ns | 0.846 ns | ~2 % |
+| NPL–PTB | 700 km | 1.364 ns | 1.356 ns | ~0 % |
+| NPL–USNO | 6500 km | 1.073 ns | 0.974 ns | ~10 % |
+| **NIST–PTB** | **10 000 km** | **1.990 ns** | **1.305 ns** | **~35 %** |
 
 Nothing at 600 km, a third at 10,000. Which is the same sentence as *common view
-only cancels what both ends genuinely share*, written in numbers.
+only removes what both ends genuinely share*, written in numbers. Their stated
+mechanism is the obvious one: the **number of satellites and epochs you get to
+use**, and the quality of the ones you are left with.
 
-## All-in-view, and then PPP
+## All-in-view: the first fix, and still in service
 
-**All-in-view** drops the simultaneity requirement. Each station uses *every*
-satellite it can see, solves its own offset against the constellation timescale
-using a precise product, and only then are the two results differenced. BIPM
-switched TAI links to it in **September 2006**, noting that it delivered
-"improved TAI time transfer stability **without any new investment** — no
-hardware updating required."
+*(Not pictured above — it is the middle step, and the figure shows where the
+subject started and where it ended up.)*
 
-**PPP time transfer** goes one better by adding the carrier phase. Each station
-runs its own [PPP](/timekeeping/glossary/#ppp) solution against the *same*
-product, and the two solutions are differenced. The product's datum appears in
-both and cancels — exactly the way the satellite clock cancelled in common view,
-but now with a far quieter observable and no requirement that the two stations
-ever look at the same satellite. BIPM has used it for UTC since **2009**.
+**All-in-view** keeps the same code measurements common view used — the same
+pseudoranges, from the same receivers, needing no new hardware — and simply
+drops the simultaneity rule. Each station uses *every* satellite it can see,
+solves its own offset against the constellation's timescale using a GNSS
+Analysis Center's precise correction stream, and only then are the two results
+differenced.
+
+BIPM switched TAI links to it in **September 2006**, and their pitch was that it
+cost nothing to adopt: "improved TAI time transfer stability **without any new
+investment** — no hardware updating required." The only disadvantage they listed
+was "more rigorous data processing than CV."
+
+<CalloutBox type="warn" title="It was not a brief stepping stone">
+	PPP time transfer arrived three years later and is now the majority
+	technique, but all-in-view did not go away with it — <strong>26 of the 86
+	links</strong> in the June 2026 <em>Circular T</em> are still all-in-view
+	code links. It is what a laboratory uses when it has a code receiver and no
+	carrier-phase processing chain, and it remains perfectly respectable.
+</CalloutBox>
+
+## PPP time transfer: remove the model instead
+
+The last step adds the **carrier phase** — a far quieter measurement than the
+code, and the reason this technique is a factor of two better than the one
+above.
+
+Each station runs its own [PPP](/timekeeping/glossary/#ppp) solution against the
+*same* correction stream, and the two solutions are then differenced. The
+stream's [datum](/timekeeping/glossary/#datum) — the arbitrary constant every
+satellite clock in it is offset by — appears in both solutions and cancels.
+BIPM has used it for UTC since **2009**.
 
 <CalloutBox type="tip" title="The trick is the same trick, applied one level up">
-	Common view cancels the <em>satellite's clock</em> by differencing two
-	stations that both saw it. PPP time transfer cancels the <em>product's
-	datum</em> by differencing two stations that both used it.
+	Common view removes <code>satellite_clock_error</code> by differencing two
+	stations that both <em>saw</em> it. PPP time transfer removes the correction
+	stream's <em>datum</em> by differencing two stations that both <em>used</em>
+	it.
 
 	Same move. The second version just picks a quantity that is easier to share —
-	because two stations can always use the same correction product, and cannot
+	because two stations can always use the same correction stream, and cannot
 	always see the same satellite.
 </CalloutBox>
 
@@ -139,7 +200,7 @@ ever look at the same satellite. BIPM has used it for UTC since **2009**.
 *Circular T* Section 5 lists the technique for every link used to compute TAI.
 For issue 462, June 2026:
 
-| technique | links | link instability (uStb) |
+| technique | links | link instability |
 |---|---|---|
 | **GPSPPP** | **48** | 0.3 ns |
 | GPS P3 — all-in-view, dual-frequency code | 16 | 0.7 ns |
@@ -162,8 +223,8 @@ vocabulary is all-in-view or PPP.
 	0.3 &nbsp; 2.1 &nbsp; 0.5</code>
 
 	NIST's link into international atomic time is two-way satellite time transfer
-	combined with <strong>GPS PPP</strong>. The organization that made
-	common view famous does not use it to connect its own timescale to the world.
+	combined with <strong>GPS PPP</strong>. The organization that made common view
+	famous does not use it to connect its own timescale to the world.
 </CalloutBox>
 
 Read the uncertainty column and the ladder is plain: **PPP links are 0.3 ns
@@ -176,16 +237,16 @@ This is the part that took me longest to see, and it is the bottom band of the
 figure.
 
 A [PPP solution](/timekeeping/utc/gnss-time-is-a-prediction/) of the ordinary
-kind — one station, one product, solve for your clock — gives you an excellent
-number referenced to **the analysis center's datum**. That datum is stable and
+kind — one station, one correction stream, solve for your clock — gives you an
+excellent number referenced to **that stream's datum**. The datum is stable and
 perfectly serviceable. It is also unpublished, uncertified, and appears in no
-document that anybody outside that analysis center is obliged to accept. Your
-chain stops there.
+document anybody outside that GNSS Analysis Center is obliged to accept. Your
+traceability chain stops there.
 
 Difference two PPP solutions and the datum cancels. What you are left with is
 your clock against **UTC(NIST)** — which appears in *Circular T* Section 1 every
-month, with a published [UTC − UTC(NIST)] and a stated uncertainty. Your chain
-does not stop; it continues, through NIST, to UTC itself.
+month, with a published [UTC − UTC(NIST)] and a stated uncertainty. Your
+traceability chain does not stop; it continues, through NIST, to UTC itself.
 
 So the anchor is not tighter in the sense of quieter. It is tighter in the sense
 that **it connects to something**. You trade a private zero for a public one,
@@ -197,19 +258,19 @@ public zeros.
 None of the above makes it a bad technique, and a page that implied so would be
 selling something.
 
-- **The cancellation is exact.** No model, no product, no assumption. There is
-  an honesty to that which the alternatives do not have.
+- **The cancellation is exact.** No model, no correction stream, no assumption.
+  There is an honesty to that which the alternatives do not have.
 - **It needs nothing you have to subscribe to.** In an outage, in a lab with no
   internet, on hardware from 1995, it still works.
 - **It is thoroughly standardized.** CGGTTS is a stable, documented format with
   decades of continuity behind it, and continuity is worth real money in
   metrology.
-- **Short baselines lose almost nothing.** BIPM measured ~0 % gain at 700 km.
-  If your reference is regional rather than continental, the case against is
-  much weaker.
+- **Short baselines lose almost nothing.** BIPM measured ~0 % gain at 700 km. If
+  your reference is regional rather than continental, the case against is much
+  weaker.
 - **And what a service like TMAS sells is not the technique anyway.** It sells a
-  calibrated end, a ten-minute feed, and a report with NIST's uncertainty on it.
-  Those would still be worth buying wrapped around any technique.
+  calibrated end of the link, a ten-minute feed, and a report with NIST's
+  uncertainty on it. Those would be worth buying wrapped around any technique.
 
 ## If somebody is selling you common view
 
@@ -219,19 +280,19 @@ Three questions, in the spirit of the
 1. **"What is my baseline to your reference, and what does the technique cost me
    at that distance?"** Under a thousand kilometers, very little. Across an
    ocean, ask for numbers.
-2. **"Single-frequency or dual?"** The deployed fleet matters more than the
-   technique. An L1-only receiver models the ionosphere rather than measuring
-   it, and over long baselines that is the dominant term.
-3. **"Is this what BIPM uses for your own link into TAI?"** For NIST the answer
-   is on the public record and it is no. That is not a gotcha — it is a way of
-   asking what the technique is actually being chosen *for*, which is usually
-   continuity, calibration, and a report rather than performance.
+2. **"Single-frequency or dual?"** The deployed hardware matters more than the
+   technique. A single-frequency receiver models the atmosphere rather than
+   measuring it, and over long baselines that is the dominant term.
+3. **"Is this what you use for your own link into TAI?"** For NIST the answer is
+   on the public record and it is no. That is not a gotcha — it is a way of
+   asking what the technique is being chosen *for*, which is usually continuity,
+   calibration, and a report rather than performance.
 
 [[? Two things I would rather have from you than guess.
 
-1) I have framed the whole page as "three ways to dispose of the satellite clock", because that was the framing that finally made it click for me. Does it click for you, or does it feel like a device I have imposed on the subject?
+1) I have framed the whole page as "a third clock, and removing its error", because that was the framing that finally made it click. Does it click for you, or does it feel like a device I have imposed on the subject?
 
-2) The "being fair to common view" section is deliberately generous, partly because I do not want the page to read as an attack on NIST. But you know this audience and I do not. Is the balance right for someone who remembers the original trumpeting, or does the fair-minded section blunt the point you wanted to make? ?]]
+2) The "being fair to common view" section is deliberately generous, and you have said credibility goes up on an even-handed comparison. Is the balance right for someone who remembers the original trumpeting, or should the fair section come earlier so it does not read as a concession tacked on at the end? ?]]
 
 ## Where to go next
 

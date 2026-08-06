@@ -380,3 +380,85 @@
     - label: "PPP"
       href: "#ppp"
   draft: true
+
+- id: gnss-analysis-center
+  term: "GNSS Analysis Center"
+  aliases: ["analysis center", "AC", "IGS Analysis Center"]
+  definition: >-
+    An institution that takes raw observations from a global network of tracking
+    stations and works out where each satellite really was and what its clock
+    really read, then publishes the answer as a **correction stream**. The IGS
+    lists thirteen of them, including CNES, JPL, Wuhan University and the U.S.
+    Naval Observatory. Say **GNSS** Analysis Center on first use — "analysis
+    center" alone means something different in almost every other field.
+  authority:
+    label: "IGS, list of Analysis Centers"
+    url: "https://igs.org/acc/"
+  seeAlso:
+    - label: "Where corrections come from"
+      href: "/timekeeping/utc/gnss-time-is-a-prediction/"
+    - label: "PPP-AR, which needs one center's stream and not a mixture"
+      href: "#ppp-ar"
+    - label: "Datum"
+      href: "#datum"
+  draft: true
+
+- id: datum
+  term: "Datum"
+  aliases: ["reference frame", "clock datum", "position datum"]
+  definition: >-
+    The arbitrary origin a set of measurements is expressed against, fixed by
+    convention because the observations themselves only ever determine
+    *differences*. It appears twice in this subject and it is the same idea both
+    times: a **position datum** such as ITRF2020 says where coordinates are
+    measured from, and a **clock datum** is the constant every satellite clock in
+    a correction stream is offset by. Neither is discoverable from the data —
+    somebody has to declare it.
+  seeAlso:
+    - label: "GNSS Analysis Center"
+      href: "#gnss-analysis-center"
+    - label: "Why differencing two solutions cancels it"
+      href: "/timekeeping/utc/comparing-two-distant-clocks/"
+    - label: "PPP-AR"
+      href: "#ppp-ar"
+  draft: true
+
+- id: cggtts
+  term: "CGGTTS"
+  aliases: ["Common GNSS Generic Time Transfer Standard"]
+  definition: >-
+    The file format national laboratories use to exchange time-transfer
+    measurements, one line per satellite track, carrying the offset between the
+    satellite's signal and the local clock. Its header states every delay in the
+    chain — antenna cable, receiver internal, reference — which is what makes a
+    CGGTTS file self-describing enough for somebody else to use. Version 2E
+    covers every current constellation.
+  authority:
+    label: "BIPM, CGGTTS version 2E"
+    url: "https://www.bipm.org/documents/20126/52718503/G1-2015.pdf"
+  seeAlso:
+    - label: "Comparing distant clocks"
+      href: "/timekeeping/utc/comparing-two-distant-clocks/"
+    - label: "TMAS"
+      href: "#tmas"
+  draft: true
+
+- id: tmas
+  term: "TMAS"
+  aliases: ["Time Measurement and Analysis Service"]
+  definition: >-
+    NIST's remote time calibration service. NIST installs a GNSS receiver at
+    your site — the equipment stays theirs — takes the 1 PPS output of your
+    clock, and compares it against UTC(NIST), reporting every ten minutes to a
+    web page. The base tier *measures* rather than steers, and what it really
+    sells is a calibrated end of the link and a report with NIST's uncertainty
+    on it.
+  authority:
+    label: "NIST, Time Measurement and Analysis Service"
+    url: "https://www.nist.gov/programs-projects/time-measurement-and-analysis-service-tmas"
+  seeAlso:
+    - label: "Could you build the same link yourself?"
+      href: "/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/"
+    - label: "Traceability"
+      href: "/timekeeping/utc/traceability/"
+  draft: true

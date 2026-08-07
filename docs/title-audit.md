@@ -5,8 +5,8 @@ A pass over all 24 garden pages against the principle recorded in
 someone with a question, who does not know the lingo and will describe the
 problem the way they experience it.*
 
-Done 2026-08-05, after the principle was written down. Two pages were retitled
-in the same commit at Bob's instruction and are listed as done.
+Done 2026-08-05, after the principle was written down. Kept current as titles
+are fixed — three so far, each at Bob's instruction.
 
 The test applied to each title: **would somebody who has the problem, but not
 the vocabulary, type these words?** A title that only a person who already knows
@@ -32,14 +32,15 @@ they quote the reader's own sentence back at them.
 | What "traceable to UTC" actually requires | *Traceable to UTC* is the phrase a regulator hands the reader — so it is their words, not ours |
 | An uncalibrated antenna feedline is likely your largest source of error to UTC | A claim about the reader's situation. Long, but it promises a payoff |
 
-**2 fixed in this pass**, at Bob's instruction:
+**3 fixed so far**, at Bob's instruction:
 
 | was | is |
 |---|---|
 | How UTC is actually made | Can I sync my datacenter clocks to UTC? |
 | The fast loop and the slow loop | How does GNSS time relate to UTC? |
+| BIPM publishes a GNSS prediction scorecard | Which GNSS constellation keeps the best time? *(2026-08-07)* |
 
-**13 fail.** They divide into three failure modes.
+**12 still fail.** They divide into three failure modes.
 
 ---
 
@@ -64,7 +65,7 @@ Findable only by the initiated.
 
 | current title | what the reader would ask | note |
 |---|---|---|
-| BIPM publishes a GNSS prediction scorecard | **Which GNSS constellation keeps the best time?** | Probably the highest-traffic real question in the whole garden, and we answer it with fourteen months of BIPM data. Leading with *BIPM* wastes that. |
+| ~~BIPM publishes a GNSS prediction scorecard~~ | ✅ **Which GNSS constellation keeps the best time?** — *done 2026-08-07* | Probably the highest-traffic real question in the whole garden, and we answer it with fourteen months of BIPM data. Leading with *BIPM* wasted that. |
 | UTC(k), and who defines yesterday | **If nobody has UTC, whose time am I actually getting?** | *UTC(k)* is unsearchable by anyone who needs the page. |
 | Contrasting timing accuracy and precision | **What does "accurate to 15 ns" actually mean?** | That ambiguity is the page's entire argument, and it is a phrase the reader has been handed by a vendor. |
 | Relating timing accuracy with measurement resolution | **My clock reports the same number every time — is it that good?** | Worse than the one above: both *contrasting* and *relating* are essay verbs, not reader words. |
@@ -90,6 +91,6 @@ actually need?** Worth revisiting once the page settles.
 
 ## What this pass did not do
 
-Change any title Bob did not name. The 13 above are recommendations; the two
-retitles in this commit were instructed. Blog posts were not audited, since the
+Change any title Bob did not name. The 12 remaining are recommendations only;
+every retitle so far was instructed. Blog posts were not audited, since the
 principle deliberately exempts them.

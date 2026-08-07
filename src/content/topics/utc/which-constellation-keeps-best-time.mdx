@@ -1,6 +1,6 @@
 ---
-title: "BIPM publishes a GNSS prediction scorecard"
-description: "Buried in Circular T is a daily, per-constellation measurement of how well each GNSS has been predicting UTC. It turns folklore into evidence, and the evidence surprises."
+title: "Which GNSS constellation keeps the best time?"
+description: "Folklore says Galileo. BIPM measures it daily, per constellation, and publishes the answer — and over fourteen months the folklore does not hold up."
 section: "utc"
 order: 70
 updatedDate: 2026-08-04
@@ -12,17 +12,23 @@ draft: true
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 
-BIPM cannot correct your clock. The answer arrives weeks late, which is the
-whole point of [the slow loop](/timekeeping/utc/how-gnss-time-relates-to-utc/).
+**Three of them are tied, and one is not.** Over fourteen months of daily
+measurements, GPS, Galileo and BeiDou all sit within about a nanosecond of UTC
+and are effectively indistinguishable. GLONASS is an order of magnitude worse.
 
-But buried in *Circular T* is a section that measures something more useful than
-where UTC was. It measures **how well each constellation predicted it.**
+If you were expecting Galileo to win, so was I. The evidence says otherwise, and
+the evidence is better than anybody's opinion — because the body that *defines*
+UTC measures this, daily, and publishes the marks.
 
-Every GNSS satellite broadcasts its operator's estimate of the offset between
-that constellation's timescale and UTC. BIPM checks that estimate against the
-UTC it later computes, and publishes the difference — **daily**, per
-constellation. That is a scorecard on the fast loop, kept by the body that
-defines the answer.
+Here is where that comes from. Every GNSS satellite broadcasts its operator's
+estimate of the offset between that constellation's timescale and UTC. Weeks
+later, BIPM computes what UTC actually was, checks each operator's estimate
+against it, and publishes the difference — **daily, per constellation**, in
+Section 4 of *Circular T*.
+
+That is a scorecard on
+[the fast loop](/timekeeping/utc/how-gnss-time-relates-to-utc/), kept by the
+only organization entitled to mark it.
 
 <ZoomableImage
 	plate

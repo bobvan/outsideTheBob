@@ -94,6 +94,104 @@ Antenna coordinates to the millimeter, every delay term stated, and a
 `CAL_ID` naming the BIPM campaign that determined them. This is what a
 professional link looks like when it is not hiding anything.
 
+## We ran it, and here is what came out
+
+Two results, from a single day of observations — 2026-07-25 — with both ends
+processed through the *same* correction stream so the
+[datum](/timekeeping/glossary/#datum) cancels. Neither needed a calibration,
+and that is the point of both of them.
+
+### First, a check that the method works at all
+
+Before differencing anything, run **NIST's own observations** through the
+pipeline and look at what falls out. If the machinery is sound, the answer
+should look like a hydrogen maser, because that is what is clocking that
+receiver.
+
+| | over 24 h, 2880 epochs |
+|---|---|
+| frequency offset vs the correction stream's datum | **−2.1 × 10⁻¹⁵** |
+| RMS about the linear fit | **57 ps** |
+| ADEV at 30 s → 4 h | 1.6 × 10⁻¹³ → 4.2 × 10⁻¹⁵ |
+| TDEV at 30 s | **2.7 ps** |
+
+That is maser-class, which is exactly what a receiver clocked by UTC(NIST)
+should look like. It says nothing about our clock and everything about whether
+we can trust the next number.
+
+### Then the real one: two national timescales, differenced through us
+
+Now do it twice — once against NIST, once against
+[USNO](/timekeeping/glossary/#utc-k) — and subtract. What comes out is
+[UTC(USNO) − UTC(NIST)], computed entirely from public observations by somebody
+with no calibration and no standing whatsoever:
+
+| | over 24 h, 2880 common epochs |
+|---|---|
+| peak-to-peak | **0.2 ns** |
+| RMS about the fit | **0.04 ns** |
+| relative rate | **+8.7 × 10⁻¹⁶**, or +0.1 ns/day |
+| TDEV at 30 s | **4 ps** |
+| mean offset | +17.7 ns — **uncalibrated, and not a result** |
+
+<CalloutBox type="tip" title="Read that table the right way round">
+	<strong>The rate is claimable at full accuracy. The offset is not claimable
+	at all.</strong> That is the frequency/time split of this whole page, showing
+	up in one table.
+
+	<code>+8.7 × 10⁻¹⁶</code> is a real measurement of how two national timescales
+	are drifting relative to each other, and it is checkable against
+	<em>Circular T</em>. The <code>+17.7 ns</code> is our two uncalibrated
+	stations' delays plus whatever the truth is, with no way to separate them.
+
+	Same dataset, same afternoon's work. One number you could defend to a
+	metrologist and one you could not, and the difference is not effort — it is
+	whether the quantity survives an unknown constant.
+</CalloutBox>
+
+**What we could not get** is the number you would most expect: our own clock
+against UTC(NIST). Not for want of trying, and the reason turned out to be more
+interesting than the numbers above.
+
+## Why our own clock did not appear in the answer
+
+A [timescale](/timekeeping/datacenters/timescales/) is three things: the
+duration of one tick, an origin, and a count of ticks since. It is worth
+holding that definition in mind here, because **a GNSS receiver never observes
+satellites against UTC. It observes them against a timescale of its own** — it
+declares the origin, and it counts the ticks.
+
+The question that decides everything is: *where does the tick duration come
+from?*
+
+**If the receiver has no external reference input, the ticks come from a TCXO
+soldered to its own board.** Every pseudorange, every carrier phase, every PPS
+edge is timed against that oscillator. So when we solved for the receiver clock
+and differenced it against UTC(NIST), what we measured was the offset of a
+**free-running TCXO** — not the disciplined oscillator we actually care about.
+The disciplined oscillator is steered separately and **does not appear in the
+raw observations at all.**
+
+<CalloutBox type="warn" title="Which puts a ceiling on the whole exercise">
+	When the tick interval can only come from an internal TCXO, your link to a
+	national laboratory measures that TCXO. You can bolt the disciplined
+	oscillator on afterwards — comparing the two with a time interval counter and
+	adding the term — and that works, but you are now measuring through a second
+	hop, and <strong>you are limited by how tightly you can tie the TCXO to your
+	oscillator.</strong>
+
+	A receiver with an <strong>external reference input</strong> removes the hop
+	entirely: fed your oscillator, it takes its carrier-phase observations
+	directly against it, and the receiver's clock estimate simply <em>is</em> your
+	oscillator's error against GNSS. Same measurement, one fewer thing in the way.
+</CalloutBox>
+
+That distinction is the difference between
+[a receiver that wants to be your clock and one that expects you to have one](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/),
+and it is the reason the numbers above stop where they do. Redoing this
+measurement on an externally clocked receiver is a different experiment, and it
+deserves its own page rather than a footnote on this one.
+
 ## What common view gives you for free
 
 [Common view](/timekeeping/glossary/#common-mode) is the oldest trick in time

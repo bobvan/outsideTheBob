@@ -100,11 +100,24 @@ result in its own messages.
 The last trait is the one that changes the category, and it is the one most
 datasheets bury.
 
-**Without a reference input, every measurement the receiver makes is timed
-against a TCXO soldered to its own board.** Every pseudorange, every carrier
-phase, every PPS edge. That oscillator is a few dollars' worth of quartz in a
-can, and its short-term instability is baked into every observation the receiver
-will ever give you.
+Start from what a receiver can actually do, which is narrower than it looks.
+**No GNSS receiver ever observes a satellite against UTC.** It observes the
+satellite against *a timescale of its own* — and a
+[timescale](/timekeeping/datacenters/timescales/) is three things: a tick
+duration, an origin, and a count. The receiver always supplies the origin and
+always does the counting.
+
+So the only question left is **where the tick duration comes from.**
+
+**Without a reference input, the ticks come from a TCXO soldered to the
+receiver's own board.** Every pseudorange, every carrier phase, every PPS edge
+is timed against that oscillator. It is a few dollars' worth of quartz in a can,
+and its short-term instability is baked into every observation the receiver will
+ever give you.
+
+**With one, the ticks come from your oscillator** — and the receiver's clock
+estimate simply *is* your oscillator's error against GNSS. Not a proxy for it, a
+direct measurement of it.
 
 <CalloutBox type="warn" title="Which puts a ceiling on what you can build">
 	GNSS gives you excellent <em>long-term</em> truth and poor short-term
@@ -115,8 +128,15 @@ will ever give you.
 	But if the receiver will not accept your oscillator as its own timebase, its
 	measurements are made against its TCXO, and <strong>you cannot build a clock
 	with better short-term stability than that TCXO out of them.</strong> You can
-	bolt the receiver's answer onto a better oscillator externally, and people do,
-	but the receiver's own measurement noise is then a floor you cannot get under.
+	bolt a better oscillator on externally and compare the two with a counter —
+	people do, and it works — but that is a second hop, and you are then limited
+	by <em>how tightly you can tie the TCXO to your oscillator</em> rather than by
+	either one.
+
+	We hit this measuring
+	<a href="/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/">our own link to
+	UTC(NIST)</a>: the disciplined oscillator never appeared in the raw
+	observations at all, because the receiver was not clocked by it.
 </CalloutBox>
 
 Which is why the receivers in national laboratories all have this input and all

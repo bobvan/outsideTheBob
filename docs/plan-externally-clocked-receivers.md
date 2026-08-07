@@ -43,10 +43,27 @@ sky, same antenna if we split it, two architectures.
 A **NetRS** externally clocked is the third leg, and the one that reaches
 furthest back — a geodetic receiver of an older generation doing the same trick.
 
-⚠️ Naming to check before publishing: `docs/receiver-clock-hierarchy.md` in
-PePPAR-Fix calls the SXT-D oscillator a Rakon; `docs/gnssdo-plus-integration.md`
-calls it an **STP3593LF double-oven OCXO** and is the more recent,
-hardware-validated document. Confirm with Bob rather than picking.
+✅ **Oscillator settled 2026-08-07**, from
+[SparkFun's own product page](https://www.sparkfun.com/sparkpnt-gnss-disciplined-oscillator-plus.html):
+the GNSSDO+ carries an **STP3593LF (ROX5242T1N family) double-oven OCXO from
+Rakon**. Both PePPAR-Fix docs were right and neither was complete —
+`receiver-clock-hierarchy.md` named the maker, `gnssdo-plus-integration.md`
+named the part. There was no contradiction to resolve.
+
+Specs worth having to hand when the page is written:
+
+| | |
+|---|---|
+| frequency calibration at 25 °C | better than 50 ppb |
+| aging | ±0.2 ppb/day |
+| stability over −32 to +70 °C | ±0.03 ppb |
+| ADEV at 10 000 s | below 1 × 10⁻¹⁴ *(with AtomiChron enabled)* |
+
+Note the asterisk on that last one: **the 1 × 10⁻¹⁴ figure is quoted with a
+commercial correction service running**, so it is a system number and not the
+oscillator's. Worth being careful about, since it is exactly the kind of spec
+that gets repeated without its condition. The plain GNSSDO (non-plus) carries a
+DCTCXO instead and is a different animal.
 
 ## What we already have, and why it is not enough
 

@@ -114,22 +114,23 @@ it resumes. That is the bottleneck again, wearing a safety control's uniform.
 
 So I moved the safety somewhere it could actually do some good.
 
-### A git worktree per agent
+### Use git worktrees when agents share a repo
 
-The third habit, and the one that turned out to matter most for the architecture.
-Each agent works in its own git worktree of the same repository — separate
-directories, separate checkouts, one shared history. Agents can work on different
-branches of the same problem without tripping over each other's files, and
-everything still converges through git.
+The third habit. When several agents are working on one project, give each its
+own git worktree — separate directories, separate checkouts, one shared history.
+They can work on different aspects of the same problem without tripping over each
+other's files, and everything still converges through git.
 
-I did not know at the time how much this decision was going to decide for me.
+At this point in the story that was just tidiness. It turned out to decide far
+more than I realised, for reasons I would not understand for months.
 
 ## Where they live, and what I assume about them
 
 The whole fleet runs inside a single unprivileged LXC container on the Proxmox
-cluster. Inside that container the agents have real authority — passwordless sudo
-and control of the lab resources they work on. Outside it, they have exactly what
-I have handed them: specific credentials, scoped to specific jobs.
+cluster. Inside that container the agents are ordinary users — no passwordless
+sudo, nothing special. What they *do* have is real authority **outward**:
+passwordless sudo on the timelab machines they run experiments on, and whatever
+other credentials I have handed them, scoped to specific jobs.
 
 My default security posture is that **malicious intent will show up eventually,
 even on a nominally trusted network.** I do not get to assume my own LAN stays
@@ -137,11 +138,12 @@ friendly forever. So I treat the VM running my agents as a potentially malicious
 actor and ask two questions about it: what could go wrong if code in there went
 rogue, and how would I recover?
 
-Those questions have good answers here. It is a container I can snapshot, roll
-back, or throw away, on a cluster that can move it between nodes. That is the
-trade — the agents are trusted and fast inside a boundary I can actually defend,
-instead of being interrupted forty times a day by prompts that were never a
-boundary at all.
+Those questions have good answers here. The container itself I can snapshot, roll
+back, or throw away, on a cluster that can move it between nodes. The lab
+machines it can reach are experiment boxes I can reimage in an afternoon. That is
+the trade — the agents are fast and trusted within a blast radius I have actually
+drawn, instead of being interrupted forty times a day by prompts that were never
+a boundary at all.
 
 It is worth being honest that this is a *homelab* posture. My blast radius is my
 own equipment and my own time. If the same fleet were touching production systems
@@ -182,7 +184,24 @@ plan is where I put those, and where the agents put their results, their request
 of each other, and their proposed follow-ups.
 
 It reads like a stand-up that happens in writing, all day, without anybody
-standing up.
+standing up. The four sessions on my main project have names — Main, Bravo,
+Charlie and Delta — and they address each other by them, which sounds twee until
+you are reading a threaded argument between two of them about whose number is
+right.
+
+### The first sign that I did not understand my own setup
+
+One day Charlie started talking about itself in the third person.
+
+It took me a moment to work out what I was reading, and then it clicked: Charlie
+had taken on Bravo's persona. I now had two Bravos and no Charlie at all. Getting
+one of them to pick up as Charlie again was easy enough — I told it who it was
+and it carried on — and at the time I did not give it much thought beyond
+laughing about it.
+
+It was the first sign that I did not really understand what my agents shared and
+what they kept separate. I filed it as a curiosity. It was actually a symptom,
+and it would be months before I knew of what.
 
 ## Retained knowledge, and how I stumbled into it
 
@@ -239,17 +258,38 @@ Which yields one rule that does most of the work:
 > separate instructions, and separate retained knowledge for free.** No access
 > control needed. The isolation is a side effect of where you started.
 
-And it explained my accident. My four project agents shared a repo, so they
-shared one memory store — which is why they had felt so well coordinated. Two
-directories that share a git repo share their retained knowledge no matter how
-separate they look.
+And it explained my accident. Main, Bravo, Charlie and Delta shared a repo, so
+they shared one memory store — which is why they had felt so well coordinated.
+Two directories that share a git repo share their retained knowledge no matter
+how separate they look.
+
+It also explained why the day plan worked as well as it did. A shared log of
+proposals and acks is only useful between agents who already have the same
+picture of the project; four strangers passing notes would have spent every
+message re-establishing context. **The day plan was an extra layer of
+coordination on top of shared retained knowledge, and it was only possible
+because that layer was there.** I had built the visible half and inherited the
+invisible half by accident.
 
 Then the meta agent found the thing I would never have found myself: a
 **vestigial `~/.git` left over from Gas Town**. My home directory had quietly
-become a git repository, so every agent underneath it — Proxmox, DNS, the blog,
-all of them — was pooling its memories into one store and reading everybody
-else's facts. I had been carefully separating agents into their own directories
-and running a global hive mind the whole time.
+become a git repository, so every agent underneath it that was not inside another
+nested git repo — Proxmox, DNS, the blog, all of them — was pooling its memories
+into one store and reading everybody else's facts. I had been carefully
+separating agents into their own directories and running a global hive mind the
+whole time.
+
+Which, I suspect, is what happened to Charlie. My best guess is that I restarted
+an agent without paying attention to the working directory and ended up with two
+copies of one agent — though I am honestly not certain that is exactly what went
+wrong, and I no longer have the evidence to check. What I am certain of is that
+an agent could pick up somebody else's identity at all, and that is the part I
+should have chased at the time.
+
+The scaffolding now includes a **tmux startup script per agent** that launches it
+from the correct directory, every time. It is a nine-line shell script guarding
+the single decision that determines who an agent *is*, and writing it down was
+the cheapest fix in this entire story.
 
 Archiving that stray `.git` fixed it, and we then walked through the rest
 deliberately: isolate retained knowledge where isolation is what you want, and
@@ -279,7 +319,15 @@ conventions, its working rules, and *pointers to everything else*. It is the
 single biggest lever against re-explaining yourself.
 
 **`glossary.md` holds the lingo** — human-facing, browsable, the place where the
-project's jargon gets defined once.
+project's jargon gets defined once. That one is my buddy **Chris Treichel's**
+idea, and it has earned its keep several times over. A glossary keeps the
+language consistent across sessions *and* consistent with what is written in
+`docs/`, which matters more than it sounds like.
+
+In my last talk I put it as **sloppy language is sloppy thinking.** A glossary
+keeps the thinking honest, and it cuts down the confusion between the language
+model and the meat-ware — which is very often not a disagreement about the
+subject at all, but two parties using one word for two things.
 
 **The memory store holds distilled agent-facing facts**, one per file, indexed so
 a fresh session can find them.
@@ -312,7 +360,10 @@ watching more than one thing. Check in episodically; do not sit and watch.
 
 **Give each agent its own directory, and know what that keys.** Transcript and
 instructions follow the directory. Retained knowledge follows the *repo*. That
-difference is the whole ballgame and it is easy to get wrong by accident.
+difference is the whole ballgame and it is easy to get wrong by accident. Write
+the launcher script that starts each agent in the right place — the one decision
+you cannot afford to make by hand at eleven at night is which agent you are
+talking to.
 
 **Build the shared file before you think you need it**, and make it append-only.
 The moment you have two agents on related work you have a coordination problem,
@@ -329,8 +380,8 @@ assumption that something hostile turns up eventually. Yours might be somewhere
 else entirely — but it should be a decision you made once, not a prompt you
 dismiss forty times a day.
 
-[[? Two things left, both smaller than last time.
+[[? One left, and it is a check rather than a request.
 
-1) The histogram is real data — 1595 prompts, every agent directory, measured from your prompt to the last transcript record before your next one. That end point is when the agent went idle rather than when you came back, so it should be the agent working. Worth a sanity check against your intuition: does a 3.2 min median with a 14 min p90 match what it feels like?
+I went looking for the Charlie-as-Bravo moment in the transcripts and could not find it — I searched the bravo and charlie buckets for Charlie speaking as Bravo, and for your correction, and got nothing usable. The surviving transcripts may not reach back that far. So the story is told from your memory with no quote, which I think reads fine and is certainly honester than a reconstructed one.
 
-2) Still no war story from the four-session period. The post now has the stray `~/.git` and the state-storage blind spot, which helps, but one concrete "and then two agents did X" would still be the best thing you could add. ?]]
+The thing to check: I have hung a fair amount on that anecdote. It opens as foreshadowing and pays off twice — once as the probable cause of the `~/.git` mess, once as the reason the launcher scripts exist. If your recollection of it is hazier than the post implies, tell me and I will soften the causal claim to "I never did find out." ?]]

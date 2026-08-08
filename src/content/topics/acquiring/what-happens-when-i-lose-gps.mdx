@@ -1,0 +1,178 @@
+---
+title: "What happens when I lose GPS?"
+description: "Your clock does not stop. It starts drifting, and how fast is a question about your oscillator and your room — not about GPS. Why a holdover figure with no threshold attached tells you nothing."
+section: "acquiring"
+order: 30
+updatedDate: 2026-08-08
+coverage: "H"
+tags: ["GNSS", "timing", "datacenter", "oscillators", "buying"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+Nothing dramatic. The antenna goes deaf — a failed amplifier, a construction
+crew, a jammer in a passing truck — and your clock keeps producing seconds
+exactly as before. It just stops knowing whether they are the right ones.
+
+That state is called **[holdover](/timekeeping/glossary/#holdover)**, and the
+useful question is not *how long can I hold over?* It is **how long until I have
+drifted past what I can tolerate?** — which is a different question with a
+different answer for every reader, and the reason a number quoted without a
+threshold is worthless.
+
+## Holdover is not the same as free-running
+
+Worth getting straight first, because the two get used interchangeably and the
+difference is load-bearing.
+
+An oscillator that was **never disciplined** does not know its own frequency
+error. It runs at whatever rate its crystal happens to run at, and that rate is
+off by an amount nobody has ever measured.
+
+A clock in **holdover** was disciplined until a moment ago. It has been steered
+for hours or days against GNSS, and in the process something learned its
+frequency offset to great precision. When the reference vanishes, that
+correction keeps being applied. The clock does not revert to its raw crystal — it
+coasts on the last thing it was told.
+
+<CalloutBox type="tip" title="Which is why holdover is so much better than it sounds">
+	A crystal that was 40 ppb fast before discipline is not 40 ppb fast in
+	holdover. The discipline loop already removed that, and the removal survives
+	the reference disappearing.
+
+	What you are left with is not the oscillator's <em>error</em> but the
+	oscillator's <strong>drift</strong> — how much its frequency changes from the
+	value that was correct a minute ago. That is a much smaller number, and it is
+	the whole subject of this page.
+</CalloutBox>
+
+## Why a holdover figure alone tells you nothing
+
+"Twenty-four hours of holdover" is a specification-shaped object with no
+information in it. It needs two companions before it means anything.
+
+**Held over to what threshold?** Twenty-four hours to 1 ms and twenty-four hours
+to 100 ns are different products at different prices.
+
+**On which oscillator?** The same clock with the TCXO option and the rubidium
+option holds over differently by orders of magnitude, and vendors quote the good
+one.
+
+Here is what that looks like with real arithmetic. This is our own error budget
+for an OCXO-class host in a thermally quiet room, holding over after the phase
+reference disappears — the same clock, read against two different thresholds:
+
+| time in holdover | accumulated error | vs a 350 ps budget | vs a 1 ns budget |
+|---|---|---|---|
+| 1 min | 0.21 ns | within | within |
+| 2 min | 0.30 ns | within | within |
+| 5 min | 0.51 ns | **exceeded** | within |
+| 10 min | 0.81 ns | exceeded | within |
+| 30 min | 1.86 ns | exceeded | **exceeded** |
+| 1 hour | 3.38 ns | exceeded | exceeded |
+
+**One clock. Two honest answers: "about two minutes" and "about half an hour".**
+A factor of fifteen, decided entirely by a number the reader supplies and the
+datasheet cannot know.
+
+## The dominant term is usually your room
+
+Here is the part that surprises people, and it is the most useful thing on this
+page.
+
+The limit on holdover is not usually the oscillator's intrinsic noise. It is
+**temperature**. An oscillator's frequency moves with its temperature, and a
+room whose temperature is moving drags the frequency with it — far faster than
+the crystal would have wandered on its own.
+
+The same budget, with the room misbehaving:
+
+| | quiet room | thermal transient |
+|---|---|---|
+| frequency walk | 0.05 ppb/min | 0.2 ppb/min |
+| error at 5 min | 0.51 ns | **1.10 ns** |
+| error at 10 min | 0.81 ns | **2.10 ns** |
+
+Roughly **double to triple the error at the same elapsed time**, from nothing but
+air. And a full-blown thermal transient can be five times worse again — the
+range we budget for runs from 0.01 ppb/min in a quiet room to 1 ppb/min while
+the temperature is genuinely moving, a factor of a hundred.
+
+<CalloutBox type="warn" title="So the cheapest holdover upgrade is usually not an oscillator">
+	If your holdover is limited by temperature, a better crystal buys you very
+	little and a stable room buys you a lot. Before specifying a rubidium, find
+	out whether the air conditioning cycles, whether the rack door gets opened,
+	and whether anything nearby turns on and off on a schedule.
+
+	This is also why holdover measured on a bench in a lab does not transfer to a
+	rack in a datacenter, and why the honest version of the specification has a
+	temperature range attached.
+</CalloutBox>
+
+An oven-controlled oscillator helps precisely because it attacks this term: it
+holds the crystal at a constant temperature so the room's temperature stops
+mattering. That is what you are buying, and it is why the improvement over a
+TCXO in holdover is far larger than the difference in their quoted stability
+figures suggests.
+
+## What an honest specification looks like
+
+Our own rule, arrived at after trying to write the other kind:
+
+> **We do not promise a fixed holdover budget. We report the growing uncertainty
+> and let whoever depends on it decide their own tolerance.**
+
+That is a harder thing to put on a datasheet and a much more useful thing to
+receive. It also matches how the rest of this site treats
+[uncertainty](/timekeeping/glossary/#accuracy) — a number without its error bar
+is an assertion, not a measurement.
+
+The protocol world has the same instinct built in. PTP carries a `clockClass`
+field precisely so a grandmaster can announce *I have lost my reference and my
+confidence is degrading*, and downstream clocks can decide for themselves
+whether to keep following it. A holdover design that never tells anybody it is
+in holdover has solved the easy half of the problem.
+
+## How to measure your own
+
+You do not need a laboratory, and you should not take the datasheet's word for
+it, because the datasheet was not measured in your rack.
+
+1. **Let it discipline properly first.** Holdover performance depends on the loop
+   having learned the frequency offset well, so a clock that has been locked for
+   an hour will hold over worse than one locked for a day.
+2. **Disconnect the antenna, and keep measuring.** Compare against a second
+   source you have not disturbed — another clock, another receiver, anything
+   independent.
+3. **Plot the error against elapsed time, not against a pass/fail line.** The
+   shape tells you which term dominates: roughly linear growth means frequency
+   offset, and a curve that bends means the frequency itself is moving, which
+   means temperature.
+4. **Do it twice — once with the room quiet and once with it not.** Run it again
+   during the part of the day when the HVAC works hardest. If the two curves
+   differ substantially, you have found your real limit and it is not the
+   oscillator.
+5. **Then pick your threshold** and read the answer off the plot. That number is
+   yours, and unlike the vendor's it means something.
+
+The [benchmarking page](/timekeeping/questions/benchmarking-clocks/) covers the
+measurement side of this in more detail; the point here is that holdover is one
+of the few clock specifications you can check yourself with equipment you
+already own.
+
+[[? Two things I could not source and did not want to invent.
+
+1) Bravo mentioned you have three thermal stories that would make this page much better than the arithmetic does: an OCXO that moved 4 ppb from a *ceiling fan*, an oven that got worse when over-insulated because the loop needs heat loss to regulate against, and a back-yard unit that entered a wind-driven limit cycle by day and recovered every night. I could not find any of them in the PePPAR-Fix docs, so I have left them out rather than reconstruct them. Any one of them would be the best paragraph on the page — the over-insulated oven especially, because it is genuinely counterintuitive.
+
+2) The σ(t) tables are from `tdcp-holdover-anchor.md`, which is a **design document with no code in flight** — so they are a modelled error budget, not a measurement. I have described them as "our own error budget" rather than as results. If any of it has since been measured, say so and I will relabel; if it is still modelled, I think the current framing is honest but you should check it reads that way to you. ?]]
+
+## Where to go next
+
+- **[What makes an accurate GNSS timing receiver?](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/)**
+  — the reference input that decides whether your oscillator is even in the loop.
+- **[Questions to ask a clock vendor](/timekeeping/questions/buying-a-clock/)** —
+  question five is the holdover one, and this page is its long form.
+- **[Ways to get time into a datacenter](/timekeeping/acquiring/acquiring-time/)**
+  — the argument for having a second source, which is the other answer to losing
+  the first.

@@ -30,9 +30,10 @@ Ranked as the review ranked them. Section refs are that document's.
 
 ### Blocking the garden's own rules
 
+*E1 (Holdover) closed 2026-08-08 — `acquiring/what-happens-when-i-lose-gps`.*
+
 | # | item | where |
 |---|---|---|
-| E1 | **Holdover has no Home.** Carries weight on five pages, all linking to a two-sentence glossary entry. Reader question: *what happens when I lose GPS?* | new page |
 | E2 | **Oscillators have no Home.** Four pages tagged `oscillators`, "a good oscillator" load-bearing in five, no page says what one is. Reader question: *do I need an OCXO or will a TCXO do?* | new page |
 | E4 | **"Silently wrong" is promised on four pages and never answered.** Either write *how do you know it is still right?* or downgrade the promises to observations. | new page, or 4 edits |
 

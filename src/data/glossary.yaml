@@ -126,6 +126,8 @@
     cannot. A holdover figure is meaningless without both the error threshold and
     the oscillator it assumes.
   seeAlso:
+    - label: "What happens when I lose GPS?"
+      href: "/timekeeping/acquiring/what-happens-when-i-lose-gps/"
     - label: "Stability"
       href: "#stability"
   draft: true

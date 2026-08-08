@@ -1,9 +1,9 @@
 ---
 title: "Configuring GNSS antenna position for datacenter receivers"
-description: "If a receiver has the antenna position wrong, it has the time wrong — about a nanosecond for every foot of vertical error. Here is how to get it right."
+description: "If you don't know your exact location, you can't know the exact time — about a nanosecond of error for every foot you are off vertically. Here is how to get it right."
 section: "antennas"
 order: 40
-updatedDate: 2026-08-03
+updatedDate: 2026-08-08
 coverage: "H"
 tags: ["GNSS", "antennas", "timing", "datacenter"]
 draft: true
@@ -11,10 +11,18 @@ draft: true
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-If a GNSS receiver has the antenna position wrong, it has the time wrong.
-**Every foot of vertical error is about a nanosecond of time error**, and the
-receiver will report that wrong time with complete confidence, because from
-where it sits nothing looks amiss.
+> **If you don't know your exact location, you can't know the exact time.**
+
+That is the whole page in one sentence, and it is worth a moment because the two
+halves sound unrelated. Position is a surveying problem. Time is a clock problem.
+What connects them is that a GNSS receiver does not measure time at all — it
+measures *how long a signal took to arrive*, and it cannot turn that into a time
+without knowing how far the signal came.
+
+Get the distance wrong and you get the time wrong by exactly that much.
+**Every foot of vertical error is about a nanosecond**, and the receiver will
+report that wrong time with complete confidence, because from where it sits
+nothing looks amiss.
 
 So this page is not really about position. It is about how to get the time
 right.

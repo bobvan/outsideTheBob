@@ -103,9 +103,9 @@ reading. Ordered as bravo ranked them.
 | # | item |
 |---|---|
 | H1 | **86 unlinked glossary first-uses** across 28 files — `npm run glossary-links`. Advisory; mostly `UTC` and `timescale`, which need judgement rather than a sweep. |
-| H2 | **11 title retitles** outstanding in `title-audit.md`. Strongest: *GNSS time is a prediction* → *Does the satellite know what time it is?* |
+| H2 | **11 title retitles** outstanding in `title-audit.md`, now with proposed slugs. Strongest: *GNSS time is a prediction* → *Does the satellite know what time it is?* Cheap while everything is `draft: true`; expensive after. |
 | H3 | Three empty sections: The Datacenter Problem, Benchmarking, Stories. |
-| H4 | Restart the dev server occasionally — bravo found it at 7.5 days of uptime and warns against trusting a stale preview. |
+| H4 | Restart the dev server occasionally — bravo found it at 7.5 days of uptime and warns against trusting a stale preview. **Restarted 2026-08-08.** Tailscale preview: `http://100.117.189.97:4321/` |
 
 ---
 

@@ -739,4 +739,73 @@ mkdirSync(OUT, { recursive: true });
 	writeFileSync(`${OUT}/time-transfer-techniques.svg`, svg(W, H, b));
 }
 
-console.error(`wrote 9 figures to ${OUT}/`);
+// ---------------------------------------------------------------------------
+// 10. How long a prompt actually takes.
+//
+//     Measured, not remembered: 1595 prompts across the whole agent fleet,
+//     extracted from session transcripts by timing each prompt to the last
+//     record written before the next one. That end point is when the agent went
+//     idle, not when Bob came back, so it measures the agent working rather
+//     than the human away.
+//
+//     The figure exists to justify a habit. A median of three minutes sounds
+//     like something you could sit and watch. The tail is the whole point: one
+//     prompt in ten runs past a quarter of an hour, and one in twenty past half
+//     an hour. That is what makes checking in episodically the right posture
+//     rather than a lazy one.
+// ---------------------------------------------------------------------------
+{
+	const d = JSON.parse(readFileSync('src/data/prompt-durations.json', 'utf8'));
+	const W = 760, H = 400;
+	const L = 62, R = 22, TOP = 96, BOT = 316;
+	const bins = d.bins;
+	const maxN = Math.max(...bins.map((b) => b.n));
+	const bw = (W - L - R) / bins.length;
+	const y = (n) => BOT - (n / maxN) * (BOT - TOP);
+	let b = '';
+
+	// Horizontal guides only — the eye compares bar heights, so vertical rules
+	// would be ink competing with the data.
+	for (const t of [0, 100, 200, 300, 400, 500]) {
+		if (t > maxN) continue;
+		b += `<line x1="${L}" y1="${y(t)}" x2="${W - R}" y2="${y(t)}" stroke="${t ? '#ececec' : INK}" stroke-width="${t ? 0.8 : 1}"/>`;
+		b += text(L - 8, y(t) + 3.5, String(t), { size: 10, fill: MUTED, anchor: 'end' });
+	}
+
+	bins.forEach((bin, i) => {
+		const x = L + i * bw;
+		// The long-tail bins are the argument, so they carry the accent colour
+		// and everything else stays quiet.
+		const tail = bin.lo >= 10;
+		b += `<rect x="${x + 5}" y="${y(bin.n)}" width="${bw - 10}" height="${BOT - y(bin.n)}" fill="${tail ? RED : '#0072B2'}" opacity="${tail ? 0.9 : 0.78}"/>`;
+		b += text(x + bw / 2, y(bin.n) - 7, String(bin.n), { size: 10.5, weight: 600, fill: tail ? RED : INK });
+		b += text(x + bw / 2, BOT + 16, bin.hi ? `${bin.lo}–${bin.hi}` : `${bin.lo}+`, { size: 10.5 });
+	});
+	b += text((L + W - R) / 2, BOT + 34, 'minutes from my prompt to the agent going idle', { size: 11, fill: MUTED });
+	b += text(16, (TOP + BOT) / 2, 'prompts', { size: 11, weight: 600 })
+		.replace('<text', `<text transform="rotate(-90 16 ${(TOP + BOT) / 2})"`);
+
+	// The percentiles say what the bars cannot: where the tail starts to hurt.
+	const facts = [
+		['median', `${d.p50.toFixed(1)} min`],
+		['1 in 10 longer than', `${d.p90.toFixed(0)} min`],
+		['1 in 20 longer than', `${d.p95.toFixed(0)} min`],
+		['longest', `${(d.max / 60).toFixed(1)} h`],
+	];
+	facts.forEach(([k, v], i) => {
+		const x = L + i * ((W - L - R) / 4);
+		b += text(x, BOT + 62, k, { size: 10.5, fill: MUTED, anchor: 'start' });
+		b += text(x, BOT + 78, v, { size: 14, weight: 700, anchor: 'start', fill: i >= 1 ? RED : INK });
+	});
+
+	b += text(L, 26, 'How long a prompt actually takes', { size: 15, weight: 700, anchor: 'start' });
+	b += text(L, 44, `${d.n} prompts across the whole fleet, from session transcript timestamps`, {
+		size: 11, fill: MUTED, anchor: 'start',
+	});
+	b += text(L, 58, 'Red is everything past ten minutes — the reason to check in rather than sit and watch.', {
+		size: 10.5, fill: MUTED, anchor: 'start', style: 'italic',
+	});
+	writeFileSync(`${OUT}/prompt-durations.svg`, svg(W, H, b));
+}
+
+console.error(`wrote 10 figures to ${OUT}/`);

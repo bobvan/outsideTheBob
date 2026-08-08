@@ -7,160 +7,225 @@ tags: ["AI", "agents", "tooling", "Proxmox"]
 draft: true
 ---
 import CalloutBox from "../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
 
 The bottleneck wasn't the agent. It was me, watching one.
 
 I had gone through the progression everybody goes through — chat window, then
-the IDE plugin, then the command line — and each step was a real improvement.
-But they all landed in the same place: one conversation, one task, and me
-sitting there while it thought. I could feel the shape of the problem. I had
-four or five things I wanted done and exactly one worker.
+the IDE plugin, then the command line, then the command line **with a git repo**
+underneath it, which is the step where an agent stops being a clever autocomplete
+and starts being something you can hand a project to.
 
-So I went looking for a way to run several at once, and I ended up somewhere I
-did not expect: I tried the obvious tool, could not make it work the way I
-needed, and walked back to something much dumber that I built myself.
+Each step was a real improvement. But they all landed in the same place: one
+conversation, one task, and me sitting there while it thought. I had four or five
+things I wanted done and exactly one worker.
+
+## What I was actually trying to run
+
+Some context, because the shape of the work drove everything that follows.
+
+I run a homelab of about ten Proxmox VMs and containers with high-availability
+migration between nodes. Alongside it is a **timelab** — more than half a dozen
+embedded Linux boxes, mostly Raspberry Pi class, doing precision timing work. At
+any given moment that lab usually has three or four different data-collection
+experiments running at once.
+
+That is the load. It is not one project that needs an assistant. It is a small
+institution that needs staff.
 
 ## The framework I couldn't drive
 
 Early in 2026 I tried [Gas Town](https://github.com/gastownhall/gastown), a
 multi-agent workspace manager. It has a whole vocabulary — a **Mayor** who
 coordinates, a **Town** that holds your projects, worker agents with persistent
-identity, work tracked in a git-backed ledger. Conceptually it was exactly what
-I was after.
+identity, work tracked in a git-backed ledger. Conceptually it was exactly what I
+was after.
 
-It did bring many agents to bear on my problems in parallel. That part worked.
-What I could not figure out was how to *control* them well. I would set things
-in motion and then find I had no good way to steer, correct, or even see what
-was happening across the whole town. And so I did the thing you do when a
-system is too complicated to drive: I stopped driving it. I ended up sitting and
-waiting for the Mayor to do the work — which is precisely the bottleneck I had
-set out to escape, now with more moving parts.
+And when I told the Mayor to write code, I loved the result. That part was
+genuinely good.
+
+The trouble started when the Mayor **delegated**. Work handed off to another
+agent came back incorrect, or did not come back at all, and I could not see
+enough of what was happening to work out why. In retrospect I suspect I was meant
+to be working directly with those agents rather than through the Mayor — but I
+never figured out how to structure my project so that I could.
+
+So I did the thing you do when a system is too complicated to drive: I stopped
+driving it. I went back to giving the Mayor the work directly and waiting for it,
+which is precisely the bottleneck I had set out to escape, now with more moving
+parts.
 
 <CalloutBox type="tip" title="In fairness to Gas Town">
 	It was very new when I tried it, and I probably could have worked harder to
-	whip it into the shape I needed. A tool being wrong for me in early 2026 is
-	not the same as a tool being wrong. I am describing why I left, not making a
+	whip it into the shape I needed. A tool being wrong for me in early 2026 is not
+	the same as a tool being wrong. I am describing why I left, not making a
 	recommendation about where you should land.
 </CalloutBox>
 
-## The two things I took with me
+## The three habits I took with me
 
-I did not leave empty-handed. Two habits came out of that experiment and both
-turned out to be load-bearing.
+I did not leave empty-handed. Three things came out of that experiment and all
+three turned out to be load-bearing.
 
-**tmux.** Not as a terminal multiplexer — as a way to hold several agent
-sessions and switch between them in a keystroke. This sounds trivial and it is
-not. The cost of checking on an agent has to be near zero, or you stop checking,
-and an agent you have stopped checking on is an agent that has quietly gone
-sideways for an hour. Fast switching is what makes parallelism actually
-parallel instead of just concurrent-and-neglected.
+### tmux, and the episodic check-in
 
-**`--dangerously-skip-permissions`.** The flag does what it says. Every
-approval prompt goes away, and the agent just acts.
+Not as a terminal multiplexer — as a way to hold several agent sessions and
+switch between them in a keystroke.
+
+The reason that matters is that my prompts are not quick. I got curious enough to
+measure it: I pulled the timestamps out of every session transcript across the
+whole fleet and timed each prompt to the moment the agent went idle.
+
+<ZoomableImage
+	plate
+	src="/figures/prompt-durations.svg"
+	alt="A histogram of 1595 prompt durations across the agent fleet. Bars for zero to one, one to two, two to five and five to ten minutes are blue and hold 249, 274, 533 and 294 prompts. Bars past ten minutes are red: 132 in the ten-to-twenty bucket, 42 in twenty-to-forty, 47 in forty-to-eighty and 24 beyond eighty minutes. Summary figures below read: median 3.2 minutes, one in ten longer than 14 minutes, one in twenty longer than 30 minutes, longest 5.6 hours."
+	caption="Every prompt I have given the fleet, timed from the transcripts. The median is three
+		minutes, which sounds watchable. The tail is the argument: one prompt in ten runs past a
+		quarter of an hour, one in twenty past half an hour, and the longest ran most of a working
+		day."
+/>
+
+A three-minute median sounds like something you could sit and watch. The tail
+says otherwise, and the tail is where the interesting work is.
+
+It gets better, because **a prompt returning quickly often does not mean the work
+is done.** Half the time the agent has just *started an experiment* in the
+timelab, and what I actually want is to come back later, look at the data
+collected so far, and decide whether to let it run or change the parameters.
+
+So the unit of interaction is not "ask, wait, read." It is **check in, correct,
+leave again** — and tmux is what makes that cost nothing. The same sessions I
+have at my office desk are on an iPad Pro with a keyboard on a park bench, or on
+my iPhone with a folding keyboard I have carried on the bike to a picnic table.
+I get a status update and make a mid-course correction whenever I have a moment,
+from wherever I happen to be.
+
+### `--dangerously-skip-permissions`
+
+The flag does what it says. Every approval prompt goes away and the agent just
+acts.
 
 I understand why that alarms people, so let me say plainly how I think about it.
 The prompts were not making me safe. I was approving them the way everyone
-approves them — reflexively, in batches, without really reading. What they were
-doing was *serializing* the work: the agent stops, I context-switch back, I
-click, it resumes. That is the bottleneck again, dressed up as a safety
-control.
+approves them — reflexively, in batches, without really reading. What they *were*
+doing was serializing the work: the agent stops, I context-switch back, I click,
+it resumes. That is the bottleneck again, wearing a safety control's uniform.
 
-So I moved the safety somewhere it could actually do some good: **give the
-agents great power, and limit the blast radius instead.**
+So I moved the safety somewhere it could actually do some good.
 
-## Where they live
+### A git worktree per agent
 
-The whole fleet runs inside a single unprivileged LXC container on a Proxmox
-cluster. Inside that container the agents have real authority — including
-passwordless sudo and control of the lab resources they work on. Outside it,
-they have exactly what I have handed them, which is a specific set of
-credentials scoped to specific jobs.
+The third habit, and the one that turned out to matter most for the architecture.
+Each agent works in its own git worktree of the same repository — separate
+directories, separate checkouts, one shared history. Agents can work on different
+branches of the same problem without tripping over each other's files, and
+everything still converges through git.
 
-That is the trade. Inside the box, the agents are trusted and fast. The box
-itself is a container I can snapshot, roll back, or throw away. I would rather
-defend one boundary properly than pretend that a thousand approval prompts add
-up to a boundary.
+I did not know at the time how much this decision was going to decide for me.
+
+## Where they live, and what I assume about them
+
+The whole fleet runs inside a single unprivileged LXC container on the Proxmox
+cluster. Inside that container the agents have real authority — passwordless sudo
+and control of the lab resources they work on. Outside it, they have exactly what
+I have handed them: specific credentials, scoped to specific jobs.
+
+My default security posture is that **malicious intent will show up eventually,
+even on a nominally trusted network.** I do not get to assume my own LAN stays
+friendly forever. So I treat the VM running my agents as a potentially malicious
+actor and ask two questions about it: what could go wrong if code in there went
+rogue, and how would I recover?
+
+Those questions have good answers here. It is a container I can snapshot, roll
+back, or throw away, on a cluster that can move it between nodes. That is the
+trade — the agents are trusted and fast inside a boundary I can actually defend,
+instead of being interrupted forty times a day by prompts that were never a
+boundary at all.
 
 It is worth being honest that this is a *homelab* posture. My blast radius is my
-own equipment and my own time. If the same fleet were touching production
-systems belonging to somebody else, the arithmetic would be different and I
-would not be writing this paragraph so cheerfully.
+own equipment and my own time. If the same fleet were touching production systems
+belonging to somebody else, the arithmetic would be different and I would not be
+writing this paragraph so cheerfully.
 
 ## The day plan
 
-With tmux and no approval prompts, I got to four sessions running in parallel.
-And immediately hit the next problem, which is the interesting one: **four
-agents working on related things have no way to talk to each other.**
+With tmux, worktrees and no approval prompts, I got to four sessions running in
+parallel. And immediately hit the next problem, which is the interesting one:
+**four agents working on related things have no way to talk to each other.**
 
-They cannot see each other's conversations. They cannot ask each other
-questions. Two of them will happily solve the same problem twice, or worse,
-solve it two incompatible ways.
+They cannot see each other's conversations. They cannot ask each other questions.
+Two of them will happily solve the same problem twice, or worse, solve it two
+incompatible ways.
 
-What I built for this is embarrassingly simple. It is a file. I call it the
-**day plan**, and it is an append-only log that every agent can write to and
-read back. An agent can:
-
-- **propose** an item, which gets an ID
-- **ack** somebody else's item, meaning "I've read this and I agree"
-- **discuss** under an item, threaded
-- set **status** — in progress, blocked, done, disputed
-- **render** the current state as markdown
-
-Current state is computed by replaying the log, so several agents can write at
-once without stepping on each other. There is no database and no server. The
-whole coordination layer is a JSONL file and a Python script.
+What I built for this is embarrassingly simple. It is a file. I call it the **day
+plan**, and it is an append-only log every agent can write to and read back. An
+agent can **propose** an item and get an ID, **ack** somebody else's, **discuss**
+under one in a thread, set a **status**, or **render** the whole current state as
+markdown. Current state is computed by replaying the log, so several agents can
+write at once without stepping on each other. No database, no server — a JSONL
+file and a script.
 
 <CalloutBox type="tip" title="Why append-only turned out to matter">
-	My first instinct was a shared markdown file the agents would edit. That
-	fails immediately and in the most annoying way: two agents read it, both
-	edit, the second write silently erases the first, and neither of them knows.
+	My first instinct was a shared markdown file the agents would edit. That fails
+	immediately and in the most annoying way: two agents read it, both edit, the
+	second write silently erases the first, and neither of them knows.
 
 	Append-only fixes it at the storage layer instead of asking everyone to be
-	careful. Nobody edits; everybody appends; the current picture is derived. It
-	is the same reason the shared host inventory ended up as one file per host.
+	careful. Nobody edits; everybody appends; the current picture is derived.
 </CalloutBox>
 
-The rhythm that grew around it is my favorite part of all this. I would wake up
-having slept on the previous day's work, and I would have new tasks — usually
-with some dependency between them that we would refine as the day went on. The
-day plan is where I put those, and where the agents put their results, their
-requests of each other, and their proposed follow-ups.
+The rhythm that grew around it is my favourite part of all this. I would wake up
+having slept on the previous day's work with new tasks in mind — usually with
+some dependency between them that we would refine as the day went on. The day
+plan is where I put those, and where the agents put their results, their requests
+of each other, and their proposed follow-ups.
 
 It reads like a stand-up that happens in writing, all day, without anybody
 standing up.
 
-<CalloutBox type="warn" title="The failure mode is stale reads">
-	The single most common way this breaks is an agent working from a rendered
-	copy it made an hour ago and concluding that nobody has responded to it. The
-	log is the truth; anything you rendered from it is already history. Every
-	agent's instructions now say so explicitly, because I lost an afternoon to it
-	before I worked out what was happening.
-</CalloutBox>
+## Retained knowledge, and how I stumbled into it
 
-## Then I went looking for how state actually works
+Here is the part I got to backwards.
 
-Here is the part I got to backwards. I had been running this fleet for a while
-before I understood how any of the underlying state was shared — I just had a
-strong instinct that I wanted the work **partitioned into distinct contexts**,
-so each agent kept a small, focused working set and needed compaction less
-often.
+What I wanted, without yet having the words for it, was **retained knowledge**:
+every new session for a given agent should start with a distillation of the
+previous work, so I never have to re-explain the project. And — just as
+important — I did *not* want every agent to know everything, because knowing
+everything is just a way of wasting context.
 
-The analogy I kept coming back to is hiring.
+Those first four agents were each in a separate worktree of one shared repo,
+working on different aspects of the same project. They shared everything except
+their transcripts. Entirely by accident, I had stumbled into exactly the retained
+knowledge configuration you want for that shape of work: common facts pooled,
+conversations separate.
+
+Then I started spinning up agents for completely unrelated purposes — Proxmox,
+UniFi, DNS, Homebridge, Checkmk, the UPS fleet, this blog, and others. And the
+accident stopped being lucky. **I did not want to clutter my Proxmox agent's
+context with conversations about writing blog posts.**
+
+That is what finally drove me to understand how retained knowledge is shared
+between agents, and how it is not.
+
+### The hiring analogy
+
+The way I think about it is hiring.
 
 Say you run a ten-person company and everyone is working at 90% capacity. On
-paper you have one person's worth of slack — you could distribute the new
-project across the team and it would fit. But you probably should not. Handing
-a new direction to ten busy people costs each of them a context switch, and the
-work you actually get is worse than one focused person's. **Hire the eleventh.**
+paper you have one person's worth of slack you could use to start a new project
+if you distributed it across the team. But you probably should not. Handing a new
+direction to ten busy people costs each of them a context switch, and what you get
+back is worse than one focused person's work. **Hire the eleventh.**
 
-That is exactly the trade with agents, except the eleventh employee costs
-nothing and starts immediately. If a new domain is genuinely a new domain, it
-should get its own agent rather than being pushed into somebody's already-full
-head.
+That is exactly the trade with agents, except the eleventh employee costs nothing
+and starts immediately.
 
-So I eventually pointed an agent at the fleet itself — a meta agent whose whole
-job is how the other agents are set up — and had it work out what was really
-going on. Three things are keyed independently:
+### What the meta agent found
+
+So I pointed an agent at the fleet itself — a meta agent whose whole job is how
+the other agents are set up. The meta agent explained how three things are keyed
+independently:
 
 | what | where it lives | keyed by |
 |---|---|---|
@@ -170,67 +235,102 @@ going on. Three things are keyed independently:
 
 Which yields one rule that does most of the work:
 
-> **Launch each agent from its own directory, and it gets a separate transcript,
-> separate instructions, and separate memory for free.** No access control
-> needed. The isolation is a side effect of where you started.
+> **Launch each agent from its own directory and it gets a separate transcript,
+> separate instructions, and separate retained knowledge for free.** No access
+> control needed. The isolation is a side effect of where you started.
 
-That third row is the one that bit me. The memory store keys to the *git
-repository* the launch directory sits in, not the directory itself — and my home
-directory had accidentally become a git repo, left over from the earlier
-experiment. So every agent beneath it was pooling its memories into one shared
-store and reading everyone else's facts. The fleet had been quietly leaking
-context between agents for weeks, which is the precise opposite of what I was
-trying to build. Archiving that stray `.git` fixed it.
+And it explained my accident. My four project agents shared a repo, so they
+shared one memory store — which is why they had felt so well coordinated. Two
+directories that share a git repo share their retained knowledge no matter how
+separate they look.
 
-<CalloutBox type="warn" title="Isolation of context is not isolation of authority">
-	The directory boundary separates what agents *know*. It does nothing about
-	what they can *reach* — they all run as the same user, with the same skipped
-	permissions. An agent's actual blast radius is set by the credentials I hand
-	it, and nothing else.
+Then the meta agent found the thing I would never have found myself: a
+**vestigial `~/.git` left over from Gas Town**. My home directory had quietly
+become a git repository, so every agent underneath it — Proxmox, DNS, the blog,
+all of them — was pooling its memories into one store and reading everybody
+else's facts. I had been carefully separating agents into their own directories
+and running a global hive mind the whole time.
 
-	So the two axes have to be reasoned about separately, and the credential is
-	the one that matters. Scope it to the job.
+Archiving that stray `.git` fixed it, and we then walked through the rest
+deliberately: isolate retained knowledge where isolation is what you want, and
+share it where sharing is what you want. The ops agents, for instance, each keep
+private lessons in their own store but read and write one shared repository of
+host facts — because facts about the homelab belong to the homelab, while how an
+agent personally works belongs to that agent.
+
+<CalloutBox type="tip" title="Isolated context is not isolated access">
+	Even with contexts properly separated, all these agents run on the same VM as
+	the same user and can read the same files. That turns out to be a feature.
+	When work with the Proxmox agent produces something that might interest people
+	outside my homelab, I can simply ask the blog agent to go and read what the
+	Proxmox agent did.
+
+	Separate heads, shared filesystem. The isolation is about what clutters whose
+	context, not about building walls.
 </CalloutBox>
 
-## Where it stands
+### The scaffolding
 
-There are about a dozen agents now. Four of them are sessions on my main
-research project, working in separate git worktrees on the same repository and
-coordinating through the day plan. The rest are one-per-domain — the network
-gear, the monitoring stack, the DNS, the UPS fleet, this blog — plus a couple of
-private, non-technical ones that will not be appearing in any post.
+The meta agent also worked out what actually goes where, and this is the part I
+would hand to somebody starting today.
 
-The blog agent is the interesting edge case, because it is the only one whose
-output leaves the box. Every other agent's discipline is about what it can
-touch. That one's discipline is about what it can *reveal*, which turns out to
-be a completely different review.
+**`CLAUDE.md` auto-loads every session**, so it holds the project's identity, its
+conventions, its working rules, and *pointers to everything else*. It is the
+single biggest lever against re-explaining yourself.
+
+**`glossary.md` holds the lingo** — human-facing, browsable, the place where the
+project's jargon gets defined once.
+
+**The memory store holds distilled agent-facing facts**, one per file, indexed so
+a fresh session can find them.
+
+And the rule that ties it together, which my main project now follows: **every new
+file in `docs/` gets summarised into `CLAUDE.md` with a link back to the file for
+the details.** So every session begins with a summary of all the retained
+knowledge that exists, plus pointers to the depth. The agent reads a page and
+knows what it knows; it goes and reads the file only when it needs the detail.
+
+That is what makes a brand-new session genuinely caught up rather than merely
+resumed — which matters more than it sounds like, because resuming an old session
+replays the entire transcript into context, and transcripts grow without bound.
+
+<CalloutBox type="warn" title="The comfort that hid the problem">
+	Here is the mild scar tissue. tmux gave me session continuity, those sessions
+	ran on high-availability servers, and the whole thing sat behind a UPS. Nothing
+	ever went away.
+
+	Which meant I never had to think about *where state was stored* — until I
+	started actively trying to separate agent contexts and discovered I did not
+	know. The infrastructure was good enough to hide the question for months.
+	Uptime is a wonderful thing and it is a poor teacher.
+</CalloutBox>
 
 ## What I'd tell someone starting
 
 **Steal the tmux habit first.** It is free and it changes the economics of
-watching more than one thing.
+watching more than one thing. Check in episodically; do not sit and watch.
 
-**Build the shared file before you think you need it.** The moment you have two
-agents on related work, you have a coordination problem, and you will invent
-something worse under time pressure than what you would design calmly.
+**Give each agent its own directory, and know what that keys.** Transcript and
+instructions follow the directory. Retained knowledge follows the *repo*. That
+difference is the whole ballgame and it is easy to get wrong by accident.
 
-**Make it append-only.** Whatever it is.
+**Build the shared file before you think you need it**, and make it append-only.
+The moment you have two agents on related work you have a coordination problem,
+and you will invent something worse under time pressure than what you would
+design calmly.
 
 **Partition by domain, not by capacity.** The temptation is to give new work to
 whichever agent seems least busy. Resist it. Hire the eleventh.
 
 **And pick your boundary deliberately.** Somewhere between "approve every file
 write" and "no limits at all" there is a line that fits what you are actually
-risking. Mine is the edge of a container I can roll back. Yours might be
-somewhere else entirely — but it should be a decision you made once, not a
-prompt you dismiss forty times a day.
+risking. Mine is the edge of a container I can roll back, chosen on the
+assumption that something hostile turns up eventually. Yours might be somewhere
+else entirely — but it should be a decision you made once, not a prompt you
+dismiss forty times a day.
 
-[[? Four things I would rather have from you than guess.
+[[? Two things left, both smaller than last time.
 
-1) "Claude Army" is in the title and then never used again in the body — it felt like a joke that works once. Do you want it woven through, or is once enough?
+1) The histogram is real data — 1595 prompts, every agent directory, measured from your prompt to the last transcript record before your next one. That end point is when the agent went idle rather than when you came back, so it should be the agent working. Worth a sanity check against your intuition: does a 3.2 min median with a 14 min p90 match what it feels like?
 
-2) I have kept the fleet description deliberately vague: a dozen agents, one per domain, no names except PePPAR-Fix and this blog, and "a couple of private, non-technical ones". Is that the right line, or are you happy naming more of them?
-
-3) The `--dangerously-skip-permissions` and sudo section is the riskiest thing in the post — not because it is secret, but because it is the part a hostile reader would quote. I have framed it with the blast-radius argument from your NPL talk and been explicit that it is a homelab posture. Read that section specifically and tell me if it lands the way you want.
-
-4) Is there a story from the four-session period worth adding? The post explains the mechanism well and has no scar tissue in it beyond the stray `.git`. One concrete "and then two agents did X" would make it much better, and I do not have one that is mine to tell. ?]]
+2) Still no war story from the four-session period. The post now has the stray `~/.git` and the state-storage blind spot, which helps, but one concrete "and then two agents did X" would still be the best thing you could add. ?]]

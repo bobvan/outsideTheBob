@@ -14,7 +14,8 @@
     "banner:404": "BANNER_INSIDE=404 BANNER_WORD=OutsideTheSite BANNER_OUT=public/images/outsideTheSite.svg BANNER_LABEL=\"404 \u2014 Outside The Site\" BANNER_INSIDE_CENTER=1 node scripts/make-banner.mjs",
     "figures": "node scripts/make-figures.mjs",
     "circular-t": "node scripts/fetch-circular-t.mjs",
-    "glossary-links": "node scripts/check-glossary-links.mjs"
+    "glossary-links": "node scripts/check-glossary-links.mjs",
+    "publish-check": "node scripts/publish-check.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.3",

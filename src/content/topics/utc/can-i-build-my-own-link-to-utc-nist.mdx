@@ -66,7 +66,7 @@ QZSS and SBAS. Daily 30 s multi-constellation RINEX, about 4.7 MB, anonymously
 downloadable — no login — from BKG:
 
 ```
-https://igs.bkg.bund.de/root_ftp/IGS/obs/2026/216/NIST00USA_R_20262160000_01D_30S_MO.crx.gz
+https://igs.bkg.bund.de/root_ftp/IGS/obs/2026/206/NIST00USA_R_20262060000_01D_30S_MO.crx.gz
 ```
 
 CDDIS carries the same files but now wants Earthdata credentials. BKG does not.
@@ -256,7 +256,8 @@ By physically carrying a calibrated receiver to the site. BIPM's calibration
 campaigns take a "golden reference" travelling system, co-locate it with the
 station under test, run both for weeks, and difference them. The published report
 for campaign 1001-2022 gives the resulting uncertainty as **uCAL(P3) = 0.9 ns**,
-built up from:
+built up from — these are the largest contributors, not the whole budget, which
+is why they do not sum to the total on their own:
 
 | contribution | value |
 |---|---|
@@ -264,7 +265,8 @@ built up from:
 | position error | 0.28 ns |
 | multipath | 0.2 ns |
 | counter nonlinearity | 0.1 ns |
-| combined | **0.91 ns** |
+| *(further terms not listed)* | — |
+| **combined** | **0.91 ns** |
 
 Two things leap out of that table. The first is that a sub-nanosecond link is
 achievable and somebody has done the work to prove it. The second is more

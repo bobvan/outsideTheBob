@@ -499,3 +499,22 @@
     - label: "Choosing a GNSS timescale"
       href: "/timekeeping/utc/choosing-a-gnss-timescale/"
   draft: true
+
+- id: pps
+  term: "PPS"
+  aliases: ["1 PPS", "pulse per second", "timepulse"]
+  definition: >-
+    A once-per-second electrical edge marking the start of a second. It is the
+    lingua franca between timing equipment — almost every receiver emits one and
+    almost every instrument accepts one — and its limitation is exactly its
+    simplicity: **it marks a moment without naming it, and it compensates for
+    nothing.** The pulse says *now*; it does not say which second, and it carries
+    no correction for the cable it travelled down.
+  seeAlso:
+    - label: "What the protocols do that a PPS cannot"
+      href: "/timekeeping/transferring/distribution/"
+    - label: "Resolution, and why a quantized edge is not a precise one"
+      href: "#resolution"
+    - label: "What makes an accurate timing receiver"
+      href: "/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/"
+  draft: true

@@ -12,7 +12,7 @@ draft: true
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
 Every GNSS receiver will hand you a
-[PPS](/timekeeping/glossary/#resolution) and a claim about how accurate it is.
+[PPS](/timekeeping/glossary/#pps) and a claim about how accurate it is.
 The claims cluster suspiciously close together, so they are not much use for
 choosing. The *capabilities* are far more revealing, because each one changes
 what you are able to do rather than what somebody is willing to assert.
@@ -125,13 +125,16 @@ direct measurement of it.
 	entire art of a disciplined clock — you steer the oscillator slowly toward
 	GNSS and let it carry the seconds in between.
 
-	But if the receiver will not accept your oscillator as its own timebase, its
-	measurements are made against its TCXO, and <strong>you cannot build a clock
-	with better short-term stability than that TCXO out of them.</strong> You can
-	bolt a better oscillator on externally and compare the two with a counter —
-	people do, and it works — but that is a second hop, and you are then limited
-	by <em>how tightly you can tie the TCXO to your oscillator</em> rather than by
-	either one.
+	But if the receiver will not accept your oscillator as its own timebase, then
+	<strong>every servo input you derive from that receiver is timed against its
+	TCXO.</strong> Inside your loop bandwidth you inherit the TCXO's noise. Above
+	it you are flying blind — your oscillator may well be quieter than the
+	instrument watching it, and you have no way to prove it or to correct it.
+
+	Note what that does <em>not</em> say. A disciplined OCXO under a low loop
+	bandwidth routinely is quieter at short averaging times than the receiver's
+	TCXO, because the loop simply does not act up there. The ceiling is on
+	<strong>measurement and correction</strong>, not on output.
 
 	We hit this measuring
 	<a href="/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/">our own link to

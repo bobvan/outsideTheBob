@@ -9,7 +9,8 @@ draft: true
 import CalloutBox from "../../components/post/CalloutBox.astro";
 import ZoomableImage from "../../components/post/ZoomableImage.astro";
 
-The bottleneck wasn't the agent. It was me, watching one.
+I knew I could get more done if I could bring more than one agent to bear on my research,
+but I couldn't figure out how to keep many agents marching in the same direction.
 
 I had gone through the progression everybody goes through — chat window, then
 the IDE plugin, then the command line, then the command line **with a git repo**
@@ -29,6 +30,10 @@ migration between nodes. Alongside it is a **timelab** — more than half a doze
 embedded Linux boxes, mostly Raspberry Pi class, doing precision timing work. At
 any given moment that lab usually has three or four different data-collection
 experiments running at once.
+
+I needed agents for Python coding, for code reviews, for coordinating access to
+shared lab resources, for research, for design, for graphical presentation of experimental
+results, and for monitoring/restarting experiments while I was away from the lab or sleeping.
 
 That is the load. It is not one project that needs an assistant. It is a small
 institution that needs staff.
@@ -79,11 +84,11 @@ whole fleet and timed each prompt to the moment the agent went idle.
 <ZoomableImage
 	plate
 	src="/figures/prompt-durations.svg"
-	alt="A histogram of 1595 prompt durations across the agent fleet. Bars for zero to one, one to two, two to five and five to ten minutes are blue and hold 249, 274, 533 and 294 prompts. Bars past ten minutes are red: 132 in the ten-to-twenty bucket, 42 in twenty-to-forty, 47 in forty-to-eighty and 24 beyond eighty minutes. Summary figures below read: median 3.2 minutes, one in ten longer than 14 minutes, one in twenty longer than 30 minutes, longest 5.6 hours."
+	alt="A histogram of 1071 prompt durations across the agent fleet. Bars for zero to one, one to two, two to five and five to ten minutes are blue and hold 194, 191, 347 and 174 prompts. Bars past ten minutes are red: 90 in the ten-to-twenty bucket, 31 in twenty-to-forty, 26 in forty-to-eighty and 18 beyond eighty minutes. Summary figures below read: median 3.0 minutes, one in ten longer than 14 minutes, one in twenty longer than 28 minutes, longest 5.6 hours."
 	caption="Every prompt I have given the fleet, timed from the transcripts. The median is three
 		minutes, which sounds watchable. The tail is the argument: one prompt in ten runs past a
-		quarter of an hour, one in twenty past half an hour, and the longest ran most of a working
-		day."
+		quarter of an hour, one in twenty past twenty-eight minutes, and the longest ran most of a
+		working day."
 />
 
 A three-minute median sounds like something you could sit and watch. The tail
@@ -94,34 +99,20 @@ is done.** Half the time the agent has just *started an experiment* in the
 timelab, and what I actually want is to come back later, look at the data
 collected so far, and decide whether to let it run or change the parameters.
 
-### And you cannot tell from the prompt
+#### And you cannot predict it from the prompt either
 
 I assumed a long prompt meant a long wait. It seemed obvious — more asked for,
-more work done. So I measured that too, and it is not true.
+more work done. So I measured that too, and it is not true. Across all 1,071
+prompts the rank correlation between how many words I typed and how long the
+agent then ran is **0.12**, which is another way of writing "none". Bucket the
+prompts by length and the median duration barely moves: about three minutes for
+a five-word prompt and about three minutes for a three-hundred-word one.
 
-| prompt length | prompts | median | 1 in 10 longer than |
-|---|---|---|---|
-| 1–5 words | 85 | 3.2 min | 14 min |
-| 5–15 words | 357 | 2.8 min | 14 min |
-| 15–40 words | 518 | 3.1 min | 14 min |
-| 40–100 words | 348 | 3.4 min | 13 min |
-| 100–300 words | 163 | 3.8 min | 16 min |
-| **300+ words** | 127 | **3.4 min** | **41 min** |
+Which lands somewhere more useful than where I started. **I cannot look at what
+I just typed and estimate when to come back.** The information simply is not in
+the prompt.
 
-Look down the median column: it is **flat**. A five-word prompt and a
-three-hundred-word prompt take about three minutes either way. Across all 1,598
-prompts the rank correlation between length and duration is 0.11, which is
-another way of writing "none."
-
-The only real signal is in the last column, and it is about *risk* rather than
-duration. My longest prompts are usually multi-part briefs — do this, then that,
-and while you are in there fix the other — and while their typical case is no
-slower, their tail is three times fatter. Asking for six things does not make the
-median longer; it makes a bad afternoon more likely.
-
-Which lands somewhere more useful than where I started. **I cannot look at what I
-just typed and estimate when to come back.** The information simply is not in the
-prompt. So the unit of interaction is not "ask, wait, read." It is **check in,
+So the unit of interaction is not "ask, wait, read." It is **check in,
 correct, leave again** — and tmux is what makes that cost nothing. The same sessions I
 have at my office desk are on an iPad Pro with a keyboard on a park bench, or on
 my iPhone with a folding keyboard I have carried on the bike to a picnic table.
@@ -159,11 +150,12 @@ sudo, nothing special. What they *do* have is real authority **outward**:
 passwordless sudo on the timelab machines they run experiments on, and whatever
 other credentials I have handed them, scoped to specific jobs.
 
-My default security posture is that **malicious intent will show up eventually,
-even on a nominally trusted network.** I do not get to assume my own LAN stays
-friendly forever. So I treat the VM running my agents as a potentially malicious
+My default security posture assumes that **malicious intent will show up eventually,
+even on a nominally trusted network.** I do not get to assume my own LANs stay
+friendly forever. So I treat the container running my agents as a potentially malicious
 actor and ask two questions about it: what could go wrong if code in there went
-rogue, and how would I recover?
+rogue, and how would I recover? This posture explains why it's an **unprivileged**
+container.
 
 Those questions have good answers here. The container itself I can snapshot, roll
 back, or throw away, on a cluster that can move it between nodes. The lab
@@ -228,8 +220,8 @@ One day Charlie started talking about itself in the third person.
 It took me a moment to work out what I was reading, and then it clicked: Charlie
 had taken on Bravo's persona. I now had two Bravos and no Charlie at all. Getting
 one of them to pick up as Charlie again was easy enough — I told it who it was
-and it carried on — and at the time I did not give it much thought beyond
-laughing about it.
+and it carried on. At the time I did not give it much thought beyond
+laughing and imagining a B-grade movie: Invasion of the Context Snatchers.
 
 It was the first sign that I did not really understand what my agents shared and
 what they kept separate. I filed it as a curiosity. It was actually a symptom,
@@ -278,8 +270,11 @@ if you distributed it across the team. But you probably should not. Handing a ne
 direction to ten busy people costs each of them a context switch, and what you get
 back is worse than one focused person's work. **Hire the eleventh.**
 
-That is exactly the trade with agents, except the eleventh employee costs nothing
-and starts immediately.
+That is exactly the trade with agents, except the eleventh employee starts
+immediately and costs a great deal less. Not nothing — every agent burns tokens,
+and more of them means more output to review, which is the scarce resource in the
+end. But the argument was never about cost. It is about context switching, and
+that is the thing the eleventh employee actually saves you.
 
 ### What the meta agent found
 
@@ -312,13 +307,12 @@ coordination on top of shared retained knowledge, and it was only possible
 because that layer was there.** I had built the visible half and inherited the
 invisible half by accident.
 
-I can also now see a plausible explanation for what happened to Charlie. My best
-guess is that I restarted an agent without paying attention to the working
-directory and ended up with two copies of one agent — though I am honestly not
-certain that is exactly what went wrong, and I no longer have the evidence to
-check. What I am certain of is that
-an agent could pick up somebody else's identity at all, and that is the part I
-should have chased at the time.
+It also explains what an agent *is*. Identity comes from the launch directory —
+which means Charlie was never a thing that could be corrupted, only a directory I
+could start something in. I never did find out exactly what happened that day,
+and I no longer have the evidence to check. What I am certain of is that an agent
+could pick up somebody else's identity at all, and that is the part I should have
+chased at the time.
 
 The scaffolding now includes a **tmux startup script per agent** that launches it
 from the correct directory, every time. It is a nine-line shell script guarding
@@ -326,11 +320,11 @@ the single decision that determines who an agent *is*, and writing it down was
 the cheapest fix in this entire story.
 
 Then the meta agent found the thing I would never have found myself: a
-**vestigial `~/.git` left over from Gas Town**. My home directory had quietly
+**vestigial `~/.git` left over from that earlier experiment**. My home directory had quietly
 become a git repository, so every agent underneath it that was not inside another
 nested git repo — Proxmox, DNS, the blog, all of them — was pooling its memories
 into one store and reading everybody else's facts. I had been carefully
-separating agents into their own directories and running a global hive mind the
+separating agents into their own directories and inadvertently running a global hive mind the
 whole time.
 
 Archiving that stray `.git` fixed it, and we then walked through the rest
@@ -456,9 +450,3 @@ risking. Mine is the edge of a container I can roll back, chosen on the
 assumption that something hostile turns up eventually. Yours might be somewhere
 else entirely — but it should be a decision you made once, not a prompt you
 dismiss forty times a day.
-
-[[? One left, and it is a check rather than a request.
-
-I went looking for the Charlie-as-Bravo moment in the transcripts and could not find it — I searched the bravo and charlie buckets for Charlie speaking as Bravo, and for your correction, and got nothing usable. The surviving transcripts may not reach back that far. So the story is told from your memory with no quote, which I think reads fine and is certainly honester than a reconstructed one.
-
-The thing to check: I have hung a fair amount on that anecdote. It opens as foreshadowing and pays off twice — once as the probable cause of the `~/.git` mess, once as the reason the launcher scripts exist. If your recollection of it is hazier than the post implies, tell me and I will soften the causal claim to "I never did find out." ?]]

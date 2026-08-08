@@ -1,8 +1,8 @@
 ---
-title: "Raising a Claude Army"
-slug: "raising-a-claude-army"
+title: "Organizing a Claude Army"
+slug: "organizing-a-claude-army"
 pubDate: 2026-08-07
-description: "I went chat, IDE, CLI like everyone else. Then I tried a multi-agent framework, couldn't drive it, and walked back to build something simpler — a dozen agents in tmux, coordinating through a file I call the day plan"
+description: "I went chat, IDE, CLI like everyone else. Then I tried a multi-agent framework, couldn't drive it, and walked back to build my own — a dozen agents organized three different ways, sorted by how much each group shares"
 tags: ["AI", "agents", "tooling", "Proxmox"]
 draft: true
 ---
@@ -216,6 +216,11 @@ Charlie and Delta — and they address each other by them, which sounds twee unt
 you are reading a threaded argument between two of them about whose number is
 right.
 
+Those four are the first of **three different ways I ended up organizing
+agents**, and it is the one that shares the most: one repo, one pool of retained
+knowledge, one day plan. A **hive mind — everything shared.** I did not choose it
+so much as fall into it, and it would be months before I understood why it worked.
+
 ### The first sign that I did not understand my own setup
 
 One day Charlie started talking about itself in the third person.
@@ -250,6 +255,15 @@ Then I started spinning up agents for completely unrelated purposes — Proxmox,
 UniFi, DNS, Homebridge, Checkmk, the UPS fleet, this blog, and others. And the
 accident stopped being lucky. **I did not want to clutter my Proxmox agent's
 context with conversations about writing blog posts.**
+
+Those turned out to need the other two organizations. The ops agents each tend a
+different system, so they want private heads — but they all need the same facts
+about which host is which, so they are **independent, with one shared database.**
+And a handful of agents have nothing whatever to do with each other and should
+never bleed together: **fully independent, nothing shared.**
+
+Three organizations, sorted by how much each group shares. But I only got there
+after finding out how sharing worked at all.
 
 That is what finally drove me to understand how retained knowledge is shared
 between agents, and how it is not.
@@ -321,10 +335,45 @@ whole time.
 
 Archiving that stray `.git` fixed it, and we then walked through the rest
 deliberately: isolate retained knowledge where isolation is what you want, and
-share it where sharing is what you want. The ops agents, for instance, each keep
-private lessons in their own store but read and write one shared repository of
-host facts — because facts about the homelab belong to the homelab, while how an
-agent personally works belongs to that agent.
+share it where sharing is what you want.
+
+## The three organizations, on one page
+
+Which is where the three ways of organizing agents stop being scattered
+observations and become a shape. The meta agent drew the whole fleet as a single
+map, and it is the clearest picture of this I have.
+
+<ZoomableImage
+	plate
+	src="/figures/fleet-map.svg"
+	alt="A one-page map of the agent fleet in three numbered zones. Zone 1, Hive mind, everything shared: Main, Bravo, Charlie and Delta over one shared memory store, one shared repo and one shared day plan. Zone 2, Independent with one shared database: seven ops agents, each with private memory, all reading and writing one shared homelab database. Zone 3, Fully independent, nothing shared: meta, the blog and one more, each with its own memory and no shared pool at all. A coloured badge above each agent shows its reach — read-only, admin, or full commit and root."
+	caption="One fleet, three organizations, sorted by how much each group shares — a hive that
+		shares everything, independents that share one database, and agents that share nothing.
+		The badges are a second and independent dimension: how far each agent can reach."
+/>
+
+**1 Hive mind — everything shared.** Main, Bravo, Charlie and Delta. Four
+worktrees of one repo, so one memory store, one set of docs, one day plan. They
+know everything each other knows, which is what makes a threaded argument between
+two of them productive rather than a re-briefing.
+
+**2 Independent — one shared database.** The seven ops agents. Each keeps private
+lessons in its own store, because how the Checkmk agent likes to work is no
+business of the DNS agent's. But they all read and write one shared repository of
+host facts, because facts about the homelab belong to the homelab. The trick is
+that they *reference* that repo rather than launching from it — so it never
+becomes their memory keying.
+
+**3 Fully independent — nothing shared.** The meta agent, this blog, and one
+more. Different domains that should never bleed into one another.
+
+There is a second dimension on that map, drawn as a badge above each agent, and
+it is worth reading separately: **reach.** How far into the real world that agent
+can act. Those two axes are independent, and confusing them is the mistake the
+map exists to prevent — the ops group is the most *isolated* in knowledge and
+contains some of the widest *authority*, while the blog agent is isolated on both
+axes and still carries the fleet's only real risk, because its output is public.
+Sharing and power are different questions.
 
 <CalloutBox type="tip" title="Isolated context is not isolated access">
 	Even with contexts properly separated, all these agents run on the same VM as

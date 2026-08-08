@@ -808,4 +808,133 @@ mkdirSync(OUT, { recursive: true });
 	writeFileSync(`${OUT}/prompt-durations.svg`, svg(W, H, b));
 }
 
-console.error(`wrote 10 figures to ${OUT}/`);
+// ---------------------------------------------------------------------------
+// 11. The fleet map — three ways to organize a Claude army.
+//
+//     Redrawn from ~/meta/fleet-map.html, which the meta agent authored as an
+//     interactive page. There is no headless browser on this box, and a
+//     screenshot of a web page would look like a screenshot next to ten native
+//     figures — so it is rebuilt here in the house idiom instead.
+//
+//     Zone headings are VERBATIM from that map, and the post's section names
+//     match them word for word. A reader moving between prose and picture must
+//     see the same language or the whole device fails. If any of the three is
+//     reworded, the other two have to move with it.
+//
+//     Two dimensions at once, which is the point: the columns sort by how much
+//     each group SHARES, and the badge above each agent shows how far it can
+//     REACH. Those are independent, and conflating them is the mistake the
+//     figure exists to prevent.
+// ---------------------------------------------------------------------------
+{
+	const W = 1000, H = 548;
+	const BLUE = '#0072B2', GREEN = '#009E73', AMBER = '#E69F00';
+	const COLW = 316, GAP = 16, LEFT = 16;
+	const cx = (i) => LEFT + i * (COLW + GAP) + COLW / 2;
+	const x0 = (i) => LEFT + i * (COLW + GAP);
+	let b = '';
+
+	const box = (x, y, w, h, stroke, dash) =>
+		`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#fff" stroke="${stroke}"` +
+		`${dash ? ` stroke-dasharray="${dash}"` : ''} stroke-width="1.3"/>`;
+
+	// Reach badge — colour IS the blast radius, so it carries meaning, not decoration.
+	const badge = (x, y, w, label, level) => {
+		const c = level === 'read-only' ? GREEN : level === 'admin' ? AMBER : RED;
+		return `<rect x="${x}" y="${y}" width="${w}" height="15" rx="7.5" fill="${c}" opacity="0.14"/>` +
+			`<circle cx="${x + 9}" cy="${y + 7.5}" r="3.2" fill="${c}"/>` +
+			text(x + 17, y + 11, label, { size: 9, anchor: 'start', fill: '#333' });
+	};
+
+	const agent = (x, y, w, name, sub) =>
+		box(x, y, w, 32, INK) +
+		text(x + 8, y + 14, name, { size: 11.5, weight: 700, anchor: 'start' }) +
+		text(x + 8, y + 26, sub, { size: 9, anchor: 'start', fill: MUTED });
+
+	const pool = (x, y, w, label, sub, shared) =>
+		box(x, y, w, 34, shared ? BLUE : MUTED, shared ? '' : '4 3') +
+		text(x + w / 2, y + 15, label, { size: 10.5, weight: 700, fill: shared ? BLUE : INK }) +
+		text(x + w / 2, y + 27, sub, { size: 9, fill: MUTED });
+
+	const ZONES = [
+		['1  Hive mind — everything shared', 'PePPAR-Fix · four worktrees of one repo'],
+		['2  Independent — one shared database', 'ops · seven specialists'],
+		['3  Fully independent — nothing shared', 'meta · blog · and one more'],
+	];
+	for (let i = 0; i < 3; i++) {
+		b += `<rect x="${x0(i)}" y="52" width="${COLW}" height="440" rx="7" fill="none" stroke="#dcdcdc"/>`;
+		b += text(x0(i) + 12, 74, ZONES[i][0], { size: 12.5, weight: 700, anchor: 'start' });
+		b += text(x0(i) + 12, 89, ZONES[i][1], { size: 9.5, fill: MUTED, anchor: 'start' });
+	}
+
+	// --- Zone 1: four agents over three shared pools ------------------------
+	b += badge(x0(0) + 12, 102, 200, 'commit + root on lab hosts', 'full');
+	['Main', 'Bravo', 'Charlie', 'Delta'].forEach((n, k) => {
+		b += agent(x0(0) + 12 + (k % 2) * 148, 128 + Math.floor(k / 2) * 40, 140, n, 'own worktree · own transcript');
+	});
+	b += text(cx(0), 222, 'all four read / write ↓', { size: 9.5, fill: MUTED, style: 'italic' });
+	[['Shared memory store', 'one .git → one pool'],
+	 ['Shared repo · docs/', 'one .git, four worktrees'],
+	 ['Shared state · day plan', 'append-only, all four append']].forEach(([l, sub], k) => {
+		b += pool(x0(0) + 12, 232 + k * 42, 288, l, sub, true);
+	});
+	b += text(cx(0), 372, 'The shared .git is what pools the knowledge.', { size: 9.5, fill: BLUE, style: 'italic' });
+
+	// --- Zone 2: seven private-memory agents over one shared database -------
+	const OPS = [
+		['proxmox', 'read-only'], ['ntp', 'read-only'], ['ups', 'read-only'], ['homebridge', 'read-only'],
+		['checkmk', 'admin'], ['unifi', 'admin'], ['dns', 'admin'],
+	];
+	OPS.forEach(([n, lvl], k) => {
+		const y = 104 + k * 38;
+		b += badge(x0(1) + 12, y, 96, lvl, lvl);
+		b += box(x0(1) + 116, y - 3, 184, 22, INK);
+		b += text(x0(1) + 124, y + 12, n, { size: 10.5, weight: 700, anchor: 'start' });
+		b += text(x0(1) + 292, y + 12, 'private memory', { size: 8.5, anchor: 'end', fill: MUTED });
+	});
+	b += text(cx(1), 386, 'all seven read / write ↓', { size: 9.5, fill: MUTED, style: 'italic' });
+	b += pool(x0(1) + 12, 396, 288, 'Shared homelab database', 'referenced, not launched from', true);
+	b += text(cx(1), 450, 'A data repo they reference rather than launch', { size: 9.5, fill: BLUE, style: 'italic' });
+	b += text(cx(1), 463, 'from — so private memory stays private.', { size: 9.5, fill: BLUE, style: 'italic' });
+
+	// --- Zone 3: nothing shared ---------------------------------------------
+	const SOLO = [
+		['meta', 'the fleet itself', 'GitHub · repo admin', 'admin'],
+		['blog', 'the public surface', 'publishes to the web · Bob-gated', 'full'],
+		['one more', 'a private, non-technical domain', 'scoped, and not described here', 'read-only'],
+	];
+	SOLO.forEach(([n, role, reach, lvl], k) => {
+		const y = 108 + k * 74;
+		b += badge(x0(2) + 12, y, 288, reach, lvl);
+		b += box(x0(2) + 12, y + 20, 288, 34, INK);
+		b += text(x0(2) + 20, y + 34, n, { size: 11.5, weight: 700, anchor: 'start' });
+		b += text(x0(2) + 20, y + 47, role, { size: 9, anchor: 'start', fill: MUTED });
+		b += pool(x0(2) + 12, y + 20, 0, '', '', false); // spacer, keeps the idiom honest
+		b += text(x0(2) + 292, y + 47, 'own memory', { size: 8.5, anchor: 'end', fill: MUTED });
+	});
+	b += box(x0(2) + 12, 336, 288, 34, MUTED, '4 3');
+	b += text(cx(2), 351, 'no shared pool at all', { size: 10.5, weight: 700, fill: MUTED });
+	b += text(cx(2), 363, 'separate dirs, separate everything', { size: 9, fill: MUTED });
+	b += text(cx(2), 396, 'Different domains that should never', { size: 9.5, fill: BLUE, style: 'italic' });
+	b += text(cx(2), 409, 'bleed into one another.', { size: 9.5, fill: BLUE, style: 'italic' });
+
+	// --- Legend --------------------------------------------------------------
+	const ly = 522;
+	b += text(LEFT, ly, 'reach:', { size: 10, weight: 700, anchor: 'start', fill: MUTED });
+	[['read-only', GREEN], ['admin', AMBER], ['full — commit / root', RED]].forEach(([l, c], k) => {
+		const x = LEFT + 46 + k * 132;
+		b += `<circle cx="${x}" cy="${ly - 3.5}" r="3.4" fill="${c}"/>`;
+		b += text(x + 9, ly, l, { size: 10, anchor: 'start', fill: '#333' });
+	});
+	b += text(W - LEFT, ly, 'Every agent runs as the same user — reach is scoped credentials, not a sandbox.', {
+		size: 9.5, fill: MUTED, anchor: 'end', style: 'italic',
+	});
+
+	b += text(LEFT, 24, 'Three ways to organize a Claude army', { size: 15.5, weight: 700, anchor: 'start' });
+	b += text(LEFT, 41, 'One fleet, three organizations — sorted by how much each group shares. Above each agent, a second and independent dimension: its reach.', {
+		size: 10, fill: MUTED, anchor: 'start',
+	});
+	writeFileSync(`${OUT}/fleet-map.svg`, svg(W, H, b));
+}
+
+console.error(`wrote 11 figures to ${OUT}/`);

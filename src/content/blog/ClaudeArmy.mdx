@@ -94,8 +94,35 @@ is done.** Half the time the agent has just *started an experiment* in the
 timelab, and what I actually want is to come back later, look at the data
 collected so far, and decide whether to let it run or change the parameters.
 
-So the unit of interaction is not "ask, wait, read." It is **check in, correct,
-leave again** — and tmux is what makes that cost nothing. The same sessions I
+### And you cannot tell from the prompt
+
+I assumed a long prompt meant a long wait. It seemed obvious — more asked for,
+more work done. So I measured that too, and it is not true.
+
+| prompt length | prompts | median | 1 in 10 longer than |
+|---|---|---|---|
+| 1–5 words | 85 | 3.2 min | 14 min |
+| 5–15 words | 357 | 2.8 min | 14 min |
+| 15–40 words | 518 | 3.1 min | 14 min |
+| 40–100 words | 348 | 3.4 min | 13 min |
+| 100–300 words | 163 | 3.8 min | 16 min |
+| **300+ words** | 127 | **3.4 min** | **41 min** |
+
+Look down the median column: it is **flat**. A five-word prompt and a
+three-hundred-word prompt take about three minutes either way. Across all 1,598
+prompts the rank correlation between length and duration is 0.11, which is
+another way of writing "none."
+
+The only real signal is in the last column, and it is about *risk* rather than
+duration. My longest prompts are usually multi-part briefs — do this, then that,
+and while you are in there fix the other — and while their typical case is no
+slower, their tail is three times fatter. Asking for six things does not make the
+median longer; it makes a bad afternoon more likely.
+
+Which lands somewhere more useful than where I started. **I cannot look at what I
+just typed and estimate when to come back.** The information simply is not in the
+prompt. So the unit of interaction is not "ask, wait, read." It is **check in,
+correct, leave again** — and tmux is what makes that cost nothing. The same sessions I
 have at my office desk are on an iPad Pro with a keyboard on a park bench, or on
 my iPhone with a folding keyboard I have carried on the bike to a picnic table.
 I get a status update and make a mid-course correction whenever I have a moment,
@@ -271,18 +298,11 @@ coordination on top of shared retained knowledge, and it was only possible
 because that layer was there.** I had built the visible half and inherited the
 invisible half by accident.
 
-Then the meta agent found the thing I would never have found myself: a
-**vestigial `~/.git` left over from Gas Town**. My home directory had quietly
-become a git repository, so every agent underneath it that was not inside another
-nested git repo — Proxmox, DNS, the blog, all of them — was pooling its memories
-into one store and reading everybody else's facts. I had been carefully
-separating agents into their own directories and running a global hive mind the
-whole time.
-
-Which, I suspect, is what happened to Charlie. My best guess is that I restarted
-an agent without paying attention to the working directory and ended up with two
-copies of one agent — though I am honestly not certain that is exactly what went
-wrong, and I no longer have the evidence to check. What I am certain of is that
+I can also now see a plausible explanation for what happened to Charlie. My best
+guess is that I restarted an agent without paying attention to the working
+directory and ended up with two copies of one agent — though I am honestly not
+certain that is exactly what went wrong, and I no longer have the evidence to
+check. What I am certain of is that
 an agent could pick up somebody else's identity at all, and that is the part I
 should have chased at the time.
 
@@ -290,6 +310,14 @@ The scaffolding now includes a **tmux startup script per agent** that launches i
 from the correct directory, every time. It is a nine-line shell script guarding
 the single decision that determines who an agent *is*, and writing it down was
 the cheapest fix in this entire story.
+
+Then the meta agent found the thing I would never have found myself: a
+**vestigial `~/.git` left over from Gas Town**. My home directory had quietly
+become a git repository, so every agent underneath it that was not inside another
+nested git repo — Proxmox, DNS, the blog, all of them — was pooling its memories
+into one store and reading everybody else's facts. I had been carefully
+separating agents into their own directories and running a global hive mind the
+whole time.
 
 Archiving that stray `.git` fixed it, and we then walked through the rest
 deliberately: isolate retained knowledge where isolation is what you want, and

@@ -15,6 +15,9 @@ const blog = defineCollection({
 				heroImage: image().optional(),
 				slug: z.string().optional(),
 				tags: z.array(z.string()).optional(),
+				// See the note on the topics collection — Bob's, not ours.
+				reviewed: z.coerce.date().optional(),
+				reviewNote: z.string().optional(),
 				draft: z.boolean().default(true),
 			}),
 });
@@ -46,6 +49,20 @@ const topics = defineCollection({
 			coverage: z.enum(['H', 'S', 'M']).default('H'),
 			tags: z.array(z.string()).optional(),
 			slug: z.string().optional(),
+			// Bob's own review tracking. Deliberately NOT `updatedDate`: that is the
+			// reader-facing date, and it moves for a typo fix. `reviewed` is the
+			// date Bob last read the page top to bottom and was happy with it.
+			//
+			// The pairing is what makes it useful. If `updatedDate` is later than
+			// `reviewed`, the page changed after he signed it off and wants another
+			// look; `npm run review` computes exactly that. Nothing renders it, so
+			// it cannot affect the published page.
+			//
+			// AGENTS: this field is Bob's. Never set it, clear it, or "helpfully"
+			// bring it forward — doing so would silently mark your own work as
+			// reviewed by him.
+			reviewed: z.coerce.date().optional(),
+			reviewNote: z.string().optional(),
 			// Same default as blog: a new file is invisible until it is finished
 			// on purpose, not published until it is hidden on purpose.
 			draft: z.boolean().default(true),

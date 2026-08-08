@@ -98,7 +98,15 @@ reading. Ordered as bravo ranked them.
 7. **Datums, reference frames, and the ground moving** — Barrow, the Italian earthquake, 15 cm in seven years ≈ 500 ps.
 8. **Spoofing, jamming, and OSNMA** — the acquiring page's authenticity section is a Summary looking for its Home.
 
-## 5. Housekeeping
+## 5. Bob's review status
+
+`npm run review` — what still needs his eyes, and what he signed off before it
+changed. State lives in a `reviewed:` frontmatter field on each page; it never
+renders. See `scripts/review-status.mjs`.
+
+**Agents: never touch that field.**
+
+## 6. Housekeeping
 
 | # | item |
 |---|---|

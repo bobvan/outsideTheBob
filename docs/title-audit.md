@@ -32,15 +32,16 @@ they quote the reader's own sentence back at them.
 | What "traceable to UTC" actually requires | *Traceable to UTC* is the phrase a regulator hands the reader — so it is their words, not ours |
 | An uncalibrated antenna feedline is likely your largest source of error to UTC | A claim about the reader's situation. Long, but it promises a payoff |
 
-**3 fixed so far**, at Bob's instruction:
+**4 fixed so far**, at Bob's instruction:
 
 | was | is |
 |---|---|
 | How UTC is actually made | Can I sync my datacenter clocks to UTC? |
 | The fast loop and the slow loop | How does GNSS time relate to UTC? |
 | BIPM publishes a GNSS prediction scorecard | Which GNSS constellation keeps the best time? *(2026-08-07)* |
+| Configuring GNSS antenna position for datacenter receivers | What do I put in for my antenna's position? *(2026-08-08)* |
 
-**12 still fail.** They divide into three failure modes.
+**11 still fail.** They divide into three failure modes.
 
 ---
 
@@ -77,8 +78,8 @@ Not wrong, just not yet in the reader's mouth.
 
 | current title | suggestion | note |
 |---|---|---|
-| Ways to get time into a datacenter | **How do I get accurate time into my datacenter?** | Already plain; the question form and *accurate* are what a searcher adds. |
-| Configuring GNSS antenna position for datacenter receivers | **What do I put in for my antenna's position?** | The current title is the task; the suggestion is the moment of confusion, which is when someone goes looking. |
+| Ways to get time into a datacenter | **How do I get accurate time into my datacenter?** | Already plain; the question form and *accurate* are what a searcher adds. This is now the only one left in this category. |
+| ~~Configuring GNSS antenna position for datacenter receivers~~ | ✅ **What do I put in for my antenna's position?** — *done 2026-08-08* | The old title was the task; this one is the moment of confusion, which is when someone goes looking. **Slug deliberately left as `antenna-position`** — unlike the earlier retitles, the old slug was already the plain keyword, and a seven-word slug would be worse on every axis. |
 
 ---
 
@@ -91,6 +92,6 @@ actually need?** Worth revisiting once the page settles.
 
 ## What this pass did not do
 
-Change any title Bob did not name. The 12 remaining are recommendations only;
+Change any title Bob did not name. The 11 remaining are recommendations only;
 every retitle so far was instructed. Blog posts were not audited, since the
 principle deliberately exempts them.

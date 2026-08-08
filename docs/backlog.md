@@ -32,10 +32,12 @@ Ranked as the review ranked them. Section refs are that document's.
 
 *E1 (Holdover) closed 2026-08-08 — `acquiring/what-happens-when-i-lose-gps`.*
 *E2 (Oscillators) closed 2026-08-08 — `acquiring/do-i-need-an-ocxo`.*
+*E4 (silently wrong) closed 2026-08-08 — `two-clock/how-do-i-know-its-still-right`; the three promising pages now link to it.*
+
+**This subsection is now empty — the garden no longer breaks its own H/S/M rule.**
 
 | # | item | where |
 |---|---|---|
-| E4 | **"Silently wrong" is promised on four pages and never answered.** Either write *how do you know it is still right?* or downgrade the promises to observations. | new page, or 4 edits |
 
 ### Technical, needs sources or a decision
 

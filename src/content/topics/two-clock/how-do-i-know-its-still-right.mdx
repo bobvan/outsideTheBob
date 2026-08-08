@@ -1,0 +1,186 @@
+---
+title: "How do I know my clock is still right?"
+description: "Timing failures are usually quiet, and nothing inside a wrong clock knows it is wrong. The only detector is a second opinion — and what that second opinion shares with the first decides what it can and cannot see."
+section: "two-clock"
+order: 20
+updatedDate: 2026-08-08
+coverage: "H"
+tags: ["datacenter", "timing", "GNSS", "monitoring", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+This site keeps making the same uncomfortable observation from different
+directions. A receiver with the
+[antenna position wrong](/timekeeping/antennas/antenna-position/) reports the
+wrong time with complete confidence. A
+[traceability](/timekeeping/utc/traceability/) claim needs a monitoring record
+showing you stayed inside your budget, not merely that you configured it once
+correctly. Timing failures are frequently quiet.
+
+Which leaves an obvious question the rest of the site keeps not answering:
+**how would you know?**
+
+## Why the clock cannot tell you
+
+Start with why this is hard, because it is not a matter of better firmware.
+
+A clock's error is the difference between what it says and what is true. The
+clock has access to exactly one of those. Everything it can measure — its own
+oscillator, its own PPS, its own solution residuals — is measured *in its own
+frame*, and a constant error moves that whole frame together. **You cannot
+detect a silent error from inside the thing that has it.**
+
+That is not a limitation anyone has failed to engineer around. It is the shape
+of the problem.
+
+<CalloutBox type="tip" title="Which failures are loud, and which are not">
+	Worth separating, because half the anxiety here is misplaced and the other
+	half is not nearly anxious enough.
+
+	**Loud** — the antenna cable is cut, the receiver loses lock, the satellite
+	count goes to zero, the PPS stops. Every one of these announces itself, and
+	every monitoring system already catches them.
+
+	**Quiet** — the antenna moved a meter, a cable was replaced with a different
+	length, a firmware update changed a delay, the configured position was wrong
+	from the start, the room warmed up. Every one of these produces a clock that
+	is confidently, steadily, invisibly wrong.
+
+	The loud ones get all the alerting. The quiet ones cause the incidents you
+	find out about from somebody else.
+</CalloutBox>
+
+## The only detector is a second opinion
+
+So you need something outside the frame. Two sources that ought to agree, and do
+not, are telling you something no single source ever could.
+
+That much is standard resilience reasoning and most people arrive at it
+unaided. The part that is not standard — and the part worth the rest of this
+page — is that **a second source is not a second source**. What it *shares* with
+the first decides what it can see.
+
+## What your second opinion shares decides what it can see
+
+Here is the counterintuitive bit, and it runs the opposite way to the instinct.
+
+Put two receivers on **one antenna** through a splitter and you have deliberately
+made them share almost every systematic there is: the same antenna position, the
+same feedline delay, the same sky, the same multipath, the same weather. A
+skeptic would say you have ruined the comparison.
+
+You have done the opposite. Because everything else is common, **any
+disagreement that appears must be the receivers.** The comparison is exquisitely
+sensitive to exactly one class of fault, and blind to the rest. In our lab, two
+receivers sharing an antenna produce independent position solutions that ought
+to land on the same point to within millimeters; when they do not, the problem
+is in a receiver, and no single-receiver self-test could have told us that.
+
+Now give the second receiver **its own antenna** on the other side of the roof.
+You have given up that sensitivity — the two now disagree a little for a dozen
+innocent reasons — and bought something you could not have otherwise: the
+comparison can now see an antenna problem.
+
+| your second source | catches | cannot see |
+|---|---|---|
+| second receiver, **same antenna** | receiver faults, firmware changes, configuration drift — at millimetre sensitivity | anything about the antenna, feedline, position or sky |
+| second receiver, **own antenna** | antenna moved, feedline changed, local multipath | anything common to the site |
+| **different constellation** | one operator's bad day, one constellation's [prediction error](/timekeeping/utc/which-constellation-keeps-best-time/) | a receiver fault affecting both |
+| **a national laboratory**, by [time transfer](/timekeeping/utc/comparing-two-distant-clocks/) | everything local, including the whole site | little — this is the widest net |
+| **a second GNSS receiver on the same signal** | almost nothing a spoofer would trip | a spoofed signal both are happily tracking |
+
+Read down the "cannot see" column and the design rule writes itself: **choose
+what your second source shares, on purpose, according to what you are trying to
+catch.** A backup you never compare against inherits exactly the same silence as
+the primary — and a comparison whose two halves share the fault you fear is
+worse, because it produces confident agreement.
+
+<CalloutBox type="warn" title="Comparison detects divergence, not error">
+	The sharp limit, and it is the same argument as
+	<a href="/timekeeping/two-clock/agreement-is-not-accuracy/">agreement is not
+	accuracy</a>, pointed at monitoring instead of at requirements.
+
+	Two clocks that drift together tell you nothing. If both receivers share an
+	uncompensated feedline delay, they will agree perfectly and both be wrong. If
+	both track a spoofed constellation, they will agree beautifully.
+
+	<strong>Agreement is evidence of nothing on its own.</strong> It is only
+	informative in proportion to how independent the two sources are — which is
+	why the table above is the whole design, and why "we have two of them" is not
+	an answer to the question.
+</CalloutBox>
+
+## Second opinions you can have this week
+
+Three that cost little and are not widely used.
+
+**A different constellation.** Free, already in your receiver, and it catches an
+entire class of failure — one operator having a bad day. BIPM's own scorecard
+shows [GLONASS running an order of magnitude worse](/timekeeping/utc/which-constellation-keeps-best-time/)
+than the others for over a year, which is exactly the kind of thing a
+single-constellation installation would never notice.
+
+**A link to a national laboratory.** The observations are
+[public and free](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/). You
+will not get a defensible absolute offset without calibration — but you do not
+need one to monitor. **A step in the link is a step in your hardware.** If your
+offset jumps 40 ns one Tuesday, something in your installation changed on
+Tuesday, and it does not matter that you cannot say what the offset should have
+been.
+
+**The clock's own confidence, published rather than swallowed.** PTP carries a
+`clockClass` field precisely so a grandmaster can announce *my reference is gone
+and my confidence is degrading*. A system that knows it is in
+[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/) and does not say
+so has solved the easy half of the problem.
+
+## Make something complain
+
+A comparison nobody reads is not monitoring. Three properties separate the real
+thing from a dashboard:
+
+1. **It alarms on divergence, not on absence.** "The GNSS receiver is up" is the
+   loud failure you already catch. "The two sources moved 30 ns apart" is the
+   quiet one.
+2. **The threshold is your error budget**, not a round number somebody liked. If
+   you have not written the budget down, the alarm level is a guess and will be
+   tuned until it stops firing.
+3. **It keeps the record.** This is the part that converts monitoring into
+   [traceability](/timekeeping/utc/traceability/) — the requirement is a record
+   showing you stayed inside the budget *over the period being claimed*, and that
+   record cannot be reconstructed later. It exists only if you were writing it
+   down at the time.
+
+That third point is the one that catches people at audit. Everything else on
+this page is engineering; that one is the difference between having been right
+and being able to show it.
+
+## The short version
+
+- **Nothing inside a clock can detect a constant error.** Stop looking for a
+  self-test that would.
+- **Get a second opinion**, and choose deliberately what it shares with the
+  first, because that decides what it can see.
+- **Agreement proves nothing** in proportion to what the two sources have in
+  common.
+- **Alarm on divergence against your written budget**, and keep the record — the
+  record is the part you cannot backfill.
+
+[[? Two things worth your eye.
+
+1) The shared-antenna argument — that sharing every systematic makes the comparison *more* sensitive rather than less — is from `multi-receiver-design.md` §5 and it is the reason I think this page clears the 1001st-page bar. But I have stated it as a design principle where your doc states it as a lab practice with a specific claim about survey solutions converging. If you have a number for how tightly two co-antenna receivers actually agree, that would turn the best paragraph on the page from an argument into a result.
+
+2) I have left the fleet-consensus work out entirely. The cohort distinction — which hosts can be cross-checked against which, and at what sensitivity — is a more developed version of this page's central idea, and it may deserve its own page rather than a paragraph here. Tell me if you would rather I fold a summary in. ?]]
+
+## Where to go next
+
+- **[When agreement matters more than being right](/timekeeping/two-clock/agreement-is-not-accuracy/)**
+  — the same independence argument, pointed at requirements instead of at
+  monitoring.
+- **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
+  — where the monitoring record stops being good practice and becomes the
+  deliverable.
+- **[Ways to get time into a datacenter](/timekeeping/acquiring/acquiring-time/)**
+  — the case for a second source, made before you knew what to do with it.

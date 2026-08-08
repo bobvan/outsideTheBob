@@ -31,10 +31,10 @@ Ranked as the review ranked them. Section refs are that document's.
 ### Blocking the garden's own rules
 
 *E1 (Holdover) closed 2026-08-08 — `acquiring/what-happens-when-i-lose-gps`.*
+*E2 (Oscillators) closed 2026-08-08 — `acquiring/do-i-need-an-ocxo`.*
 
 | # | item | where |
 |---|---|---|
-| E2 | **Oscillators have no Home.** Four pages tagged `oscillators`, "a good oscillator" load-bearing in five, no page says what one is. Reader question: *do I need an OCXO or will a TCXO do?* | new page |
 | E4 | **"Silently wrong" is promised on four pages and never answered.** Either write *how do you know it is still right?* or downgrade the promises to observations. | new page, or 4 edits |
 
 ### Technical, needs sources or a decision

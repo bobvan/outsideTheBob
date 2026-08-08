@@ -38,7 +38,7 @@ meant to carry this.
 1. **Small pages.** One idea each.
 2. **No topic runs more than a few pages.**
 3. **Heavy linking.** Anywhere to what you needed in one hop.
-4. **Be the 11th page, not the 1001st.**
+4. **Be the 11th page on the web for a topic, not the 1001st.**
 5. **Every topic is a valid entry point.** No forced order.
 
 ## Coverage notation
@@ -90,9 +90,174 @@ uncompensated regions:
 That is the whole argument for the split in one paragraph, and it should open
 **Transferring Time**.
 
+## Images to be used
+
+* It's all about the corrections. Doesn't exist yet. Realtime focus, but mention post-processing too. A continuum from broadcast to HAS to single-AC realtime.
+* Years since Victoria's reign
+* Old tyme surveyor
+* Archery targets
+* Mean and standard deviation around UTC
+* Sawtooth
+* Satellite laser ranging
+* Evil GNSS clock
+* UTC Distribution Accuracy
+* Chain of UTC offset errors: AntPos, AntCalib, feedline, RX delay, PPS delay
+* Log-log blobs
+* Table contrasting SPP, RTK, and PPP & PPP-AR
+
+## Glossary terms
+
+* Timescale
+* Accuracy
+* Precision
+* Stability
+* Holdover
+* Survey
+* Repeatability
+* RTK
+* SPP
+* PPP
+* PPP-AR
+* Traceability
+* Bias
+* Measurement error
+* Measurement noise
+* Sawtooth error
+* ADEV, TDEV, MTIE
+* Measuring form lastNs2Utc
+* APC, ARP, PCO
+
+## Possible sections
+
+* Antennas
+* GNSS
+* Time Measurement
+* Trading
+
+## File me somewhere
+
+* GNSS signal structure
+  * PR
+  * Carrier
+
+* GNSS constellations and bands
+
+* Project PePPAR-Fix
+
+* GNSS support infrastrucutre
+  * XXX
+
+* Timkeeping basics
+  * Contrast fast/slow clocks with ahead/behind clocks
+  * Contrast step/slew adjustments with phase/frequency
+  * Contrast disciplined with freerun and error logging
+  * Contrast short-term stability with long-term stability
+  * Contrast molecular clocks with atomic clocks
+
+* Position survey accuracy limits
+
+* Timekeeping myths
+  * Master clocks are in space
+  * Some atomic clocks are so accurate they never need adjustment
+    * You just count cycles of some atomic resonance and you're done
+
+* GPSDO basics
+  * Components
+  * Architecture
+
+* Best practices
+
+* Ionospheric/tropospheric compensation
+
+* Antenna feedlines
+  * Sat signals combine at APC
+  * Feedline doesn't change signal mixing position
+  * Feedline adds delay from UTC
+
+* GNSS clock benchmarking
+  * Good images in lastNs2Utc
+
+* Time acquisiton vs time distribution (AKA clock sync or time transfer)
+  * Length compensated
+  * Uncompensated
+
+* Ways a clock can be wrong
+
+* Two-clock agreement CDF
+
+* Contrast GNSS receiver types
+  * Positioning
+  * RTK positioning
+  * Timing
+  * Automotive
+  * Geodetic
+  * PPS IN vs PPS OUT
+
+* GNSS processing techniques
+  * SPP
+  * RTK
+  * PPP
+  * PPP-AR
+  * Tradeoffs in observatoin time and precision
+
+* Timelab equipment
+  * TIC
+  * Frequency standard
+  * Distribution amplifier
+  * Geodetic GNSS receiver
+  * Calibrated antenna
+  * Wide sky view with low multipath
+
+* Related but distinct and not covered
+  * Host timestamping
+  * Slave following master
+  * Holdover
+  * Elapsed time
+  * MiFID 2 compliance
+
+* Spoofing, jaming, meaconing
+  * Calling BS on your GM
+
+* Feasibility of Sub-ns UTC Sync
+  * Literally no
+  * Practically yes
+
+* Accuracy and precision challenges
+  * Quantization with digital clocks at reasonable speeds
+  * Oscillator stability
+
+* GNSS infrastructure
+  * BIPM
+  * National labs (MRIs)
+  * Stable clocks
+  * Observation stations
+  * Analysis centers
+  * Constellations
+
+* Sources of GNSS UTC error
+  * Antenna position error
+  * Feedline length error
+  * Receiver clock drift
+  * Ionosphere
+  * Troposphere
+  * Coarse corrections
+
+* Matching time acquisition and distribution
+  * Comparison table
+  * Order of magnitude difference
+  * Maybe Secaucus aerial photo
+  
+
 ---
 
 ## The hierarchy
+
+### Level definition
+
+- timekeeping
+  - section
+    - page
+      - point
 
 ### 1. Timekeeping in Datacenters
 
@@ -364,7 +529,7 @@ under-appreciated part of precision timekeeping."*
   eraser — of a point you cannot see. Plus antenna calibration: patterns
   measured by *a robot on a building in Germany* moving the antenna while the
   satellites appear to stand still.
-- **Your feed line is probably wrong** — **H**. **New, promoted out of *Siting,
+- **Your feed line is likely your largest source of error** — **H**. **New, promoted out of *Siting,
   cabling, multipath* on the strength of L1**, where Bob makes a claim big enough
   to carry a page on its own:
 
@@ -681,7 +846,7 @@ Things worth a page eventually, not now. Add freely.
   a two-line decision rule, and — the best of it — a **diagnostic the reader can
   run with the equipment they already own**: restart the survey every 24 h for
   14 days and see whether the answers converge or wander.
-- **New topic promoted: *Your feed line is probably wrong*.** Bob's bet that
+- **New topic promoted: *Your feed line is likely your largest source of error*.** Bob's bet that
   feedline compensation is the largest bias in typical datacenter deployments,
   plus the questioner's velocity-factor point, is too big to stay a clause inside
   *Siting, cabling, multipath*. Arithmetic verified: 30 m of coax costs 152 ns at

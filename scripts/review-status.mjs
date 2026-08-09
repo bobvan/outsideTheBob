@@ -2,7 +2,8 @@
 // Bob's review tracker.
 //
 //     npm run review                      # what still needs your eyes
-//     npm run review -- --all             # every page, including the done ones
+//     npm run review -- --all             # every draft, including the done ones
+//     npm run review -- --published       # include already-published pages too
 //     npm run review -- --never           # only the ones you have never read
 //     npm run review -- --stale           # only the ones that changed after you read them
 //     npm run review -- --mark <slug>     # sign a page off, dated today
@@ -61,10 +62,18 @@ function load(file) {
 		updated: field(fm, 'updatedDate') ?? field(fm, 'pubDate'),
 		reviewed: field(fm, 'reviewed'),
 		note: field(fm, 'reviewNote'),
+		// draft defaults to true in both schemas, so absent means draft.
+		draft: (field(fm, 'draft') ?? 'true') !== 'false',
 	};
 }
 
-const pages = [...walk('src/content')].map(load);
+// Only drafts are in scope. A published page has already had whatever review it
+// was going to get, and counting nine shipped posts as "never reviewed" made the
+// number useless — the question this tool answers is "what is not ready yet",
+// not "what have I ever read". --published brings them back if you want a sweep.
+const allPages = [...walk('src/content')].map(load);
+const pages = has('published') ? allPages : allPages.filter((p) => p.draft);
+const hiddenPublished = allPages.length - pages.length;
 
 // Astro strips unknown frontmatter keys without complaint, so `reviwed:` would
 // do nothing at all and look like it had worked. Catch the near misses.
@@ -132,7 +141,10 @@ const shown = has('all') ? rows : rows.filter((r) => (only ? r.state === only : 
 // a terminal, and a summary you have to scroll past the answer to reach is a
 // summary in the wrong place.
 const n = (s) => rows.filter((r) => r.state === s).length;
-const summary = `${n('ok')} current · ${n('stale')} changed since you read them · ${n('never')} never reviewed · ${rows.length} pages`;
+const summary =
+	`${n('ok')} current · ${n('stale')} changed since you read them · ${n('never')} never reviewed · ` +
+	`${rows.length} draft${rows.length === 1 ? '' : 's'}` +
+	(hiddenPublished ? ` (${hiddenPublished} published page${hiddenPublished === 1 ? '' : 's'} not counted — --published to include)` : '');
 console.error(summary);
 if (!has('all') && !only) console.error('listing everything that is not current:');
 
@@ -166,4 +178,4 @@ if (!has('all') && !shown.length) console.error('\n✓ everything is reviewed an
 console.error('\n  ✓ current   ! changed since review   · never reviewed');
 console.error('  sign off in vi:  reviewed: YYYY-MM-DD   (reviewNote: "..." optional)');
 console.error('  or from here:    npm run review -- --mark <slug>');
-console.error('  narrow with:     --never   --stale   --all');
+console.error('  narrow with:     --never   --stale   --all   --published');

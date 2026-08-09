@@ -542,3 +542,29 @@
     - label: "Holdover, which is what its oscillator is really for"
       href: "/timekeeping/acquiring/what-happens-when-i-lose-gps/"
   draft: true
+
+- id: epoch
+  term: "Epoch"
+  aliases: ["observation epoch", "measurement epoch"]
+  definition: >-
+    A named instant — and the confusion is real, because the word carries two
+    senses that pull in opposite directions. **The origin sense** is a fixed
+    starting point a timescale counts from: the epoch of GPS Time is
+    1980-01-06, of Unix time 1970-01-01. **The measurement sense** is one sample
+    instant in a stream of them: a GNSS receiver reports *an epoch* of
+    observations — every satellite measured at that moment — and the next one
+    arrives however far apart the sampling rate says. It reads as a synonym for
+    "second" only because 1 Hz is the common sampling rate; a 30-second file
+    has 2880 epochs in a day, and an epoch need not land on a second boundary at
+    all. **An epoch is a point, never a duration.**
+  authority:
+    label: "IGS, RINEX 3.05 — epoch records in observation files"
+    url: "https://files.igs.org/pub/data/format/rinex305.pdf"
+  seeAlso:
+    - label: "Timescales — where the origin sense lives"
+      href: "/timekeeping/datacenters/timescales/"
+    - label: "RINEX, where you meet epochs one block at a time"
+      href: "#rinex"
+    - label: "PPS, which marks a moment without naming it"
+      href: "#pps"
+  draft: true

@@ -80,9 +80,9 @@ Same antennas, same roofs.
 Cheap, widely fitted, and more useful as a *diagnostic* than as an alarm — once
 you understand precisely what it is watching.
 
-It watches **the connection, not the signal.** The receiver puts DC up the coax
-to power the antenna and measures the current coming back; too little reads as
-open, too much as short. That is a statement about electrical load, and it is
+It watches **the connection, not the signal.** The receiver offers DC on the coax
+to power the antenna and measures the current consumption; too little reads as
+open coax, too much as a short. That is a statement about electrical load, and it is
 only loosely coupled to whether you are receiving anything.
 
 Both failure modes are real and both are common:
@@ -91,7 +91,7 @@ Both failure modes are real and both are common:
   that does not mimic an antenna's current draw will read as open forever while
   the signal is perfect.
 - **No signal, connection fine.** Aluminum foil over the antenna will do it in
-  seconds, and the supervisor is entirely happy.
+  seconds. The current consumption doesn't change, so the supervisor is entirely happy.
 
 So on its own it is a liar in both directions. What makes it valuable is the
 **correlation**: if signal quality changes *and* the connection state changes at

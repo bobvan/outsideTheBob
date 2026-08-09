@@ -20,8 +20,13 @@
 // since I read it?"** A page signed off on the 5th and edited on the 8th is
 // not reviewed any more, and no checklist maintained by hand would notice.
 //
-// --mark exists so signing off is never a hand-edit of frontmatter. Read on
-// whatever device you like; mark from a terminal afterwards.
+// Bob edits these by hand in vi, which is the expected path — `--mark` is a
+// convenience, not the interface. Two consequences the code has to carry:
+//
+//   - dates are PARSED, not string-compared, because a hand-typed `2026-8-8`
+//     is reasonable and would sort wrong as a string;
+//   - a mistyped key is reported, because Astro drops unknown frontmatter keys
+//     without complaint and `reviwed:` would look like it had worked.
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
@@ -58,6 +63,20 @@ function load(file) {
 }
 
 const pages = [...walk('src/content')].map(load);
+
+// Astro strips unknown frontmatter keys without complaint, so `reviwed:` would
+// do nothing at all and look like it had worked. Catch the near misses.
+const KNOWN = new Set(['reviewed', 'reviewNote']);
+const typos = [];
+for (const p of pages) {
+	const fm = p.src.split(/^---$/m)[1] ?? '';
+	for (const m of fm.matchAll(/^([A-Za-z]+):/gm)) {
+		const k = m[1];
+		if (KNOWN.has(k)) continue;
+		const kl = k.toLowerCase();
+		if (kl.startsWith('rev') || kl.includes('review')) typos.push(`${p.file}: "${k}:" — did you mean "reviewed:"?`);
+	}
+}
 const today = new Date().toISOString().slice(0, 10);
 
 // ---- mark / unmark --------------------------------------------------------
@@ -85,12 +104,23 @@ if (mark !== null || unmark !== null) {
 }
 
 // ---- report ---------------------------------------------------------------
+// Parse rather than string-compare. A hand-typed `2026-8-8` is a perfectly
+// reasonable thing to write in vi and would sort wrong as a string, which would
+// quietly mark a stale page current — the one error this tool must not make.
+const day = (v) => {
+	if (!v) return null;
+	const t = Date.parse(v);
+	return Number.isNaN(t) ? NaN : t;
+};
 const state = (p) => {
-	if (!p.reviewed) return 'never';
-	if (p.updated && p.updated > p.reviewed) return 'stale';
+	const r = day(p.reviewed);
+	if (r === null) return 'never';
+	if (Number.isNaN(r)) return 'bad';
+	const u = day(p.updated);
+	if (u !== null && !Number.isNaN(u) && u > r) return 'stale';
 	return 'ok';
 };
-const MARK = { never: '·', stale: '!', ok: '✓' };
+const MARK = { never: '·', stale: '!', ok: '✓', bad: '?' };
 
 const rows = pages.map((p) => ({ ...p, state: state(p) }));
 const shown = has('all') ? rows : rows.filter((r) => r.state !== 'ok');
@@ -111,10 +141,20 @@ for (const [section, list] of [...bySection].sort()) {
 	}
 }
 
+if (typos.length) {
+	console.error('\n⚠ frontmatter keys that look like a typo — Astro ignores unknown keys silently:');
+	for (const t of typos) console.error('   ' + t);
+}
+if (rows.some((r) => r.state === 'bad')) {
+	console.error('\n⚠ unparseable review dates (use YYYY-MM-DD):');
+	for (const r of rows.filter((x) => x.state === 'bad')) console.error(`   ${r.file}: reviewed: ${r.reviewed}`);
+}
+
 const n = (s) => rows.filter((r) => r.state === s).length;
 console.error(
 	`\n${n('ok')} current · ${n('stale')} changed since you read them · ${n('never')} never reviewed · ${rows.length} pages`,
 );
 if (!has('all') && !shown.length) console.error('\n✓ everything is reviewed and nothing has changed since.');
 console.error('\n  ✓ current   ! changed since review   · never reviewed');
-console.error('  sign off with:  npm run review -- --mark <slug>');
+console.error('  sign off in vi:  reviewed: YYYY-MM-DD   (reviewNote: "..." optional)');
+console.error('  or from here:    npm run review -- --mark <slug>');

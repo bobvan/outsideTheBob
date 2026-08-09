@@ -34,11 +34,32 @@ toward UTC(SU) — and every satellite broadcasts its operator's *estimate* of t
 residual offset. That estimate has to be an estimate, because
 [UTC will not be computed for another month](/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/).
 
-The published specifications for that residual are loose — 40 ns for GPS at 95%,
-50 ns for Galileo, 100 ns for BeiDou. The measured reality is roughly a hundred
-times better than that, about **a nanosecond of mean bias** for GPS, Galileo and
-BeiDou alike. We know the real figure rather than the specified one because
-somebody grades it, which is the whole subject of the rest of this page.
+Each operator publishes what that residual is allowed to be, and all three
+current standards land in the same place:
+
+| | committed accuracy of the broadcast UTC offset | source |
+|---|---|---|
+| GPS | **30 ns**, 95% global statistic | SPS Performance Standard, 5th Ed. 2020, Table 3.4-4 |
+| Galileo | **< 30 ns**, 95%, over all ages of data | OS-SDD v1.3, Table 13 |
+| BeiDou | **≤ 20 ns**, 95% | BDS Open Service Performance Standard v3.0, 2021, Table 5-8 |
+
+The measured reality is roughly **ten times better than that.** Over fourteen
+months of daily BIPM measurements, all three sit within a nanosecond of mean
+bias and a few nanoseconds at 95%. We know the real figure rather than the
+specified one because somebody grades it, which is the whole subject of the rest
+of this page.
+
+<CalloutBox type="tip" title="Comparing those two rows honestly">
+	The specifications are 95% statistics. Our measured figures are a mean and a
+	standard deviation, and comparing a mean against a 95% would flatter us by
+	about a factor of three.
+
+	Like for like: GPS measures +0.59 ± 1.17 ns, Galileo +0.62 ± 1.95, BeiDou
+	−0.10 ± 1.04, with worst excursions under 5 ns across 426 days. Call that
+	roughly 3–5 ns at 95%, against committed figures of 20–30 ns. <strong>An order
+	of magnitude of headroom, not two</strong> — which is still a striking margin,
+	and a more defensible sentence than the one it replaces.
+</CalloutBox>
 
 ## Two loops, at wildly different speeds
 

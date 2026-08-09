@@ -41,9 +41,10 @@ Ranked as the review ranked them. Section refs are that document's.
 
 ### Technical, needs sources or a decision
 
+*B5 closed 2026-08-09 — all three specs checked against primaries. All three were wrong; see `references.md`.*
+
 | # | item | where |
 |---|---|---|
-| B5 | **Three broadcast-UTC spec figures are uncited**, and bravo believes two are wrong — Galileo may be 30 ns not 50, BeiDou tighter than 100 (that reads BDS-2-era). The page's whole argument is a ratio built on these. Check primaries, cite in `references.md`. | `how-gnss-time-relates-to-utc` |
 | B4 | **Cut the AtomiChron compute argument.** A ZED-F9P resolves ambiguities at a few hundred mW — an RTK reader kills the inference in one second. Keep the link-budget half, which is the better argument anyway. | `choosing-a-gnss-timescale` |
 | B7 | **`antenna-position` undersells its own advice.** "Below 15 ns" is a survey-in number on a page that argues against survey-in; an offline solution is centimeter-class ≈ 40 ps. Reframe as two regimes. | `antenna-position` |
 | B9 | GLONASS system time is **UTC(SU) + 3 h**; and the steering list omits Galileo, the one constellation the page grades two paragraphs later. | `how-gnss-time-relates-to-utc` |

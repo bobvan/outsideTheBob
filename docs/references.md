@@ -727,3 +727,79 @@ Short baselines gain nothing; long ones gain a third. Which is the same
 statement as "common view cancels only what both ends share", in numbers.
 
 **Use in:** UTC → *How do you compare two clocks a thousand miles apart?*
+
+---
+
+## ✅ The three broadcast-UTC specifications — all primary, all checked
+
+**Verified 2026-08-09** by downloading each standard and reading the table.
+Raised as §B5 of `review-2026-08-08.md`, where bravo doubted two of the three
+figures the page carried. He was right to doubt, and **all three were wrong** —
+including the one he was confident in.
+
+| | page said | actual | source |
+|---|---|---|---|
+| GPS | 40 ns | **30 ns**, 95% | SPS PS 5th Ed. Apr 2020, **Table 3.4-4** |
+| Galileo | 50 ns | **< 30 ns**, 95% | OS-SDD **v1.3, Table 13** |
+| BeiDou | 100 ns | **≤ 20 ns**, 95% | BDS OS PS **v3.0, 2021, Table 5-8** |
+
+### GPS — 30 ns, and 40 ns is the previous edition
+
+<https://www.gps.gov/sites/default/files/2025-07/2020-SPS-performance-standard.pdf>
+
+> **Table 3.4-4. SPS SIS UTCOE Accuracy Standards** — 30 ns 95% Global Statistic
+> UTCOE during Normal Operations at Any AOD.
+>
+> *Note 1.* This is the accuracy of the UTC(USNO) offset data in the broadcast
+> navigation message portion of the SPS SIS.
+
+40 ns is the widely quoted figure and it is the **4th Edition (2008)** number.
+The 5th Edition tightened it and is the standard in force. Anyone citing 40 ns
+today — including a reviewer who was sure of it — is citing a superseded
+document, which is worth remembering as a general hazard with this family of
+specs.
+
+⚠ Do not confuse this with the 1995 *SPS Signal Specification*, which is a
+different document and says "better than 30 nanoseconds" about something else
+plus a 250 ns time-transfer bound. It is obsolete and still the first hit for
+some searches.
+
+### Galileo — < 30 ns
+
+<https://www.gsc-europa.eu/sites/default/files/sites/all/files/Galileo-OS-SDD_v1.3.pdf>
+
+> **Table 13. Galileo SIS UTC Time Dissemination Accuracy MPL** — For each SF
+> and DF combination: **< 30 ns (95%) over all AODs**. For any healthy OS SIS,
+> at any user location, calculated over a period of 30 days, propagation and
+> user contributions excluded.
+
+Note it is an **MPL** — a Minimum Performance Level — and that v1.1 and v1.2 are
+both still online and marked *Superseded*. Cite the version.
+
+### BeiDou — ≤ 20 ns, and 100 ns is BDS-2 era
+
+<http://en.beidou.gov.cn/SYSTEMS/Officialdocument/202110/P020211014595952404052.pdf>
+
+> **Table 5-8 The SIS UTCOE Accuracy Standard** — B1C, B2a, B2b, B1I, B3I:
+> UTCOE **≤ 20 ns** (95%). The statistical value over a specific healthy SIS
+> from any single BDS satellite in-orbit (GEO, IGSO, MEO); excludes transmission
+> or user segment errors.
+
+§5.4.2.4 defines it as "the error of the offset between BDT and UTC (NTSC)".
+Separately, §4.5: "the deviation of BDT to UTC is maintained within **50
+nanoseconds** (modulo 1 second)" — a *system* commitment about the timescale
+itself, not the broadcast offset's accuracy. Two different 50-ish numbers in one
+document; do not swap them.
+
+### The correction this forced on the page
+
+The old sentence claimed the measured reality was "roughly a hundred times
+better" than the specification. With correct specs of 20–30 ns that ratio is
+**about ten**, and there was a second error underneath it: **it compared our
+*mean* against their *95%*.** Like for like — mean plus about 2σ, worst
+excursions under 5 ns across 426 days — we are at roughly 3–5 ns against a
+committed 20–30 ns.
+
+An order of magnitude, not two. Still a striking margin, and now defensible.
+
+**Use in:** UTC → *How does GNSS time relate to UTC?*

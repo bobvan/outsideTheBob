@@ -163,11 +163,28 @@ reference frames and datums add a meter or two on top of that.
 And do not expect the GPS or compass app on your phone to give you elevation to
 the nearest foot. It is lucky to be right within ten.
 
-### What is actually achievable
+### What is actually achievable — two very different regimes
 
-With reasonable care and a dual-frequency receiver, you can get the time error
-contributed by configured antenna position **below 15 ns**. Into the low single
-digits is a great deal harder.
+The achievable number depends entirely on which method you used, and the gap
+between them is three orders of magnitude. Quoting one figure for "antenna
+position error" hides the whole decision.
+
+| method | position | time contribution |
+|---|---|---|
+| receiver survey-in, dual-frequency | meter-class, sometimes worse | **3–15 ns** |
+| offline PPP or OPUS-Static on 24 h of raw observations | centimeter-class | **under 100 ps** |
+
+Our own operational antenna positions carry σ ≈ 12 mm, which is **40 ps**. That
+is not a heroic number — it is what an offline solution on a day of observations
+routinely produces, using processing somebody else already built and runs for
+free.
+
+The consequence is the useful part. **Once you are in the second row, antenna
+position stops being your limiting term** and the
+[feedline](/timekeeping/antennas/feedline/) takes over as the largest thing in
+your budget. That is the whole reason this page insists on the offline route:
+not because 15 ns is intolerable, but because leaving it there means you never
+get to have the more interesting problem.
 
 NIST's own measurements make the point. Evaluating a low-cost dual-frequency
 timing receiver's built-in survey mode, they wanted height good to 30 cm — one

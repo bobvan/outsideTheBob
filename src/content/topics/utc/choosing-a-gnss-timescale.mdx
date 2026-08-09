@@ -110,34 +110,39 @@ documented**. The receiver-side manuals describe applying a "Fugro composite
 bias" and say nothing about ambiguity fixing, and Fugro's marine positioning
 products do PPP-AR, so guessing either way would be easy.
 
-The hardware argues against it, though, and it is worth walking through because
-the reasoning generalizes to any correction service that will not tell you what
-it does.
+The link budget argues against it, and it is worth walking through because the
+reasoning generalizes to any correction service that will not tell you what it
+does.
 
-<CalloutBox type="tip" title="What the power budget implies">
-	The AtomiChron solution runs on a CPU inside a <strong>Septentrio mosaic-T</strong>
-	— a 31 × 31 mm LGA module, 6.8 g, single 3.3 V supply, and <em>no heatsink</em>.
+<CalloutBox type="tip" title="What the correction channel implies">
+	AtomiChron's corrections arrive over <strong>L-band at a couple of kilobits
+	per second</strong>. That is a channel sized for orbits, clocks and code
+	biases.
 
-	Septentrio's own power table gives <strong>760 mW</strong> for the row that
-	matches this application exactly: "GPS/GLONASS L1/L2 + L-band, PPP (1 Hz)."
-	Nothing anywhere in that table exceeds 1080 mW. And that budget is not the
-	CPU's — it covers the RF front ends, the correlators for every constellation,
-	Ethernet, USB and the SD card as well. Whatever is left for computation is a
-	fraction of three quarters of a watt.
+	<strong>Ambiguity resolution needs per-satellite phase biases</strong> —
+	another product entirely, from a single self-consistent analysis center, and
+	one that has to stay current across the whole constellation. Without them
+	nothing can be fixed no matter how much compute you have.
 
-	<strong>Ambiguity resolution is not a cheap computation.</strong> Fixing
-	integers means decorrelating and searching an integer lattice across many
-	satellites and frequencies, on top of a much larger filter state. That is
-	vector floating-point work, and it is not what a passively cooled sub-watt
-	module with an RF chain to feed looks like it is doing.
+	So: my hunch is that AtomiChron is not PPP-AR. That is an inference from a
+	link budget, not a fact from Fugro, and it is labelled as one. But it is the
+	way to bet.
+</CalloutBox>
 
-	The correction feed points the same way. It arrives over L-band at a couple of
-	kilobits per second — a channel sized for a modest correction product, not for
-	the per-satellite phase biases that make fixing possible.
+<CalloutBox type="warn" title="An argument I made here and had to withdraw">
+	I originally reasoned from <em>compute</em>: ambiguity resolution means
+	searching an integer lattice, which is real floating-point work, and the
+	solution runs on a passively cooled sub-watt module.
 
-	<strong>So: my hunch is that AtomiChron is not PPP-AR.</strong> That is an
-	inference from a power table and a link budget, not a fact from Fugro, and it
-	is labelled as one. But it is the way to bet.
+	That does not survive contact with the evidence — and the evidence is the
+	same Septentrio power table I was citing. It lists <strong>RTK at
+	670 mW</strong> against <strong>PPP at 760 mW</strong> on the identical
+	module. RTK <em>is</em> integer ambiguity resolution, and it costs
+	<em>less</em> than the row I was pointing at. Any reader who has run RTK on a
+	cheap receiver would have known that immediately.
+
+	Integer AR is what sub-watt modules do all day. The compute argument was
+	wrong, and the link-budget argument above never needed it.
 </CalloutBox>
 
 ## c. PPP-AR against one analysis center's datum

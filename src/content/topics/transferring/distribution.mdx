@@ -34,7 +34,7 @@ it, and keeping track of what the journey cost.
 | **NTS** | RFC 8915 | as NTP | Yes — NTP, with authentication added |
 | **PTP**, software timestamps | IEEE **1588-2008** | tens of µs | Yes — measured, but timestamps taken late |
 | **PTP**, hardware timestamps | IEEE **1588-2008** | sub-µs to tens of ns | Yes — measured at the wire |
-| **White Rabbit** | IEEE **1588-2019** | sub-nanosecond | Yes — and it handles *asymmetry* too |
+| **White Rabbit** | IEEE **1588-2019** High Accuracy profile | sub-nanosecond | Yes — and it *measures* asymmetry too |
 | **PPS** | — | ~50 ps to 1 ns | **No** |
 
 Links out, because each of these is documented far better elsewhere than a page
@@ -70,14 +70,27 @@ is assumed is a permanent offset.
 	protocol conformance detects it.
 </CalloutBox>
 
-**White Rabbit is the exception**, and the way it gets there is worth knowing.
-IEEE 1588-2019 explicitly accounts for asymmetric links rather than assuming they
-are symmetric — and White Rabbit removes the largest practical source of
-asymmetry at the physical layer, by running both directions down **a single fiber
-strand on different wavelengths** instead of over a duplex pair. Two fibers are
-never quite the same length; one fiber cannot disagree with itself. What
-asymmetry remains comes from the wavelengths propagating at slightly different
-speeds, which is a calculable quantity rather than an unknown one.
+**White Rabbit is the exception**, and the way it gets there is worth knowing —
+including one thing it is commonly given credit for that it does not deserve.
+
+**1588-2008 already had somewhere to put asymmetry.** There is a
+`delayAsymmetry` correction in the standard, and always was. What the standard
+has never given you is a way to *find out what to write in it*. A field for a
+quantity is not a method for determining it, and an unmeasured asymmetry
+correction defaults to zero — which is exactly the assumption it was supposed to
+relax.
+
+**White Rabbit's contribution is the measurement**, achieved at the physical
+layer: it runs both directions down **a single fiber strand on different
+wavelengths** instead of over a duplex pair. Two fibers are never quite the same
+length; one fiber cannot disagree with itself. What asymmetry remains comes from
+the two wavelengths propagating at slightly different speeds — a calculable
+quantity rather than an unknown one.
+
+Its techniques were subsequently folded into IEEE 1588 as the **High Accuracy
+profile of 1588-2019**, which is the accurate way to cite it. White Rabbit
+predates that standard by roughly a decade; the profile documents what White
+Rabbit was already doing rather than the other way round.
 
 ## PPS is barely a protocol, and belongs here anyway
 

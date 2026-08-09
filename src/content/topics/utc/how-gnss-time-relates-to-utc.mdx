@@ -23,15 +23,30 @@ the source of a great deal of muddle.
 System Time and BeiDou Time are continuous scales that ignore leap seconds, so
 each sits an integer number of seconds away from UTC — 18 s for GPS and Galileo,
 4 s for BeiDou, as of today. Every constellation broadcasts that count, your
-receiver subtracts it, and nobody thinks about it again. GLONASS is the odd one
-out: it follows UTC(SU) and applies leap seconds, so it has no such offset.
+receiver subtracts it, and nobody thinks about it again.
+
+GLONASS is the odd one out twice over. It is the only constellation that
+**applies leap seconds**, following UTC(SU) — and it is offset from it by a flat
+**three hours**, which is Moscow. So GLONASS system time is UTC(SU) + 3 h, and
+the thing that stays constant is the three hours rather than a leap-second
+count.
 
 **Part two is the interesting part, and it is a prediction.** Underneath the
-integer, each constellation's timescale is steered toward UTC by way of a
-national laboratory's realization of it — GPS toward
-[UTC(USNO)](/timekeeping/glossary/#utc-k), BeiDou toward UTC(NTSC), GLONASS
-toward UTC(SU) — and every satellite broadcasts its operator's *estimate* of the
-residual offset. That estimate has to be an estimate, because
+integer, each constellation's timescale is steered toward UTC — and *how* differs
+in a way worth a sentence, because it is the one place these four systems are not
+built alike:
+
+- **GPS** toward [UTC(USNO)](/timekeeping/glossary/#utc-k), a single national
+  laboratory's realization.
+- **BeiDou** toward UTC(NTSC), likewise a single laboratory.
+- **GLONASS** toward UTC(SU), likewise.
+- **Galileo** is the exception: GST has no single national laboratory behind it.
+  It is realized and aligned to UTC by the **Galileo Time Service Provider**,
+  which works from an ensemble of European timing laboratories rather than one
+  of them.
+
+Every satellite then broadcasts its operator's *estimate* of the residual
+offset. That estimate has to be an estimate, because
 [UTC will not be computed for another month](/timekeeping/utc/can-i-sync-datacenter-clocks-to-utc/).
 
 Each operator publishes what that residual is allowed to be, and all three

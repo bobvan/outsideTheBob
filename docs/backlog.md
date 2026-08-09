@@ -42,13 +42,10 @@ Ranked as the review ranked them. Section refs are that document's.
 ### Technical, needs sources or a decision
 
 *B5 closed 2026-08-09 — all three specs checked against primaries. All three were wrong; see `references.md`.*
+*B4, B7, B8, B9 closed 2026-08-09 — sources in `references.md`. Only B10's two cosmetic items remain in this group.*
 
 | # | item | where |
 |---|---|---|
-| B4 | **Cut the AtomiChron compute argument.** A ZED-F9P resolves ambiguities at a few hundred mW — an RTK reader kills the inference in one second. Keep the link-budget half, which is the better argument anyway. | `choosing-a-gnss-timescale` |
-| B7 | **`antenna-position` undersells its own advice.** "Below 15 ns" is a survey-in number on a page that argues against survey-in; an offline solution is centimeter-class ≈ 40 ps. Reframe as two regimes. | `antenna-position` |
-| B9 | GLONASS system time is **UTC(SU) + 3 h**; and the steering list omits Galileo, the one constellation the page grades two paragraphs later. | `how-gnss-time-relates-to-utc` |
-| B8 | White Rabbit is the **1588-2019 High Accuracy profile**, not 1588-2019; and 1588-2008 already has a `delayAsymmetry` field — what it lacks is a way to *measure* it. | `transferring/distribution` |
 | B10 | Two unrelated 16 ns numbers four paragraphs apart read as connected; and consider "BIPM's stated 10 000 km" for the NIST–PTB baseline. | `can-i-build-my-own-link-to-utc-nist` |
 
 ### Internal contradictions

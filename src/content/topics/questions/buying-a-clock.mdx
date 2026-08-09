@@ -11,12 +11,29 @@ reviewed: 2026-08-08
 reviewNote: "Could need a lot of work"
 ---
 
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
 You are buying a clock for a datacenter. You are not going to build a lab and
 measure it yourself, and you should not have to. What you need is a short list
 of questions whose *answers* tell you whether the person selling it understands
 what they are selling.
 
 These are ordered roughly by how much they reveal per second spent asking.
+
+<CalloutBox type="tip" title="These are questions for a network-clock vendor">
+	The nine below assume you are buying a finished
+	<a href="/timekeeping/glossary/#gps-network-clock">GPS network clock</a> —
+	a box that hands you NTP and PTP and has already made every internal
+	engineering decision on your behalf. That is the common case and these are the
+	questions that expose whether it was made well.
+
+	If you are buying a <strong>module or a geodetic receiver</strong> to build a
+	clock around, the vendor conversation is a different one: you are shopping for
+	<a href="/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/">exposed
+	capabilities</a> rather than for delivered performance, and most of what
+	matters is in the integration manual rather than in anything a salesperson
+	will tell you.
+</CalloutBox>
 
 ## 1. "Accurate to 15 ns" — accurate in which sense?
 

@@ -103,6 +103,17 @@ in time from one box to another — and because at the accurate end of the range
 it is what everything else falls back on. The last hop into a grandmaster, or
 between a reference and a counter on a bench, is very often a PPS cable.
 
+<CalloutBox type="tip" title="Which is the dividing line between the two kinds of box">
+	A <a href="/timekeeping/glossary/#gps-network-clock">GPS network clock</a>
+	speaks the protocols above. That is what it is <em>for</em> — it exists to
+	turn an antenna into NTP and PTP on your network.
+
+	A <strong>GNSS receiver module</strong> speaks none of them. It emits a PPS
+	and a serial stream, and everything on this page is work you would be taking
+	on yourself. If you are holding a module and wondering which protocol it
+	supports, the answer is that supplying one is your job.
+</CalloutBox>
+
 The trade is stark: no protocol overhead and no timestamp exchange, which makes
 it very good, and no path compensation whatsoever, which makes it very
 unforgiving.

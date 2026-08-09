@@ -93,6 +93,13 @@ comparison can now see an antenna problem.
 | **a national laboratory**, by [time transfer](/timekeeping/utc/comparing-two-distant-clocks/) | everything local, including the whole site | little — this is the widest net |
 | **a second GNSS receiver on the same signal** | almost nothing a spoofer would trip | a spoofed signal both are happily tracking |
 
+None of that is module-only. A second
+[GPS network clock](/timekeeping/glossary/#gps-network-clock) on its own antenna
+gives you the second row; two of them fed from one antenna through a splitter
+gives you the first; and a network clock with a **PPS input** will compare
+against another clock directly, which is the cheapest version of this there is.
+The arrangement is the design decision, not the class of hardware.
+
 Read down the "cannot see" column and the design rule writes itself: **choose
 what your second source shares, on purpose, according to what you are trying to
 catch.** A backup you never compare against inherits exactly the same silence as

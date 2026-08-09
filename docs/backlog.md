@@ -112,7 +112,7 @@ renders. See `scripts/review-status.mjs`.
 | H1 | **86 unlinked glossary first-uses** across 28 files — `npm run glossary-links`. Advisory; mostly `UTC` and `timescale`, which need judgement rather than a sweep. |
 | H2 | **11 title retitles** outstanding in `title-audit.md`, now with proposed slugs. Strongest: *GNSS time is a prediction* → *Does the satellite know what time it is?* Cheap while everything is `draft: true`; expensive after. |
 | H3 | Three empty sections: The Datacenter Problem, Benchmarking, Stories. |
-| H5 | **Sweep the module-vs-network-clock distinction across the other pages.** The rule is now in `style-guide.md` and worked through on `what-makes-an-accurate-timing-receiver`; `acquiring-time`, `buying-a-clock`, `distribution` and `what-happens-when-i-lose-gps` all speak to both audiences without saying which. |
+| H6 | **Restart the dev server after editing `glossary.yaml`.** A new entry does not hot-reload — the content-collection cache serves the old set and the link checker reports a false missing anchor. Cost twenty minutes on 2026-08-09. |
 | H4 | Restart the dev server occasionally — bravo found it at 7.5 days of uptime and warns against trusting a stale preview. **Restarted 2026-08-08.** Tailscale preview: `http://100.117.189.97:4321/` |
 
 ---

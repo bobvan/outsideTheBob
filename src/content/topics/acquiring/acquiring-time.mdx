@@ -22,6 +22,20 @@ most people realize, and none of them are exotic.
 them. The signals carry time traceable to UTC, and the equipment is
 commodity — this is the route most datacenters take, for reasons below.
 
+That "receiver" is two quite different purchases, and it is worth deciding which
+one you are making before reading any further:
+
+- a **[GPS network clock](/timekeeping/glossary/#gps-network-clock)** — a 1RU
+  box you rack, feed an antenna, and give an IP address, which hands you NTP and
+  PTP. You are buying the clock.
+- a **GNSS receiver module** or geodetic receiver, whose PPS and serial stream
+  you wire into yourself, supplying the oscillator, the discipline loop and the
+  protocols. You are building the clock.
+
+Almost every datacenter wants the first. The rest of this page applies to both;
+[which capabilities matter to which](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/)
+is where they part company.
+
 **A commercial time service over a dedicated link.** Increasingly available and
 increasingly good. Quincy Data, for instance,
 [announced a sub-nanosecond synchronization service in 2024](https://www.businesswire.com/news/home/20241112721920/en/Quincy-Data-Announces-Sub-Nanosecond-Time-Synchronization-Service),

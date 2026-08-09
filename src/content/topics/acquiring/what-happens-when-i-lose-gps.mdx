@@ -23,6 +23,19 @@ drifted past what I can tolerate?** — which is a different question with a
 different answer for every reader, and the reason a number quoted without a
 threshold is worthless.
 
+<CalloutBox type="tip" title="Whose oscillator is doing the coasting?">
+	In a <a href="/timekeeping/glossary/#gps-network-clock">GPS network clock</a>
+	it is the one inside the box, chosen and disciplined by the vendor. Holdover
+	is then a <em>specification you are buying</em>, and the questions below are
+	the ones to ask about it.
+
+	If you are building around a <strong>module</strong>, the oscillator is yours,
+	the loop is yours, and holdover is something you
+	<a href="/timekeeping/acquiring/do-i-need-an-ocxo/">design and then
+	measure</a>. A bare module has no meaningful holdover at all — its own TCXO is
+	the only thing coasting, and nobody sells that as a feature.
+</CalloutBox>
+
 ## Holdover is not the same as free-running
 
 Worth getting straight first, because the two get used interchangeably and the

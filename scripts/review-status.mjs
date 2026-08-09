@@ -3,6 +3,8 @@
 //
 //     npm run review                      # what still needs your eyes
 //     npm run review -- --all             # every page, including the done ones
+//     npm run review -- --never           # only the ones you have never read
+//     npm run review -- --stale           # only the ones that changed after you read them
 //     npm run review -- --mark <slug>     # sign a page off, dated today
 //     npm run review -- --mark <slug> --note "keep the archer paragraph"
 //     npm run review -- --unmark <slug>
@@ -123,7 +125,16 @@ const state = (p) => {
 const MARK = { never: '·', stale: '!', ok: '✓', bad: '?' };
 
 const rows = pages.map((p) => ({ ...p, state: state(p) }));
-const shown = has('all') ? rows : rows.filter((r) => r.state !== 'ok');
+const only = has('never') ? 'never' : has('stale') ? 'stale' : null;
+const shown = has('all') ? rows : rows.filter((r) => (only ? r.state === only : r.state !== 'ok'));
+
+// Counted and printed BEFORE the listing. With forty pages the list can run off
+// a terminal, and a summary you have to scroll past the answer to reach is a
+// summary in the wrong place.
+const n = (s) => rows.filter((r) => r.state === s).length;
+const summary = `${n('ok')} current · ${n('stale')} changed since you read them · ${n('never')} never reviewed · ${rows.length} pages`;
+console.error(summary);
+if (!has('all') && !only) console.error('listing everything that is not current:');
 
 const bySection = new Map();
 for (const r of shown) {
@@ -150,11 +161,9 @@ if (rows.some((r) => r.state === 'bad')) {
 	for (const r of rows.filter((x) => x.state === 'bad')) console.error(`   ${r.file}: reviewed: ${r.reviewed}`);
 }
 
-const n = (s) => rows.filter((r) => r.state === s).length;
-console.error(
-	`\n${n('ok')} current · ${n('stale')} changed since you read them · ${n('never')} never reviewed · ${rows.length} pages`,
-);
+console.error('\n' + summary);
 if (!has('all') && !shown.length) console.error('\n✓ everything is reviewed and nothing has changed since.');
 console.error('\n  ✓ current   ! changed since review   · never reviewed');
 console.error('  sign off in vi:  reviewed: YYYY-MM-DD   (reviewNote: "..." optional)');
 console.error('  or from here:    npm run review -- --mark <slug>');
+console.error('  narrow with:     --never   --stale   --all');

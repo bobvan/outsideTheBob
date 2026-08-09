@@ -19,9 +19,43 @@ The claims cluster suspiciously close together, so they are not much use for
 choosing. The *capabilities* are far more revealing, because each one changes
 what you are able to do rather than what somebody is willing to assert.
 
-Here they are in roughly the order they start to matter. The interesting thing
-about the list is its shape: **the first few make the receiver a better clock,
-and the last two stop it from having to be your clock at all.**
+## First: which of these are you buying?
+
+Two quite different products get called "a GNSS timing receiver", and half the
+confusion in this subject comes from advice written for one being read by
+somebody holding the other.
+
+**A module, or a geodetic receiver.** A
+[u-blox ZED-F9T](https://www.u-blox.com/en/product/zed-f9t-module) or a
+[Septentrio mosaic-T](https://www.septentrio.com/en/products/gnss-receivers/gnss-receiver-modules/mosaic-t)
+at the module end; a Trimble NetRS or a Septentrio PolaRx at the geodetic end.
+You wire into its PPS and its serial stream yourself, and **you are building the
+clock.** Everything downstream — the oscillator, the discipline loop, the
+holdover, the protocols — is yours to supply.
+
+**A GPS network clock.** A 1RU box you rack, feed an antenna, and give an IP
+address. There is a module inside it, but it is a hidden component: you never
+see its PPS jitter or its serial stream, because the vendor has already wrapped
+it in an oscillator, a discipline loop and a protocol stack. **You are buying
+the clock**, and what you get out is NTP and PTP.
+
+Both hand you a PPS. Only the network clock hands you a protocol, and only the
+module hands you the parts.
+
+<CalloutBox type="tip" title="Which is why the same trait can matter enormously or not at all">
+	Raw carrier-phase observations are the difference between a useful module and
+	a toy — and a network clock will never give you them, nor should you expect it
+	to. Quantization error is a first-class purchase criterion for a module and
+	meaningless on a network clock, whose whole job is to have dealt with it
+	already.
+
+	So read the list below with your own answer in mind. The summary table at the
+	end says which traits apply to which.
+</CalloutBox>
+
+Here they are in roughly the order they start to matter. The shape of the list
+is the interesting part: **the first few make the receiver a better clock, and
+the last two stop it from having to be your clock at all.**
 
 > A good timing receiver wants to be your master clock.
 > A great one knows you already have a better short-term clock, and that what
@@ -41,27 +75,101 @@ NIST quantified the difference on their own hardware: over a long
 ranged up to **50 ns in a day** where dual-frequency stayed within about 10 ns.
 Same antennas, same roofs.
 
-## 2. Carrier-phase smoothing
+## 2. Antenna supervision
+
+Cheap, widely fitted, and more useful as a *diagnostic* than as an alarm — once
+you understand precisely what it is watching.
+
+It watches **the connection, not the signal.** The receiver puts DC up the coax
+to power the antenna and measures the current coming back; too little reads as
+open, too much as short. That is a statement about electrical load, and it is
+only loosely coupled to whether you are receiving anything.
+
+Both failure modes are real and both are common:
+
+- **Great signal, apparent disconnection.** A splitter or an inline amplifier
+  that does not mimic an antenna's current draw will read as open forever while
+  the signal is perfect.
+- **No signal, connection fine.** Aluminum foil over the antenna will do it in
+  seconds, and the supervisor is entirely happy.
+
+So on its own it is a liar in both directions. What makes it valuable is the
+**correlation**: if signal quality changes *and* the connection state changes at
+the same moment, you have learned something a single indicator could not tell
+you. If signal drops and the connection is unchanged, look at the sky, the
+firmware, or somebody's foil. That is the
+[second-opinion argument](/timekeeping/two-clock/how-do-i-know-its-still-right/)
+in miniature — two indicators that share almost nothing, read together.
+
+For a module builder there is one more reason to want it: an antenna fault is
+usually the leading indicator that
+[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/) is in your near
+future. Knowing that a few seconds early is worth having.
+
+## 3. Carrier-phase smoothing
 
 The code measurement — the one that tells you unambiguously *which* nanosecond
 it is — is noisy. The carrier phase is exquisitely quiet but tells you only the
 fractional part of a cycle, with a whole number of cycles unknown.
 
 Smoothing the code with the carrier gets you most of the carrier's quietness
-without solving the ambiguity problem at all. It is nearly free in
-computation and it is the difference between a jittery PPS and a steady one.
+without solving the ambiguity problem at all. It is nearly free — a one-state
+recursive filter per satellite per band, a few operations an epoch — and it is
+the difference between a jittery PPS and a steady one.
 
-## 3. A PPS output, and honesty about it
+<CalloutBox type="tip" title="Three levels of computational cost above SPP, and they are not equivalent">
+	Worth separating, because "it resolves integers" gets used as though it meant
+	one thing.
 
-Table stakes — but ask two follow-ups.
+	<strong>Carrier smoothing</strong> adds almost no state and no new modelling.
+	Any low-power module does it continuously.
 
-**Is it quantized, and does the receiver tell you by how much?** A PPS edge can
-only land on a tick of the receiver's internal clock, so it is systematically
-early or late by a sawtooth-shaped amount. A good receiver *reports* that
-quantization error so you can correct for it. A receiver that does not report it
-is not less quantized, only less forthcoming.
+	<strong>RTK</strong> does resolve integers — but on a
+	<em>double-differenced</em> problem, where differencing against a base station
+	has already removed the satellite clock, the receiver clock and, over a short
+	baseline, the atmosphere. What is left is small, well conditioned, and
+	converges in seconds. Low-power modules do this all day too.
 
-**Where does the connector sit relative to the module?** On a u-blox EVK-F9T,
+	<strong>PPP-AR</strong> is the expensive one. Undifferenced, dozens of
+	satellites across constellations, each carrying a pseudorange model and an
+	integer-constrained carrier-phase model, plus receiver clock, troposphere and
+	externally supplied phase biases — an ill-conditioned estimate that takes tens
+	of minutes to converge. That is the case that wants a fast CPU with vector
+	arithmetic.
+
+	The distinction matters beyond this page: "RTK is cheap, therefore ambiguity
+	resolution is cheap" is <a href="/timekeeping/utc/choosing-a-gnss-timescale/">an
+	inference worth resisting</a>. Fixing integers after differencing has done the
+	hard part is not the same problem.
+</CalloutBox>
+
+## 4. A PPS output — and know what to expect from it
+
+Table stakes for both audiences, but you should expect very different things.
+
+**From a module or geodetic receiver, expect jitter.** Its PPS is generated
+directly from the receiver's own timebase, so it inherits that oscillator's
+short-term noise and lands on a quantized tick. That is not a defect; it is what
+a raw PPS is. Smoothing it is *your* job, and doing it is most of what building
+a clock consists of.
+
+**From a network clock, expect it already smoothed.** The whole point of the box
+is that an internal oscillator has been disciplined to GNSS and the PPS comes
+off that oscillator rather than off the receiver. It should be quiet, and it
+should keep being quiet through
+[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/), because the
+same oscillator carries both jobs. A network clock whose PPS jitters like a bare
+module has not done the thing you paid for.
+
+<CalloutBox type="tip" title="Which is a whole subject we have not written yet">
+	How that oscillator, that discipline loop and that receiver fit together —
+	GPSDO architecture — deserves its own page. For now the useful summary is
+	that a network clock is a module plus an oscillator plus a loop, and the
+	quality of the box is mostly the quality of the last two.
+</CalloutBox>
+
+One question for both: **where does the connector sit relative to the
+module?** On a u-blox EVK-F9T,
 the rear SMA carries a *buffered* timepulse — the board's parts list names
 NC7SZ125/126 logic buffers — so the connector is single-digit nanoseconds after
 the module pin, not the few hundred picoseconds a centimeter of trace would
@@ -69,7 +177,35 @@ cost. That is a real term in an
 [error budget](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/), and it
 drifts with temperature.
 
-## 4. Raw observations out
+## 5. Quantization error output
+
+*(Modules and geodetic receivers only. A network clock has already used this
+internally, and has nothing to report.)*
+
+A PPS edge cannot land wherever it likes. It has to fall on a tick of the
+receiver's internal clock, so it is systematically early or late by a
+sawtooth-shaped amount — and on a receiver clocked at 125 MHz, that is 8 ns of
+error you could remove if only you knew its sign and size each second.
+
+Good timing firmware **tells you**. It reports the quantization error for the
+edge it just produced, so your loop can correct for it. A receiver that does not
+report it is not less quantized, only less forthcoming, and you have thrown away
+the single cheapest nanosecond on the whole board.
+
+<CalloutBox type="warn" title="This is a purchase-level trap, not a footnote">
+	Reporting quantization error is a *timing-firmware* feature, not a silicon
+	one. Parts from the same family — the same package, the same pins, the same
+	signals — will differ on it, and the positioning variant simply returns zero.
+
+	Zero is a plausible-looking number. Nothing errors, nothing warns, and your
+	correction quietly does nothing at all. Check the manual for the specific
+	part number, not the family.
+</CalloutBox>
+
+## 6. Raw observations out
+
+*(Modules and geodetic receivers. Do not expect these from a network clock —
+that is not what it is for.)*
 
 The difference between a box that gives you an *answer* and a box that gives you
 *evidence*.
@@ -83,10 +219,11 @@ rather than
 [compare your clock against a national laboratory's](/timekeeping/utc/comparing-two-distant-clocks/).
 
 None of that is possible with a box that only ever tells you its conclusion. If
-you expect to care about this subject in two years, this trait is worth more
-than a nanosecond of specified accuracy.
+you expect to still care about this subject in two years, **weight this trait
+above its position on the list** — it is the one that compounds, because
+everything you might later want to do turns out to require it.
 
-## 5. A time-mark input
+## 7. A time-mark or PPS input
 
 Now the flip. A time-mark or external-interrupt input lets the receiver
 **timestamp an edge you give it** — which means it can measure *your* clock
@@ -97,7 +234,14 @@ being a comparator, and comparison is what you actually need if you already own
 something good. The ZED-F9T does this on its `EXTINT` pins and reports the
 result in its own messages.
 
-## 6. A reference frequency input — and this is the one
+**And this is the one place a network clock joins in.** Some of them accept a
+PPS input for exactly this purpose — feed it another clock's PPS and it will
+tell you the difference. That is the cheapest way to
+[compare two clocks against each other](/timekeeping/two-clock/how-do-i-know-its-still-right/)
+that exists, and it turns a box you bought as a source into a box that can also
+audit one.
+
+## 8. A reference frequency input — and this is the one
 
 The last trait is the one that changes the category, and it is the one most
 datasheets bury.
@@ -154,15 +298,37 @@ The same split shows up in hardware you can actually buy. Septentrio's mosaic
 module says it plainly — "the module can use its internal TCXO as frequency
 reference, but **also accepts an external frequency reference on the REF_I
 pin**", 10 MHz, 0.5–1.7 Vp-p. The ZED-F9T's pinout has the time-mark inputs of
-trait 5 but no reference frequency input at all.
+trait 7 but no reference frequency input at all.
+
+A network clock, of course, has its oscillator *inside*. That is the product.
+
+## Which traits apply to which
+
+| # | trait | module / geodetic receiver | GPS network clock |
+|---|---|---|---|
+| 1 | Two frequency bands | **essential** | **essential** |
+| 2 | Antenna supervision | useful diagnostic | useful, and usually surfaced as an alarm |
+| 3 | Carrier-phase smoothing | **essential** | internal — the vendor's problem |
+| 4 | PPS output | expect it to jitter | expect it smoothed, and steady through holdover |
+| 5 | Quantization error output | **essential** | n/a — already used internally |
+| 6 | Raw observations out | **the one that compounds** | not expected |
+| 7 | Time-mark or PPS input | turns it into a comparator | present on some, and worth seeking out |
+| 8 | Reference frequency input | **the one that changes the category** | n/a — the oscillator is inside |
+| — | NTP / PTP | no | **the entire point** |
+
+Read the two columns and the split is clean. A module is judged on **what it
+exposes**; a network clock is judged on **what it has already done for you**. The
+traits that matter most to one are meaningless to the other, which is why a
+datasheet comparison across the two is nearly useless.
 
 ## Reading the list backwards
 
-Work down from the bottom and the list sorts receivers into two kinds.
+Work down from the bottom and the modules sort into two kinds.
 
 **A receiver that wants to be your clock** takes a signal in and gives a PPS
-out. If its PPS is good enough, you are done, and for a great deal of datacenter
-work that is genuinely the right answer.
+out. If its PPS is good enough, you are done — and if you have got this far and
+concluded that is you, what you probably want is a network clock and somebody
+else's engineering.
 
 **A receiver that expects you to have a clock** takes your 10 MHz *in*, times
 everything against it, and tells you how your clock compares to GNSS. That box
@@ -172,16 +338,8 @@ or anything else whose short-term stability beats a TCXO.
 Knowing which one you are shopping for saves more money than any specification
 on the datasheet. And it is a question the
 [vendor questions page](/timekeeping/questions/buying-a-clock/) never quite asks,
-because it starts from the assumption that you are buying a clock rather than an
-instrument.
-
-[[? Three things I would rather have from you than guess.
-
-1) Is the six-trait order right? I have put dual-band first because it is the biggest single measured jump, but you might rank raw-observations-out higher for the kind of reader who will still be at this in two years.
-
-2) I have said carrier-phase smoothing is "nearly free in computation". That is my inference from what it involves, not something I have measured or read. Correct me if it is more expensive than I think on the small modules.
-
-3) Is there a seventh trait I have missed that you would not buy a receiver without? Antenna supervisor and open/short detection came to mind and felt like plumbing rather than accuracy, but you have actually lived with these boxes. ?]]
+because it starts from the assumption that you are buying a clock rather than
+the parts to build one.
 
 ## Where to go next
 

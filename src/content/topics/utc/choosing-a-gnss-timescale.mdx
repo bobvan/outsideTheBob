@@ -143,6 +143,17 @@ does.
 
 	Integer AR is what sub-watt modules do all day. The compute argument was
 	wrong, and the link-budget argument above never needed it.
+
+	<strong>One refinement, because the two are not the same problem.</strong>
+	RTK fixes integers on a <em>double-differenced</em> observation, where
+	differencing against a base has already removed the clocks and most of the
+	atmosphere — a small, well-conditioned estimate. PPP-AR is undifferenced,
+	across dozens of satellites, each carrying an integer-constrained
+	carrier-phase model plus clock, troposphere and external phase biases. So the
+	power table does not <em>settle</em> the compute question either; it only
+	shows that the version of it I made does not hold.
+	<a href="/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/">The
+	three levels of cost</a> are worth keeping straight.
 </CalloutBox>
 
 ## c. PPP-AR against one analysis center's datum

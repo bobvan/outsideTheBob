@@ -87,6 +87,7 @@ Each of these is an edit bravo handed us with the reasoning attached.
 From review §F. These are not debt — they are the reason the garden is worth
 reading. Ordered as bravo ranked them.
 
+0. **GPSDO architecture** — how the module, the oscillator and the discipline loop fit together. Promised in a callout on the receiver-traits page, and it is the page that explains why a network clock's PPS is quiet and a module's is not. Bob raised it 2026-08-09.
 1. **The Goldilocks actuation interval** — drafted in the plan doc, figure exists, two-plant table in §D6. Generalizes past GPSDOs to any control loop with a noisy actuator.
 2. **Known-good observations — grading your own chain.** Run the pipeline on a station whose clock *is* UTC(k); any wander cannot be the clock. Credit **Ole Petter Rønningen**. `can-i-build-my-own-link` already does half of it without naming it as a method.
 3. **Fresher is not automatically steadier.** Broadcast ephemeris steadier at long τ than real-time IGS SSR, whose datum humped ~15 ns over three hours. Qualifies a claim `gnss-time-is-a-prediction` currently makes flatly.
@@ -111,6 +112,7 @@ renders. See `scripts/review-status.mjs`.
 | H1 | **86 unlinked glossary first-uses** across 28 files — `npm run glossary-links`. Advisory; mostly `UTC` and `timescale`, which need judgement rather than a sweep. |
 | H2 | **11 title retitles** outstanding in `title-audit.md`, now with proposed slugs. Strongest: *GNSS time is a prediction* → *Does the satellite know what time it is?* Cheap while everything is `draft: true`; expensive after. |
 | H3 | Three empty sections: The Datacenter Problem, Benchmarking, Stories. |
+| H5 | **Sweep the module-vs-network-clock distinction across the other pages.** The rule is now in `style-guide.md` and worked through on `what-makes-an-accurate-timing-receiver`; `acquiring-time`, `buying-a-clock`, `distribution` and `what-happens-when-i-lose-gps` all speak to both audiences without saying which. |
 | H4 | Restart the dev server occasionally — bravo found it at 7.5 days of uptime and warns against trusting a stale preview. **Restarted 2026-08-08.** Tailscale preview: `http://100.117.189.97:4321/` |
 
 ---

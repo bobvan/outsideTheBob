@@ -127,6 +127,30 @@ Two corollaries:
 point of view — stories, not answers to questions somebody might be asking. This
 rule governs the garden.
 
+## Two audiences, and never blur them
+
+The garden serves two readers who both say "GNSS timing receiver" and mean
+opposite things. Be explicit about which one a passage is for.
+
+- **The clock builder** wires into a **GNSS receiver module** (u-blox ZED-F9T,
+  Septentrio mosaic-T) or a **geodetic receiver** (Trimble NetRS, Septentrio
+  PolaRx), takes its PPS and serial stream, and supplies the oscillator, the
+  discipline loop and the protocols. *They are building the clock.*
+- **The datacenter buyer** racks a **[GPS network clock](/timekeeping/glossary/#gps-network-clock)**
+  and gets NTP and PTP. There is a module inside, but as a hidden component.
+  *They are buying the clock.*
+
+**Both get a PPS. Only a network clock speaks a protocol; only a module hands
+over the parts.** So a capability can be essential to one and meaningless to the
+other — raw observations, quantization error and a reference-frequency input are
+module concerns; a smoothed PPS that stays quiet through holdover is what a
+network clock is *for*.
+
+The failure mode this rule prevents: advice written for one audience read by
+somebody holding the other, which is where half the confusion in this subject
+comes from. When a page speaks to only one of them, say so in the sentence
+rather than leaving the reader to work it out.
+
 ## Headings
 
 **Sentence case**, always. *How UTC is actually made*, not *How UTC Is Actually

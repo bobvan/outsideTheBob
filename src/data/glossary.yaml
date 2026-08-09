@@ -522,3 +522,23 @@
     - label: "What makes an accurate timing receiver"
       href: "/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/"
   draft: true
+
+- id: gps-network-clock
+  term: "GPS network clock"
+  aliases: ["network clock", "network time server", "grandmaster appliance"]
+  definition: >-
+    A rack-mounted appliance that turns an antenna into NTP and PTP on your
+    network. There is a GNSS receiver module inside it, but as a hidden
+    component: the vendor has already wrapped it in an oscillator, a discipline
+    loop and a protocol stack, so you never see the module's raw PPS jitter or
+    its observation stream. **You are buying the clock rather than the parts** —
+    which is why the specifications that matter for a module are largely
+    meaningless here, and vice versa.
+  seeAlso:
+    - label: "Which traits matter for which"
+      href: "/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/"
+    - label: "The protocols it exists to speak"
+      href: "/timekeeping/transferring/distribution/"
+    - label: "Holdover, which is what its oscillator is really for"
+      href: "/timekeeping/acquiring/what-happens-when-i-lose-gps/"
+  draft: true

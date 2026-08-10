@@ -11,6 +11,12 @@ tombstones.
 
 ---
 
+## 0. Publish plan
+
+**[`publish-plan.md`](publish-plan.md)** — which 25 pages ship first, which 6
+defer, and the exact cost (3 link edits, 1 glossary trim). Computed with
+`npm run publish-set`, which prices any batch you propose.
+
 ## 1. Publish gate
 
 Everything here must be true before any `draft: true` becomes `draft: false`.

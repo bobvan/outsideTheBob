@@ -28,7 +28,7 @@ that remain (`datacenters`, `gnss`, `measuring-time`, `questions-to-ask`,
 
 ---
 
-## ✅ Passing — 25
+## ✅ Passing — 28
 
 ### The ones that ask the reader's question
 

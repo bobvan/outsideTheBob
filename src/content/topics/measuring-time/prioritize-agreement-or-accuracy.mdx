@@ -1,6 +1,6 @@
 ---
-title: "\"It matters more that my clocks agree than that they're right\""
-description: "A sentiment you hear constantly in datacenter timing. It is correct, it is about a different measurand, and it has one sharp boundary."
+title: "Should I prioritize clock agreement or accuracy to UTC?"
+description: "Usually a false choice. The two are not opposed, most improvements buy both, and the real tradeoff only appears at the very last nanoseconds — where it is a genuine engineering preference rather than a confession of low standards."
 section: "measuring-time"
 order: 100
 updatedDate: 2026-08-02
@@ -12,6 +12,18 @@ reviewNote: "Within 1 hr of ready"
 ---
 
 import ZoomableImage from "../../../components/post/ZoomableImage.astro";
+
+**Usually you should not have to choose, and the question is a false one.**
+
+Almost everything that makes a clock estimate better makes it better on both
+counts at once. A surveyed antenna position, a measured feedline, a quieter
+oscillator, a shorter loop — none of these trade agreement against accuracy.
+They remove error, and removing error improves your offset from UTC *and* your
+spread within the ensemble.
+
+The choice only becomes real at the end, when the cheap error is gone and what
+remains is a deliberate allocation. That is where the sentiment below comes
+from, and where it is exactly right.
 
 Anyone who has run timing in a datacenter has heard it, and most have said it:
 

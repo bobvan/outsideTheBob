@@ -1,22 +1,22 @@
 ---
-title: "Yeah, but why do you want precise time?"
-description: "Precise time is never the goal. It is the price of admission for something else — which is why the requirement usually arrives from outside engineering."
+title: "Why do you want precise time?"
+description: "Precise time is seldom the goal. It is the price of admission for something else — which is why the requirement usually arrives from outside engineering."
 section: "measuring-time"
 order: 40
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["datacenter", "timing", "trading"]
 draft: true
-reviewed: 2026-08-08
+reviewed: 2026-08-10
 reviewNote: "Likely ready to go in 1hr or less"
 ---
 
-Nobody wants precise time.
+Unless you work at a government lab, time is probably a means to an end.
 
-People want a trade to be provably ahead of another trade. They want a
+People want one stock trade to be timestamped ahead of another. They want a
 distributed database to agree with itself about what happened first. They want a
-log they can hand to somebody who is entitled to ask. Precise time is what those
-things cost — never the thing anybody set out to buy.
+log they can hand to somebody who must know when things happened. Precise time is what those
+things cost — seldom the thing you set out to buy.
 
 That sounds like a pedantic distinction and it is not, because it decides
 several things that follow.
@@ -29,7 +29,7 @@ they arrive as a number, without the reasoning that produced it.
 
 Which means the number is often the wrong question to start from. "We need 100
 microseconds" is an answer to something, and the useful move is to find out what.
-Whether the answer is *ordering*, *elapsed time*, or *a defensible record*
+Whether the answer is *sequencing*, *elapsed time*, or *a defensible record*
 changes what you should build, and those three have very different costs.
 
 ## It explains why "how accurate?" is the wrong first question
@@ -37,21 +37,21 @@ changes what you should build, and those three have very different costs.
 If precise time is a means, the first question is what it is a means *to*. Two
 systems quoting the same accuracy figure can need entirely different things:
 
-- A system that must **order** events needs its clocks to agree with each other.
+- A system that must **sequence** events needs its clocks to agree with each other.
   It may not care much where the group sits relative to UTC — see
-  [when agreement matters more than being right](/timekeeping/measuring-time/agreement-is-not-accuracy/).
+  [when agreement matters more than being right](/timekeeping/measuring-time/prioritize-agreement-or-accuracy/).
 - A system that must **produce a defensible record** needs
   [traceability](/timekeeping/glossary/#traceability) to a reference, which is a
   paperwork problem as much as an engineering one.
 - A system that must **measure durations** needs frequency stability and
-  possibly no timescale at all — see [elapsed time](/timekeeping/measuring-time/elapsed-time/).
+  possibly no timescale at all — see [elapsed time](/timekeeping/measuring-time/measuring-elapsed-time/).
 
 Those are three different purchases. Asking "how accurate do we need to be?"
 before asking "accurate at what?" is how organizations buy the wrong one.
 
 ## It explains why the work is invisible when it goes well
 
-Nothing about a correctly timestamped trade looks like anything. The entire
+Nothing about a correctly timestamped network packet looks like anything. The entire
 return on this work is the absence of a problem: an audit that goes quietly, a
 reconciliation that matches, an incident timeline that makes sense.
 

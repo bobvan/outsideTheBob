@@ -1,6 +1,6 @@
 ---
-title: "Elapsed time needs no timescale"
-description: "Measuring how long something took is a different and much easier problem than knowing what time it is. Short intervals forgive both ways a clock can be wrong."
+title: "Accurately measuring elapsed time"
+description: "A clock so bad the internet refuses to talk to it still measures a microsecond-scale interval to about a nanosecond. Short durations forgive both ways a clock can be wrong, and knowing when you are measuring one saves real money."
 section: "measuring-time"
 order: 50
 updatedDate: 2026-08-03
@@ -13,9 +13,18 @@ reviewNote: "Likely ready to go in 1hr or less"
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-A [timescale](/timekeeping/measuring-time/timescales/) defines three things: the
-duration of one tick, a time when the first tick happened, and a count of
-elapsed ticks since then.
+**A clock bad enough that the internet's most forgiving time protocol refuses to
+work with it will still measure a microsecond-scale interval to about a
+nanosecond.**
+
+That is the surprise, and it is not a trick. Short elapsed-time measurements are
+extraordinarily forgiving of bad clocks — so much so that the interesting
+question is usually not *how good is my clock* but *am I measuring a duration or
+a moment*, because the answers cost wildly different amounts.
+
+A [timescale](/timekeeping/measuring-time/what-are-timestamps-and-timescales/)
+defines three things: the duration of one tick, a time when the first tick
+happened, and a count of elapsed ticks since then.
 
 Measuring a *duration* needs only the first and the last. You do not need to know
 what time it is to know how long something took — you need a tick of known
@@ -40,7 +49,7 @@ accumulate at all. A clock set three minutes fast that otherwise keeps perfect
 time is three minutes fast forever — no worse tomorrow than today.
 
 These map exactly onto the two parameters relating
-[any pair of timescales](/timekeeping/measuring-time/timescales/): frequency error
+[any pair of timescales](/timekeeping/measuring-time/what-are-timestamps-and-timescales/): frequency error
 is the **slope**, offset error is the **intercept**. A clock can have either,
 both, or neither, and the fixes are unrelated — you correct an offset by setting
 the clock once, and a frequency error by disciplining it continuously.
@@ -105,7 +114,7 @@ and you need a good oscillator after all.
 **Intervals measured by two different clocks.** The cancellation depends on both
 timestamps coming from the same counter. Start on one clock and stop on another
 and you are measuring elapsed time *plus* the offset between two clocks — which
-is the [expensive problem](/timekeeping/measuring-time/agreement-is-not-accuracy/)
+is the [expensive problem](/timekeeping/measuring-time/prioritize-agreement-or-accuracy/)
 wearing a disguise.
 
 **Anything compared with somebody else's record.** A duration reported to a

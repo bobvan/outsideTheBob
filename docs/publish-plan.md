@@ -30,10 +30,19 @@ most ready to go.
 
 Bob's list, 2026-08-10 — held back for reasons of *scope* rather than quality:
 
+**Moved to `held/clock-building/` on 2026-08-10**, outside `src/content/` so the
+dev preview answers "what does the site look like at `draft: false`?" honestly.
+Not a branch — see `held/README.md` for why, and for how to bring one back.
+
 | page | why |
 |---|---|
 | `do-i-need-an-ocxo` | Written for clock builders. Wants redoing as *important properties of GNSS receivers* for the dual audience — buyers and builders — alongside the receiver-traits page |
 | `designing-a-clock` | Builder-only, and Bob's own note says it could need a lot of work |
+
+Holding them cost 4 inbound links, now removed and recorded here so they can be
+put back: `do-timestamp-errors-average-out` and `benchmarking-clocks` both
+pointed at *designing a clock*; `what-happens-when-i-lose-gps` pointed at the
+OCXO page twice, and the glossary's `holdover` entry had it in `seeAlso`.
 
 ## The recommended batch — publish 25, defer 6
 

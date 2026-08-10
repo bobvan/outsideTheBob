@@ -215,7 +215,7 @@ A receiver that emits raw code and carrier-phase measurements — as
 reprocess the same day with better correction streams months later, run your own
 [PPP](/timekeeping/glossary/#ppp) solution, survey the antenna position properly
 rather than
-[letting the receiver guess](/timekeeping/datacenters/antenna-position/), and
+[letting the receiver guess](/timekeeping/datacenters/configuring-gnss-antenna-position/), and
 [compare your clock against a national laboratory's](/timekeeping/measuring-time/comparing-two-distant-clocks/).
 
 None of that is possible with a box that only ever tells you its conclusion. If
@@ -249,7 +249,7 @@ datasheets bury.
 Start from what a receiver can actually do, which is narrower than it looks.
 **No GNSS receiver ever observes a satellite against UTC.** It observes the
 satellite against *a timescale of its own* — and a
-[timescale](/timekeeping/measuring-time/timescales/) is three things: a tick
+[timescale](/timekeeping/measuring-time/what-are-timestamps-and-timescales/) is three things: a tick
 duration, an origin, and a count. The receiver always supplies the origin and
 always does the counting.
 
@@ -347,5 +347,5 @@ the parts to build one.
   — the layer above this one: whether GNSS is the right source at all.
 - **[Questions to ask a clock vendor](/timekeeping/questions-to-ask/buying-a-clock/)** —
   what to ask once you know which kind of box you want.
-- **[What do I put in for my antenna's position?](/timekeeping/datacenters/antenna-position/)**
+- **[What do I put in for my antenna's position?](/timekeeping/datacenters/configuring-gnss-antenna-position/)**
   — the setting that wastes the most of a good receiver's capability.

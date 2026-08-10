@@ -98,7 +98,7 @@
     url: "https://jcgm.bipm.org/vim/en/2.41.html"
   seeAlso:
     - label: "What \"traceable to UTC\" actually requires"
-      href: "/timekeeping/utc/traceability/"
+      href: "/timekeeping/utc/what-does-traceable-to-utc-mean/"
   draft: true
 
 - id: stability
@@ -128,8 +128,6 @@
   seeAlso:
     - label: "What happens when I lose GPS?"
       href: "/timekeeping/datacenters/what-happens-when-i-lose-gps/"
-    - label: "Do I need an OCXO?"
-      href: "/timekeeping/datacenters/do-i-need-an-ocxo/"
     - label: "Stability"
       href: "#stability"
   draft: true
@@ -235,7 +233,7 @@
     stops the moment you compare against a clock outside the set.
   seeAlso:
     - label: "Why agreement can matter more than being right"
-      href: "/timekeeping/measuring-time/agreement-is-not-accuracy/"
+      href: "/timekeeping/measuring-time/prioritize-agreement-or-accuracy/"
     - label: "Trueness"
       href: "#trueness"
   draft: true
@@ -252,7 +250,7 @@
     on an ordinary run.
   seeAlso:
     - label: "Why the feedline is likely your largest error"
-      href: "/timekeeping/datacenters/feedline/"
+      href: "/timekeeping/datacenters/configuring-gnss-antenna-feedline/"
   draft: true
 
 - id: nmi
@@ -317,7 +315,7 @@
     url: "https://gssc.esa.int/navipedia/index.php/Code_Based_Positioning_(SPS)"
   seeAlso:
     - label: "Why GNSS time is a prediction"
-      href: "/timekeeping/gnss/gnss-time-is-a-prediction/"
+      href: "/timekeeping/gnss/limits-of-gnss-time-accuracy/"
     - label: "PPP"
       href: "#ppp"
   draft: true
@@ -341,7 +339,7 @@
     - label: "PPP-AR"
       href: "#ppp-ar"
     - label: "Where the corrections come from"
-      href: "/timekeeping/gnss/gnss-time-is-a-prediction/"
+      href: "/timekeeping/gnss/limits-of-gnss-time-accuracy/"
   draft: true
 
 - id: ppp-ar
@@ -400,7 +398,7 @@
     url: "https://igs.org/acc/"
   seeAlso:
     - label: "Where corrections come from"
-      href: "/timekeeping/gnss/gnss-time-is-a-prediction/"
+      href: "/timekeeping/gnss/limits-of-gnss-time-accuracy/"
     - label: "PPP-AR, which needs one center's stream and not a mixture"
       href: "#ppp-ar"
     - label: "Datum"
@@ -464,7 +462,7 @@
     - label: "Could you build the same link yourself?"
       href: "/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/"
     - label: "Traceability"
-      href: "/timekeeping/utc/traceability/"
+      href: "/timekeeping/utc/what-does-traceable-to-utc-mean/"
   draft: true
 
 - id: rinex
@@ -562,7 +560,7 @@
     url: "https://files.igs.org/pub/data/format/rinex305.pdf"
   seeAlso:
     - label: "Timescales — where the origin sense lives"
-      href: "/timekeeping/measuring-time/timescales/"
+      href: "/timekeeping/measuring-time/what-are-timestamps-and-timescales/"
     - label: "RINEX, where you meet epochs one block at a time"
       href: "#rinex"
     - label: "PPS, which marks a moment without naming it"

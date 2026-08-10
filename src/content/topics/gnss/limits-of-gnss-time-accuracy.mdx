@@ -1,6 +1,6 @@
 ---
-title: "GNSS time is a prediction"
-description: "Your receiver is not reading time out of the sky. It is applying corrections, computed on the ground, to signals from clocks that nobody is steering."
+title: "What are the limits of GNSS time accuracy?"
+description: "The limits are not about radio or geometry. GNSS time is a prediction, so its accuracy is bounded by how good the corrections are — and corrections are forecasts of errors that have not happened yet."
 section: "gnss"
 order: 10
 updatedDate: 2026-08-04
@@ -16,9 +16,17 @@ import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 import approximations from "../../../assets/GnssApproximations.png";
 import corrections from "../../../assets/RealTimeCorrections.png";
 
-Almost everybody starts with the same mental model of GNSS, and it is wrong in an
-interesting way. Getting from it to what actually happens takes two steps, and
-each one moves the intelligence further from the satellite.
+**GNSS time is a prediction, and that single fact sets every limit on this
+page.**
+
+Not the radio link, not the geometry, not the speed of light. Your accuracy is
+bounded by how good somebody's *forecast of a satellite clock's future error*
+happened to be at the moment your receiver used it — because that forecast is
+what a correction is. Everything below is an unpacking of that sentence, and
+every number in it comes from the same place.
+
+Getting there takes two steps, and each one moves the intelligence further from
+the satellite.
 
 <ZoomableImage
 	src={approximations}
@@ -157,7 +165,7 @@ and knowing that is worth a lot of money.
 - **[Which GNSS constellation keeps the best time?](/timekeeping/gnss/which-constellation-keeps-best-time/)**
   — how well these predictions have actually been doing, measured and published
   monthly by the people who define the answer.
-- **[Traceability](/timekeeping/utc/traceability/)** — what it takes to make a
+- **[Traceability](/timekeeping/utc/what-does-traceable-to-utc-mean/)** — what it takes to make a
   claim about UTC that somebody else has to accept.
-- **[When agreement matters more than being right](/timekeeping/measuring-time/agreement-is-not-accuracy/)**
+- **[When agreement matters more than being right](/timekeeping/measuring-time/prioritize-agreement-or-accuracy/)**
   — the same argument from the application's side.

@@ -166,7 +166,7 @@ interesting than the numbers above.
 
 ## Why our own clock did not appear in the answer
 
-A [timescale](/timekeeping/measuring-time/timescales/) is three things: the
+A [timescale](/timekeeping/measuring-time/what-are-timestamps-and-timescales/) is three things: the
 duration of one tick, an origin, and a count of ticks since. It is worth
 holding that definition in mind here, because **a GNSS receiver never observes
 satellites against UTC. It observes them against a timescale of its own** — it
@@ -213,7 +213,7 @@ which both stations saw identically — vanishes exactly.
 
 You are then no longer relying on the satellite to know what time it is, which is
 the single largest term in
-[an ordinary GNSS timing solution](/timekeeping/gnss/gnss-time-is-a-prediction/).
+[an ordinary GNSS timing solution](/timekeeping/gnss/limits-of-gnss-time-accuracy/).
 Everything the satellite got wrong is
 [common-mode](/timekeeping/glossary/#common-mode) and cancels.
 
@@ -274,7 +274,7 @@ Two things leap out of that table. The first is that a sub-nanosecond link is
 achievable and somebody has done the work to prove it. The second is more
 useful to you: **even in a professionally executed calibration, the largest
 single uncertainty is the antenna cable** — which is precisely the argument the
-[feedline page](/timekeeping/datacenters/feedline/) makes from the other end. The
+[feedline page](/timekeeping/datacenters/configuring-gnss-antenna-feedline/) makes from the other end. The
 people who are best at this still find the wire is the hard part.
 
 You cannot download a travelling receiver.
@@ -346,7 +346,7 @@ disciplining a clock in real time, the public route is useless to you; if you ar
 calibrating a frequency standard or auditing last quarter, it is entirely
 adequate. Know which one you are doing.
 
-**The report.** [Traceability](/timekeeping/utc/traceability/) cannot be
+**The report.** [Traceability](/timekeeping/utc/what-does-traceable-to-utc-mean/) cannot be
 self-issued. However good your measurement, the deliverable an auditor wants is a
 calibration report with a national metrology institute's uncertainty on it, and
 that is a document, not a number you computed yourself.
@@ -358,7 +358,7 @@ rule: **you get frequency for free and you do not get time at all.**
 
 The reason is that **an unknown constant delay is an offset error, not a
 frequency error** — and those are
-[two genuinely independent ways for a clock to be wrong](/timekeeping/measuring-time/elapsed-time/).
+[two genuinely independent ways for a clock to be wrong](/timekeeping/measuring-time/measuring-elapsed-time/).
 A fixed 300 ns you cannot account for ruins your claim about *what time it is*
 and does absolutely nothing to your claim about *how fast your clock runs*,
 because it appears at both ends of every rate measurement and subtracts out.
@@ -377,7 +377,7 @@ That single fact makes a home-built link genuinely valuable:
 - **Checking a vendor's number** without taking their word for it.
 - **A second opinion on your antenna position**, since a PPP solution from the
   same observations is the recommended fix for
-  [letting a receiver survey itself](/timekeeping/datacenters/antenna-position/).
+  [letting a receiver survey itself](/timekeeping/datacenters/configuring-gnss-antenna-position/).
 
 And what it is not good for: any sentence beginning "we are traceable to". That
 sentence has to be bought.
@@ -398,8 +398,8 @@ sentence has to be bought.
 - **[Choosing a GNSS timescale for syncing datacenter clocks](/timekeeping/gnss/choosing-a-gnss-timescale/)**
   — where TMAS sits among the alternatives, and why it is a different kind of
   answer from the other three.
-- **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
+- **[What "traceable to UTC" actually requires](/timekeeping/utc/what-does-traceable-to-utc-mean/)**
   — the paperwork problem this page keeps running into.
-- **[An uncalibrated antenna feedline is likely your largest source of error to UTC](/timekeeping/datacenters/feedline/)**
+- **[An uncalibrated antenna feedline is likely your largest source of error to UTC](/timekeeping/datacenters/configuring-gnss-antenna-feedline/)**
   — the 0.5 ns that dominates even BIPM's own error budget, and the hundreds of
   nanoseconds it becomes when nobody measures it.

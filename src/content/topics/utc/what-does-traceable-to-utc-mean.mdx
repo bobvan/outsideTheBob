@@ -1,6 +1,6 @@
 ---
-title: "What \"traceable to UTC\" actually requires"
-description: "Traceability is not a logo, a certificate, or a GPS antenna. It is a documented unbroken chain with uncertainty accounted at every step — and it is mostly a paperwork problem."
+title: "What does \"traceable to UTC\" actually mean?"
+description: "It means an unbroken chain of comparisons back to UTC, each with its uncertainty stated. Not a logo, not a certificate, and not a GPS antenna — which is why most systems that claim it do not have it."
 section: "utc"
 order: 40
 updatedDate: 2026-08-04
@@ -13,10 +13,19 @@ reviewNote: "Within 1 hr of ready"
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-"Traceable to UTC" appears in a great many specifications and rather fewer
-systems.
+**It means somebody can follow your number all the way back to UTC, one
+documented comparison at a time, and say how much uncertainty it picked up on
+the way.** That is the whole of it.
 
-The formal definition is exact and unhelpful:
+What it does *not* mean is the useful half. It is not a logo, not a certificate,
+not a vendor's word, and — the one that catches people — **not a GPS antenna.**
+Receiving a signal that ultimately derives from UTC is a fact about the signal,
+not a chain of comparisons you can show anybody.
+
+Which is why "traceable to UTC" appears in a great many specifications and
+rather fewer systems.
+
+The formal definition says the same thing exactly, and unhelpfully:
 [metrological traceability](/timekeeping/glossary/#traceability) is the property
 of a result that it can be related to a stated reference through a **documented,
 unbroken chain of calibrations**, each contributing to the measurement
@@ -55,7 +64,7 @@ with no content.
 Here is where datacenter reality bites.
 
 A GNSS receiver gives you [a prediction of
-UTC](/timekeeping/gnss/gnss-time-is-a-prediction/), broadcast by a constellation
+UTC](/timekeeping/gnss/limits-of-gnss-time-accuracy/), broadcast by a constellation
 operator who steers their timescale toward UTC and publishes how they did. That
 *can* anchor a traceability chain — the operators' relationship to UTC is
 documented and monitored.

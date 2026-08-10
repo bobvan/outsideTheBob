@@ -58,14 +58,14 @@ before choosing the counter, not after.
 
 Trace it: antenna, feedline, connectors, PPS cable, and everything between. Its
 length is a fixed offset in your output, and the arithmetic is unforgiving —
-[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/datacenters/feedline/).
+[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/datacenters/configuring-gnss-antenna-feedline/).
 This is the error most likely to survive every other thing you get right.
 
 ## 7. How will you know your position, and how will you know it is right?
 
 If you are disciplining from GNSS, your antenna's surveyed position is an input
 to the time solution, and
-[a receiver's own survey is biased](/timekeeping/datacenters/antenna-position/).
+[a receiver's own survey is biased](/timekeeping/datacenters/configuring-gnss-antenna-position/).
 Decide now whether you will accept that bias, post-process a better answer, or
 have the position surveyed — because it is not something averaging will fix
 after the fact.

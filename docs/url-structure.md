@@ -164,3 +164,51 @@ naming the root once — is already taken.
 work is mechanical, and doing it in the abstract risks building the wrong
 abstraction. But keep the glossary question in mind whenever glossary structure
 is touched.
+
+---
+
+## Decided 2026-08-10: one glossary per garden
+
+Confirmed by Bob. A second garden gets its own `glossary.yaml` and its own
+`/<garden>/glossary/` route; anchors become `/<garden>/glossary/#term`. Nothing
+to do today — the current single glossary already lives at
+`/timekeeping/glossary/`, which is the per-garden shape.
+
+## Should repo paths mirror deployment paths?
+
+Bob's proposal: `src/content/timekeeping/<section>/<page>` or
+`src/content/gardens/timekeeping/<section>/<page>`, instead of today's
+`src/content/topics/<section>/<page>`.
+
+**Recommendation: not yet, and possibly never in that form.** The gain is real
+but smaller than it looks, and the cost is paid twice.
+
+**What the rename would actually buy.** Path-mirroring is nice for a human
+reading the tree, but the second garden does *not* need it to exist. Astro
+collections are declared explicitly in `content.config.ts`; a second garden is a
+second `defineCollection` with whatever base path you like. `src/content/topics`
+and `src/content/horticulture` would work exactly as well as
+`src/content/gardens/*`, with no shared parent required.
+
+**What it would cost.** Every path in the repo moves: 29 content files, the
+scripts that glob them, `content.config.ts`, and the muscle memory of anyone
+working in it. And it would land in the same week as a section reorganization
+that already moved all 29 — two large mechanical churns before a deadline, for
+no reader-visible difference.
+
+**The one thing genuinely worth deciding now**, because it is nearly free: if
+there is ever a second garden, `topics` is the wrong collection name. It is
+generic where it should be specific. Renaming the collection to `timekeeping`
+would be the substantive half of Bob's idea without moving a single file —
+`defineCollection` keeps its `base: './src/content/topics'` and only the
+collection *identifier* changes.
+
+**Suggested sequencing:**
+
+1. **Now:** nothing. `GARDEN_ROOT` already isolates the URL side.
+2. **When a second garden is real:** rename the collection `topics` →
+   `timekeeping`, add the second `defineCollection`, and move both content trees
+   under `src/content/gardens/` in the same commit. One churn, at the moment it
+   pays for itself, with a real second garden to validate the shape against.
+3. **Never:** restructure speculatively. The current layout has one flaw — a
+   generic name — and no second garden to tell us what the right structure is.

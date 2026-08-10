@@ -1,6 +1,6 @@
 ---
-title: "An uncalibrated antenna feedline is likely your largest source of error to UTC"
-description: "Your phone never made you think about this. Separating the antenna from the receiver is what creates the problem — and measuring the delay is what solves it."
+title: "How to configure feedline length for datacenter GNSS receivers?"
+description: "An uncalibrated feedline is likely your largest source of error to UTC — tens of nanoseconds from a cable nobody measured. Here is how to find the number and configure it."
 section: "datacenters"
 order: 60
 updatedDate: 2026-08-02
@@ -15,6 +15,13 @@ import CalloutBox from "../../../components/post/CalloutBox.astro";
 import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 import byLength from "../../../assets/CableDelayByLength.png";
 import byDelay from "../../../assets/CableDelayByDelay.png";
+
+**An uncalibrated antenna feedline is likely your largest source of error to
+UTC.** A run of coax that nobody measured can put tens of nanoseconds between
+your clock and the truth — quietly, permanently, and with nothing in the system
+disagreeing. What makes it a *configuration* problem rather than a hardware one
+is that the fix is a single number typed into the receiver; what makes it a hard
+configuration problem is that the number is genuinely difficult to come by.
 
 ## Why you have this problem at all
 
@@ -174,6 +181,6 @@ that occupy far more attention, and both are fixed by reading two labels and
 typing one number.
 
 It ends in the same place as
-[not letting the receiver survey itself](/timekeeping/datacenters/antenna-position/):
+[not letting the receiver survey itself](/timekeeping/datacenters/configuring-gnss-antenna-position/):
 measure it if you can, look it up if you cannot, and configure the result. Do
 not accept a default and do not guess.

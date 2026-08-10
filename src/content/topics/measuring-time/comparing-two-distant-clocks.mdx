@@ -70,9 +70,9 @@ Those are all terms of one sum, and each has a different status:
 
 | term | where it comes from |
 |---|---|
-| `geometry` | known, if you surveyed the [antenna position](/timekeeping/datacenters/antenna-position/) properly |
+| `geometry` | known, if you surveyed the [antenna position](/timekeeping/datacenters/configuring-gnss-antenna-position/) properly |
 | `your_clock_error` | **what you are solving for** |
-| `satellite_clock_error` | the problem — [drifting, and nobody is steering it](/timekeeping/gnss/gnss-time-is-a-prediction/) |
+| `satellite_clock_error` | the problem — [drifting, and nobody is steering it](/timekeeping/gnss/limits-of-gnss-time-accuracy/) |
 | `atmosphere_delay` | measured with a dual-frequency receiver, or modelled |
 | `noise` | averages down with time |
 
@@ -329,7 +329,7 @@ accuracy and no defensible time offset at all. That gap, and what closes it, is
 This is the part that took me longest to see, and it is the bottom band of the
 figure.
 
-A [PPP solution](/timekeeping/gnss/gnss-time-is-a-prediction/) of the ordinary
+A [PPP solution](/timekeeping/gnss/limits-of-gnss-time-accuracy/) of the ordinary
 kind — one station, one correction stream, solve for your clock — gives you an
 excellent number referenced to **that stream's datum**. The datum is stable and
 perfectly serviceable. It is also unpublished, uncertified, and appears in no
@@ -343,7 +343,7 @@ traceability chain does not stop; it continues, through NIST, to UTC itself.
 
 So the anchor is not tighter in the sense of quieter. It is tighter in the sense
 that **it connects to something**. You trade a private zero for a public one,
-and [traceability](/timekeeping/utc/traceability/) is precisely the business of
+and [traceability](/timekeeping/utc/what-does-traceable-to-utc-mean/) is precisely the business of
 public zeros.
 
 ## Being fair to common view
@@ -394,5 +394,5 @@ Three questions, in the spirit of the
   is not.
 - **[Distributing time: the protocols](/timekeeping/time-distribution/distribution/)**
   — the other problem, the one where you own the wire.
-- **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
+- **[What "traceable to UTC" actually requires](/timekeeping/utc/what-does-traceable-to-utc-mean/)**
   — why a public zero is worth more than a quiet one.

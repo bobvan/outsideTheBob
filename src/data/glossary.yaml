@@ -76,7 +76,8 @@
     same procedure, operator, instrument and location, over a short enough
     period that nothing drifts. Its counterpart, reproducibility, deliberately
     varies those things — so a result that repeats well but reproduces badly is
-    telling you something about your setup rather than about the measurand.
+    telling you something about your setup rather than about the thing you are
+    measuring.
   authority:
     label: "VIM 2.21, measurement repeatability"
     url: "https://jcgm.bipm.org/vim/en/2.21.html"
@@ -230,9 +231,9 @@
   term: "Common-mode error"
   definition: >-
     An error that affects every measurement in a set equally, and therefore
-    cancels exactly when you take a difference between any two of them. A clock
-    ensemble that is uniformly 100 ns late has a 100 ns common-mode error and
-    still measures intervals *between its own clocks* perfectly. The cancelling
+    cancels exactly when you take a difference between any two of them. A set of
+    clocks that is uniformly 100 ns late has a 100 ns common-mode error and still
+    measures intervals *between its own clocks* perfectly. The cancelling
     stops the moment you compare against a clock outside the set.
   seeAlso:
     - label: "Why agreement can matter more than being right"

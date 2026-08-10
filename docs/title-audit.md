@@ -5,7 +5,7 @@ Every garden page assessed against the principle in
 someone with a question, who does not know the lingo and will describe the
 problem the way they experience it.*
 
-Started 2026-08-05, kept current. **29 pages in six sections**, plus two
+Started 2026-08-05, kept current. **30 pages in six sections**, plus two
 [held](../held/README.md) outside the build.
 
 **Slug policy.** A slug changes when the old one carried jargon, an internal
@@ -18,7 +18,7 @@ keyword-dense over a literal transcription of the title.
 
 | | count |
 |---|---|
-| ✅ pass | **29** |
+| ✅ pass | **30** |
 | ⏳ recommended, not done | **0** |
 
 **Sections passed too**, as of the 2026-08-10 reorganization — `two-clock`,
@@ -28,7 +28,7 @@ that remain (`datacenters`, `gnss`, `measuring-time`, `questions-to-ask`,
 
 ---
 
-## ✅ Passing — 29
+## ✅ Passing — 30
 
 ### The ones that ask the reader's question
 
@@ -62,6 +62,7 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 | Questions to ask a clock vendor | Task-shaped |
 | Time Distribution Protocols | A statement, not a question — Bob's call. A compare/contrast page that search will read as one |
 | Measurement resolution and accuracy | A statement, same reasoning. Names both halves of what the page relates |
+| Datacenter GNSS Time Best Practices | A statement, and a phrase people search verbatim. Bob's title and slug |
 | UTC(k), and who defines yesterday | Kept the title; slug is now `who-defines-utc`, which is the searchable half |
 | Questions to ask when benchmarking clocks | Task-shaped |
 | Accurately measuring elapsed time | Plain words, and the reframe puts the surprise in the first line |
@@ -75,7 +76,7 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 
 ## ⏳ Recommended — none
 
-**Every title has been through the principle.** Twenty-nine pages, six sections,
+**Every title has been through the principle.** Thirty pages, six sections,
 no outstanding recommendations. Anything further is a rewrite rather than a
 retitle.
 

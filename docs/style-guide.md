@@ -159,6 +159,18 @@ Made*. Page titles included.
 Headings should be claims or questions rather than labels where possible — *Why
 that is seldom the default* beats *Defaults*.
 
+## Two words we retired
+
+- **measurand.** Correct, and nobody outside metrology says it. Write *the thing
+  you are measuring*, *the quantity*, or recast the sentence. Removed from all
+  pages 2026-08-10.
+- **ensemble**, except where it is literally true. An ensemble is a set of clocks
+  **combined into one result** — BIPM's, or a national lab's. Ten GNSS clocks in
+  ten racks, each authoritative for its own rack, are not an ensemble; they are
+  *your clocks*, a *set of clocks*, or your *estate*. Bob's test: an ensemble
+  plays together to make music. Somebody who grabs time from whichever clock is
+  nearest does not have one.
+
 ## Terms of art
 
 Use the precise word when the page is about the distinction, and gloss it once:

@@ -7,7 +7,7 @@ updatedDate: 2026-08-02
 coverage: "H"
 tags: ["datacenter", "timing", "PTP", "metrology"]
 draft: true
-reviewed: 2026-08-08
+reviewed: 2026-08-10
 reviewNote: "Within 1 hr of ready"
 ---
 
@@ -19,7 +19,7 @@ Almost everything that makes a clock estimate better makes it better on both
 counts at once. A surveyed antenna position, a measured feedline, a quieter
 oscillator, a shorter loop — none of these trade agreement against accuracy.
 They remove error, and removing error improves your offset from UTC *and* your
-spread within the ensemble.
+spread across the clocks themselves.
 
 The choice only becomes real at the end, when the cheap error is gone and what
 remains is a deliberate allocation. That is where the sentiment below comes
@@ -43,25 +43,25 @@ what it costs, because it does cost something.
 
 ## What they are actually saying
 
-The two statements are not about the same measurand.
+The two statements are not about the same quantity.
 
 "Right" means the offset from [UTC](/timekeeping/glossary/#utc) — a
 [trueness](/timekeeping/glossary/#trueness) claim about each clock individually,
 against an external reference.
 
-"Agree" means the spread *within the clock ensemble* — how far your clocks are from
+"Agree" means the spread *across your own clocks* — how far they are from
 each other, which is a claim about dispersion and says nothing about where the
 group sits.
 
-So the sentiment translates to: **I will trade a common-mode offset for a
+So the sentiment translates to: **I will trade a common-mode error that hits every clock equally for a
 smaller differential error.** And the reason that is a good tradeoff is arithmetic
 rather than taste.
 
 <ZoomableImage
 	plate
 	src="/figures/agreement-vs-truth.svg"
-	alt="Top row: two archery targets. The left has a tight group well off center; the right has a loose group centered on the bullseye. Bottom row: the same two clock ensembles drawn as normal distributions against a UTC axis — one offset with small sigma, one centered with large sigma."
-	caption="The tradeoff, in both languages. Top: the two clock ensembles as targets. Bottom: the
+	alt="Top row: two archery targets. The left has a tight group well off center; the right has a loose group centered on the bullseye. Bottom row: the same two sets of clocks drawn as normal distributions against a UTC axis — one offset with small sigma, one centered with large sigma."
+	caption="The tradeoff, in both languages. Top: the two sets of clocks as targets. Bottom: the
 		same two as distributions, for readers who would rather see μ and σ. The
 		left-hand option is worse against UTC and better at everything the
 		application actually computes."
@@ -81,7 +81,7 @@ It is not that the 100 ns is small. It is that it is *common-mode*, and every
 internal calculation you perform is a differential measurement that rejects it
 entirely. The error that survives the subtraction is the 10 ns of disagreement.
 
-Run the other option and the survivor is 25 ns. On this measurand the second
+Run the other option and the survivor is 25 ns. By that measure the second
 configuration is two and a half times worse.
 
 Put plainly: **when you prioritize your clocks agreeing with each other over
@@ -91,8 +91,7 @@ datacenter work that is exactly the right priority.
 
 ## The boundary where it stops being free
 
-Common-mode error cancels within the clock ensemble. It cancels *only* within the
-ensemble.
+Common-mode error cancels among your own clocks. It cancels *only* among them.
 
 The moment a timestamp is compared with one that did not come from your clocks,
 the 100 ns stops cancelling and becomes the entire error. That happens at every
@@ -104,14 +103,14 @@ edge of your estate:
 - any measurement of one-way latency into or out of your estate.
 
 So the sentiment is not wrong, it is **scoped**. It holds exactly as far as your
-ensemble does, and the scoping is worth making explicit, because the boundary is
+estate does, and the scoping is worth making explicit, because the boundary is
 rarely where people assume — it is usually much closer than the building.
 
 ## It is really a statement about distribution
 
 Notice which half of the problem the preference is about.
 
-Agreement within a clock ensemble is a property of how you *distribute* time from a
+Agreement among your own clocks is a property of how you *distribute* time from a
 common source: the switches, the protocol, the cabling, the asymmetries.
 Trueness against UTC is a property of how you *acquire* it: the antenna, the
 receiver, the survey, the feedline.
@@ -119,19 +118,17 @@ receiver, the survey, the feedline.
 Someone saying "agreement matters more" is saying they will spend on
 distribution before acquisition. Given the trade above, and given that
 distribution errors are differential and acquisition errors are largely
-common-mode, that is the right order — until the clock ensemble boundary is crossed,
+common-mode, that is the right order — until that boundary is crossed,
 at which point the spending they deferred is the whole of their error.
 
 ## Saying it rigorously
 
 The version to use when it matters:
 
-> Within a clock ensemble, [common-mode](/timekeeping/glossary/#common-mode)
-> offset cancels in every differential measurement, so the ensemble's internal
-> error is governed by its dispersion rather than by its offset from UTC. Only
-> measurements crossing the ensemble boundary are exposed to that offset.
+> Among a set of clocks fed from one source, [common-mode](/timekeeping/glossary/#common-mode)
+> offset cancels in every differential measurement, so the internal error is
+> governed by their dispersion rather than by their offset from UTC. Only
+> measurements crossing out of that set are exposed to the offset.
 
 That says the same thing as the sheepish version, commits to where it stops
 being true, and does not sound like an apology.
-
-[[? One left. "Common-mode" now has a glossary entry and every use links to it, so a reader who has not met the term gets it in one hop. But the page still leans on it hard — four uses. Worth keeping, or should the prose carry "an error that hits every clock equally" and let the term appear once? ?]]

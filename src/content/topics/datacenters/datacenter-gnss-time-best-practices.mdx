@@ -1,0 +1,146 @@
+---
+title: "Datacenter GNSS Time Best Practices"
+description: "Eight things worth doing, from the closing slide of a talk on getting the last nanoseconds to UTC. Most cost nothing but attention, and most of the error they remove is invisible until somebody checks."
+section: "datacenters"
+order: 5
+updatedDate: 2026-08-10
+coverage: "S"
+tags: ["GNSS", "datacenter", "timing", "antennas", "buying"]
+draft: true
+---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
+
+This is the closing slide of
+[*The Last Nanoseconds to UTC*](/blog/last-nanoseconds-to-utc/), unpacked. Eight
+practices, and the striking thing about them as a group is how little they cost.
+Almost none require better hardware. What they require is that somebody decides
+to do them, once, and writes down what they did.
+
+They are also, mostly, defenses against error you would never otherwise see —
+which is why they read as fussy until the day something depends on them.
+
+## 1. Run GNSS clocks in fixed-position mode, not survey-in
+
+A receiver that keeps solving for its own position is solving four unknowns when
+it only has one. Survey the antenna properly, configure the answer, and let the
+receiver solve for time alone — it needs fewer satellites and gets a better
+answer.
+
+The catch worth knowing: fixed position is only safe if the position is right
+*and* somebody notices when the antenna moves.
+
+→ **[How to configure antenna position](/timekeeping/datacenters/configuring-gnss-antenna-position/)**
+
+## 2. Choose antenna sites with good sky view and few multipath reflections
+
+The site is the one decision you cannot fix later with configuration. A wall
+beside the antenna reflects a signal that arrives late and pretends to be the
+real one, and it does so at the same time every day, which is precisely what
+[averaging cannot remove](/timekeeping/measuring-time/limits-of-averaging/).
+
+Sky view and multipath are worth more attention than the receiver you bolt to
+the end of the cable.
+
+## 3. Use a dual-band receiver and antenna
+
+L1/L5 or L1/L2 — the point is two frequencies, not which two. A single-frequency
+receiver has to *model* the ionosphere; a dual-frequency one **measures** it.
+NIST put a number on the difference: over a long baseline, single-frequency
+measurements ranged up to 50 ns in a day where dual-frequency stayed within
+about 10.
+
+It is the single biggest jump available, and it is a purchase decision rather
+than a configuration one — so it is worth getting right at order time.
+
+→ **[What makes an accurate GNSS timing receiver?](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/)**
+
+## 4. Measure the antenna feedline and configure it in
+
+Tens of meters of coax between a roof antenna and a rack receiver is tens of
+nanoseconds of delay that nothing in the system will mention. Measure it, or
+look it up from the cable's velocity factor, and type the number in.
+
+→ **[How to configure feedline length](/timekeeping/datacenters/configuring-gnss-antenna-feedline/)**
+
+<CalloutBox type="tip" title="Practices 1 through 4 are one practice">
+	All four are the same instruction wearing different clothes: <strong>find out
+	the number, and configure it, rather than letting the equipment guess.</strong>
+
+	Every one of them fails silently. A wrong position, a wrong cable delay, a
+	single-frequency receiver in a bad ionospheric hour — none raises an alarm,
+	none degrades a status light, and all of them produce a confident, steady,
+	wrong answer.
+</CalloutBox>
+
+## 5. Defend against spoofing — use NTS to public servers, and ntpsec over ntpd
+
+Accuracy and authenticity are different problems, and the second is easier to
+forget. A spoofed source can be exquisitely precise and completely wrong.
+
+For network time, [NTS](/timekeeping/time-distribution/time-distribution-protocols/)
+(RFC 8915) authenticates what NTP never did, and **ntpsec** is the implementation
+to prefer over the traditional `ntpd`.
+
+→ **[Keeping time on Proxmox with ntpsec](/blog/keeping-time-proxmox-ntpsec/)**
+
+## 6. Check your clocks against something else you already have
+
+Matching engine timestamps, application logs, another clock — anything
+independent. **Plot the minimum delta over every 5000 ticks, or every five
+minutes**, and watch that floor rather than the mean. The minimum is the
+interesting statistic because it strips out queueing and scheduling delay and
+leaves the clock difference.
+
+A backup nobody compares against inherits exactly the same silence as the
+primary.
+
+→ **[How do I know my clock is still right?](/timekeeping/measuring-time/how-do-i-know-its-still-right/)**
+
+## 7. Use the symmetry of radio and fiber latency to check clocks across sites
+
+Between two sites, the one-way delay each direction ought to be the same. When
+you know the path is symmetric, any asymmetry you measure in the timestamps is
+not the network — it is a clock.
+
+That turns an ordinary link into an instrument, using infrastructure you are
+already paying for.
+
+→ **[Comparing distant clocks](/timekeeping/measuring-time/comparing-two-distant-clocks/)**
+
+## 8. Know which parts of your distribution are length-compensated
+
+PTP measures the wire and corrects for it. A raw PPS does not, and neither does
+a length of fiber. Where a path is uncompensated, its length is your error — and
+uncompensated segments are usually at the two ends, where nobody is looking.
+
+→ **[Time distribution protocols](/timekeeping/time-distribution/time-distribution-protocols/)**
+· **[Matching acquisition and distribution](/timekeeping/time-distribution/matching-acquisition-and-distribution/)**
+
+## What the list has in common
+
+Read the eight together and two things stand out.
+
+**Almost none of them is about buying better equipment.** One is a purchase
+decision; the rest are siting, measurement, configuration and checking. The
+common failure in datacenter timing is not cheap hardware — it is good hardware
+running on numbers nobody established.
+
+**Almost all of them defend against silence.** A wrong position, an
+uncompensated cable, a spoofed source, a drifting clock nobody compares: none of
+these announces itself. The practices are not a route to a better number so much
+as a route to *knowing* your number, which is a different and more durable
+thing.
+
+[[? One judgement to check.
+
+Practice 6 says to plot the **minimum** delta over each window, and I have given the reasoning I believe is right — the minimum strips queueing and scheduling and leaves the clock difference. Your slide says "plot min delta for every 5000 ticks or 5 minutes" without the why. If the reason you actually chose the minimum was something else, say so and I will replace my explanation with yours. ?]]
+
+## Where to go next
+
+- **[Ways to get time into a datacenter](/timekeeping/datacenters/acquiring-time/)**
+  — the decision that comes before any of these.
+- **[Questions to ask a clock vendor](/timekeeping/questions-to-ask/buying-a-clock/)**
+  — practice 3 is a purchase, and these are the questions around it.
+- **[The Last Nanoseconds to UTC](/blog/last-nanoseconds-to-utc/)** — the talk
+  this list closes, with the measurements behind it.

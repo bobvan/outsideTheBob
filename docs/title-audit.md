@@ -18,8 +18,8 @@ keyword-dense over a literal transcription of the title.
 
 | | count |
 |---|---|
-| ✅ pass | **28** |
-| ⏳ recommended, not done | **1** |
+| ✅ pass | **29** |
+| ⏳ recommended, not done | **0** |
 
 **Sections passed too**, as of the 2026-08-10 reorganization — `two-clock`,
 `metrology`, `acquiring`, `transferring` and `questions` are gone, and the six
@@ -28,7 +28,7 @@ that remain (`datacenters`, `gnss`, `measuring-time`, `questions-to-ask`,
 
 ---
 
-## ✅ Passing — 28
+## ✅ Passing — 29
 
 ### The ones that ask the reader's question
 
@@ -61,6 +61,7 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 |---|---|
 | Questions to ask a clock vendor | Task-shaped |
 | Time Distribution Protocols | A statement, not a question — Bob's call. A compare/contrast page that search will read as one |
+| Measurement resolution and accuracy | A statement, same reasoning. Names both halves of what the page relates |
 | UTC(k), and who defines yesterday | Kept the title; slug is now `who-defines-utc`, which is the searchable half |
 | Questions to ask when benchmarking clocks | Task-shaped |
 | Accurately measuring elapsed time | Plain words, and the reframe puts the surprise in the first line |
@@ -72,11 +73,11 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 
 ---
 
-## ⏳ Recommended — 1
+## ⏳ Recommended — none
 
-| current | proposed | proposed slug | note |
-|---|---|---|---|
-| Relating timing accuracy with measurement resolution | **My clock reports the same number every time — is it that good?** | `same-number-every-time` | *Contrasting* and *relating* are essay verbs. Also flagged "needs serious work" |
+**Every title has been through the principle.** Twenty-nine pages, six sections,
+no outstanding recommendations. Anything further is a rewrite rather than a
+retitle.
 
 ---
 
@@ -99,6 +100,7 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 | Contrasting timing accuracy and precision | Visualizing precision, trueness, and accuracy | `visualizing-precision-trueness-accuracy` |
 | Distributing time: the protocols | Time Distribution Protocols | `time-distribution-protocols` |
 | *(kept)* UTC(k), and who defines yesterday | — | `who-defines-utc` |
+| Relating timing accuracy with measurement resolution | Measurement resolution and accuracy | `measurement-resolution-and-accuracy` |
 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | shortened at draft |
 
 ## One caveat on a title that passes
@@ -111,8 +113,8 @@ worth changing against the author's judgement.
 ## Method notes
 
 - Retitling is cheap **while everything is `draft: true`**. It gets expensive the
-  day the garden publishes. One left, and it is on a page already flagged as
-  needing serious work — so it may get rewritten rather than retitled.
+  day the garden publishes — and as of 2026-08-10 the work is done, so that
+  deadline no longer has anything riding on it.
 - A retitle is frontmatter, filename, inbound link text, and this file. The link
   crawler catches anything missed, and `publish-check` P6 catches a section that
   drifts from its directory.

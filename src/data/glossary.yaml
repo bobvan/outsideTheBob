@@ -159,7 +159,7 @@
     - label: "Trueness"
       href: "#trueness"
     - label: "What coarse resolution hides"
-      href: "/timekeeping/measuring-time/accuracy-and-resolution-in-pictures/"
+      href: "/timekeeping/measuring-time/measurement-resolution-and-accuracy/"
   draft: true
 
 - id: utc

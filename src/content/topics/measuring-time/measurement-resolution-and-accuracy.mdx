@@ -1,6 +1,6 @@
 ---
-title: "Relating timing accuracy with measurement resolution"
-description: "Coarse resolution does not merely limit precision. It counterfeits it — and the instrument reports a confident number either way."
+title: "Measurement resolution and accuracy"
+description: "Coarse resolution does not merely limit precision — it counterfeits it. A grid too coarse to show scatter returns the same confident number every time, and stops being able to warn you."
 section: "measuring-time"
 order: 70
 updatedDate: 2026-08-02
@@ -15,7 +15,9 @@ import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 
 [Resolution](/timekeeping/glossary/#resolution) is the smallest change that
 produces a perceptible change in an instrument's measurement. It is easy to
-treat as a minor spec, and it has a failure mode that is anything but.
+treat as a minor spec, and it has a failure mode that is anything but. If you
+take time measurements from a wall clock showing only hours and minutes, you
+will never resolve seconds.
 
 Imagine the same set of measurements taken on four different grids, dividing the
 measurement range very finely or very coarsely. The grid represents the
@@ -42,22 +44,37 @@ Do we have highly repeatable measurements all landing on the same value due to t
 Or do we have low-precision measurements that **only appear** highly repeatable due to the low resolution of our measurements?
 
 **Being able to see noise in your measurements is comforting, and it is worth
-being precise about why.**
+being exact about what it does and does not tell you.**
 
-Noise you can see means your resolution is finer than your precision. The
-instrument is resolving detail smaller than its own scatter, which means the
-scatter you are looking at is *real* — you are seeing the measurement's actual
-uncertainty rather than an artifact of the reporting grid.
+Seeing noise means your **resolution is at least as good as your precision**.
+The grid is fine enough to reveal scatter, so nothing is being hidden from you
+by the reporting alone.
 
-The moment the noise disappears, that guarantee goes with it. A single repeated
-value is consistent with two situations you cannot tell apart from the data:
-genuinely excellent precision, or a grid too coarse to show the scatter that is
-still there. **The instrument has stopped being able to warn you** — and it will
-go on returning that clean, confident number indefinitely.
+That is all it means. In particular it says nothing about *whose* noise you are
+looking at, and the two extremes are both entirely consistent with the same
+picture:
 
-So visible noise is not a defect to be engineered away. It is the instrument
-reporting its own limits honestly, and it is the only condition under which the
-number it gives you carries its own error bar.
+- The measurand could be perfectly steady and every bit of the scatter your
+  own measurement noise — a bolted-down antenna read by a noisy receiver.
+- Or the instrument could be essentially noise-free and every bit of the scatter
+  a real variation in the thing you are measuring.
+
+**Observed scatter is the measurand's variation and the measurement's noise
+added together, and one set of readings cannot separate them.** Splitting them
+needs something from outside the measurement — which is exactly what the
+fixed-antenna example above supplies. *Knowing* the antenna cannot move is what
+licenses attributing the wander to the measurement; without that knowledge the
+same picture would have been equally good evidence of a moving antenna.
+
+What matters here is the other direction. The moment the noise disappears, even
+that modest guarantee goes with it. A single repeated value is consistent with
+genuinely excellent precision *and* with a grid too coarse to show scatter that
+is still there, and now you cannot tell which — **the instrument has stopped
+being able to warn you**, and it will go on returning that clean, confident
+number indefinitely.
+
+So visible noise is not a defect to engineer away. It is the instrument
+declining to flatter itself.
 
 **Coarse resolution does not merely limit precision — it counterfeits it.** A
 counter ticking every 10 ns, watching a source that jitters by 1 ns, is

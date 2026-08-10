@@ -7,7 +7,7 @@ updatedDate: 2026-08-04
 coverage: "H"
 tags: ["UTC", "GNSS", "timing", "metrology"]
 draft: true
-reviewed: 2026-08-08
+reviewed: 2026-08-10
 reviewNote: "Within 1 hr of ready"
 ---
 
@@ -25,13 +25,13 @@ happened to be at the moment your receiver used it — because that forecast is
 what a correction is. Everything below is an unpacking of that sentence, and
 every number in it comes from the same place.
 
-Getting there takes two steps, and each one moves the intelligence further from
-the satellite.
+Getting from the common mental model to what actually happens takes two steps,
+and each one moves the intelligence further from the satellite.
 
 <ZoomableImage
 	src={approximations}
 	alt="Three panels. First Order Approximation: a satellite labeled Master Clocks sends an orange signal arrow down to a User. Second Order Approximation: a ground segment sends a blue Clock Steering arrow up to Sat Clocks, which sends an orange arrow down to a User. Best Approximation: a ground segment sends blue Clock Corrections up to the satellite's Bent Pipe, which sends them back down to the user, while the satellite's Free-Running Clocks send an orange signal directly; the user box is labeled in magenta, Receiver Applies Corrections."
-	caption="The same picture three times, with the intelligence moving further from the satellite each time. From an updated <a href='/blog/sub-nanosecond-at-home-with-gnss-and-ai/'>Sub-Nanosecond at Home</a>."
+	caption="The same picture three times, with the intelligence moving further from the satellite each time. From an updated <a href='/blog/sub-nanosecond-at-home-with-gnss-and-ai/'>Sub-Nanosecond at Home</a> presentation."
 />
 
 ## First order: the satellite knows what time it is

@@ -29,7 +29,7 @@
     - label: "Precision"
       href: "#precision"
     - label: "Seen side by side"
-      href: "/timekeeping/measuring-time/accuracy-and-precision-in-pictures/"
+      href: "/timekeeping/measuring-time/visualizing-precision-trueness-accuracy/"
   draft: true
 
 - id: trueness
@@ -169,11 +169,12 @@
     The world's civil timescale, computed by the [BIPM](https://www.bipm.org/)
     (the international bureau that keeps the world's measurement standards) from
     the clocks of about eighty contributing institutes, and published monthly in
-    *Circular T*. It is
+    *Circular T*. It is a **virtual** timescale — nothing ticks it, and the
+    literature's term of art, *paper timescale*, means the same thing. And it is
     a **deferred-time** scale: nobody can tell you what UTC reads right now,
-    because this month's answer is settled next month. Everything that claims to
-    distribute UTC in real time is in fact distributing a realization or a
-    prediction of it.
+    because this month's answer is settled next month. So everything that claims
+    to distribute UTC in real time is distributing a **realization** of it, and
+    every realization is necessarily a prediction.
   authority:
     label: "BIPM — Circular T"
     url: "https://www.bipm.org/en/time-ftp/circular-t"
@@ -189,11 +190,13 @@
 - id: utc-k
   term: UTC(k)
   definition: >-
-    A national institute's own real-time realization of UTC — the thing you can
-    actually steer to, since UTC itself is not available live. *Circular T*
-    publishes the difference [UTC − UTC(k)] every five days, so how far your
-    reference sat from the truth is knowable, but only in arrears. BIPM's weekly
-    *UTCr* narrows the wait without closing it.
+    A national institute's own **realization** of UTC — a physical clock that
+    ticks, in contrast with [UTC](#utc) itself, which is virtual and ticks
+    nowhere. It is the thing you can actually steer to. Because the virtual scale
+    is settled in arrears, a realization cannot copy UTC and must instead
+    *predict* it: *Circular T* publishes the difference [UTC − UTC(k)] every five
+    days, so how good the prediction was is knowable, but only afterwards.
+    BIPM's weekly *UTCr* narrows the wait without closing it.
   authority:
     label: "BIPM — Rapid UTC (UTCr)"
     url: "https://www.bipm.org/en/time-ftp/utcr"
@@ -201,7 +204,7 @@
     - label: "UTC"
       href: "#utc"
     - label: "Who defines yesterday"
-      href: "/timekeeping/utc/utc-k/"
+      href: "/timekeeping/utc/who-defines-utc/"
   draft: true
 
 - id: measurement-ratio
@@ -514,7 +517,7 @@
     no correction for the cable it travelled down.
   seeAlso:
     - label: "What the protocols do that a PPS cannot"
-      href: "/timekeeping/time-distribution/distribution/"
+      href: "/timekeeping/time-distribution/time-distribution-protocols/"
     - label: "Resolution, and why a quantized edge is not a precise one"
       href: "#resolution"
     - label: "What makes an accurate timing receiver"
@@ -536,7 +539,7 @@
     - label: "Which traits matter for which"
       href: "/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/"
     - label: "The protocols it exists to speak"
-      href: "/timekeeping/time-distribution/distribution/"
+      href: "/timekeeping/time-distribution/time-distribution-protocols/"
     - label: "Holdover, which is what its oscillator is really for"
       href: "/timekeeping/datacenters/what-happens-when-i-lose-gps/"
   draft: true

@@ -14,8 +14,14 @@ reviewNote: "Likely needs serious work"
 import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 
 [Resolution](/timekeeping/glossary/#resolution) is the smallest change that
-produces a perceptible change in what the instrument reports. It is easy to
+produces a perceptible change in an instrument's measurement. It is easy to
 treat as a minor spec, and it has a failure mode that is anything but.
+
+Imagine the same set of measurements taken on four different grids, dividing the
+measurement range very finely or very coarsely. The grid represents the
+resolution of the measurement, likely limited by the resolution of the
+instrument making it. There is no interpolation within a cell — the grid's marks
+*are* the units of measurement, and every reading has to land on one.
 
 <ZoomableImage
 	plate
@@ -25,15 +31,33 @@ treat as a minor spec, and it has a failure mode that is anything but.
 		fourth, the instrument returns one value every time."
 />
 
-Read left to right and nothing about the clock changes. What changes is how
-finely you are allowed to be told about it.
+If the left panel above showed repeated measurements of the position of a fixed antenna,
+the fine (high-resolution) grid would clearly show our position measurement wandering.
+Knowing that our antenna is fixed, we can conclude that our measurements have resolution beyond their precision.
+Even though the data is noisy, this is not a bad place to be.
 
-The first three panels behave as expected: coarser reporting, less detail. The
-fourth is the one worth stopping at. When the grid is coarser than the group,
-every shot lands in the same cell and the instrument returns **the same number
-every time**.
+The coarse (low-resolution) grid panel on the right with only a single data point leaves a
+critical question.
+Do we have highly repeatable measurements all landing on the same value due to the high precision of our measurements?
+Or do we have low-precision measurements that **only appear** highly repeatable due to the low resolution of our measurements?
 
-That does not look like a limitation. It looks like a flawless clock.
+**Being able to see noise in your measurements is comforting, and it is worth
+being precise about why.**
+
+Noise you can see means your resolution is finer than your precision. The
+instrument is resolving detail smaller than its own scatter, which means the
+scatter you are looking at is *real* — you are seeing the measurement's actual
+uncertainty rather than an artifact of the reporting grid.
+
+The moment the noise disappears, that guarantee goes with it. A single repeated
+value is consistent with two situations you cannot tell apart from the data:
+genuinely excellent precision, or a grid too coarse to show the scatter that is
+still there. **The instrument has stopped being able to warn you** — and it will
+go on returning that clean, confident number indefinitely.
+
+So visible noise is not a defect to be engineered away. It is the instrument
+reporting its own limits honestly, and it is the only condition under which the
+number it gives you carries its own error bar.
 
 **Coarse resolution does not merely limit precision — it counterfeits it.** A
 counter ticking every 10 ns, watching a source that jitters by 1 ns, is
@@ -48,4 +72,4 @@ Which gives the three terms their natural order:
 > **[Trueness](/timekeeping/glossary/#trueness)** is what no amount of seeing will reveal.
 
 See also: [contrasting accuracy and
-precision](/timekeeping/measuring-time/accuracy-and-precision-in-pictures/).
+precision](/timekeeping/measuring-time/visualizing-precision-trueness-accuracy/).

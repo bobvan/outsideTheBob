@@ -111,6 +111,13 @@ mkdirSync(OUT, { recursive: true });
 			// A bracket rather than a caption, so the claim sits ON the panel it
 			// is about and cannot drift into a neighboring label.
 			b += `<rect x="${p.cx - R - 8}" y="${p.cy - R - 8}" width="${2 * R + 16}" height="${2 * R + 16}" fill="none" stroke="${INK}" stroke-width="1.2" stroke-dasharray="5 4"/>`;
+			// And the word itself, written across the panel it belongs to. Magenta
+			// because nothing else here uses it; hollow because the target
+			// underneath is the evidence and must stay readable through it.
+			b += `<text x="${p.cx}" y="${p.cy + 7}" text-anchor="middle" transform="rotate(-35 ${p.cx} ${p.cy})" ` +
+				`font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif" font-size="21" font-weight="800" ` +
+				`letter-spacing="1.5" fill="#d81b8c" fill-opacity="0.12" stroke="#d81b8c" stroke-width="0.9" ` +
+				`stroke-opacity="0.8" style="paint-order: fill stroke;">ACCURATE</text>`;
 		}
 	}
 	// Columns vary precision; rows vary trueness. Each label appears once.
@@ -123,10 +130,10 @@ mkdirSync(OUT, { recursive: true });
 			`<text transform="rotate(-90 26 ${cy})"`,
 		);
 	}
-	b += text(26, H - 24, 'Only the boxed panel is ACCURATE — the corner where both', {
+	b += text(26, H - 24, 'Accuracy is the one panel with truth AND precision — the', {
 		size: 12, anchor: 'start', fill: MUTED, style: 'italic',
 	});
-	b += text(26, H - 8, 'are good. Not a third axis, and not a synonym for either.', {
+	b += text(26, H - 8, 'intersection of the two axes, not a third axis of its own.', {
 		size: 12, anchor: 'start', fill: MUTED, style: 'italic',
 	});
 	writeFileSync(`${OUT}/trueness-precision.svg`, svg(W, H, b));
@@ -175,57 +182,76 @@ mkdirSync(OUT, { recursive: true });
 }
 
 // ---------------------------------------------------------------------------
-// 3. Resolution ladder. One set of points, four reporting grids. The last panel
-//    is the point: coarse resolution does not merely limit precision, it
-//    counterfeits it.
+// 3. Resolution ladder. ONE set of 18 measurements, four reporting grids.
 //
-//    Every panel carries a grid, including the finest — otherwise the reader has
-//    to work out that the first panel is also quantized, just not visibly. And
-//    points snap to grid INTERSECTIONS throughout, never to cell centers: mixing
-//    the two conventions between panels was the bug in the first draft, and it
-//    made the progression look like two different ideas.
+//    No target rings, deliberately. Rings imply a bullseye, a bullseye implies a
+//    true value, and truth is not what this figure is about — it is about how
+//    many distinct values an instrument is capable of reporting. The rings also
+//    competed with the grid for attention, and the grid is the whole subject.
+//
+//    The grid is quantized in cells so the coarsening is countable rather than
+//    vibes: 256 cells, then 64, 16, 4. Points snap to grid INTERSECTIONS, so a
+//    2x2-cell grid has exactly one interior intersection and every measurement
+//    must report it. That is the honest way to draw "coarser than the
+//    measurement range": not a big grid, but a grid with nowhere else to land.
+//
+//    The distinct-count under each panel is COMPUTED from the snapped points,
+//    never typed. A hand-written count that drifted from the drawing would be
+//    the one error this figure cannot survive.
 // ---------------------------------------------------------------------------
 {
-	const R = 62, GAP = 34, PAD = 22, TOP = 26;
+	const R = 62, GAP = 34, PAD = 22, TOP = 30;
 	const W = PAD * 2 + 4 * (2 * R) + 3 * GAP;
-	const H = TOP + 2 * R + 66;
-	const cells = [8, 20, 40, R];
-	const pts = points(19, 0, 0, 15);
+	const H = TOP + 2 * R + 84;
+	const CELLS = [16, 8, 4, 2];        // per side → 256, 64, 16, 4 cells
+	const N = 18;
+	// Seed and sigma chosen by search so the four panels land on 18/11/5/1 — all
+	// distinct at the finest grid, exactly one at the coarsest. The counts below
+	// are still computed from the drawing, so this is a nicer starting point
+	// rather than a claim the figure has to live up to.
+	const pts = points(84, 0, 0, 21, N);
 	let b = '';
-	cells.forEach((cell, i) => {
+
+	CELLS.forEach((n, i) => {
 		const cx = PAD + R + i * (2 * R + GAP);
 		const cy = TOP + R;
-		b += rings(cx, cy, [R, R * 0.62]);
-		// The last panel is a single cross — four squares, and therefore exactly ONE
-		// intersection. That is what makes every point report the same value, and
-		// it is the honest way to draw "coarser than the group": not a grid that
-		// happens to be big, but a grid with nowhere else to land.
-		const lines = i === 3 ? [0] : [];
-		if (i < 3) for (let g = -Math.floor(R / cell) * cell; g <= R; g += cell) lines.push(g);
-		for (const g of lines) {
+		const cell = (2 * R) / n;
+
+		b += `<rect x="${cx - R}" y="${cy - R}" width="${2 * R}" height="${2 * R}" fill="none" stroke="${MUTED}" stroke-width="0.9"/>`;
+		for (let k = 1; k < n; k++) {
+			const g = -R + k * cell;
 			b += `<line x1="${cx + g}" y1="${cy - R}" x2="${cx + g}" y2="${cy + R}" stroke="${MUTED}" stroke-width="0.4"/>`;
 			b += `<line x1="${cx - R}" y1="${cy + g}" x2="${cx + R}" y2="${cy + g}" stroke="${MUTED}" stroke-width="0.4"/>`;
 		}
-		const snap = (v) => Math.round(v / cell) * cell;
-		const snapped = i === 3 ? pts.map(() => ({ x: 0, y: 0 })) : pts.map((p) => ({ x: snap(p.x), y: snap(p.y) }));
-		// Coincident points would otherwise be drawn on top of each other and lie
-		// about how many there are; dedupe so the count is honest.
+
+		// Snap to the nearest interior intersection, clamped inside the frame.
+		const lim = R - cell;
+		const snap = (v) => Math.max(-lim, Math.min(lim, Math.round(v / cell) * cell));
 		const seen = new Set();
-		const shown = snapped.filter((p) => {
-			const k = `${p.x},${p.y}`;
-			if (seen.has(k)) return false;
+		const shown = [];
+		for (const p of pts) {
+			const q = { x: snap(p.x), y: snap(p.y) };
+			const k = `${q.x},${q.y}`;
+			if (seen.has(k)) continue;
 			seen.add(k);
-			return true;
+			shown.push(q);
+		}
+		b += dots(shown.map((p) => ({ x: cx + p.x, y: cy + p.y })), n === 2 ? 5 : 3.2);
+
+		b += text(cx, TOP + 2 * R + 22, `${n * n} cells`, { size: 12.5, weight: 700 });
+		b += text(cx, TOP + 2 * R + 38, `${shown.length} distinct value${shown.length === 1 ? '' : 's'}`, {
+			size: 11.5, fill: shown.length === 1 ? RED : MUTED, weight: shown.length === 1 ? 700 : 400,
 		});
-		b += dots(shown.map((p) => ({ x: cx + p.x, y: cy + p.y })), i === 3 ? 5 : 3.1);
-		const labels = ['fine', 'coarser', 'coarser still', 'coarser than the group'];
-		b += text(cx, TOP + 2 * R + 24, labels[i], { size: 12, weight: 600 });
-		if (i === 3) {
-			b += text(cx, TOP + 2 * R + 42, 'one value, every time.', { size: 11, fill: MUTED, style: 'italic' });
-			b += text(cx, TOP + 2 * R + 55, 'looks flawless.', { size: 11, fill: MUTED, style: 'italic' });
+		if (n === 2) {
+			b += text(cx, TOP + 2 * R + 56, 'coarser than the', { size: 11, fill: RED, style: 'italic' });
+			b += text(cx, TOP + 2 * R + 68, 'measurement range', { size: 11, fill: RED, style: 'italic' });
 		}
 	});
-	b += text(PAD, 16, 'resolution →', { size: 12, fill: MUTED, anchor: 'start' });
+
+	b += text(PAD, 18, `the same ${N} measurements, reported on four grids`, {
+		size: 12, fill: MUTED, anchor: 'start', weight: 600,
+	});
+	b += text(W - PAD, 18, 'coarser resolution →', { size: 12, fill: MUTED, anchor: 'end' });
 	writeFileSync(`${OUT}/resolution-ladder.svg`, svg(W, H, b));
 }
 

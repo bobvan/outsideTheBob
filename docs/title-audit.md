@@ -18,8 +18,8 @@ keyword-dense over a literal transcription of the title.
 
 | | count |
 |---|---|
-| ✅ pass | **25** |
-| ⏳ recommended, not done | **4** |
+| ✅ pass | **28** |
+| ⏳ recommended, not done | **1** |
 
 **Sections passed too**, as of the 2026-08-10 reorganization — `two-clock`,
 `metrology`, `acquiring`, `transferring` and `questions` are gone, and the six
@@ -51,6 +51,7 @@ that remain (`datacenters`, `gnss`, `measuring-time`, `questions-to-ask`,
 | Why do you want precise time? | `why-precise-time` |
 | How big is a nanosecond? | `how-big-is-a-nanosecond` |
 | How big is a degree? | `how-big-is-a-degree` |
+| Visualizing precision, trueness, and accuracy | `visualizing-precision-trueness-accuracy` |
 
 ### Passing for the other reason
 
@@ -59,6 +60,8 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 | page | why it works |
 |---|---|
 | Questions to ask a clock vendor | Task-shaped |
+| Time Distribution Protocols | A statement, not a question — Bob's call. A compare/contrast page that search will read as one |
+| UTC(k), and who defines yesterday | Kept the title; slug is now `who-defines-utc`, which is the searchable half |
 | Questions to ask when benchmarking clocks | Task-shaped |
 | Accurately measuring elapsed time | Plain words, and the reframe puts the surprise in the first line |
 | Comparing distant clocks | Plain words for the actual job |
@@ -69,16 +72,11 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 
 ---
 
-## ⏳ Recommended — 4
+## ⏳ Recommended — 1
 
 | current | proposed | proposed slug | note |
 |---|---|---|---|
-| UTC(k), and who defines yesterday | **If nobody has UTC, whose time am I actually getting?** | `whose-time-am-i-getting` | *UTC(k)* is unsearchable by anyone who needs the page. **Strongest remaining.** |
-| Distributing time: the protocols | **NTP or PTP — which do I need?** | `ntp-or-ptp` | Short, high-traffic, exactly the question. Cheap — 2 inbound links |
-| Contrasting timing accuracy and precision | **What does "accurate to 15 ns" actually mean?** | `what-does-accurate-to-15-ns-mean` | That ambiguity is the page's whole argument, and it is a phrase a vendor handed them |
 | Relating timing accuracy with measurement resolution | **My clock reports the same number every time — is it that good?** | `same-number-every-time` | *Contrasting* and *relating* are essay verbs. Also flagged "needs serious work" |
-
-The last two are the metrology pair and share a fate — retitle both or neither.
 
 ---
 
@@ -98,6 +96,9 @@ The last two are the metrology pair and share a fate — retitle both or neither
 | Elapsed time needs no timescale | Accurately measuring elapsed time | `measuring-elapsed-time` — leads with the surprise |
 | Every timestamp is taken against a timescale | What are timestamps and timescales? | `what-are-timestamps-and-timescales` |
 | Yeah, but why do you want precise time? | Why do you want precise time? | `why-precise-time` |
+| Contrasting timing accuracy and precision | Visualizing precision, trueness, and accuracy | `visualizing-precision-trueness-accuracy` |
+| Distributing time: the protocols | Time Distribution Protocols | `time-distribution-protocols` |
+| *(kept)* UTC(k), and who defines yesterday | — | `who-defines-utc` |
 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | shortened at draft |
 
 ## One caveat on a title that passes
@@ -110,7 +111,8 @@ worth changing against the author's judgement.
 ## Method notes
 
 - Retitling is cheap **while everything is `draft: true`**. It gets expensive the
-  day the garden publishes. Four left; now is the moment.
+  day the garden publishes. One left, and it is on a page already flagged as
+  needing serious work — so it may get rewritten rather than retitled.
 - A retitle is frontmatter, filename, inbound link text, and this file. The link
   crawler catches anything missed, and `publish-check` P6 catches a section that
   drifts from its directory.

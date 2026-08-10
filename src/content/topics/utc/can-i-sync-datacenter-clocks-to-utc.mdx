@@ -28,10 +28,29 @@ everybody does about it.
 Most people picture UTC as something that exists — a signal, a master clock in a
 vault somewhere, a number you could in principle go and read.
 
-None of that is true. UTC is a **paper timescale**. It is computed, monthly, by
-the [BIPM](https://www.bipm.org/) in Paris, as a weighted average of the readings
-of several hundred atomic clocks held at about eighty institutes worldwide. No
-single one of those clocks is UTC. The average is.
+None of that is true. **UTC is a virtual timescale.** Nothing ticks it. It is
+computed, monthly, by the [BIPM](https://www.bipm.org/) in Paris, as a weighted
+average of the readings of several hundred atomic clocks held at about eighty
+institutes worldwide. No single one of those clocks is UTC. The average is.
+
+<CalloutBox type="tip" title="Virtual and realization — one pair of words that explains most of this">
+	The literature calls UTC a <strong>paper timescale</strong>, and that is the
+	term of art. But <strong>virtual</strong> is the more useful word here,
+	because of what it contrasts with.
+
+	A <a href="/timekeeping/glossary/#utc-k">UTC(k)</a> is a
+	<strong>realization</strong> of UTC — literally, a making-real. UTC(NIST) is a
+	physical thing in Boulder that ticks, that you can put on an oscilloscope,
+	that keeps running when the network goes down. UTC itself is none of those.
+	Virtual and realized are opposites; paper and realized are not.
+
+	And here is the consequence the whole site turns on. The virtual scale is
+	decided <em>in arrears</em> — BIPM computes what UTC was, weeks after the
+	fact. So a realization cannot be a copy of it, because there is nothing yet to
+	copy. <strong>Every realization of UTC is necessarily a prediction of
+	it</strong>, including the very best ones, and the difference between them is
+	only how good the forecast turned out to be.
+</CalloutBox>
 
 And the average is worked out afterwards. From a talk on getting to the last
 nanoseconds:
@@ -61,7 +80,7 @@ doing definition, and it works in arrears.
 	between predicting and knowing is the reason a page like
 	[the limits of averaging](/timekeeping/measuring-time/limits-of-averaging/) exists,
 	and the reason your trueness is
-	<a href="/timekeeping/measuring-time/accuracy-and-precision-in-pictures/">knowable only in arrears</a>.
+	<a href="/timekeeping/measuring-time/visualizing-precision-trueness-accuracy/">knowable only in arrears</a>.
 </CalloutBox>
 
 ## What is published, and when
@@ -141,7 +160,7 @@ the cheapest one:
 
 ## Where to go next
 
-- **[UTC(k), and who defines yesterday](/timekeeping/utc/utc-k/)** — the
+- **[UTC(k), and who defines yesterday](/timekeeping/utc/who-defines-utc/)** — the
   realizations you can actually reach in real time, and how the weighting works.
 - **[GNSS time is a prediction](/timekeeping/gnss/limits-of-gnss-time-accuracy/)** —
   what your receiver is really tracking, and why it needs correcting every few

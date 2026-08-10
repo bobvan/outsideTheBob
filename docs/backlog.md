@@ -118,7 +118,7 @@ renders. See `scripts/review-status.mjs`.
 | H1 | **86 unlinked glossary first-uses** across 28 files — `npm run glossary-links`. Advisory; mostly `UTC` and `timescale`, which need judgement rather than a sweep. |
 | H2 | **11 title retitles** outstanding in `title-audit.md`, now with proposed slugs. Strongest: *GNSS time is a prediction* → *Does the satellite know what time it is?* Cheap while everything is `draft: true`; expensive after. |
 | H3 | Three empty sections: The Datacenter Problem, Benchmarking, Stories. |
-| H6 | **Restart the dev server after editing `glossary.yaml`.** A new entry does not hot-reload — the content-collection cache serves the old set and the link checker reports a false missing anchor. Cost twenty minutes on 2026-08-09. |
+| H6 | **Restart the dev server after any content-collection change that is not a body edit** — a new `glossary.yaml` entry, a renamed page, a changed slug. None of these hot-reload: the cache serves the old set, so the link checker reports the old URL as a 500 and the new one as a 404. Seen twice (2026-08-09, 2026-08-10). Body-text edits reload fine. |
 | H4 | Restart the dev server occasionally — bravo found it at 7.5 days of uptime and warns against trusting a stale preview. **Restarted 2026-08-08.** Tailscale preview: `http://100.117.189.97:4321/` |
 
 ---

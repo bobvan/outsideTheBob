@@ -1,8 +1,8 @@
 ---
 title: "Comparing distant clocks"
 description: "You cannot run a cable, and neither clock can be the source for the other. So you both watch a third clock in the sky — which drags its error into your answer. Every technique here is a different way of removing it."
-section: "utc"
-order: 33
+section: "measuring-time"
+order: 120
 updatedDate: 2026-08-05
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology"]
@@ -15,7 +15,7 @@ import CalloutBox from "../../../components/post/CalloutBox.astro";
 import ZoomableImage from "../../../components/post/ZoomableImage.astro";
 
 Handing time *out* across your own estate is one problem, and the
-[protocols page](/timekeeping/transferring/distribution/) is about that one:
+[protocols page](/timekeeping/time-distribution/distribution/) is about that one:
 you own both ends, you own the wire, and one end is unambiguously the source.
 
 This is the other problem. Two clocks, a continent apart, owned by different
@@ -70,9 +70,9 @@ Those are all terms of one sum, and each has a different status:
 
 | term | where it comes from |
 |---|---|
-| `geometry` | known, if you surveyed the [antenna position](/timekeeping/antennas/antenna-position/) properly |
+| `geometry` | known, if you surveyed the [antenna position](/timekeeping/datacenters/antenna-position/) properly |
 | `your_clock_error` | **what you are solving for** |
-| `satellite_clock_error` | the problem — [drifting, and nobody is steering it](/timekeeping/utc/gnss-time-is-a-prediction/) |
+| `satellite_clock_error` | the problem — [drifting, and nobody is steering it](/timekeeping/gnss/gnss-time-is-a-prediction/) |
 | `atmosphere_delay` | measured with a dual-frequency receiver, or modelled |
 | `noise` | averages down with time |
 
@@ -297,7 +297,7 @@ they are nudging its rate over days.
 
 	If you need a distant clock's time <em>right now</em>, to the nanosecond, none
 	of this helps. That job wants a fiber and
-	<a href="/timekeeping/transferring/distribution/">a protocol</a>, and it is a
+	<a href="/timekeeping/time-distribution/distribution/">a protocol</a>, and it is a
 	different page.
 </CalloutBox>
 
@@ -329,7 +329,7 @@ accuracy and no defensible time offset at all. That gap, and what closes it, is
 This is the part that took me longest to see, and it is the bottom band of the
 figure.
 
-A [PPP solution](/timekeeping/utc/gnss-time-is-a-prediction/) of the ordinary
+A [PPP solution](/timekeeping/gnss/gnss-time-is-a-prediction/) of the ordinary
 kind — one station, one correction stream, solve for your clock — gives you an
 excellent number referenced to **that stream's datum**. The datum is stable and
 perfectly serviceable. It is also unpublished, uncertified, and appears in no
@@ -368,7 +368,7 @@ selling something.
 ## If somebody is selling you common view
 
 Three questions, in the spirit of the
-[vendor questions](/timekeeping/questions/buying-a-clock/) page:
+[vendor questions](/timekeeping/questions-to-ask/buying-a-clock/) page:
 
 1. **"What is my baseline to your reference, and what does the technique cost me
    at that distance?"** Under a thousand kilometers, very little. Across an
@@ -392,7 +392,7 @@ Three questions, in the spirit of the
 - **[Can I build my own link to UTC(NIST)?](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/)**
   — the same techniques, applied to your own roof, with what is free and what
   is not.
-- **[Distributing time: the protocols](/timekeeping/transferring/distribution/)**
+- **[Distributing time: the protocols](/timekeeping/time-distribution/distribution/)**
   — the other problem, the one where you own the wire.
 - **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
   — why a public zero is worth more than a quiet one.

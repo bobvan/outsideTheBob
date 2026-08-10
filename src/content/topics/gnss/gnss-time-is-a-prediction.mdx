@@ -1,8 +1,8 @@
 ---
 title: "GNSS time is a prediction"
 description: "Your receiver is not reading time out of the sky. It is applying corrections, computed on the ground, to signals from clocks that nobody is steering."
-section: "utc"
-order: 50
+section: "gnss"
+order: 10
 updatedDate: 2026-08-04
 coverage: "H"
 tags: ["UTC", "GNSS", "timing", "metrology"]
@@ -101,7 +101,7 @@ and — when they come from a *single* self-consistent analysis center — they 
 the phase biases that make [**PPP-AR**](/timekeeping/glossary/#ppp-ar) possible.
 
 That maps directly onto the acquisition column of
-[the matching table](/timekeeping/transferring/matching-acquisition-and-distribution/):
+[the matching table](/timekeeping/time-distribution/matching-acquisition-and-distribution/):
 SPP, float PPP, and PPP-AR are not three grades of receiver so much as three
 grades of correction.
 
@@ -139,7 +139,7 @@ Everyone tracking the same constellation shares its prediction error. It is
 comparison you make internally.
 
 <CalloutBox type="tip" title="This resolves an apparent contradiction on this site">
-	The <a href="/timekeeping/transferring/matching-acquisition-and-distribution/">matching
+	The <a href="/timekeeping/time-distribution/matching-acquisition-and-distribution/">matching
 	table</a> shows sub-nanosecond as achievable, and this page says you cannot get
 	below a few nanoseconds. Both are true, because they are about different
 	things.
@@ -154,10 +154,10 @@ and knowing that is worth a lot of money.
 
 ## Where to go next
 
-- **[Which GNSS constellation keeps the best time?](/timekeeping/utc/which-constellation-keeps-best-time/)**
+- **[Which GNSS constellation keeps the best time?](/timekeeping/gnss/which-constellation-keeps-best-time/)**
   — how well these predictions have actually been doing, measured and published
   monthly by the people who define the answer.
 - **[Traceability](/timekeeping/utc/traceability/)** — what it takes to make a
   claim about UTC that somebody else has to accept.
-- **[When agreement matters more than being right](/timekeeping/two-clock/agreement-is-not-accuracy/)**
+- **[When agreement matters more than being right](/timekeeping/measuring-time/agreement-is-not-accuracy/)**
   — the same argument from the application's side.

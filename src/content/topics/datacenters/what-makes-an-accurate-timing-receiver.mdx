@@ -1,7 +1,7 @@
 ---
 title: "What makes an accurate GNSS timing receiver?"
 description: "Six traits, in the order they start to matter. The last one separates a box that wants to be your master clock from a box that knows you already have a better one."
-section: "acquiring"
+section: "datacenters"
 order: 20
 updatedDate: 2026-08-05
 coverage: "M"
@@ -98,12 +98,12 @@ So on its own it is a liar in both directions. What makes it valuable is the
 the same moment, you have learned something a single indicator could not tell
 you. If signal drops and the connection is unchanged, look at the sky, the
 firmware, or somebody's foil. That is the
-[second-opinion argument](/timekeeping/two-clock/how-do-i-know-its-still-right/)
+[second-opinion argument](/timekeeping/measuring-time/how-do-i-know-its-still-right/)
 in miniature — two indicators that share almost nothing, read together.
 
 For a module builder there is one more reason to want it: an antenna fault is
 usually the leading indicator that
-[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/) is in your near
+[holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) is in your near
 future. Knowing that a few seconds early is worth having.
 
 ## 3. Carrier-phase smoothing
@@ -138,7 +138,7 @@ the difference between a jittery PPS and a steady one.
 	arithmetic.
 
 	The distinction matters beyond this page: "RTK is cheap, therefore ambiguity
-	resolution is cheap" is <a href="/timekeeping/utc/choosing-a-gnss-timescale/">an
+	resolution is cheap" is <a href="/timekeeping/gnss/choosing-a-gnss-timescale/">an
 	inference worth resisting</a>. Fixing integers after differencing has done the
 	hard part is not the same problem.
 </CalloutBox>
@@ -157,7 +157,7 @@ a clock consists of.
 is that an internal oscillator has been disciplined to GNSS and the PPS comes
 off that oscillator rather than off the receiver. It should be quiet, and it
 should keep being quiet through
-[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/), because the
+[holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/), because the
 same oscillator carries both jobs. A network clock whose PPS jitters like a bare
 module has not done the thing you paid for.
 
@@ -215,8 +215,8 @@ A receiver that emits raw code and carrier-phase measurements — as
 reprocess the same day with better correction streams months later, run your own
 [PPP](/timekeeping/glossary/#ppp) solution, survey the antenna position properly
 rather than
-[letting the receiver guess](/timekeeping/antennas/antenna-position/), and
-[compare your clock against a national laboratory's](/timekeeping/utc/comparing-two-distant-clocks/).
+[letting the receiver guess](/timekeeping/datacenters/antenna-position/), and
+[compare your clock against a national laboratory's](/timekeeping/measuring-time/comparing-two-distant-clocks/).
 
 None of that is possible with a box that only ever tells you its conclusion. If
 you expect to still care about this subject in two years, **weight this trait
@@ -237,7 +237,7 @@ result in its own messages.
 **And this is the one place a network clock joins in.** Some of them accept a
 PPS input for exactly this purpose — feed it another clock's PPS and it will
 tell you the difference. That is the cheapest way to
-[compare two clocks against each other](/timekeeping/two-clock/how-do-i-know-its-still-right/)
+[compare two clocks against each other](/timekeeping/measuring-time/how-do-i-know-its-still-right/)
 that exists, and it turns a box you bought as a source into a box that can also
 audit one.
 
@@ -249,7 +249,7 @@ datasheets bury.
 Start from what a receiver can actually do, which is narrower than it looks.
 **No GNSS receiver ever observes a satellite against UTC.** It observes the
 satellite against *a timescale of its own* — and a
-[timescale](/timekeeping/datacenters/timescales/) is three things: a tick
+[timescale](/timekeeping/measuring-time/timescales/) is three things: a tick
 duration, an origin, and a count. The receiver always supplies the origin and
 always does the counting.
 
@@ -337,15 +337,15 @@ or anything else whose short-term stability beats a TCXO.
 
 Knowing which one you are shopping for saves more money than any specification
 on the datasheet. And it is a question the
-[vendor questions page](/timekeeping/questions/buying-a-clock/) never quite asks,
+[vendor questions page](/timekeeping/questions-to-ask/buying-a-clock/) never quite asks,
 because it starts from the assumption that you are buying a clock rather than
 the parts to build one.
 
 ## Where to go next
 
-- **[Ways to get time into a datacenter](/timekeeping/acquiring/acquiring-time/)**
+- **[Ways to get time into a datacenter](/timekeeping/datacenters/acquiring-time/)**
   — the layer above this one: whether GNSS is the right source at all.
-- **[Questions to ask a clock vendor](/timekeeping/questions/buying-a-clock/)** —
+- **[Questions to ask a clock vendor](/timekeeping/questions-to-ask/buying-a-clock/)** —
   what to ask once you know which kind of box you want.
-- **[What do I put in for my antenna's position?](/timekeeping/antennas/antenna-position/)**
+- **[What do I put in for my antenna's position?](/timekeeping/datacenters/antenna-position/)**
   — the setting that wastes the most of a good receiver's capability.

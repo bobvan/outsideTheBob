@@ -2,7 +2,7 @@
 title: "Can I build my own link to UTC(NIST)?"
 description: "The data you would need is public, free, and better than most people realize. You can build the measurement in a weekend. What you cannot build is the one thing that turns it into a number somebody else has to accept."
 section: "utc"
-order: 35
+order: 50
 updatedDate: 2026-08-05
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology", "datacenter"]
@@ -30,7 +30,7 @@ receiver and a network connection can difference against them.
 	people picture when they imagine building their own link.
 
 	It is not the only way, and on the evidence it is not the best one.
-	<a href="/timekeeping/utc/comparing-two-distant-clocks/">Comparing distant
+	<a href="/timekeeping/measuring-time/comparing-two-distant-clocks/">Comparing distant
 	clocks</a> lays out the alternatives — all-in-view, and GPS PPP time
 	transfer, which is what BIPM and NIST actually use for their own links into
 	TAI. <strong>Those are free too</strong>, they use the same public
@@ -76,7 +76,7 @@ CDDIS carries the same files but now wants Earthdata credentials. BKG does not.
 ### The BIPM time-transfer tree
 
 The second feed sits on the same server that publishes
-[*Circular T*](/timekeeping/utc/which-constellation-keeps-best-time/), under
+[*Circular T*](/timekeeping/gnss/which-constellation-keeps-best-time/), under
 `pub/tai/data/<year>/time_transfer/`. About forty laboratories deposit
 [CGGTTS](https://www.bipm.org/documents/20126/52718503/G1-2015.pdf) tracks there
 and about sixty deposit PPP solutions, monthly, raw and BIPM-corrected. `nist` is
@@ -166,7 +166,7 @@ interesting than the numbers above.
 
 ## Why our own clock did not appear in the answer
 
-A [timescale](/timekeeping/datacenters/timescales/) is three things: the
+A [timescale](/timekeeping/measuring-time/timescales/) is three things: the
 duration of one tick, an origin, and a count of ticks since. It is worth
 holding that definition in mind here, because **a GNSS receiver never observes
 satellites against UTC. It observes them against a timescale of its own** — it
@@ -198,7 +198,7 @@ raw observations at all.**
 </CalloutBox>
 
 That distinction is the difference between
-[a receiver that wants to be your clock and one that expects you to have one](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/),
+[a receiver that wants to be your clock and one that expects you to have one](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/),
 and it is the reason the numbers above stop where they do. Redoing this
 measurement on an externally clocked receiver is a different experiment, and it
 deserves its own page rather than a footnote on this one.
@@ -213,7 +213,7 @@ which both stations saw identically — vanishes exactly.
 
 You are then no longer relying on the satellite to know what time it is, which is
 the single largest term in
-[an ordinary GNSS timing solution](/timekeeping/utc/gnss-time-is-a-prediction/).
+[an ordinary GNSS timing solution](/timekeeping/gnss/gnss-time-is-a-prediction/).
 Everything the satellite got wrong is
 [common-mode](/timekeeping/glossary/#common-mode) and cancels.
 
@@ -249,7 +249,7 @@ Those are not small corrections. They are hundreds of nanoseconds of pure
 systematic offset, and NIST knows theirs because the BIPM measured them. You do
 not know yours. Guess them and you get a measurement that is beautifully stable,
 perfectly repeatable, and wrong by an amount you cannot state — which is
-[precision without trueness](/timekeeping/metrology/accuracy-and-precision-in-pictures/),
+[precision without trueness](/timekeeping/measuring-time/accuracy-and-precision-in-pictures/),
 the exact failure the metrology section exists to name.
 
 ### How the professionals get the number
@@ -274,7 +274,7 @@ Two things leap out of that table. The first is that a sub-nanosecond link is
 achievable and somebody has done the work to prove it. The second is more
 useful to you: **even in a professionally executed calibration, the largest
 single uncertainty is the antenna cable** — which is precisely the argument the
-[feedline page](/timekeeping/antennas/feedline/) makes from the other end. The
+[feedline page](/timekeeping/datacenters/feedline/) makes from the other end. The
 people who are best at this still find the wire is the hard part.
 
 You cannot download a travelling receiver.
@@ -282,7 +282,7 @@ You cannot download a travelling receiver.
 And this is the point at which the choice of technique stops mattering. A
 calibrated end is what turns *any* of these links into a number you can defend —
 common view,
-[all-in-view, or GPS PPP time transfer](/timekeeping/utc/comparing-two-distant-clocks/)
+[all-in-view, or GPS PPP time transfer](/timekeeping/measuring-time/comparing-two-distant-clocks/)
 alike. Pick the technique on its merits; the wall is in the same place for all
 three.
 
@@ -334,7 +334,7 @@ two receivers.
 	co-located time-transfer receiver chain, normally at the level of 1–2 ns" — a
 	statement about such chains generally, not a measurement of his own. That is
 	what a home calibration inherits. Repeatability of 0.3 ns is
-	<a href="/timekeeping/metrology/accuracy-and-precision-in-pictures/">precision,
+	<a href="/timekeeping/measuring-time/accuracy-and-precision-in-pictures/">precision,
 	not trueness</a>.
 </CalloutBox>
 
@@ -358,7 +358,7 @@ rule: **you get frequency for free and you do not get time at all.**
 
 The reason is that **an unknown constant delay is an offset error, not a
 frequency error** — and those are
-[two genuinely independent ways for a clock to be wrong](/timekeeping/datacenters/elapsed-time/).
+[two genuinely independent ways for a clock to be wrong](/timekeeping/measuring-time/elapsed-time/).
 A fixed 300 ns you cannot account for ruins your claim about *what time it is*
 and does absolutely nothing to your claim about *how fast your clock runs*,
 because it appears at both ends of every rate measurement and subtracts out.
@@ -377,7 +377,7 @@ That single fact makes a home-built link genuinely valuable:
 - **Checking a vendor's number** without taking their word for it.
 - **A second opinion on your antenna position**, since a PPP solution from the
   same observations is the recommended fix for
-  [letting a receiver survey itself](/timekeeping/antennas/antenna-position/).
+  [letting a receiver survey itself](/timekeeping/datacenters/antenna-position/).
 
 And what it is not good for: any sentence beginning "we are traceable to". That
 sentence has to be bought.
@@ -392,14 +392,14 @@ sentence has to be bought.
 
 ## Where to go next
 
-- **[Comparing distant clocks](/timekeeping/utc/comparing-two-distant-clocks/)**
+- **[Comparing distant clocks](/timekeeping/measuring-time/comparing-two-distant-clocks/)**
   — common view, all-in-view and PPP time transfer, and why BIPM retired the
   first of them.
-- **[Choosing a GNSS timescale for syncing datacenter clocks](/timekeeping/utc/choosing-a-gnss-timescale/)**
+- **[Choosing a GNSS timescale for syncing datacenter clocks](/timekeeping/gnss/choosing-a-gnss-timescale/)**
   — where TMAS sits among the alternatives, and why it is a different kind of
   answer from the other three.
 - **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
   — the paperwork problem this page keeps running into.
-- **[An uncalibrated antenna feedline is likely your largest source of error to UTC](/timekeeping/antennas/feedline/)**
+- **[An uncalibrated antenna feedline is likely your largest source of error to UTC](/timekeeping/datacenters/feedline/)**
   — the 0.5 ns that dominates even BIPM's own error budget, and the hundreds of
   nanoseconds it becomes when nobody measures it.

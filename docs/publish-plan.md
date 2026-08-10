@@ -26,6 +26,15 @@ That price is startlingly low, because the H/S/M discipline built the right
 shape: most inbound links point at concept Homes, and the Homes are the pages
 most ready to go.
 
+## Not considered for first publication
+
+Bob's list, 2026-08-10 — held back for reasons of *scope* rather than quality:
+
+| page | why |
+|---|---|
+| `do-i-need-an-ocxo` | Written for clock builders. Wants redoing as *important properties of GNSS receivers* for the dual audience — buyers and builders — alongside the receiver-traits page |
+| `designing-a-clock` | Builder-only, and Bob's own note says it could need a lot of work |
+
 ## The recommended batch — publish 25, defer 6
 
 **Total cost: 3 link edits, plus 1 glossary `seeAlso` trim.**

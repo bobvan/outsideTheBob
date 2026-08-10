@@ -1,8 +1,8 @@
 ---
 title: "The limits of averaging"
 description: "Averaging buys you improvement that stops. What is left when it stops is bias — and the same story plays out in position, in time, and in frequency."
-section: "metrology"
-order: 30
+section: "measuring-time"
+order: 80
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["metrology", "GNSS", "timing", "oscillators"]
@@ -50,7 +50,7 @@ answer for a while, then stops getting better. NIST measured a receiver's
 built-in survey converging tidily — and converging to an answer biased high,
 for reasons they could not explain. Their 24-hour results were far more
 *repeatable* than their 1-hour results, and no more *correct*. See
-[configuring antenna position](/timekeeping/antennas/antenna-position/).
+[configuring antenna position](/timekeeping/datacenters/antenna-position/).
 
 **Time.** Averaging phase measurements against a reference tightens the estimate
 of your offset, and does nothing at all about an uncompensated cable delay
@@ -71,7 +71,7 @@ where averaging actively hurts.
 	your answer with the same weight as bias.
 
 	That case is common enough in datacenter timing to have
-	<a href="/timekeeping/datacenters/do-timestamp-errors-average-out/">its own
+	<a href="/timekeeping/measuring-time/do-timestamp-errors-average-out/">its own
 	page</a>, and it is where this one's conclusions stop applying.
 </CalloutBox>
 

@@ -1,8 +1,8 @@
 ---
 title: "How do I know my clock is still right?"
 description: "Timing failures are usually quiet, and nothing inside a wrong clock knows it is wrong. The only detector is a second opinion — and what that second opinion shares with the first decides what it can and cannot see."
-section: "two-clock"
-order: 20
+section: "measuring-time"
+order: 110
 updatedDate: 2026-08-08
 coverage: "H"
 tags: ["datacenter", "timing", "GNSS", "monitoring", "metrology"]
@@ -15,7 +15,7 @@ import CalloutBox from "../../../components/post/CalloutBox.astro";
 
 This site keeps making the same uncomfortable observation from different
 directions. A receiver with the
-[antenna position wrong](/timekeeping/antennas/antenna-position/) reports the
+[antenna position wrong](/timekeeping/datacenters/antenna-position/) reports the
 wrong time with complete confidence. A
 [traceability](/timekeeping/utc/traceability/) claim needs a monitoring record
 showing you stayed inside your budget, not merely that you configured it once
@@ -89,8 +89,8 @@ comparison can now see an antenna problem.
 |---|---|---|
 | second receiver, **same antenna** | receiver faults, firmware changes, configuration drift — at millimetre sensitivity | anything about the antenna, feedline, position or sky |
 | second receiver, **own antenna** | antenna moved, feedline changed, local multipath | anything common to the site |
-| **different constellation** | one operator's bad day, one constellation's [prediction error](/timekeeping/utc/which-constellation-keeps-best-time/) | a receiver fault affecting both |
-| **a national laboratory**, by [time transfer](/timekeeping/utc/comparing-two-distant-clocks/) | everything local, including the whole site | little — this is the widest net |
+| **different constellation** | one operator's bad day, one constellation's [prediction error](/timekeeping/gnss/which-constellation-keeps-best-time/) | a receiver fault affecting both |
+| **a national laboratory**, by [time transfer](/timekeeping/measuring-time/comparing-two-distant-clocks/) | everything local, including the whole site | little — this is the widest net |
 | **a second GNSS receiver on the same signal** | almost nothing a spoofer would trip | a spoofed signal both are happily tracking |
 
 None of that is module-only. A second
@@ -108,7 +108,7 @@ worse, because it produces confident agreement.
 
 <CalloutBox type="warn" title="Comparison detects divergence, not error">
 	The sharp limit, and it is the same argument as
-	<a href="/timekeeping/two-clock/agreement-is-not-accuracy/">agreement is not
+	<a href="/timekeeping/measuring-time/agreement-is-not-accuracy/">agreement is not
 	accuracy</a>, pointed at monitoring instead of at requirements.
 
 	Two clocks that drift together tell you nothing. If both receivers share an
@@ -127,7 +127,7 @@ Three that cost little and are not widely used.
 
 **A different constellation.** Free, already in your receiver, and it catches an
 entire class of failure — one operator having a bad day. BIPM's own scorecard
-shows [GLONASS running an order of magnitude worse](/timekeeping/utc/which-constellation-keeps-best-time/)
+shows [GLONASS running an order of magnitude worse](/timekeeping/gnss/which-constellation-keeps-best-time/)
 than the others for over a year, which is exactly the kind of thing a
 single-constellation installation would never notice.
 
@@ -142,7 +142,7 @@ been.
 **The clock's own confidence, published rather than swallowed.** PTP carries a
 `clockClass` field precisely so a grandmaster can announce *my reference is gone
 and my confidence is degrading*. A system that knows it is in
-[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/) and does not say
+[holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) and does not say
 so has solved the easy half of the problem.
 
 ## Make something complain
@@ -185,11 +185,11 @@ and being able to show it.
 
 ## Where to go next
 
-- **[When agreement matters more than being right](/timekeeping/two-clock/agreement-is-not-accuracy/)**
+- **[When agreement matters more than being right](/timekeeping/measuring-time/agreement-is-not-accuracy/)**
   — the same independence argument, pointed at requirements instead of at
   monitoring.
 - **[What "traceable to UTC" actually requires](/timekeeping/utc/traceability/)**
   — where the monitoring record stops being good practice and becomes the
   deliverable.
-- **[Ways to get time into a datacenter](/timekeeping/acquiring/acquiring-time/)**
+- **[Ways to get time into a datacenter](/timekeeping/datacenters/acquiring-time/)**
   — the case for a second source, made before you knew what to do with it.

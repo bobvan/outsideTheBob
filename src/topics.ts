@@ -20,16 +20,12 @@ export const SECTIONS = [
 	// the practical front door: they ask the reader's question rather than
 	// teaching a vocabulary, and pick the vocabulary up in passing. Moving the
 	// section is one line here plus a frontmatter edit per page.
-	{ key: 'questions', title: 'Asking the Right Questions' },
+	{ key: 'questions-to-ask', title: 'Asking the Right Questions' },
 	{ key: 'datacenters', title: 'Timekeeping in Datacenters' },
-	{ key: 'acquiring', title: 'Acquiring Time' },
-	{ key: 'antennas', title: 'Antennas' },
-	{ key: 'transferring', title: 'Transferring Time' },
-	{ key: 'datacenter-problem', title: 'The Datacenter Problem' },
+	{ key: 'gnss', title: 'GNSS' },
 	{ key: 'utc', title: 'What Is UTC' },
-	{ key: 'metrology', title: 'Time Metrology' },
-	{ key: 'two-clock', title: 'Two-Clock Agreement' },
-	{ key: 'benchmarking', title: 'Benchmarking' },
+	{ key: 'measuring-time', title: 'Measuring Time' },
+	{ key: 'time-distribution', title: 'Time Distribution' },
 	{ key: 'stories', title: 'Stories' },
 ] as const;
 
@@ -40,7 +36,11 @@ export const sectionTitle = (key: string) =>
 export const topicSlug = (t: Topic) => t.data.slug ?? t.id.split('/').pop();
 
 /** Full path, which is also the feed guid — see the note in content.config.ts. */
-export const topicPath = (t: Topic) => `/timekeeping/${t.data.section}/${topicSlug(t)}/`;
+/** The garden's mount point. Named once so a second garden is a copy of this
+    module rather than a hunt through it — see docs/url-structure.md. */
+export const GARDEN_ROOT = 'timekeeping';
+
+export const topicPath = (t: Topic) => `/${GARDEN_ROOT}/${t.data.section}/${topicSlug(t)}/`;
 
 export async function publishedTopics(): Promise<Topic[]> {
 	const topics = await getCollection('topics', (t) => includeDrafts || !t.data.draft);

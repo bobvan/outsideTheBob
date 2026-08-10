@@ -1,8 +1,8 @@
 ---
 title: "Every timestamp is taken against a timescale"
 description: "A timescale is three things: how long a tick is, when tick zero was, and how many ticks since. Anything with those three is a valid timescale — including some absurd ones."
-section: "datacenters"
-order: 40
+section: "measuring-time"
+order: 10
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["datacenter", "timing", "UTC"]
@@ -75,7 +75,7 @@ That is the entire relationship between any two timescales, and it is worth
 knowing because it tells you exactly what can differ. If two clocks disagree,
 the disagreement decomposes into those two parameters and nothing else: a
 difference in how fast they tick, and a difference in where they started. See
-[elapsed time](/timekeeping/datacenters/elapsed-time/), where those two turn out
+[elapsed time](/timekeeping/measuring-time/elapsed-time/), where those two turn out
 to have very different consequences.
 
 ## Why this matters in practice
@@ -92,4 +92,4 @@ maintains those realizations and how far they sit from the definition.
 **Some things you time do not need a timescale at all.** Measuring how long
 something took needs a unit and a counter, but no origin and no agreement with
 anybody — which is a genuinely different and much easier problem. That is
-[elapsed time](/timekeeping/datacenters/elapsed-time/).
+[elapsed time](/timekeeping/measuring-time/elapsed-time/).

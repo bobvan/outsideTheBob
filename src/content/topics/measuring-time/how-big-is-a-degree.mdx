@@ -1,8 +1,8 @@
 ---
 title: "How big is a degree?"
 description: "Each decimal place of latitude and longitude buys a factor of ten. Knowing where the useful digits stop saves arguing about the ones that cannot mean anything."
-section: "datacenters"
-order: 25
+section: "measuring-time"
+order: 30
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["GNSS", "timing", "datacenter", "metrology"]
@@ -13,7 +13,7 @@ reviewNote: "Likely ready to go in 1hr or less"
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
 
-[A nanosecond is about a foot](/timekeeping/datacenters/how-big-is-a-nanosecond/),
+[A nanosecond is about a foot](/timekeeping/measuring-time/how-big-is-a-nanosecond/),
 which makes time physical. Coordinates need the same treatment, because a
 latitude with nine decimal places looks authoritative and most of it is noise.
 
@@ -73,12 +73,12 @@ Read the light-time column against the accuracy you are chasing:
   already too coarse if you care about UTC to better than that.
 - Getting it to a **room** (5 digits) is 3.7 ns — fine for most datacenter work.
 - Getting it to a **hand** (6 digits) is 371 ps, and at that point your
-  [feedline](/timekeeping/antennas/feedline/) and your survey method dominate
+  [feedline](/timekeeping/datacenters/feedline/) and your survey method dominate
   by a wide margin.
 
 Which is the useful takeaway: past about six decimal places, position stops
 being your limiting error and something else takes over. See
-[configuring antenna position](/timekeeping/antennas/antenna-position/) for what
+[configuring antenna position](/timekeeping/datacenters/antenna-position/) for what
 that something else usually is.
 
 ## The obligatory reference

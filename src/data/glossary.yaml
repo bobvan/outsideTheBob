@@ -29,7 +29,7 @@
     - label: "Precision"
       href: "#precision"
     - label: "Seen side by side"
-      href: "/timekeeping/metrology/accuracy-and-precision-in-pictures/"
+      href: "/timekeeping/measuring-time/accuracy-and-precision-in-pictures/"
   draft: true
 
 - id: trueness
@@ -49,7 +49,7 @@
     - label: "UTC"
       href: "#utc"
     - label: "The limits of averaging"
-      href: "/timekeeping/metrology/limits-of-averaging/"
+      href: "/timekeeping/measuring-time/limits-of-averaging/"
   draft: true
 
 - id: precision
@@ -66,7 +66,7 @@
     - label: "Trueness"
       href: "#trueness"
     - label: "The limits of averaging"
-      href: "/timekeeping/metrology/limits-of-averaging/"
+      href: "/timekeeping/measuring-time/limits-of-averaging/"
   draft: true
 
 - id: repeatability
@@ -127,9 +127,9 @@
     the oscillator it assumes.
   seeAlso:
     - label: "What happens when I lose GPS?"
-      href: "/timekeeping/acquiring/what-happens-when-i-lose-gps/"
+      href: "/timekeeping/datacenters/what-happens-when-i-lose-gps/"
     - label: "Do I need an OCXO?"
-      href: "/timekeeping/acquiring/do-i-need-an-ocxo/"
+      href: "/timekeeping/datacenters/do-i-need-an-ocxo/"
     - label: "Stability"
       href: "#stability"
   draft: true
@@ -161,7 +161,7 @@
     - label: "Trueness"
       href: "#trueness"
     - label: "What coarse resolution hides"
-      href: "/timekeeping/metrology/accuracy-and-resolution-in-pictures/"
+      href: "/timekeeping/measuring-time/accuracy-and-resolution-in-pictures/"
   draft: true
 
 - id: utc
@@ -235,7 +235,7 @@
     stops the moment you compare against a clock outside the set.
   seeAlso:
     - label: "Why agreement can matter more than being right"
-      href: "/timekeeping/two-clock/agreement-is-not-accuracy/"
+      href: "/timekeeping/measuring-time/agreement-is-not-accuracy/"
     - label: "Trueness"
       href: "#trueness"
   draft: true
@@ -252,7 +252,7 @@
     on an ordinary run.
   seeAlso:
     - label: "Why the feedline is likely your largest error"
-      href: "/timekeeping/antennas/feedline/"
+      href: "/timekeeping/datacenters/feedline/"
   draft: true
 
 - id: nmi
@@ -317,7 +317,7 @@
     url: "https://gssc.esa.int/navipedia/index.php/Code_Based_Positioning_(SPS)"
   seeAlso:
     - label: "Why GNSS time is a prediction"
-      href: "/timekeeping/utc/gnss-time-is-a-prediction/"
+      href: "/timekeeping/gnss/gnss-time-is-a-prediction/"
     - label: "PPP"
       href: "#ppp"
   draft: true
@@ -341,7 +341,7 @@
     - label: "PPP-AR"
       href: "#ppp-ar"
     - label: "Where the corrections come from"
-      href: "/timekeeping/utc/gnss-time-is-a-prediction/"
+      href: "/timekeeping/gnss/gnss-time-is-a-prediction/"
   draft: true
 
 - id: ppp-ar
@@ -361,7 +361,7 @@
     - label: "PPP"
       href: "#ppp"
     - label: "Matching acquisition and distribution"
-      href: "/timekeeping/transferring/matching-acquisition-and-distribution/"
+      href: "/timekeeping/time-distribution/matching-acquisition-and-distribution/"
   draft: true
 
 - id: baseline
@@ -400,7 +400,7 @@
     url: "https://igs.org/acc/"
   seeAlso:
     - label: "Where corrections come from"
-      href: "/timekeeping/utc/gnss-time-is-a-prediction/"
+      href: "/timekeeping/gnss/gnss-time-is-a-prediction/"
     - label: "PPP-AR, which needs one center's stream and not a mixture"
       href: "#ppp-ar"
     - label: "Datum"
@@ -422,7 +422,7 @@
     - label: "GNSS Analysis Center"
       href: "#gnss-analysis-center"
     - label: "Why differencing two solutions cancels it"
-      href: "/timekeeping/utc/comparing-two-distant-clocks/"
+      href: "/timekeeping/measuring-time/comparing-two-distant-clocks/"
     - label: "PPP-AR"
       href: "#ppp-ar"
   draft: true
@@ -442,7 +442,7 @@
     url: "https://www.bipm.org/documents/20126/52718503/G1-2015.pdf"
   seeAlso:
     - label: "Comparing distant clocks"
-      href: "/timekeeping/utc/comparing-two-distant-clocks/"
+      href: "/timekeeping/measuring-time/comparing-two-distant-clocks/"
     - label: "TMAS"
       href: "#tmas"
   draft: true
@@ -485,7 +485,7 @@
     - label: "CGGTTS, the time-transfer counterpart"
       href: "#cggtts"
     - label: "Comparing distant clocks"
-      href: "/timekeeping/utc/comparing-two-distant-clocks/"
+      href: "/timekeeping/measuring-time/comparing-two-distant-clocks/"
   draft: true
 
 - id: peppar-fix
@@ -501,7 +501,7 @@
     - label: "PPP-AR"
       href: "#ppp-ar"
     - label: "Choosing a GNSS timescale"
-      href: "/timekeeping/utc/choosing-a-gnss-timescale/"
+      href: "/timekeeping/gnss/choosing-a-gnss-timescale/"
   draft: true
 
 - id: pps
@@ -516,11 +516,11 @@
     no correction for the cable it travelled down.
   seeAlso:
     - label: "What the protocols do that a PPS cannot"
-      href: "/timekeeping/transferring/distribution/"
+      href: "/timekeeping/time-distribution/distribution/"
     - label: "Resolution, and why a quantized edge is not a precise one"
       href: "#resolution"
     - label: "What makes an accurate timing receiver"
-      href: "/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/"
+      href: "/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/"
   draft: true
 
 - id: gps-network-clock
@@ -536,11 +536,11 @@
     meaningless here, and vice versa.
   seeAlso:
     - label: "Which traits matter for which"
-      href: "/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/"
+      href: "/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/"
     - label: "The protocols it exists to speak"
-      href: "/timekeeping/transferring/distribution/"
+      href: "/timekeeping/time-distribution/distribution/"
     - label: "Holdover, which is what its oscillator is really for"
-      href: "/timekeeping/acquiring/what-happens-when-i-lose-gps/"
+      href: "/timekeeping/datacenters/what-happens-when-i-lose-gps/"
   draft: true
 
 - id: epoch
@@ -562,7 +562,7 @@
     url: "https://files.igs.org/pub/data/format/rinex305.pdf"
   seeAlso:
     - label: "Timescales — where the origin sense lives"
-      href: "/timekeeping/datacenters/timescales/"
+      href: "/timekeeping/measuring-time/timescales/"
     - label: "RINEX, where you meet epochs one block at a time"
       href: "#rinex"
     - label: "PPS, which marks a moment without naming it"

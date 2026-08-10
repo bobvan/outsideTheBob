@@ -1,8 +1,8 @@
 ---
 title: "Matching acquisition and distribution"
 description: "Two distinct problems that both have to be solved. Their errors sum, so the accurate one is paying for accuracy the other cannot deliver."
-section: "transferring"
-order: 5
+section: "time-distribution"
+order: 20
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["datacenter", "timing", "PTP", "NTP", "UTC"]
@@ -17,11 +17,11 @@ import secaucus from "../../../assets/SecaucusCampus.jpg";
 
 Getting accurate time into a datacenter is two problems, not one.
 
-**[Acquisition](/timekeeping/acquiring/)** is getting time into the building from
+**[Acquisition](/timekeeping/datacenters/acquiring-time/)** is getting time into the building from
 somewhere authoritative — a GNSS antenna on the roof, a fiber from a national
 lab, a service delivered over a dedicated link, NTP over the internet.
 
-**[Distribution](/timekeeping/transferring/distribution/)** is getting that time
+**[Distribution](/timekeeping/time-distribution/distribution/)** is getting that time
 from wherever it arrives to every host that needs it — the switches, the
 protocol, the cabling, the network asymmetries.
 
@@ -117,8 +117,8 @@ it costs you permanently.
 
 ## Where to go next
 
-- **[Acquiring time](/timekeeping/acquiring/)** — the ways time gets into a
+- **[Acquiring time](/timekeeping/datacenters/acquiring-time/)** — the ways time gets into a
   building, and why GNSS so often lands in the sweet spot.
-- **[Distributing time](/timekeeping/transferring/distribution/)** — the
+- **[Distributing time](/timekeeping/time-distribution/distribution/)** — the
   protocols, what each is capable of, and which of them compensate for path
   length.

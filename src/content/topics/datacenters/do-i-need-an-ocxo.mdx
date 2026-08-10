@@ -1,8 +1,8 @@
 ---
 title: "Do I need an OCXO, or will a TCXO do?"
 description: "It turns on one question: is your oscillator quieter than GNSS at short averaging times? Below that crossover the oscillator is your clock; above it, GNSS is — and an upgrade that only helps above it changes nothing you can see."
-section: "acquiring"
-order: 40
+section: "datacenters"
+order: 30
 updatedDate: 2026-08-08
 coverage: "H"
 tags: ["oscillators", "GNSS", "timing", "datacenter", "buying"]
@@ -63,7 +63,7 @@ in normal running.
 
 **Improving long-term drift and aging** changes **nothing** in normal locked
 operation. GNSS discipline is already masking it. It buys you exactly one thing:
-[holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/) — how long you
+[holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) — how long you
 coast when the antenna goes deaf.
 
 Both are worth money. They are worth money for different reasons, and a vendor
@@ -97,9 +97,9 @@ anything else gets a turn.** If your requirement has a nanosecond in it, about
 
 If your requirement has a *microsecond* in it — which covers a great deal of
 datacenter work, and all of
-[NTP-class distribution](/timekeeping/transferring/distribution/) — a TCXO is
+[NTP-class distribution](/timekeeping/time-distribution/distribution/) — a TCXO is
 genuinely fine and an OCXO is money you could have spent on the
-[antenna](/timekeeping/antennas/antenna-position/) instead.
+[antenna](/timekeeping/datacenters/antenna-position/) instead.
 
 ## What the parts actually cost
 
@@ -134,7 +134,7 @@ number.
 
 It is **temperature**. An oscillator's frequency follows its own temperature,
 and in holdover that dominates everything else — a thermal transient can be
-worth [a factor of several](/timekeeping/acquiring/what-happens-when-i-lose-gps/)
+worth [a factor of several](/timekeeping/datacenters/what-happens-when-i-lose-gps/)
 against the same crystal in a quiet room. An oven attacks exactly that term,
 which is why an OCXO beats a TCXO in holdover by far more than the ratio of
 their quoted stability figures suggests. You are not buying a better crystal so
@@ -146,7 +146,7 @@ strands you on the oscillator alone across the whole middle of the range. In
 that situation a better *receiver* improves your clock more than a better
 oscillator would, because it lets you close the loop faster. Which is the
 argument the
-[receiver traits page](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/)
+[receiver traits page](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/)
 makes from the other side.
 
 ## Both audiences make this choice — differently
@@ -161,7 +161,7 @@ vendor has already made every other choice. The crossover argument still tells
 you what you are paying for, and it tells you the question to ask: *at what
 averaging interval does the upgrade actually change your output, and is that
 interval one I care about?* A vendor who answers with aging figures alone is
-selling you [holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/),
+selling you [holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/),
 which may well be what you want — but it is worth knowing that is the answer you
 got.
 
@@ -173,7 +173,7 @@ got.
 2. **Does your budget have a nanosecond in it?** Then about 10⁻¹¹ at one second
    is the floor, and a TCXO is not a candidate.
 3. **How long must you survive without GNSS, and to what threshold?** That is the
-   [holdover](/timekeeping/acquiring/what-happens-when-i-lose-gps/) question, and
+   [holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) question, and
    it is the one aging figures actually answer.
 4. **Is the room stable?** If not, fix that first — it is cheaper than the
    oscillator and it moves the number further.
@@ -195,10 +195,10 @@ problem you do not have.
 
 ## Where to go next
 
-- **[What happens when I lose GPS?](/timekeeping/acquiring/what-happens-when-i-lose-gps/)**
+- **[What happens when I lose GPS?](/timekeeping/datacenters/what-happens-when-i-lose-gps/)**
   — where the aging half of the specification actually cashes out.
-- **[What makes an accurate GNSS timing receiver?](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/)**
+- **[What makes an accurate GNSS timing receiver?](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/)**
   — the reference input that lets your oscillator into the loop at all.
-- **[The limits of averaging](/timekeeping/metrology/limits-of-averaging/)** —
+- **[The limits of averaging](/timekeeping/measuring-time/limits-of-averaging/)** —
   the ADEV curve turning upward is the same story this site tells about position
   and about time.

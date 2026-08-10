@@ -1,7 +1,7 @@
 ---
 title: "Ways to get time into a datacenter"
 description: "GNSS, a fiber from a national lab, a commercial delivery service, or NTP from the internet. Why GNSS usually wins below 100 ns, and why you want more than one."
-section: "acquiring"
+section: "datacenters"
 order: 10
 updatedDate: 2026-08-03
 coverage: "H"
@@ -33,7 +33,7 @@ one you are making before reading any further:
   protocols. You are building the clock.
 
 Almost every datacenter wants the first. The rest of this page applies to both;
-[which capabilities matter to which](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/)
+[which capabilities matter to which](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/)
 is where they part company.
 
 **A commercial time service over a dedicated link.** Increasingly available and
@@ -53,7 +53,7 @@ sufficient, and organizations spend money escaping it before establishing that
 they needed to.
 
 Every one of these arrives through
-[a distribution protocol](/timekeeping/transferring/distribution/). Acquisition
+[a distribution protocol](/timekeeping/time-distribution/distribution/). Acquisition
 and distribution are the same technology pointed in different directions: what
 makes something *acquisition* is that the source is outside your control and
 authoritative, not that the mechanism differs.
@@ -73,7 +73,7 @@ that is hard to argue with:
 - **It is directly traceable to UTC** through the constellation operators — no
   contract, no provider, nobody to depend on commercially. And how well each one
   manages that is
-  [measured and published monthly](/timekeeping/utc/which-constellation-keeps-best-time/),
+  [measured and published monthly](/timekeeping/gnss/which-constellation-keeps-best-time/),
   which turns the choice of constellation into an evidence question. The short
   version: on predicting UTC, GPS, Galileo and BeiDou are effectively tied under
   a nanosecond of mean bias, and GLONASS is an order of magnitude worse.
@@ -114,7 +114,7 @@ comparing sources against each other**, and something that complains when they
 diverge. A backup nobody compares against inherits exactly the same silence as
 the primary — and what your second source *shares* with the first decides what
 it can catch, which is
-[a page of its own](/timekeeping/two-clock/how-do-i-know-its-still-right/).
+[a page of its own](/timekeeping/measuring-time/how-do-i-know-its-still-right/).
 
 ## Can you trust the time you acquired?
 
@@ -124,7 +124,7 @@ and nothing about the accuracy figures on this page detects that.
 
 Both major routes now have a free answer.
 
-**On the network side: [NTS](/timekeeping/transferring/distribution/).** Network
+**On the network side: [NTS](/timekeeping/time-distribution/distribution/).** Network
 Time Security is NTP with cryptographic authentication — same protocol, same
 accuracy, with assurance the time came from who it claims and was not altered on
 the way. Plain NTP is trivially spoofable by anyone able to inject packets.
@@ -147,10 +147,10 @@ right.
 
 ## Where to go next
 
-- **[Matching acquisition and distribution](/timekeeping/transferring/matching-acquisition-and-distribution/)**
+- **[Matching acquisition and distribution](/timekeeping/time-distribution/matching-acquisition-and-distribution/)**
   — how much of each you need, and why buying one without the other wastes money.
-- **[What happens when I lose GPS?](/timekeeping/acquiring/what-happens-when-i-lose-gps/)**
+- **[What happens when I lose GPS?](/timekeeping/datacenters/what-happens-when-i-lose-gps/)**
   — the other reason to have a second source, and how long the first one's
   absence actually costs you.
-- **[What do I put in for my antenna's position?](/timekeeping/antennas/antenna-position/)** —
+- **[What do I put in for my antenna's position?](/timekeeping/datacenters/antenna-position/)** —
   if you take the GNSS route, this is where the accuracy is won or lost.

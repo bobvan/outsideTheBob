@@ -1,8 +1,8 @@
 ---
 title: "What do I put in for my antenna's position?"
 description: "If you don't know your exact location, you can't know the exact time — about a nanosecond of error for every foot you are off vertically. Here is how to get it right."
-section: "antennas"
-order: 40
+section: "datacenters"
+order: 50
 updatedDate: 2026-08-08
 coverage: "H"
 tags: ["GNSS", "antennas", "timing", "datacenter"]
@@ -70,7 +70,7 @@ The important question is **how long that goes on**.
 
 Watching the sky for longer produces a more accurate fix, because some of the
 error is random and
-[averages down over time](/timekeeping/metrology/limits-of-averaging/). But the
+[averages down over time](/timekeeping/measuring-time/limits-of-averaging/). But the
 benefit does not continue indefinitely: the geometry of the satellite orbits
 limits what averaging can buy after a couple of days.
 
@@ -92,7 +92,7 @@ supervises.
 
 If you take the accurate option, the silence is the thing you have to engineer
 around — see
-[how do I know my clock is still right?](/timekeeping/two-clock/how-do-i-know-its-still-right/)
+[how do I know my clock is still right?](/timekeeping/measuring-time/how-do-i-know-its-still-right/)
 
 <CalloutBox type="tip" title="Fixed position trades accuracy against procedure">
 	If you want the benefits of solving only for time, you accept the burden of
@@ -181,7 +181,7 @@ free.
 
 The consequence is the useful part. **Once you are in the second row, antenna
 position stops being your limiting term** and the
-[feedline](/timekeeping/antennas/feedline/) takes over as the largest thing in
+[feedline](/timekeeping/datacenters/feedline/) takes over as the largest thing in
 your budget. That is the whole reason this page insists on the offline route:
 not because 15 ns is intolerable, but because leaving it there means you never
 get to have the more interesting problem.

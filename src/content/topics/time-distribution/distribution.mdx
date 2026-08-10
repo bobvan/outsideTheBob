@@ -1,8 +1,8 @@
 ---
 title: "Distributing time: the protocols"
 description: "Time distribution, clock sync and time transfer are three names for one job. Here is what each protocol can do, and which of them account for the length of the wire."
-section: "transferring"
-order: 20
+section: "time-distribution"
+order: 10
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["datacenter", "timing", "PTP", "NTP", "White Rabbit"]
@@ -58,7 +58,7 @@ is no exchange, no round trip, nothing to measure with — the pulse arrives whe
 it arrives, and every nanosecond the cable adds is a nanosecond of error you own.
 
 That is the same distinction the
-[feedline page](/timekeeping/antennas/feedline/) is built on, and it is worth
+[feedline page](/timekeeping/datacenters/feedline/) is built on, and it is worth
 carrying between them: a delay that is measured is a nuisance, and a delay that
 is assumed is a permanent offset.
 
@@ -175,12 +175,12 @@ servers exist, and support is in the common implementations.
 
 There is no accuracy argument here — NTS is not more accurate than NTP. It is the
 same accuracy that you can trust, which is a different axis and frequently the
-one that matters. See [acquiring time](/timekeeping/acquiring/) for the same
+one that matters. See [acquiring time](/timekeeping/datacenters/acquiring-time/) for the same
 question on the GNSS side, where the answer is OSNMA.
 
 ## Choosing
 
 The honest guidance is short. Work out what you need from
-[matching acquisition and distribution](/timekeeping/transferring/matching-acquisition-and-distribution/),
+[matching acquisition and distribution](/timekeeping/time-distribution/matching-acquisition-and-distribution/),
 then take the least complicated protocol that reaches it. Every step up this
 table costs hardware, configuration, and people who understand it.

@@ -1,7 +1,7 @@
 ---
 title: "Questions to ask when designing a clock"
 description: "The decisions that determine which of your errors can be corrected later, and which are permanent the moment you make them."
-section: "questions"
+section: "questions-to-ask"
 order: 30
 updatedDate: 2026-08-02
 coverage: "H"
@@ -58,14 +58,14 @@ before choosing the counter, not after.
 
 Trace it: antenna, feedline, connectors, PPS cable, and everything between. Its
 length is a fixed offset in your output, and the arithmetic is unforgiving —
-[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/antennas/feedline/).
+[a wrong velocity factor on a 30 m run is tens of nanoseconds](/timekeeping/datacenters/feedline/).
 This is the error most likely to survive every other thing you get right.
 
 ## 7. How will you know your position, and how will you know it is right?
 
 If you are disciplining from GNSS, your antenna's surveyed position is an input
 to the time solution, and
-[a receiver's own survey is biased](/timekeeping/antennas/antenna-position/).
+[a receiver's own survey is biased](/timekeeping/datacenters/antenna-position/).
 Decide now whether you will accept that bias, post-process a better answer, or
 have the position surveyed — because it is not something averaging will fix
 after the fact.
@@ -82,7 +82,7 @@ and check whether your oscillator can honor it.
 Design for measurability: bring out a clean PPS, document the delays you have
 compensated and the ones you have not, and say what reference you steered to. A
 clock that cannot be
-[independently measured](/timekeeping/questions/benchmarking-clocks/) is a clock
+[independently measured](/timekeeping/questions-to-ask/benchmarking-clocks/) is a clock
 nobody can trust, including you.
 
 [[? This page leans hardest on your unpublished expertise, so it is the one most likely to be subtly wrong.

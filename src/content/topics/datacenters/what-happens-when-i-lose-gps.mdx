@@ -1,8 +1,8 @@
 ---
 title: "What happens when I lose GPS?"
 description: "Your clock does not stop. It starts drifting, and how fast is a question about your oscillator and your room — not about GPS. Why a holdover figure with no threshold attached tells you nothing."
-section: "acquiring"
-order: 30
+section: "datacenters"
+order: 40
 updatedDate: 2026-08-08
 coverage: "H"
 tags: ["GNSS", "timing", "datacenter", "oscillators", "buying"]
@@ -31,7 +31,7 @@ threshold is worthless.
 
 	If you are building around a <strong>module</strong>, the oscillator is yours,
 	the loop is yours, and holdover is something you
-	<a href="/timekeeping/acquiring/do-i-need-an-ocxo/">design and then
+	<a href="/timekeeping/datacenters/do-i-need-an-ocxo/">design and then
 	measure</a>. A bare module has no meaningful holdover at all — its own TCXO is
 	the only thing coasting, and nobody sells that as a feature.
 </CalloutBox>
@@ -171,7 +171,7 @@ it, because the datasheet was not measured in your rack.
 5. **Then pick your threshold** and read the answer off the plot. That number is
    yours, and unlike the vendor's it means something.
 
-The [benchmarking page](/timekeeping/questions/benchmarking-clocks/) covers the
+The [benchmarking page](/timekeeping/questions-to-ask/benchmarking-clocks/) covers the
 measurement side of this in more detail; the point here is that holdover is one
 of the few clock specifications you can check yourself with equipment you
 already own.
@@ -184,13 +184,13 @@ already own.
 
 ## Where to go next
 
-- **[What makes an accurate GNSS timing receiver?](/timekeeping/acquiring/what-makes-an-accurate-timing-receiver/)**
+- **[What makes an accurate GNSS timing receiver?](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/)**
   — the reference input that decides whether your oscillator is even in the loop.
-- **[Questions to ask a clock vendor](/timekeeping/questions/buying-a-clock/)** —
+- **[Questions to ask a clock vendor](/timekeeping/questions-to-ask/buying-a-clock/)** —
   question five is the holdover one, and this page is its long form.
-- **[Do I need an OCXO, or will a TCXO do?](/timekeeping/acquiring/do-i-need-an-ocxo/)**
+- **[Do I need an OCXO, or will a TCXO do?](/timekeeping/datacenters/do-i-need-an-ocxo/)**
   — the aging half of an oscillator specification is the half that decides this
   page's answer.
-- **[Ways to get time into a datacenter](/timekeeping/acquiring/acquiring-time/)**
+- **[Ways to get time into a datacenter](/timekeeping/datacenters/acquiring-time/)**
   — the argument for having a second source, which is the other answer to losing
   the first.

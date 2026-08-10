@@ -1,8 +1,8 @@
 ---
 title: "Yeah, but why do you want precise time?"
 description: "Precise time is never the goal. It is the price of admission for something else — which is why the requirement usually arrives from outside engineering."
-section: "datacenters"
-order: 10
+section: "measuring-time"
+order: 40
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["datacenter", "timing", "trading"]
@@ -39,12 +39,12 @@ systems quoting the same accuracy figure can need entirely different things:
 
 - A system that must **order** events needs its clocks to agree with each other.
   It may not care much where the group sits relative to UTC — see
-  [when agreement matters more than being right](/timekeeping/two-clock/agreement-is-not-accuracy/).
+  [when agreement matters more than being right](/timekeeping/measuring-time/agreement-is-not-accuracy/).
 - A system that must **produce a defensible record** needs
   [traceability](/timekeeping/glossary/#traceability) to a reference, which is a
   paperwork problem as much as an engineering one.
 - A system that must **measure durations** needs frequency stability and
-  possibly no timescale at all — see [elapsed time](/timekeeping/datacenters/elapsed-time/).
+  possibly no timescale at all — see [elapsed time](/timekeeping/measuring-time/elapsed-time/).
 
 Those are three different purchases. Asking "how accurate do we need to be?"
 before asking "accurate at what?" is how organizations buy the wrong one.
@@ -57,5 +57,5 @@ reconciliation that matches, an incident timeline that makes sense.
 
 That is worth knowing before you go asking for budget, and it is why the
 questions on this site are framed the way they are — as
-[what to ask a vendor](/timekeeping/questions/buying-a-clock/) rather than as
+[what to ask a vendor](/timekeeping/questions-to-ask/buying-a-clock/) rather than as
 what to admire about a clock.

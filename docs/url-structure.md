@@ -23,7 +23,7 @@ decisions.
   the filename, so rename the file and the URL follows.
 
 Median URL is 43 characters; the longest is 64
-(`/timekeeping/transferring/matching-acquisition-and-distribution/`).
+(`/timekeeping/time-distribution/matching-acquisition-and-distribution/`).
 
 ## On the SEO premise
 
@@ -129,3 +129,38 @@ and get pinned in the same way as they go.
    keep it. The alternative is a flat namespace shared with blog posts, which is
    worse for both.
 3. **Pin slugs at publication?** Recommended above; costs one commit.
+
+---
+
+## Multi-garden readiness — audited 2026-08-10
+
+Bob's question: what would make it hard to stand up a second garden on an
+unrelated subject?
+
+**Nothing structural.** The content model generalizes cleanly — `section`,
+`order`, `coverage`, `draft` carry no timekeeping assumptions. What exists is a
+scatter of hardcoded names, each individually trivial:
+
+| where | what is hardcoded | fix when the time comes |
+|---|---|---|
+| `src/topics.ts` | ~~`/timekeeping/` in `topicPath`~~ | ✅ **done** — now `GARDEN_ROOT`, one constant |
+| `src/topics.ts` | one `SECTIONS` array, one `topics` collection | parameterize by garden, or one module per garden |
+| `src/pages/timekeeping/` | route directory named literally | copy the tree, or add a `[garden]` segment |
+| `src/content.config.ts` | one `topics` collection at one base path | a second collection, or a `garden:` field |
+| `src/data/glossary.yaml` | one glossary, mounted per garden | almost certainly one glossary **per** garden |
+| `BaseLayout.astro` | one nav entry, gated on `hasPublishedTopics()` | a list of gardens |
+| `scripts/*.mjs` | `/timekeeping/` in four scripts | one constant each |
+
+**The only genuinely structural decision is the glossary.** A second garden on
+an unrelated subject should not inherit a glossary full of ADEV and UTC(k), so
+`glossary.yaml` becomes per-garden and anchors become
+`/<garden>/glossary/#term`. That is worth deciding *before* the second garden
+exists, because it changes every glossary link that already works.
+
+Everything else is a rename, and the cheapest insurance available today —
+naming the root once — is already taken.
+
+**Recommendation:** do nothing further now. A second garden is speculative, the
+work is mechanical, and doing it in the abstract risks building the wrong
+abstraction. But keep the glossary question in mind whenever glossary structure
+is touched.

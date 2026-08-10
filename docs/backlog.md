@@ -17,6 +17,14 @@ tombstones.
 defer, and the exact cost (3 link edits, 1 glossary trim). Computed with
 `npm run publish-set`, which prices any batch you propose.
 
+## 0b. URL structure — decisions before launch
+
+**[`url-structure.md`](url-structure.md)** — three open questions: whether to
+rename the four weak section keys (`acquiring`, `transferring`, `two-clock`,
+`questions`), whether tier 1 stays `/timekeeping/`, and whether to pin explicit
+slugs at publication so filenames stop being URLs. All three are free now and
+permanent afterwards.
+
 ## 1. Publish gate
 
 Everything here must be true before any `draft: true` becomes `draft: false`.
@@ -29,6 +37,7 @@ Everything here must be true before any `draft: true` becomes `draft: false`.
 | P3 | **Every internal link and glossary anchor resolves.** | ✅ 72 routes, 24 anchors, 0 broken |
 | P4 | **Nav gate and `noindex` reviewed.** `/timekeeping/` is `noindex` and the nav entry is gated on `hasPublishedTopics()`; both flip implicitly when P1 does. | ⏳ |
 | P5 | **Sanitization pass on anything sourced from private work.** | ✅ for current content |
+| P6 | **`section:` matches the file's directory.** Nothing enforced this; a page moved between sections without editing frontmatter would build a URL contradicting its own location. | ✅ enforced by `publish-check` |
 
 ## 2. Open findings — `review-2026-08-08.md` (bravo)
 

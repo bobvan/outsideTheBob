@@ -12,7 +12,7 @@
 // in front of a deploy later without breaking today's builds.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 
 const strict = process.argv.includes('--strict');
 const walk = (dir) =>
@@ -54,6 +54,19 @@ const promptedPublished = prompted.filter((f) => !isDraft(readFileSync(f, 'utf8'
 if (promptedPublished.length) {
 	problems.push(`P2  ${promptedPublished.length} PUBLISHED file(s) still contain [[? ?]]:\n      ` +
 		promptedPublished.join('\n      '));
+}
+
+// P6 — the URL's middle tier comes from frontmatter while the file lives in a
+// directory of the same name. Nothing enforces that they agree, so a page moved
+// between sections without editing `section:` would build a URL that contradicts
+// its own location. Cheap to check, silent if it ever happened.
+for (const t of topics) {
+	const fm = readFileSync(t.f, 'utf8').split(/^---$/m)[1] ?? '';
+	const declared = fm.match(/^section:\s*"?(.*?)"?\s*$/m)?.[1];
+	const actual = dirname(t.f).split('/').pop();
+	if (declared && declared !== actual) {
+		problems.push(`P6  ${t.f}: section: "${declared}" but the file is in ${actual}/ — the URL and the file disagree.`);
+	}
 }
 
 console.error(`topics:   ${publishedTopics.length} published / ${topics.length} total`);

@@ -1,15 +1,17 @@
 ---
-title: "No second chance"
-description: "The archer gets ten arrows and can average them. A trade happens once, and its timestamp is taken once. That difference decides which errors you can tolerate."
+title: "Do timestamp errors average out?"
+description: "No. The archer gets ten arrows and can average them; a network packet is timestamped once. That difference decides which errors you can tolerate — and it moves all the work to before the event."
 section: "datacenters"
 order: 30
 updatedDate: 2026-08-03
 coverage: "H"
 tags: ["datacenter", "timing", "trading", "metrology"]
 draft: true
-reviewed: 2026-08-08
+reviewed: 2026-08-10
 reviewNote: "Likely ready to go in 1hr or less"
 ---
+
+**No — and that single fact reorganizes the whole subject.**
 
 Most measurement thinking assumes you can measure again.
 
@@ -19,11 +21,12 @@ technique on this site — [averaging](/timekeeping/metrology/limits-of-averagin
 [precision](/timekeeping/glossary/#precision), the whole idea of a distribution —
 assumes repetition is available.
 
-Timestamping a trade is not like that.
+Timestamping a network packet is not like that.
 
-The event happens once. The timestamp is taken once. There is no second
-observation to average with, no group to draw, and no opportunity to notice from
-the spread that something was off. You get one number and you keep it forever.
+The packet passes the timestamping point only once. The timestamp is taken
+once. There is no second observation to average with, no group to draw, and no
+opportunity to notice from the spread that something was off. You get one number
+and you keep it forever.
 
 ## What that changes
 
@@ -41,12 +44,21 @@ the right way to *diagnose* a system, but it stops being a way to *escape* one o
 them.
 
 **The error is unfalsifiable after the fact.** Nothing in the record says which
-timestamps were the good ones. A trade recorded 80 ns late looks exactly like a
-trade recorded on time, forever, and no amount of later analysis separates them.
+timestamps were the good ones. A packet recorded 80 ns late looks exactly like
+one recorded on time, forever, and no amount of later analysis separates them —
+which is why a regulator asking about a trade from last quarter is asking a
+question the record cannot answer.
 
 ## Which is why the work happens beforehand
 
 Everything you can do about single-shot error has to be done before the shot.
+
+This is the sharp edge of
+[will averaging longer help?](/timekeeping/metrology/limits-of-averaging/) That
+page says averaging buys precision and never buys trueness. This one says that
+when you only get one measurement, **you do not even get the precision** — so
+the two failures that page keeps carefully apart arrive together, and both of
+them arrive in your answer.
 
 You cannot average away a systematic offset in a timestamp you have already
 taken — but you *can* have measured your [feedline](/timekeeping/antennas/feedline/)

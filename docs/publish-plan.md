@@ -39,7 +39,7 @@ Deferred:
 | `accuracy-and-resolution-in-pictures` | 1 | Bob: *"likely needs serious work"* — the only page he flagged that hard |
 | `how-big-is-a-degree` | 0 | The most-covered-elsewhere page in the garden: decimal degrees and an xkcd. Nothing links to it |
 | `a-means-to-an-end` | 0 | Good page, but the "why do you want precise time" argument is the least differentiated thing here. Nothing links to it |
-| `no-second-chance` | 0 | Nothing links to it, and the pun title is on the retitle list anyway |
+| `do-timestamp-errors-average-out` | 0 | ~~Nothing links to it~~ — **now cross-linked with the averaging page (2026-08-10), so deferring it costs 1 edit. Reconsider: it is retitled, reviewed and cheap to keep.** |
 
 **Four of the six have zero inbound links.** They are free to defer — not one
 published page would notice, and no revision is owed when they land.

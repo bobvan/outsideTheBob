@@ -64,6 +64,17 @@ picture the frequency world has been drawing for decades *is* this page: a
 region where averaging pays, a floor where it stops paying, and a region beyond
 where averaging actively hurts.
 
+<CalloutBox type="warn" title="And sometimes you do not get to average at all">
+	Everything on this page assumes you can measure again. Where you cannot —
+	a timestamp taken once, on an event that happened once — the improvement
+	averaging buys is not merely bounded, it is unavailable, and scatter lands in
+	your answer with the same weight as bias.
+
+	That case is common enough in datacenter timing to have
+	<a href="/timekeeping/datacenters/do-timestamp-errors-average-out/">its own
+	page</a>, and it is where this one's conclusions stop applying.
+</CalloutBox>
+
 <CalloutBox type="warn" title="Every averaging process has a floor">
 	The improvement is real, it is bounded, and the bound is set by whatever part
 	of the error is systematic rather than random. When the curve flattens, you

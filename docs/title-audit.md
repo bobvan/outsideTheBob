@@ -22,10 +22,10 @@ Prefer short and keyword-dense over a literal transcription of the title.
 
 | | count |
 |---|---|
-| ✅ pass | **20** |
-| ⏳ recommended, not done | **11** |
+| ✅ pass | **21** |
+| ⏳ recommended, not done | **10** |
 
-Five retitles done, all at Bob's instruction.
+Six retitles done, all at Bob's instruction.
 
 | # | was | is | slug |
 |---|---|---|---|
@@ -34,10 +34,11 @@ Five retitles done, all at Bob's instruction.
 | 3 | BIPM publishes a GNSS prediction scorecard | Which GNSS constellation keeps the best time? | `which-constellation-keeps-best-time` *(changed)* |
 | 4 | Configuring GNSS antenna position for datacenter receivers | What do I put in for my antenna's position? | `antenna-position` *(kept — already the keyword)* |
 | 5 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | `comparing-two-distant-clocks` *(shortened at draft)* |
+| 6 | No second chance | Do timestamp errors average out? | `do-timestamp-errors-average-out` *(changed)* |
 
 ---
 
-## ✅ Passing — 20
+## ✅ Passing — 21
 
 **Born asking.** Written after the principle was recorded, plus the retitles.
 These are the model: the title is the query.
@@ -56,6 +57,7 @@ These are the model: the title is the query.
 | How big is a nanosecond? | `how-big-is-a-nanosecond` |
 | How big is a degree? | `how-big-is-a-degree` |
 | Yeah, but why do you want precise time? | `a-means-to-an-end` |
+| Do timestamp errors average out? | `do-timestamp-errors-average-out` |
 
 **Passing for the other reason** — they quote the reader's own sentence, or they
 are task-shaped with no jargon in the way.
@@ -73,7 +75,7 @@ are task-shaped with no jargon in the way.
 
 ---
 
-## ⏳ Recommended — 11
+## ⏳ Recommended — 10
 
 Slugs proposed. Nothing changed without Bob saying so.
 
@@ -88,7 +90,6 @@ asks them to have read the page in order to want to.
 | GNSS time is a prediction | **Does the satellite know what time it is?** | `does-the-satellite-know-what-time-it-is` | The page demolishes exactly that assumption in three steps. The naive question is a far better door than the sophisticated answer. **Strongest recommendation on this list.** |
 | Elapsed time needs no timescale | **Do I need an accurate clock to measure how long something took?** | `measuring-how-long-something-took` | The answer is a money-saving no, hidden behind a term the reader does not have yet. |
 | The limits of averaging | **Will averaging longer make my clock more accurate?** | `will-averaging-help` | Answer: no, and it is genuinely surprising. |
-| No second chance | **Why can't I just average the error away?** | `why-cant-i-average-it-away` | Currently a pun, opaque until read. The page is about a trade happening once, where the archer gets ten arrows. |
 | Every timestamp is taken against a timescale | **What is a timestamp actually measured against?** | `what-is-a-timestamp-measured-against` | |
 | Matching acquisition and distribution | **Does a better GPS receiver help if I hand the time out over NTP?** | `does-a-better-receiver-help` | Insider framing of a question people ask constantly. |
 
@@ -123,7 +124,7 @@ against the author's judgement in the meantime.
 
 - Retitling is cheap and safe **while everything is `draft: true`** — no
   external links exist yet. It gets expensive the day the garden publishes. If
-  any of the eleven are going to happen, before publication is the moment.
+  any of the ten are going to happen, before publication is the moment.
 - Every retitle so far has taken under ten minutes: frontmatter, slug, inbound
   link text, this file. Inbound *hrefs* only need touching when the slug moves,
   and the link checker catches anything missed.

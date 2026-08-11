@@ -656,6 +656,39 @@ additional delay between the internal 1PPS generation and the receiver output
 
 ---
 
+## ✅ Fiber path asymmetry — the numbers behind best practice 7
+
+**Verified 2026-08-11**, for `datacenter-gnss-time-best-practices`, practice 7.
+
+Source: *In-Band Asymmetry Compensation for Accurate Time/Phase Transport over
+Optical Transport Network*,
+[PMC4005057](https://pmc.ncbi.nlm.nih.gov/articles/PMC4005057/).
+
+| quantity | value |
+|---|---|
+| time-offset error per meter of fiber-pair length asymmetry | **2.449 ns/m** at n = 1.4682, λ = 1550 nm |
+| length asymmetry consistent with good cabling control | **within 2 m** |
+| wavelength-dependent offset, bidirectional single fiber, C band | **0.3397 ns/km** |
+| same, L band | **0.3943 ns/km** |
+
+**Why 2.449 and not 4.9.** One-way delay through fiber is n/c ≈ 4.897 ns/m, and a
+two-way protocol splits the round trip, so the *time offset* error is half the
+path asymmetry. Both numbers are correct and they answer different questions —
+quote the 2.4 when talking about clock error.
+
+**The single-fiber result is the counterintuitive one.** One fiber both ways
+sounds like it should remove the asymmetry, and on length it does — but it forces
+a different wavelength each direction, and the index differs between them. Tens
+of nanoseconds over 100 km, against a few nanoseconds for a well-controlled pair.
+
+Standards context: the ITU-T **G.8271 / G.8271.1** family covers asymmetry
+derivation and compensation, and recommends semi-static monitoring and
+recalibration rather than a one-time number.
+
+**Use in:** best practices → practice 7; and any future page on PTP over WAN.
+
+---
+
 ## ✅ Circular T Section 5 — what technique every TAI link actually uses
 
 **Verified 2026-08-05** by parsing `cirt.462` (June 2026), which

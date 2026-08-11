@@ -3,10 +3,12 @@ title: "Datacenter GNSS Time Best Practices"
 description: "Eight things worth doing, from the closing slide of a talk on getting the last nanoseconds to UTC. Most cost nothing but attention, and most of the error they remove is invisible until somebody checks."
 section: "datacenters"
 order: 5
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "S"
 tags: ["GNSS", "datacenter", "timing", "antennas", "buying"]
 draft: true
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
@@ -105,20 +107,59 @@ arrives without warning.
 
 ## 7. Use the symmetry of radio and fiber latency to check clocks across sites
 
-Between two sites, the one-way delay each direction ought to be the same. When
-you know the path is symmetric, any asymmetry you measure in the timestamps is
-not the network — it is a clock.
+Between two sites, the one-way delay each direction ought to be the same. How
+safe that assumption is depends entirely on the medium.
 
-That turns an ordinary link into an instrument, using infrastructure you are
-already paying for.
+**A radio path is genuinely reciprocal.** Both directions cross the same air over
+the same distance, and whatever residual difference a duplex frequency split
+leaves is far below anything else in the chain. With matched full-duplex
+transceivers at each end, the asymmetry that remains lives in the *equipment*,
+not in the path — a much smaller and much more tractable problem.
+
+**A full-duplex fiber pair is two different pieces of glass**, and they are not
+the same length. That is not a defect; it is how cable is made and spliced. The
+arithmetic is unforgiving: at a refractive index of 1.4682, a length difference
+of one meter puts about
+[**2.4 ns of error into the time offset**](https://pmc.ncbi.nlm.nih.gov/articles/PMC4005057/),
+and the same source treats keeping a pair within **two meters** as the mark of
+good cabling control. So a few nanoseconds of static asymmetry on a fiber pair is
+the normal case, not the pathological one.
+
+**A single fiber running both directions is worse on this term, not better.** It
+has to use a different wavelength each way, and the fiber's index differs between
+them — about **0.34 ns/km in the C band and 0.39 ns/km in the L band**, which is
+tens of nanoseconds across a hundred kilometers of otherwise identical glass.
+
+<CalloutBox type="tip" title="Which is why parallel radio and fiber is worth more than redundancy">
+	If you have both between the same pair of sites, <strong>use the radio path to
+	measure the fiber path's asymmetry.</strong> Compare the two, and the
+	difference is the fiber's static offset — the number PTP would otherwise be
+	silently wrong by.
+
+	This is BIPM's calibration campaign in miniature: take the link you trust to
+	be symmetric, co-locate it with the one you do not, and let it hand over its
+	own accuracy. You inherit the radio path's residual asymmetry as your floor,
+	which is the honest price and a great deal better than assuming zero.
+</CalloutBox>
+
+Once you know a path is symmetric, or have characterized its static asymmetry,
+any **dynamic** asymmetry you measure in the timestamps is not the network — it
+is one of your clocks. That turns an ordinary link into an instrument, using
+infrastructure you are already paying for.
 
 → **[Comparing distant clocks](/timekeeping/measuring-time/comparing-distant-clocks/)**
 
-## 8. Know which parts of your distribution are length-compensated
+## 8. Know which parts of your time distribution network are automatically delay-compensated
 
-PTP measures the wire and corrects for it. A raw PPS does not, and neither does
-a length of fiber. Where a path is uncompensated, its length is your error — and
-uncompensated segments are usually at the two ends, where nobody is looking.
+PTP measures network delay and compensates for it automatically. A raw PPS signal
+can do neither — it has no mechanism to measure its own delay and no field to
+carry a correction.
+
+Where delay is not compensated automatically, you either compensate it by hand or
+you live with the error. And the manually-compensated links are almost always at
+**the two ends** — typically a PPS into the distribution network and a PPS back
+out of it — which is exactly where nobody is looking, because the automatic part
+in the middle is the part with the impressive specification.
 
 → **[Time distribution protocols](/timekeeping/time-distribution/time-distribution-protocols/)**
 · **[Matching acquisition and distribution](/timekeeping/time-distribution/matching-acquisition-and-distribution/)**

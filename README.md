@@ -144,23 +144,28 @@ Site name and tagline live in `src/consts.ts`.
 
 ## Deploying
 
-Two workflows:
+**The site is live, and pushing to `main` deploys it.** Cloudflare Workers Builds
+watches the branch, runs `npm run build`, and publishes `dist/` with
+`npx wrangler deploy`. There is no deploy step in this repo and no deploy
+credential here — Cloudflare pulls, nothing pushes.
 
-- **`.github/workflows/build.yml`** — builds on every push to `main`. No deploy.
-- **`.github/workflows/deploy.yml`** — deploys to GitHub Pages, but only when the
-  repo variable **`PAGES_DEPLOY`** is `true`. It defaults to `false`, so nothing
-  publishes until it is set deliberately.
+`wrangler.jsonc` is the whole deployment configuration. The site is fully static,
+so it declares no Worker script and no Astro adapter: `assets` alone tells
+Cloudflare to serve the built files. Two details in there are load-bearing and
+both are commented at the point of use — `name` must match the Worker the custom
+domain points at, or wrangler silently creates a second one, and
+`not_found_handling` is what makes Astro's built `404.html` serve for unmatched
+paths.
 
-To go live:
+`.github/workflows/build.yml` still builds on every push, but only to catch a
+broken build; it deploys nothing and Cloudflare does not consult it.
 
-1. Point DNS for `ThinkOutsideTheBob.Com` at GitHub Pages.
-2. Add `public/CNAME` containing the domain, and set the custom domain in the
-   repo's Pages settings. GitHub lowercases this one regardless of how it is
-   written.
-3. Set `OutsideTheBob.Com` to redirect to the canonical domain.
-4. `gh variable set PAGES_DEPLOY --body true`
+The site previously ran on GitHub Pages behind Cloudflare, gated by a
+`PAGES_DEPLOY` repo variable. That path was retired on 2026-08-01 — Pages is
+decommissioned, the custom domain and `public/CNAME` are gone, and the deploy
+workflow has been deleted rather than left switched off.
 
-`site:` in `astro.config.mjs` is already the canonical domain, in lowercase. It
+`site:` in `astro.config.mjs` is the canonical domain, in lowercase. It
 has to be correct before publishing, because canonical URLs, the sitemap, and RSS
 links are all generated from it.
 

@@ -671,10 +671,19 @@ Optical Transport Network*,
 | wavelength-dependent offset, bidirectional single fiber, C band | **0.3397 ns/km** |
 | same, L band | **0.3943 ns/km** |
 
-**Why 2.449 and not 4.9.** One-way delay through fiber is n/c ≈ 4.897 ns/m, and a
-two-way protocol splits the round trip, so the *time offset* error is half the
-path asymmetry. Both numbers are correct and they answer different questions —
-quote the 2.4 when talking about clock error.
+**Why 2.449 and not 4.9, and when each is right.** One-way delay through fiber is
+n/c ≈ 4.897 ns/m — the rule of thumb every reader already knows. A two-way
+protocol measures the round trip and halves it, so a one-meter length difference
+between the directions produces **2.449 ns of clock error**.
+
+But the 5 ns is still observable and Bob is right to insist the page say so:
+**difference the two directions' transit times directly and you see the full
+~4.9 ns**, because that is the path asymmetry, not the error it induces. With
+d_MS = d + 4.9 and d_SM = d, the observable difference is 4.9 and the offset
+error is (d_MS − d_SM)/2 = 2.45.
+
+Quote **4.9 ns/m** when describing the cable, **2.4 ns/m** when describing the
+clock. Getting this backwards is a factor of two in either direction.
 
 **The single-fiber result is the counterintuitive one.** One fiber both ways
 sounds like it should remove the asymmetry, and on length it does — but it forces

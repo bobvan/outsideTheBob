@@ -117,13 +117,25 @@ transceivers at each end, the asymmetry that remains lives in the *equipment*,
 not in the path — a much smaller and much more tractable problem.
 
 **A full-duplex fiber pair is two different pieces of glass**, and they are not
-the same length. That is not a defect; it is how cable is made and spliced. The
-arithmetic is unforgiving: at a refractive index of 1.4682, a length difference
-of one meter puts about
-[**2.4 ns of error into the time offset**](https://pmc.ncbi.nlm.nih.gov/articles/PMC4005057/),
-and the same source treats keeping a pair within **two meters** as the mark of
-good cabling control. So a few nanoseconds of static asymmetry on a fiber pair is
-the normal case, not the pathological one.
+the same length. That is not a defect; it is how cable is made and spliced.
+
+The arithmetic is worth doing slowly, because it lands on two different numbers
+and it is easy to quote the wrong one. **The familiar rule of thumb is correct:
+one meter of fiber is about 5 ns of delay.** But a two-way protocol measures the
+round trip and halves it, so one meter of length difference *between the two
+directions* arrives as about
+[**2.4 ns of clock error**](https://pmc.ncbi.nlm.nih.gov/articles/PMC4005057/) —
+the protocol's own halving, applied to an asymmetry it assumed was not there.
+
+The 5 ns has not gone anywhere. **Difference the two directions' transit times
+directly and you measure the full ~5 ns**, because that is the path asymmetry
+itself rather than the error it induces in a clock. Both numbers are right; they
+answer different questions, and the one to quote depends on whether you are
+describing the cable or the clock.
+
+The same source treats keeping a pair within **two meters** as the mark of good
+cabling control — so a few nanoseconds of static asymmetry is the normal case,
+not the pathological one.
 
 **A single fiber running both directions is worse on this term, not better.** It
 has to use a different wavelength each way, and the fiber's index differs between

@@ -44,7 +44,7 @@ that remain (`datacenters`, `gnss`, `measuring-time`, `questions-to-ask`,
 | What makes an accurate GNSS timing receiver? | `what-makes-an-accurate-timing-receiver` |
 | How to configure antenna position for datacenter GNSS receivers? | `configuring-gnss-antenna-position` |
 | How to configure feedline length for datacenter GNSS receivers? | `configuring-gnss-antenna-feedline` |
-| How do I know my clock is still right? | `how-do-i-know-its-still-right` |
+| Is my clock right? | `is-my-clock-right` |
 | Should I prioritize clock agreement or accuracy to UTC? | `prioritize-agreement-or-accuracy` |
 | Do timestamp errors average out? | `do-timestamp-errors-average-out` |
 | What are timestamps and timescales? | `what-are-timestamps-and-timescales` |
@@ -103,6 +103,7 @@ retitle.
 | *(kept)* UTC(k), and who defines yesterday | — | `who-defines-utc` |
 | Relating timing accuracy with measurement resolution | Measurement resolution and accuracy | `measurement-resolution-and-accuracy` |
 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | shortened at draft |
+| How do I know my clock is still right? | Is my clock right? | `is-my-clock-right` — the question as somebody actually asks it |
 
 ## One caveat on a title that passes
 

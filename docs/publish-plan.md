@@ -77,7 +77,7 @@ publish, and put it back in the second batch.
 
 A tighter batch of 21 — additionally deferring the four newest pages
 (`can-i-build-my-own-link-to-utc-nist`, `comparing-two-distant-clocks`,
-`how-do-i-know-its-still-right`, `do-i-need-an-ocxo`) — costs **12 edits and 4
+`is-my-clock-right`, `do-i-need-an-ocxo`) — costs **12 edits and 4
 glossary trims**, four times the churn for four fewer pages.
 
 And it is the wrong four. Those are the pages carrying material nobody else

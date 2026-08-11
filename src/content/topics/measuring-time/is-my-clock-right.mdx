@@ -1,14 +1,14 @@
 ---
-title: "How do I know my clock is still right?"
+title: "Is my clock right?"
 description: "Timing failures are usually quiet, and nothing inside a wrong clock knows it is wrong. The only detector is a second opinion — and what that second opinion shares with the first decides what it can and cannot see."
 section: "measuring-time"
 order: 110
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "H"
 tags: ["datacenter", "timing", "GNSS", "monitoring", "metrology"]
 draft: true
-reviewed: 2026-08-08
-reviewNote: "Within 1 hr of ready"
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
@@ -150,35 +150,40 @@ so has solved the easy half of the problem.
 
 ## The free second opinion already arriving at your door
 
-If you receive any message stream that carries somebody else's timestamps —
-market data, an exchange feed, a partner's API, logs from another company — you
-already have a clock comparison running. Nobody set it up and nobody is reading
-it.
+If you are already timestamping a reasonably fast message stream that carries
+somebody else's timestamps — market data, an exchange feed, a partner's API,
+logs from another company — you already have the raw data a clock comparison
+needs. What is missing is only parsing their timestamp and setting up the
+analysis. It works best on streams carrying at least one timestamp per second.
 
 **Subtract their timestamp from yours and look at the shape.** The difference
 has two parts. There is a **physical minimum** you can never beat: speed of
 light over the distance, serialization delay, the time it takes a CPU to do
-anything at all. And there is a **variable delay** stacked on top of it — cache
-misses, operating-system scheduling, network adapters, switch queueing. Plot the
-distribution and the variable part is typically log-normal, piled up against
-that hard physical floor.
+the work with zero stalls. And there is a **variable delay** stacked on top of
+it. The long list of sources sorts into two: **contention and inefficiency**. A
+message may be delayed contending for a shared CPU core or a switch port. Or it
+may be delayed by the bad luck of hitting a cold cache — missing out on a
+mechanism that would have made it faster. Plot the distribution and the variable
+part is typically log-normal, piled up against that hard physical floor.
 
 The variable part is noise for this purpose. The floor is the signal.
 
 ### How to run it
 
-1. **Pick an interval that gives you several thousand samples** of *your
-   timestamp minus theirs* — a few thousand messages, or five minutes, whichever
-   comes first for that stream.
-2. **Log the minimum from each interval**, all day. The interval with the least
-   queueing is the one where the variable delay got out of the way, so the
-   minimum is the floor plus the clock difference and nothing else.
+1. **Pick an interval that gives you at least several thousand samples** of
+   *your timestamp minus theirs.* You need enough in each interval to get a clean
+   reading of the floor in the next step.
+2. **Log the minimum timestamp difference from each interval**, all day. That
+   minimum is the *luckiest message* — the one that met no contention and hit
+   nothing cold, so the variable delay got out of the way entirely. What is left
+   is the floor plus the clock difference and nothing else.
 3. **Expect it to be able to go negative.** If their clock or yours is off, the
    floor moves below zero, and a tool that assumes latency cannot be negative
    will hide exactly the case you are hunting.
 4. **Log the maximum too**, while you are there. It costs nothing and it tells
    you your worst-case latency on that stream — a second useful number from the
-   same pass.
+   same pass. If the minimum is the luckiest message, the maximum is the
+   unluckiest.
 5. **Do it for every stream you receive**, and deliberately choose ones that have
    nothing to do with each other: different companies, different industries,
    different geographies.
@@ -275,12 +280,6 @@ and being able to show it.
   common.
 - **Alarm on divergence against your written budget**, and keep the record — the
   record is the part you cannot backfill.
-
-[[? Two things worth your eye.
-
-1) The shared-antenna argument — that sharing every systematic makes the comparison *more* sensitive rather than less — is from `multi-receiver-design.md` §5 and it is the reason I think this page clears the 1001st-page bar. But I have stated it as a design principle where your doc states it as a lab practice with a specific claim about survey solutions converging. If you have a number for how tightly two co-antenna receivers actually agree, that would turn the best paragraph on the page from an argument into a result.
-
-2) I have left the fleet-consensus work out entirely. The cohort distinction — which hosts can be cross-checked against which, and at what sensitivity — is a more developed version of this page's central idea, and it may deserve its own page rather than a paragraph here. Tell me if you would rather I fold a summary in. ?]]
 
 ## Where to go next
 

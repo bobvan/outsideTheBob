@@ -3,12 +3,12 @@ title: "Choosing a GNSS timescale for syncing datacenter clocks"
 description: "You are not choosing a receiver so much as choosing whose timescale you end up on. There are three ways to do it, they differ by a factor of a hundred in cost, and most datacenters should take the cheapest."
 section: "gnss"
 order: 30
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "datacenter", "buying"]
 draft: true
-reviewed: 2026-08-08
-reviewNote: "Within 1 hr of ready"
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
@@ -20,9 +20,10 @@ prediction of UTC are your clocks actually on?**
 
 You always end up on somebody's timescale. The interesting part is that the
 answer is decided not by your receiver but by **where your corrections come
-from** — because a correction is computed against some datum, and applying it
-puts you on that datum. Choose the correction source and you have chosen the
-timescale, whether or not you meant to.
+from** — because a correction is computed against some
+[datum](/timekeeping/glossary/#datum), and applying it puts you on that datum.
+Choose the correction source and you have chosen the timescale, whether or not
+you meant to.
 
 There are three ways to do it.
 
@@ -79,8 +80,7 @@ The satellite's own error stops mattering, because you are no longer relying on
 the satellite's estimate of anything.
 
 What you gain in accuracy you pay for in *specificity*: you are now on the
-correction stream's [datum](/timekeeping/glossary/#datum), not the
-constellation's.
+correction stream's datum, not the constellation's.
 
 ### Galileo HAS is the one most people will actually use
 
@@ -127,33 +127,6 @@ does.
 	So: my hunch is that AtomiChron is not PPP-AR. That is an inference from a
 	link budget, not a fact from Fugro, and it is labelled as one. But it is the
 	way to bet.
-</CalloutBox>
-
-<CalloutBox type="warn" title="An argument I made here and had to withdraw">
-	I originally reasoned from <em>compute</em>: ambiguity resolution means
-	searching an integer lattice, which is real floating-point work, and the
-	solution runs on a passively cooled sub-watt module.
-
-	That does not survive contact with the evidence — and the evidence is the
-	same Septentrio power table I was citing. It lists <strong>RTK at
-	670 mW</strong> against <strong>PPP at 760 mW</strong> on the identical
-	module. RTK <em>is</em> integer ambiguity resolution, and it costs
-	<em>less</em> than the row I was pointing at. Any reader who has run RTK on a
-	cheap receiver would have known that immediately.
-
-	Integer AR is what sub-watt modules do all day. The compute argument was
-	wrong, and the link-budget argument above never needed it.
-
-	<strong>One refinement, because the two are not the same problem.</strong>
-	RTK fixes integers on a <em>double-differenced</em> observation, where
-	differencing against a base has already removed the clocks and most of the
-	atmosphere — a small, well-conditioned estimate. PPP-AR is undifferenced,
-	across dozens of satellites, each carrying an integer-constrained
-	carrier-phase model plus clock, troposphere and external phase biases. So the
-	power table does not <em>settle</em> the compute question either; it only
-	shows that the version of it I made does not hold.
-	<a href="/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/">The
-	three levels of cost</a> are worth keeping straight.
 </CalloutBox>
 
 ## c. PPP-AR against one analysis center's datum
@@ -249,14 +222,6 @@ and anonymous. The claim, no.
    the specification carefully for *which timescale* each quoted number is
    against.
 4. **Are you doing research?** Then (c), and you already knew that.
-
-[[? Three things I would rather have from you than guess at.
-
-1) Is the (a)/(b)/(c) framing above yours as you meant it? I have written the distinguishing axis as **whose datum you land on**, which felt like the honest through-line, but you may have meant it primarily as an accuracy ladder.
-
-2) I could not confirm that AtomiChron does or does not do ambiguity resolution, and I have said so on the page rather than picking. If you know from the PePPAR work, I will replace the callout with the fact.
-
-3) TMAS turned out not to be an example of (b) at all — it is GPS common view against UTC(NIST), so GNSS is the transfer link rather than the source. I have given it its own section as a fourth answer. Does that earn its place here, or does it belong on the traceability page? ?]]
 
 ## Where to go next
 

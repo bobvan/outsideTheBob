@@ -63,7 +63,7 @@ in normal running.
 
 **Improving long-term drift and aging** changes **nothing** in normal locked
 operation. GNSS discipline is already masking it. It buys you exactly one thing:
-[holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) — how long you
+[holdover](/timekeeping/datacenters/how-gnss-holdover-works/) — how long you
 coast when the antenna goes deaf.
 
 Both are worth money. They are worth money for different reasons, and a vendor
@@ -134,7 +134,7 @@ number.
 
 It is **temperature**. An oscillator's frequency follows its own temperature,
 and in holdover that dominates everything else — a thermal transient can be
-worth [a factor of several](/timekeeping/datacenters/what-happens-when-i-lose-gps/)
+worth [a factor of several](/timekeeping/datacenters/how-gnss-holdover-works/)
 against the same crystal in a quiet room. An oven attacks exactly that term,
 which is why an OCXO beats a TCXO in holdover by far more than the ratio of
 their quoted stability figures suggests. You are not buying a better crystal so
@@ -161,7 +161,7 @@ vendor has already made every other choice. The crossover argument still tells
 you what you are paying for, and it tells you the question to ask: *at what
 averaging interval does the upgrade actually change your output, and is that
 interval one I care about?* A vendor who answers with aging figures alone is
-selling you [holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/),
+selling you [holdover](/timekeeping/datacenters/how-gnss-holdover-works/),
 which may well be what you want — but it is worth knowing that is the answer you
 got.
 
@@ -173,7 +173,7 @@ got.
 2. **Does your budget have a nanosecond in it?** Then about 10⁻¹¹ at one second
    is the floor, and a TCXO is not a candidate.
 3. **How long must you survive without GNSS, and to what threshold?** That is the
-   [holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) question, and
+   [holdover](/timekeeping/datacenters/how-gnss-holdover-works/) question, and
    it is the one aging figures actually answer.
 4. **Is the room stable?** If not, fix that first — it is cheaper than the
    oscillator and it moves the number further.
@@ -195,7 +195,7 @@ problem you do not have.
 
 ## Where to go next
 
-- **[What happens when I lose GPS?](/timekeeping/datacenters/what-happens-when-i-lose-gps/)**
+- **[How does GNSS holdover work?](/timekeeping/datacenters/how-gnss-holdover-works/)**
   — where the aging half of the specification actually cashes out.
 - **[What makes an accurate GNSS timing receiver?](/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/)**
   — the reference input that lets your oscillator into the loop at all.

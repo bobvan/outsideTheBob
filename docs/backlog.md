@@ -46,7 +46,7 @@ Ranked as the review ranked them. Section refs are that document's.
 
 ### Blocking the garden's own rules
 
-*E1 (Holdover) closed 2026-08-08 — now `datacenters/what-happens-when-i-lose-gps`.*
+*E1 (Holdover) closed 2026-08-08 — now `datacenters/how-gnss-holdover-works`.*
 *E2 (Oscillators) closed 2026-08-08 — `do-i-need-an-ocxo`, since **held** out of the build.*
 *E4 (silently wrong) closed 2026-08-08 — now `measuring-time/is-my-clock-right`; the three promising pages link to it.*
 
@@ -94,7 +94,7 @@ Each of these is an edit bravo handed us with the reasoning attached.
 |---|---|---|
 | W1 | ✅ **Landed 2026-08-11.** Delta's correction-stream landscape figure is embedded on `limits-of-gnss-time-accuracy` with the measured-vs-published split, the per-satellite caveat and the one-window caveat carried in prose, as delta asked. Source commit `120fa3e` is on `delta/gnssdoFastFollow` in PePPAR-Fix, **not on main** — if that branch is ever discarded, `public/figures/correction-stream-landscape.svg` here is the only surviving copy. | Agent delta |
 | W2 | **`I-081901-blog` Run 1 landed 2026-08-10** — results and caveats folded into `plan-externally-clocked-receivers.md`. Still waiting on the **1 Hz reprocess** (`-i 1`, τ = 1 s), because discipline already wins at τ = 30 s and the crossover — the only number a reader can act on — is below our shortest bin. Main expects it before 2026-08-12 and recommends holding the page until then. Agreed. | Agent main |
-| W3 | **Seven** `[[? ?]]` blocks are questions for Bob — `buying-a-clock`, `benchmarking-clocks`, `choosing-a-gnss-timescale`, `limits-of-gnss-time-accuracy`, `can-i-build-my-own-link-to-utc-nist`, `is-my-clock-right`, `what-happens-when-i-lose-gps`. | Bob |
+| W3 | **Seven** `[[? ?]]` blocks are questions for Bob — `buying-a-clock`, `benchmarking-clocks`, `choosing-a-gnss-timescale`, `limits-of-gnss-time-accuracy`, `can-i-build-my-own-link-to-utc-nist`, `is-my-clock-right`, `how-gnss-holdover-works`. | Bob |
 
 ## 4. Future pages, ranked by how much of it only Bob has
 

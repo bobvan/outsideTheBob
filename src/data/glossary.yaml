@@ -127,8 +127,8 @@
     cannot. A holdover figure is meaningless without both the error threshold and
     the oscillator it assumes.
   seeAlso:
-    - label: "What happens when I lose GPS?"
-      href: "/timekeeping/datacenters/what-happens-when-i-lose-gps/"
+    - label: "How does GNSS holdover work?"
+      href: "/timekeeping/datacenters/how-gnss-holdover-works/"
     - label: "Stability"
       href: "#stability"
   draft: true
@@ -565,7 +565,7 @@
     - label: "The protocols it exists to speak"
       href: "/timekeeping/time-distribution/time-distribution-protocols/"
     - label: "Holdover, which is what its oscillator is really for"
-      href: "/timekeeping/datacenters/what-happens-when-i-lose-gps/"
+      href: "/timekeeping/datacenters/how-gnss-holdover-works/"
   draft: true
 
 - id: epoch

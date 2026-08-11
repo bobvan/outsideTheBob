@@ -41,7 +41,7 @@ Not a branch — see `held/README.md` for why, and for how to bring one back.
 
 Holding them cost 4 inbound links, now removed and recorded here so they can be
 put back: `do-timestamp-errors-average-out` and `benchmarking-clocks` both
-pointed at *designing a clock*; `what-happens-when-i-lose-gps` pointed at the
+pointed at *designing a clock*; `how-gnss-holdover-works` pointed at the
 OCXO page twice, and the glossary's `holdover` entry had it in `seeAlso`.
 
 ## The recommended batch — publish 25, defer 6
@@ -66,7 +66,7 @@ The three edits, all trivial:
 
 ```
 buying-a-clock                     → benchmarking-clocks
-what-happens-when-i-lose-gps       → benchmarking-clocks
+how-gnss-holdover-works       → benchmarking-clocks
 accuracy-and-precision-in-pictures → accuracy-and-resolution-in-pictures
 ```
 

@@ -40,7 +40,7 @@ that remain (`datacenters`, `gnss`, `measuring-time`, `questions-to-ask`,
 | Can I build my own link to UTC(NIST)? | `can-i-build-my-own-link-to-utc-nist` |
 | How does GNSS time relate to UTC? | `how-gnss-time-relates-to-utc` |
 | What does "traceable to UTC" actually mean? | `what-does-traceable-to-utc-mean` |
-| What happens when I lose GPS? | `what-happens-when-i-lose-gps` |
+| How does GNSS holdover work? | `how-gnss-holdover-works` |
 | What makes an accurate GNSS timing receiver? | `what-makes-an-accurate-timing-receiver` |
 | How to configure antenna position for datacenter GNSS receivers? | `configuring-gnss-antenna-position` |
 | How to configure feedline length for datacenter GNSS receivers? | `configuring-gnss-antenna-feedline` |
@@ -104,6 +104,7 @@ retitle.
 | Relating timing accuracy with measurement resolution | Measurement resolution and accuracy | `measurement-resolution-and-accuracy` |
 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | shortened at draft |
 | How do I know my clock is still right? | Is my clock right? | `is-my-clock-right` — the question as somebody actually asks it |
+| What happens when I lose GPS? | How does GNSS holdover work? | `how-gnss-holdover-works` — names the mechanism the page explains, and the word people search |
 
 ## One caveat on a title that passes
 

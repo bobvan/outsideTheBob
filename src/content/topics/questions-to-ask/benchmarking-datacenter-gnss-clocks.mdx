@@ -3,25 +3,33 @@ title: "Questions to ask when benchmarking clocks"
 description: "You have the hardware and you want to compare it. Most of the traps are in the comparison, not the clocks."
 section: "questions-to-ask"
 order: 20
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "H"
 tags: ["benchmarking", "timing", "metrology"]
 draft: true
-reviewed: 2026-08-08
-reviewNote: "Could need a lot of work"
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
+
+import CalloutBox from "../../../components/post/CalloutBox.astro";
 
 You have two or more clocks and you want to know which is better. The awkward
 part is that a comparison is itself a measurement, and it can be wrong in all
-the ways the clocks can be wrong — quietly, and in your favor.
+the ways the clocks can be wrong — quietly.
 
-## 1. Is your reference better than the things you are measuring?
+## 1. Is your reference clock better than the clock you are measuring?
 
-You cannot measure a clock with a worse clock. Whatever you compare against
-contributes its own error to every number you produce, so the first question is
-whether your reference is enough better that you can neglect it — and by how
-much. If it is not, you are not benchmarking the clocks, you are benchmarking
-the reference.
+You cannot measure a clock with a worse clock. Your reference clock contributes
+its own error to every measurement you make. Is it so much better that you can
+neglect that error? If not, your benchmark results have to be qualified by the
+error of the reference.
+
+An analogy: you can use a digital wall clock that displays seconds to benchmark
+one that shows only hours and minutes. But it is very hard to say anything
+conclusive when comparing two wall clocks that both show only hours and minutes.
+It is an imperfect analogy, because it may suggest that
+[resolution](/timekeeping/glossary/#resolution) is the only source of error — but
+it might still help you explain the challenge to your boss.
 
 ## 2. Are you measuring trueness or precision?
 
@@ -50,15 +58,54 @@ comparison at all.
 
 Measuring everything against one reference is simple and puts the reference's
 error into every result equally. Measuring pairwise lets you separate the units
-from the reference — the three-cornered hat — but needs three and assumes their
-errors are uncorrelated, which is exactly what a shared environment breaks.
+from the reference — the
+[three-cornered hat](/timekeeping/glossary/#three-cornered-hat) — but needs three
+clocks and assumes their errors are uncorrelated, which is exactly what a shared
+environment breaks.
+
+<CalloutBox type="tip" title="You may already have three clocks without meaning to">
+	Put two clocks on a two-channel time interval counter and it is natural to
+	think you are comparing two things. You are comparing three. **The counter
+	digitizes both channels against its own timebase** — its reference clock —
+	and that oscillator is in every reading it gives you.
+
+	It is easy to miss because the counter reports a confident number either way,
+	and because the timebase is usually inside the instrument where nobody looks
+	at it.
+
+	So **run a three-cornered hat on anything measured this way.** You have the
+	three clocks whether you wanted them or not, and the analysis will tell you
+	which of the three you can actually trust — including the one you were
+	treating as furniture.
+
+	<strong>And watch where the counter's reference comes from.</strong> If you
+	feed its external reference input from one of the clocks under test, that
+	clock is now in the measurement twice, and you have broken the uncorrelated
+	assumption with your own patch cable. The three-cornered hat will usually
+	announce it, by returning a negative variance for something.
+</CalloutBox>
 
 ## 6. Have you separated the device under test from the measuring system?
 
 Cables, connectors, the counter's own trigger noise and any distribution
-amplifier are all in the loop. Measure the loop with the device replaced by a
-short, and subtract. Whatever you find is the floor beneath which none of your
-results mean anything.
+amplifier are all in the loop, and none of them announce themselves.
+
+The standard test for a two-channel time interval counter is a **zero-baseline**
+measurement, and it takes two minutes: **split one 1 PPS with a tee connector and
+run it to both channels on carefully matched lengths of coax.** Both channels are
+now looking at the same edge at the same instant, so the true interval is exactly
+zero. Everything the counter reports is the counter.
+
+You get two numbers out of it, and they are different things:
+
+- **The spread of the readings is your counter's single-shot resolution** — the
+  floor beneath which none of your results mean anything, no matter how many
+  digits are displayed.
+- **The mean is the channel-to-channel offset**, a systematic you can simply
+  subtract from every subsequent measurement.
+
+Matched cable lengths matter for the second one: any length difference lands
+directly in that mean and is indistinguishable from the instrument's own bias.
 
 ## 7. Are cable delays calibrated out?
 
@@ -85,9 +132,3 @@ systematically flatter clocks whose errors are slow.
 
 If the answers start raising questions about *why* a clock behaves the way it
 does rather than *whether* it does, you have crossed into designing one.
-
-[[? Section 5 (three-cornered hat) and section 6 are the two I am least sure of at your level of practice.
-
-On 5: is the three-cornered hat something you actually use in timelab, or is it a textbook technique you would not bother with at this scale? I would rather cut it than have it read as borrowed.
-
-On 6: "measure the loop with the device replaced by a short" is the general instrument-metrology move. Is there a standard way this is done for time-interval counters specifically that I should name instead? ?]]

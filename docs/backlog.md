@@ -34,7 +34,7 @@ Everything here must be true before any `draft: true` becomes `draft: false`.
 | # | gate | state |
 |---|---|---|
 | P1 | **Topic pages and glossary entries flip in the same commit.** 60-odd body links point into `/timekeeping/glossary/#…`; flipping pages without the glossary lands every one of them on "nothing published here yet". | ⏳ 30 pages + 30 terms all `draft: true` |
-| P2 | **No `[[? … ?]]` blocks survive.** They render as ordinary body text — readers would see our questions to each other. | ⏳ **7 pages** (was 9) |
+| P2 | **No `[[? … ?]]` blocks survive.** They render as ordinary body text — readers would see our questions to each other. | ✅ **0 pages** (was 9 on 2026-08-10) |
 | P3 | **Every internal link and glossary anchor resolves.** | ✅ re-crawled 2026-08-10 after the reorganization — 73 routes, 0 broken |
 | P4 | **Nav gate and `noindex` reviewed.** `/timekeeping/` is `noindex` and the nav entry is gated on `hasPublishedTopics()`; both flip implicitly when P1 does. | ⏳ |
 | P5 | **Sanitization pass on anything sourced from private work.** | ✅ for current content |
@@ -82,6 +82,13 @@ per-unit term.*
 
 Each of these is an edit bravo handed us with the reasoning attached.
 
+*D3a and D3b closed 2026-08-11 — and D3a's premise was wrong. It assumed the
+three-cornered hat was unavailable to us and that its unavailability was the
+point; Bob uses it routinely in the lab. Kept the uncorrelated-errors caveat,
+which is the real content, and added his observation that a two-channel counter
+quietly supplies the third clock. D3b landed as the tee-connector zero-baseline
+test, replacing "replaced by a short".*
+
 *D5 and E5 declined by Bob, 2026-08-11 — **do not name specific regulations.**
 His reason: the topic invites "IANAL, but here is why you are wrong and I am
 right", which is an argument this site cannot win and does not want. The
@@ -91,8 +98,6 @@ not a one-off, and do not re-propose naming MiFID II RTS 25 or its equivalents.*
 | # | item | where |
 |---|---|---|
 | D1c | Band pairs a part *supports* vs *lists* — L1/L2 **or** L1/L5, switchable, NAKing the other. **Still open** — the page names the pairs but never says a part may refuse to run both. | `what-makes-an-accurate-timing-receiver` |
-| D3a | Three-cornered hat: keep it, and make its unavailability the point — it assumes uncorrelated errors, which a shared antenna/reference/room deliberately breaks. | `benchmarking-datacenter-gnss-clocks` |
-| D3b | Replace "replaced by a short" with the **zero-baseline counter test** — split one PPS into both channels; reproducible by any reader with a splitter. | `benchmarking-datacenter-gnss-clocks` |
 | D6a | **Missing category: the actuator.** What are you steering with, how finely, over what range, and is the range symmetric? | `designing-a-clock` — **held**, so this waits for the rework |
 | D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` — **held** |
 | D7 | Gloss common-mode on **first** use. Still open: first use is the pull-quote translation, and the explanation does not arrive until 24 lines later. | `measuring-time/prioritize-agreement-or-accuracy` |
@@ -105,7 +110,7 @@ not a one-off, and do not re-propose naming MiFID II RTS 25 or its equivalents.*
 |---|---|---|
 | W1 | ✅ **Landed 2026-08-11.** Delta's correction-stream landscape figure is embedded on `limits-of-gnss-time-accuracy` with the measured-vs-published split, the per-satellite caveat and the one-window caveat carried in prose, as delta asked. Source commit `120fa3e` is on `delta/gnssdoFastFollow` in PePPAR-Fix, **not on main** — if that branch is ever discarded, `public/figures/correction-stream-landscape.svg` here is the only surviving copy. | Agent delta |
 | W2 | **`I-081901-blog` Run 1 landed 2026-08-10** — results and caveats folded into `plan-externally-clocked-receivers.md`. Still waiting on the **1 Hz reprocess** (`-i 1`, τ = 1 s), because discipline already wins at τ = 30 s and the crossover — the only number a reader can act on — is below our shortest bin. Main expects it before 2026-08-12 and recommends holding the page until then. Agreed. | Agent main |
-| W3 | **One** `[[? ?]]` block left in the whole garden — on `benchmarking-datacenter-gnss-clocks`. Everything else is answered and closed. | Bob |
+| W3 | ✅ **Closed 2026-08-11 — zero `[[? ?]]` blocks left in the garden.** Every question we raised has been answered. | Bob |
 
 ## 4. Future pages, ranked by how much of it only Bob has
 

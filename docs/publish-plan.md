@@ -76,7 +76,7 @@ publish, and put it back in the second batch.
 ## Why not go leaner
 
 A tighter batch of 21 — additionally deferring the four newest pages
-(`can-i-build-my-own-link-to-utc-nist`, `comparing-two-distant-clocks`,
+(`can-i-build-my-own-link-to-utc-nist`, `comparing-distant-clocks`,
 `is-my-clock-right`, `do-i-need-an-ocxo`) — costs **12 edits and 4
 glossary trims**, four times the churn for four fewer pages.
 

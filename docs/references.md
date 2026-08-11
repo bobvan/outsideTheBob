@@ -517,6 +517,27 @@ Same antenna; the 16 ns difference is the receivers'.
    solution", so it was GPS-only too. **Quote 28 ns as a GPS L1/L2 figure, not as
    "the" F9T delay.**
 
+### The antenna, and whether the chain is reproducible
+
+**Verified 2026-08-11.** Part 2 — the source of the 16 / 52 / 28 split — **does
+not name the antenna**. The 2020 method article does: the receivers "are
+connected to the same antenna as the ublox F9T (**a Harxon CHX600A**)".
+
+Two consequences worth keeping straight:
+
+1. **The TIC − CGGTTS method never needs the antenna delay separated.** `D` is
+   the whole chain — antenna, cable, receiver — as one number. The 16 / 52 / 28
+   decomposition in part 2 exists only to publish a reusable *receiver* figure.
+   So "can a home builder calibrate everything except the antenna?" has the
+   premise backwards: the antenna is not the obstacle, the **co-located
+   calibrated reference** is.
+2. **The chain is therefore reproducible on paper** — Harxon CHX600A, 10 m cable,
+   ZED-F9T, D = 93.9 ns on GPS L1/L2 — which makes "copy a published chain, then
+   calibrate others against your copy" a real amateur path. Price: Píriz's
+   1–2 ns floor, plus an unmeasured per-unit term, because our own bench found
+   **two nominally identical F9Ts further apart than an F9T and an F9P**. A
+   starting number, not a calibration.
+
 Also worth carrying: part 1 moved the F9T from an office with a low-cost Harxon
 antenna to a temperature-stabilized server room with a Leica AR20, and found
 

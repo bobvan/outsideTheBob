@@ -3,7 +3,7 @@ title: "Comparing distant clocks"
 description: "You cannot run a cable, and neither clock can be the source for the other. So you both watch a third clock in the sky — which drags its error into your answer. Every technique here is a different way of removing it."
 section: "measuring-time"
 order: 120
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology"]
 draft: true
@@ -109,8 +109,13 @@ somebody publishes, which turns out to matter more than anything else here.
 
 The measurements are exchanged in a format called
 [CGGTTS](/timekeeping/glossary/#cggtts), which is worth a glance if only because
-its header states every delay in the chain. NIST sells the technique as a
-service, [TMAS](/timekeeping/glossary/#tmas).
+its header states every delay in the chain.
+
+**This is the one technique on the page you can buy off the shelf.** NIST sells
+it as [TMAS](/timekeeping/glossary/#tmas) — their receiver at your site, their
+calibration at both ends, their report at the end of it. Wherever this page
+weighs common view against the alternatives, TMAS is the concrete thing being
+weighed.
 
 ## Then why has BIPM stopped using it?
 
@@ -318,11 +323,14 @@ their IGS station runs on UTC(NIST) itself, and its raw
 [RINEX](/timekeeping/glossary/#rinex) is anonymously downloadable. Run your PPP
 solution and theirs against the same correction stream, difference them, and you
 have the same measurement TMAS makes — by the technique BIPM prefers, without
-any [baseline](/timekeeping/glossary/#baseline) penalty, for free.
+any [baseline](/timekeeping/glossary/#baseline) penalty, at no cost.
 
-What you will not have is a calibrated end, which means you get frequency at full
-accuracy and no defensible time offset at all. That gap, and what closes it, is
-[its own page](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/).
+**Free of charge is not free of obligation**, though, and the distinction is the
+whole of the companion page. What you will not have is a calibrated end, which
+means you get frequency at full accuracy and no defensible time offset at all.
+**[We ran exactly this and published the numbers](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/)**
+— including [UTC(USNO) − UTC(NIST)] computed from public observations, and the
+one number in that table we could not claim.
 
 ## So what is your answer referenced to?
 
@@ -384,8 +392,8 @@ Three questions, in the spirit of the
 ## Where to go next
 
 - **[Can I build my own link to UTC(NIST)?](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/)**
-  — the same techniques, applied to your own roof, with what is free and what
-  is not.
+  — this page's techniques actually run, on public data, with our own numbers and
+  the wall they hit.
 - **[Distributing time: the protocols](/timekeeping/time-distribution/time-distribution-protocols/)**
   — the other problem, the one where you own the wire.
 - **[What "traceable to UTC" actually requires](/timekeeping/utc/what-does-traceable-to-utc-mean/)**

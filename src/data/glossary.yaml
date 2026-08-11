@@ -447,7 +447,7 @@
     - label: "GNSS Analysis Center"
       href: "#gnss-analysis-center"
     - label: "Why differencing two solutions cancels it"
-      href: "/timekeeping/measuring-time/comparing-two-distant-clocks/"
+      href: "/timekeeping/measuring-time/comparing-distant-clocks/"
     - label: "PPP-AR"
       href: "#ppp-ar"
   draft: true
@@ -467,7 +467,7 @@
     url: "https://www.bipm.org/documents/20126/52718503/G1-2015.pdf"
   seeAlso:
     - label: "Comparing distant clocks"
-      href: "/timekeeping/measuring-time/comparing-two-distant-clocks/"
+      href: "/timekeeping/measuring-time/comparing-distant-clocks/"
     - label: "TMAS"
       href: "#tmas"
   draft: true
@@ -510,7 +510,7 @@
     - label: "CGGTTS, the time-transfer counterpart"
       href: "#cggtts"
     - label: "Comparing distant clocks"
-      href: "/timekeeping/measuring-time/comparing-two-distant-clocks/"
+      href: "/timekeeping/measuring-time/comparing-distant-clocks/"
   draft: true
 
 - id: peppar-fix

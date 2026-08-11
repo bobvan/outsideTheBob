@@ -58,17 +58,24 @@ Ranked as the review ranked them. Section refs are that document's.
 ### Technical, needs sources or a decision
 
 *B5 closed 2026-08-09 — all three specs checked against primaries. All three were wrong; see `references.md`.*
-*B4, B7, B8, B9 closed 2026-08-09 — sources in `references.md`. Only B10's two cosmetic items remain in this group.*
+*B4, B7, B8, B9 closed 2026-08-09 — sources in `references.md`.*
+*B10 closed 2026-08-11 — the two unrelated 16 ns numbers are now explicitly
+disambiguated in the sentence that introduces the second. The "BIPM's stated
+10 000 km" wording was left alone; it reads correctly as theirs.*
+
+**This subsection is now empty.**
 
 | # | item | where |
 |---|---|---|
-| B10 | Two unrelated 16 ns numbers four paragraphs apart read as connected; and consider "BIPM's stated 10 000 km" for the NIST–PTB baseline. | `can-i-build-my-own-link-to-utc-nist` |
 
 ### Internal contradictions
 
+*C1 closed 2026-08-11 — the hard stop now names the price of walking through the
+door: copy a published chain, inherit its 1–2 ns floor, add an unmeasured
+per-unit term.*
+
 | # | item | where |
 |---|---|---|
-| C1 | **"You cannot download a travelling receiver"** is contradicted two sections later by Píriz's co-located method, which *is* the amateur path. State the price of walking through the door rather than closing it: you inherit that chain's floor, 1–2 ns. | `can-i-build-my-own-link-to-utc-nist` |
 | C2 | **"Directly traceable to UTC"** is the usage the traceability page forbids. Traceability is the Home; the acquiring page should defer. One occurrence, confirmed still there 2026-08-10. | `datacenters/acquiring-time` |
 
 ### From the answers to our own open questions (§D)
@@ -84,7 +91,7 @@ Each of these is an edit bravo handed us with the reasoning attached.
 | D6a | **Missing category: the actuator.** What are you steering with, how finely, over what range, and is the range symmetric? | `designing-a-clock` — **held**, so this waits for the rework |
 | D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` — **held** |
 | D7 | Gloss common-mode on **first** use. Still open: first use is the pull-quote translation, and the explanation does not arrive until 24 lines later. | `measuring-time/prioritize-agreement-or-accuracy` |
-| D8 | Move **one sentence** of the fairness section up, under the "why has BIPM stopped" heading, so the reader is not braced against us while reading the evidence. Leave the section where it is. | `comparing-two-distant-clocks` |
+| D8 | Move **one sentence** of the fairness section up, under the "why has BIPM stopped" heading, so the reader is not braced against us while reading the evidence. Leave the section where it is. | `comparing-distant-clocks` |
 | E5 | Name a regulation somewhere — the page builds its opening on requirements arriving from a regulator and still names none. Bravo argues this is the biggest hole in the search surface. | `measuring-time/why-precise-time` |
 | E6 | Two-Clock Agreement is a section of one, named after Bob's strongest original result. *What limits agreement* has the most unpublished evidence behind it. | new page |
 

@@ -102,7 +102,7 @@ retitle.
 | Distributing time: the protocols | Time Distribution Protocols | `time-distribution-protocols` |
 | *(kept)* UTC(k), and who defines yesterday | — | `who-defines-utc` |
 | Relating timing accuracy with measurement resolution | Measurement resolution and accuracy | `measurement-resolution-and-accuracy` |
-| How do you compare two clocks a thousand miles apart? | Comparing distant clocks | shortened at draft |
+| How do you compare two clocks a thousand miles apart? | Comparing distant clocks | `comparing-distant-clocks` — slug now matches the title |
 | How do I know my clock is still right? | Is my clock right? | `is-my-clock-right` — the question as somebody actually asks it |
 | What happens when I lose GPS? | How does GNSS holdover work? | `how-gnss-holdover-works` — names the mechanism the page explains, and the word people search |
 

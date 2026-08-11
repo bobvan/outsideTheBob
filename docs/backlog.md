@@ -19,11 +19,12 @@ defer, and the exact cost (3 link edits, 1 glossary trim). Computed with
 
 ## 0b. URL structure — decisions before launch
 
-**[`url-structure.md`](url-structure.md)** — three open questions: whether to
-rename the four weak section keys (`acquiring`, `transferring`, `two-clock`,
-`questions`), whether tier 1 stays `/timekeeping/`, and whether to pin explicit
-slugs at publication so filenames stop being URLs. All three are free now and
-permanent afterwards.
+**[`url-structure.md`](url-structure.md)** — the section-rename question is
+**closed**: the 2026-08-10 reorganization replaced all eight sections with six,
+and every path word now reads as ordinary English. Two open questions remain:
+whether tier 1 stays `/timekeeping/`, and whether to **pin explicit slugs at
+publication** so filenames stop being URLs. Both are free now and permanent
+afterwards; the slug pinning is the one with teeth.
 
 ## 1. Publish gate
 
@@ -32,9 +33,9 @@ Everything here must be true before any `draft: true` becomes `draft: false`.
 
 | # | gate | state |
 |---|---|---|
-| P1 | **Topic pages and glossary entries flip in the same commit.** 60-odd body links point into `/timekeeping/glossary/#…`; flipping pages without the glossary lands every one of them on "nothing published here yet". | ⏳ 28 pages + 28 terms all `draft: true` |
-| P2 | **No `[[? … ?]]` blocks survive.** They render as ordinary body text — readers would see our questions to each other. | ⏳ 9 pages |
-| P3 | **Every internal link and glossary anchor resolves.** | ✅ 72 routes, 24 anchors, 0 broken |
+| P1 | **Topic pages and glossary entries flip in the same commit.** 60-odd body links point into `/timekeeping/glossary/#…`; flipping pages without the glossary lands every one of them on "nothing published here yet". | ⏳ 30 pages + 30 terms all `draft: true` |
+| P2 | **No `[[? … ?]]` blocks survive.** They render as ordinary body text — readers would see our questions to each other. | ⏳ **7 pages** (was 9) |
+| P3 | **Every internal link and glossary anchor resolves.** | ✅ re-crawled 2026-08-10 after the reorganization — 73 routes, 0 broken |
 | P4 | **Nav gate and `noindex` reviewed.** `/timekeeping/` is `noindex` and the nav entry is gated on `hasPublishedTopics()`; both flip implicitly when P1 does. | ⏳ |
 | P5 | **Sanitization pass on anything sourced from private work.** | ✅ for current content |
 | P6 | **`section:` matches the file's directory.** Nothing enforced this; a page moved between sections without editing frontmatter would build a URL contradicting its own location. | ✅ enforced by `publish-check` |
@@ -45,9 +46,9 @@ Ranked as the review ranked them. Section refs are that document's.
 
 ### Blocking the garden's own rules
 
-*E1 (Holdover) closed 2026-08-08 — `acquiring/what-happens-when-i-lose-gps`.*
-*E2 (Oscillators) closed 2026-08-08 — `acquiring/do-i-need-an-ocxo`.*
-*E4 (silently wrong) closed 2026-08-08 — `two-clock/how-do-i-know-its-still-right`; the three promising pages now link to it.*
+*E1 (Holdover) closed 2026-08-08 — now `datacenters/what-happens-when-i-lose-gps`.*
+*E2 (Oscillators) closed 2026-08-08 — `do-i-need-an-ocxo`, since **held** out of the build.*
+*E4 (silently wrong) closed 2026-08-08 — now `measuring-time/how-do-i-know-its-still-right`; the three promising pages link to it.*
 
 **This subsection is now empty — the garden no longer breaks its own H/S/M rule.**
 
@@ -68,7 +69,7 @@ Ranked as the review ranked them. Section refs are that document's.
 | # | item | where |
 |---|---|---|
 | C1 | **"You cannot download a travelling receiver"** is contradicted two sections later by Píriz's co-located method, which *is* the amateur path. State the price of walking through the door rather than closing it: you inherit that chain's floor, 1–2 ns. | `can-i-build-my-own-link-to-utc-nist` |
-| C2 | **"Directly traceable to UTC"** is the usage the traceability page forbids. Traceability is the Home; the acquiring page should defer. | `acquiring-time` |
+| C2 | **"Directly traceable to UTC"** is the usage the traceability page forbids. Traceability is the Home; the acquiring page should defer. One occurrence, confirmed still there 2026-08-10. | `datacenters/acquiring-time` |
 
 ### From the answers to our own open questions (§D)
 
@@ -76,26 +77,24 @@ Each of these is an edit bravo handed us with the reasoning attached.
 
 | # | item | where |
 |---|---|---|
-| D1a | Add one line to trait 4: *if you expect to still care in two years, weight this above its position on the list.* | receiver traits |
-| D1b | **Seventh trait: does the firmware report quantization error?** A purchase-level trap — same silicon family, and the non-timing parts report zero. | receiver traits |
-| D1c | Band pairs a part *supports* vs *lists* — L1/L2 **or** L1/L5, switchable, NAKing the other. | receiver traits |
+| D1c | Band pairs a part *supports* vs *lists* — L1/L2 **or** L1/L5, switchable, NAKing the other. **Still open** — the page names the pairs but never says a part may refuse to run both. | `what-makes-an-accurate-timing-receiver` |
 | D3a | Three-cornered hat: keep it, and make its unavailability the point — it assumes uncorrelated errors, which a shared antenna/reference/room deliberately breaks. | `benchmarking-clocks` |
 | D3b | Replace "replaced by a short" with the **zero-baseline counter test** — split one PPS into both channels; reproducible by any reader with a splitter. | `benchmarking-clocks` |
 | D5 | **Tenth vendor question, and name the regulation** — MiFID II RTS 25. Ask not "are you compliant" but *what do you produce when a regulator asks me to demonstrate divergence over a past quarter?* | `buying-a-clock` |
-| D6a | **Missing category: the actuator.** What are you steering with, how finely, over what range, and is the range symmetric? | `designing-a-clock` |
-| D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` |
-| D7 | Gloss common-mode on **first** use, then let it carry the page. | `agreement-is-not-accuracy` |
+| D6a | **Missing category: the actuator.** What are you steering with, how finely, over what range, and is the range symmetric? | `designing-a-clock` — **held**, so this waits for the rework |
+| D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` — **held** |
+| D7 | Gloss common-mode on **first** use. Still open: first use is the pull-quote translation, and the explanation does not arrive until 24 lines later. | `measuring-time/prioritize-agreement-or-accuracy` |
 | D8 | Move **one sentence** of the fairness section up, under the "why has BIPM stopped" heading, so the reader is not braced against us while reading the evidence. Leave the section where it is. | `comparing-two-distant-clocks` |
-| E5 | Name a regulation somewhere — `a-means-to-an-end` builds its opening on requirements arriving from a regulator and never names one. Bravo argues this is the biggest hole in the search surface. | `a-means-to-an-end` |
+| E5 | Name a regulation somewhere — the page builds its opening on requirements arriving from a regulator and still names none. Bravo argues this is the biggest hole in the search surface. | `measuring-time/why-precise-time` |
 | E6 | Two-Clock Agreement is a section of one, named after Bob's strongest original result. *What limits agreement* has the most unpublished evidence behind it. | new page |
 
 ## 3. Waiting on someone else
 
 | # | item | who |
 |---|---|---|
-| W1 | Correction-stream landscape figure — a `[[? ?]]` on `gnss-time-is-a-prediction` holds its place. For a self-consistent publish, land it or delete the marker; the page reads complete without it. | Agent delta |
+| W1 | Correction-stream landscape figure — a `[[? ?]]` on `limits-of-gnss-time-accuracy` holds its place. For a self-consistent publish, land it or delete the marker; the page reads complete without it. | Agent delta |
 | W2 | **`I-081901-blog`** — GNSSDO+ vs F9T, one antenna, 24 h, TDEV vs τ. The data for `plan-externally-clocked-receivers.md`. | Agent main |
-| W3 | Nine `[[? ?]]` blocks are questions for Bob. Bravo answered all of them in §D; those answers are rows above, but the *decisions* are still Bob's. | Bob |
+| W3 | **Seven** `[[? ?]]` blocks are questions for Bob — `buying-a-clock`, `benchmarking-clocks`, `choosing-a-gnss-timescale`, `limits-of-gnss-time-accuracy`, `can-i-build-my-own-link-to-utc-nist`, `how-do-i-know-its-still-right`, `what-happens-when-i-lose-gps`. | Bob |
 
 ## 4. Future pages, ranked by how much of it only Bob has
 
@@ -125,8 +124,8 @@ renders. See `scripts/review-status.mjs`.
 | # | item |
 |---|---|
 | H1 | **86 unlinked glossary first-uses** across 28 files — `npm run glossary-links`. Advisory; mostly `UTC` and `timescale`, which need judgement rather than a sweep. |
-| H2 | **11 title retitles** outstanding in `title-audit.md`, now with proposed slugs. Strongest: *GNSS time is a prediction* → *Does the satellite know what time it is?* Cheap while everything is `draft: true`; expensive after. |
-| H3 | Three empty sections: The Datacenter Problem, Benchmarking, Stories. |
+| H7 | **`updatedDate` is not being maintained**, and it is an input to the publish-facing page as well as to the review tracker. On 2026-08-10 a day of retitles, reslugs and a terminology sweep touched ~25 pages and bumped `updatedDate` on none of them. The tracker no longer depends on it (it reads git), but the *reader-visible* date is now wrong on those pages. Decide: bump them all to the reorganization date, or leave them at the date the prose last changed in substance. |
+| H3 | **One** empty section left: `stories` — declared in `SECTIONS` with no pages. The other two went away in the reorganization. Either fill it or drop the key before launch. |
 | H6 | **Restart the dev server after any content-collection change that is not a body edit** — a new `glossary.yaml` entry, a renamed page, a changed slug. None of these hot-reload: the cache serves the old set, so the link checker reports the old URL as a 500 and the new one as a 404. Seen twice (2026-08-09, 2026-08-10). Body-text edits reload fine. |
 | H4 | Restart the dev server occasionally — bravo found it at 7.5 days of uptime and warns against trusting a stale preview. **Restarted 2026-08-08.** Tailscale preview: `http://100.117.189.97:4321/` |
 
@@ -138,3 +137,13 @@ renders. See `scripts/review-status.mjs`.
 - **The logo experiment is closed** — decided against change, 2026-08-07.
 - **The GNSSDO+ oscillator** is an STP3593LF (ROX5242T1N family) double-oven OCXO from Rakon. Both PePPAR-Fix docs were right; there was no contradiction.
 - **`dns1` and WBPC stay off the fleet map** — Bob confirmed both sanitization calls, 2026-08-08.
+
+- **Section names are settled** — six sections as of 2026-08-10, and the
+  [title audit](title-audit.md) closed with 30 of 30 passing and nothing
+  recommended. Retitling is done; do not reopen it without a reason.
+- **The review tracker reads git, not `updatedDate`** (fixed 2026-08-10). It had
+  been reporting "0 changed since you read them" while pages Bob signed off on
+  the 8th had been rewritten, because nothing bumped the frontmatter date. It now
+  takes the later of the frontmatter date and the file's last commit, sorts stale
+  pages by how many lines moved since the sign-off, and reports *read and edited
+  the same day* as its own undecidable state rather than guessing.

@@ -93,7 +93,7 @@ Each of these is an edit bravo handed us with the reasoning attached.
 | # | item | who |
 |---|---|---|
 | W1 | Correction-stream landscape figure — a `[[? ?]]` on `limits-of-gnss-time-accuracy` holds its place. For a self-consistent publish, land it or delete the marker; the page reads complete without it. | Agent delta |
-| W2 | **`I-081901-blog`** — GNSSDO+ vs F9T, one antenna, 24 h, TDEV vs τ. The data for `plan-externally-clocked-receivers.md`. | Agent main |
+| W2 | **`I-081901-blog` Run 1 landed 2026-08-10** — results and caveats folded into `plan-externally-clocked-receivers.md`. Still waiting on the **1 Hz reprocess** (`-i 1`, τ = 1 s), because discipline already wins at τ = 30 s and the crossover — the only number a reader can act on — is below our shortest bin. Main expects it before 2026-08-12 and recommends holding the page until then. Agreed. | Agent main |
 | W3 | **Seven** `[[? ?]]` blocks are questions for Bob — `buying-a-clock`, `benchmarking-clocks`, `choosing-a-gnss-timescale`, `limits-of-gnss-time-accuracy`, `can-i-build-my-own-link-to-utc-nist`, `how-do-i-know-its-still-right`, `what-happens-when-i-lose-gps`. | Bob |
 
 ## 4. Future pages, ranked by how much of it only Bob has

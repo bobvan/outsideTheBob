@@ -170,9 +170,9 @@ The variable part is noise for this purpose. The floor is the signal.
 1. **Pick an interval that gives you several thousand samples** of *your
    timestamp minus theirs* — a few thousand messages, or five minutes, whichever
    comes first for that stream.
-2. **Log the minimum from each interval**, all day. That minimum is the closest
-   thing you have to the pure clock difference, because the interval with the
-   least queueing is the one where the variable delay got out of the way.
+2. **Log the minimum from each interval**, all day. The interval with the least
+   queueing is the one where the variable delay got out of the way, so the
+   minimum is the floor plus the clock difference and nothing else.
 3. **Expect it to be able to go negative.** If their clock or yours is off, the
    floor moves below zero, and a tool that assumes latency cannot be negative
    will hide exactly the case you are hunting.
@@ -182,6 +182,44 @@ The variable part is noise for this purpose. The floor is the signal.
 5. **Do it for every stream you receive**, and deliberately choose ones that have
    nothing to do with each other: different companies, different industries,
    different geographies.
+
+### Separating the floor from your clock
+
+The minima are not yet a clock measurement. Each one is **the physical minimum
+plus your clock minus theirs**, added together, and on day one you have no way
+to say which part is which.
+
+Watching solves it. **Run it for days, then take the average of the minima and
+call that the physical minimum.** The floor is a property of distance and
+hardware, so it holds still while a clock difference does not; average over long
+enough and what survives is the constant. Subtract that baseline from each new
+interval minimum as it arrives and you have what you were after all along: **your
+clock minus theirs**, in nanoseconds, updating all day, on a stream you were
+already receiving.
+
+Now you have something to alarm on. Not a round number somebody liked — the
+**historical spread of that particular stream's differences**, learned from the
+same data. An excursion outside the range this stream has shown you for a week is
+worth a page; the same 50 ns on a different stream might be perfectly ordinary.
+Every stream calibrates its own threshold.
+
+<CalloutBox type="warn" title="What the baseline quietly absorbs">
+	Averaging the minima cannot tell a constant path delay from a constant clock
+	offset — so if you were 200 ns off on day one, that 200 ns is now baked into
+	your baseline and reads as zero forever after.
+
+	This is <a href="#make-something-complain">divergence, not error</a>, again:
+	the technique is exquisite at detecting <em>change</em> and blind to a
+	standing offset. For the absolute number you need a
+	<a href="/timekeeping/utc/what-does-traceable-to-utc-mean/">calibrated
+	path</a>. For catching the day something moved, this is the best instrument
+	you own.
+
+	The floor can also move for honest reasons — a rerouted circuit, a new
+	switch, a NIC replaced. That is the same common-mode test read backwards: a
+	step on <em>one</em> stream is a network change, a step on <em>all</em> of
+	them is your clock.
+</CalloutBox>
 
 <CalloutBox type="tip" title="And here is what makes it the best second opinion you have">
 	Those counterparties share almost nothing. Different clocks, different

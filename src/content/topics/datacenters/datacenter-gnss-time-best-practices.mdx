@@ -91,6 +91,10 @@ carrying somebody else's clock. **Plot the minimum delta over every 5000 ticks,
 or every five minutes**, and watch that floor rather than the mean. The minimum
 strips out queueing and scheduling delay and leaves the clock difference.
 
+Average those minima over a few days and you have learned the physical floor;
+subtract it and what is left is your clock minus theirs, with alarm thresholds
+the stream taught you itself.
+
 Then do it for streams that have nothing to do with each other. **If all the
 minimums move together, it is your clock** — nothing else could move unrelated
 counterparties at once. Keep a few weeks of it for the forensic question that

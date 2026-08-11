@@ -3,7 +3,7 @@ title: "What are the limits of GNSS time accuracy?"
 description: "The limits are not about radio or geometry. GNSS time is a prediction, so its accuracy is bounded by how good the corrections are — and corrections are forecasts of errors that have not happened yet."
 section: "gnss"
 order: 10
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "H"
 tags: ["UTC", "GNSS", "timing", "metrology"]
 draft: true
@@ -123,9 +123,81 @@ grades of correction.
 	present. It was a forecast, and forecasts decay.
 </CalloutBox>
 
-[[? Delta's correction-stream landscape figure belongs here, closing the sequence: intuition, then topology, then measurement. It is the one that puts numbers on "how fresh" and "how good".
+## And here is what that costs you, measured
 
-Still waiting on you — last word was that the work was in progress. When it is ready I would embed it as-is with a short caption pointing at the single message (fresher and lower is better) and leave the five caveats and the open/filled marker convention in PePPAR-Fix, where they matter and where a reader can find them. ?]]
+Two figures so far have shown the *shape* of the problem. This one puts numbers
+on it.
+
+<ZoomableImage
+	plate
+	src="/figures/correction-stream-landscape.svg"
+	alt="A log-log scatter plot titled Real-time accuracy is all about the corrections. The x axis is correction update rate, reversed so more frequent is to the right, running from 3 hours to 5 seconds. The y axis is satellite clock plus orbit time error in nanoseconds, lower is better, with a second axis on the right converting to equivalent range error where 1 ns is 30 cm. A grey region at upper left holds four triangles for the broadcast navigation message, updated every 10 minutes to 2 hours: GPS LNAV at 0.44 ns, Galileo I/NAV at 0.22 ns, BeiDou-3 at 0.69 ns and GLONASS at 3.82 ns, each with an error bar running from its median to its 95th percentile. A blue region at lower right holds three points for real-time correction streams updated every 5 to 10 seconds: Galileo HAS on the E6-B signal, IGS-RTS combined with no phase bias, and single-analysis-center SSR from CNES, CAS, WHU or AtomiChron, the last of these lowest on the plot. A thick green arrow runs diagonally from upper left to lower right labelled more frequent, more complete, better time. Marker shape distinguishes over-the-air sources from internet NTRIP; marker fill distinguishes broadcast-only from precise orbit plus clock plus code bias, and from streams that add phase bias and are therefore PPP-AR capable."
+	caption="Real-time correction sources: how often each updates against how well it pins the
+		satellite. The good corner is bottom right. The four broadcast points were measured from a
+		24-hour capture by <a href='https://github.com/bobvan/PePPAR-Fix'>PePPAR-Fix</a>, which also
+		carries the plotting script; the three stream points are their providers' published figures."
+/>
+
+**The eye should travel down and to the right**, and the distance it travels is
+the point: leaving the broadcast navigation message for a real-time correction
+stream buys two orders of magnitude in freshness and one in error, in a single
+step. Your receiver's raw observations do not improve when you spend more here.
+Everything separating a hundred-nanosecond consumer fix from a sub-nanosecond
+disciplined clock lives in the corrections applied on top.
+
+### Read the left-hand cluster carefully
+
+The four broadcast points are the interesting part, because they refute the
+obvious reading of their own axis. **Within** that cluster, update rate is not
+what sets accuracy. Galileo refreshes every ten minutes and lands at 0.22 ns;
+GLONASS refreshes every thirty minutes and lands at **3.82 ns**, seventeen times
+worse at the median and forty times worse at the 95th percentile. Galileo updates
+*more* often and is *better*, so cadence cannot be the explanation.
+
+What is left is the clock on board and the ground segment behind it — Galileo
+flies passive hydrogen masers where GLONASS flies caesium. That is why the figure
+draws two soft regions and one arrow rather than a line through seven points: a
+fitted line would assert a relationship that holds *between* the tiers and
+demonstrably fails *within* one.
+
+<CalloutBox type="tip" title="Two independent measurements, the same verdict on GLONASS">
+	The [prediction scorecard](/timekeeping/gnss/which-constellation-keeps-best-time/)
+	on another page also puts GLONASS an order of magnitude behind the other
+	three. It is worth being precise that these are <strong>not the same
+	measurement</strong>: BIPM's scorecard grades the <em>broadcast UTC offset</em>
+	against UTC, while this figure measures <em>satellite clock and orbit error</em>
+	against a precise correction stream. Different quantity, different reference,
+	different observer.
+
+	Two unrelated methods agreeing is worth more than either alone — and it is
+	the reason the advice on the
+	[timescale page](/timekeeping/gnss/choosing-a-gnss-timescale/) is *pick any
+	constellation but GLONASS* rather than a hedge.
+</CalloutBox>
+
+<CalloutBox type="warn" title="What this figure is not">
+	Four caveats, because the plot is more quotable than it is careful.
+
+	<strong>The four broadcast points are measured here; the three stream points
+	are published figures.</strong> The broadcast numbers come from a 24-hour
+	capture of the CNES stream, 8.8 million rows, on the logic that <em>the
+	correction a stream supplies is the broadcast error it removes</em>. The
+	residuals quoted for HAS, IGS-RTS and single-analysis-center SSR are their
+	providers' numbers. The figure does not distinguish the two, so this sentence
+	has to.
+
+	<strong>The y axis is per-satellite error, not your clock's error.</strong> A
+	receiver averages over every satellite in view, so its clock solution beats
+	any single point on this plot. Nothing here is an end-to-end budget.
+
+	<strong>One 24-hour window, one site.</strong> Constellation error varies with
+	geometry, with the upload schedule, and with which satellites happen to be up.
+
+	<strong>Real-time sources only.</strong> Post-processed IGS products reach
+	about 20 ps — far better than anything plotted — but arrive 17 hours to two
+	weeks late, which disqualifies them for a running clock and not for anything
+	else.
+</CalloutBox>
 
 ## Why you cannot get below a few nanoseconds *to UTC*
 

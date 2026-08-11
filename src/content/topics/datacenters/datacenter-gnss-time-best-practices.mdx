@@ -86,16 +86,17 @@ to prefer over the traditional `ntpd`.
 
 ## 6. Check your clocks against something else you already have
 
-Matching engine timestamps, application logs, another clock — anything
-independent. **Plot the minimum delta over every 5000 ticks, or every five
-minutes**, and watch that floor rather than the mean. The minimum is the
-interesting statistic because it strips out queueing and scheduling delay and
-leaves the clock difference.
+Matching engine timestamps, application logs, a partner's feed — anything
+carrying somebody else's clock. **Plot the minimum delta over every 5000 ticks,
+or every five minutes**, and watch that floor rather than the mean. The minimum
+strips out queueing and scheduling delay and leaves the clock difference.
 
-A backup nobody compares against inherits exactly the same silence as the
-primary.
+Then do it for streams that have nothing to do with each other. **If all the
+minimums move together, it is your clock** — nothing else could move unrelated
+counterparties at once. Keep a few weeks of it for the forensic question that
+arrives without warning.
 
-→ **[How do I know my clock is still right?](/timekeeping/measuring-time/how-do-i-know-its-still-right/)**
+→ **[The free second opinion already arriving at your door](/timekeeping/measuring-time/how-do-i-know-its-still-right/)**
 
 ## 7. Use the symmetry of radio and fiber latency to check clocks across sites
 
@@ -131,11 +132,6 @@ uncompensated cable, a spoofed source, a drifting clock nobody compares: none of
 these announces itself. The practices are not a route to a better number so much
 as a route to *knowing* your number, which is a different and more durable
 thing.
-
-[[? One judgement to check.
-
-Practice 6 says to plot the **minimum** delta over each window, and I have given the reasoning I believe is right — the minimum strips queueing and scheduling and leaves the clock difference. Your slide says "plot min delta for every 5000 ticks or 5 minutes" without the why. If the reason you actually chose the minimum was something else, say so and I will replace my explanation with yours. ?]]
-
 ## Where to go next
 
 - **[Ways to get time into a datacenter](/timekeeping/datacenters/acquiring-time/)**

@@ -123,7 +123,7 @@ worse, because it produces confident agreement.
 
 ## Second opinions you can have this week
 
-Three that cost little and are not widely used.
+Four that cost little and are not widely used.
 
 **A different constellation.** Free, already in your receiver, and it catches an
 entire class of failure — one operator having a bad day. BIPM's own scorecard
@@ -139,11 +139,72 @@ offset jumps 40 ns one Tuesday, something in your installation changed on
 Tuesday, and it does not matter that you cannot say what the offset should have
 been.
 
+**Every inbound message stream that carries a timestamp.** This one is the best
+of them and it is already arriving, so it gets a section of its own below.
+
 **The clock's own confidence, published rather than swallowed.** PTP carries a
 `clockClass` field precisely so a grandmaster can announce *my reference is gone
 and my confidence is degrading*. A system that knows it is in
 [holdover](/timekeeping/datacenters/what-happens-when-i-lose-gps/) and does not say
 so has solved the easy half of the problem.
+
+## The free second opinion already arriving at your door
+
+If you receive any message stream that carries somebody else's timestamps —
+market data, an exchange feed, a partner's API, logs from another company — you
+already have a clock comparison running. Nobody set it up and nobody is reading
+it.
+
+**Subtract their timestamp from yours and look at the shape.** The difference
+has two parts. There is a **physical minimum** you can never beat: speed of
+light over the distance, serialization delay, the time it takes a CPU to do
+anything at all. And there is a **variable delay** stacked on top of it — cache
+misses, operating-system scheduling, network adapters, switch queueing. Plot the
+distribution and the variable part is typically log-normal, piled up against
+that hard physical floor.
+
+The variable part is noise for this purpose. The floor is the signal.
+
+### How to run it
+
+1. **Pick an interval that gives you several thousand samples** of *your
+   timestamp minus theirs* — a few thousand messages, or five minutes, whichever
+   comes first for that stream.
+2. **Log the minimum from each interval**, all day. That minimum is the closest
+   thing you have to the pure clock difference, because the interval with the
+   least queueing is the one where the variable delay got out of the way.
+3. **Expect it to be able to go negative.** If their clock or yours is off, the
+   floor moves below zero, and a tool that assumes latency cannot be negative
+   will hide exactly the case you are hunting.
+4. **Log the maximum too**, while you are there. It costs nothing and it tells
+   you your worst-case latency on that stream — a second useful number from the
+   same pass.
+5. **Do it for every stream you receive**, and deliberately choose ones that have
+   nothing to do with each other: different companies, different industries,
+   different geographies.
+
+<CalloutBox type="tip" title="And here is what makes it the best second opinion you have">
+	Those counterparties share almost nothing. Different clocks, different
+	vendors, different networks, different countries, different reasons to be
+	wrong.
+
+	<strong>So if all your minimum differences move in the same direction at the
+	same moment, it is not a coincidence and it is not them. It is you.</strong>
+	Nothing else could move every unrelated stream at once.
+
+	That is the independence argument from the table above, taken to its limit —
+	and unlike every other row, it needs no hardware, no subscription and no
+	installation. The data is already coming in.
+</CalloutBox>
+
+You may be surprised at what you see.
+
+**Keep a few weeks of it.** The difference series is small, cheap to store, and
+it is the record you will want the day somebody asks what your clock was doing
+last Tuesday. Forensic questions arrive without warning and cannot be answered
+retrospectively from data nobody kept — which is the same argument the
+[monitoring record](/timekeeping/utc/what-does-traceable-to-utc-mean/) rests on,
+arriving from a completely different direction.
 
 ## Make something complain
 

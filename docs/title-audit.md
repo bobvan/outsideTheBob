@@ -59,12 +59,12 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 
 | page | why it works |
 |---|---|
-| Questions to ask a clock vendor | Task-shaped. Slug is `buying-a-datacenter-clock` — Bob's rule: get *datacenter* into the URL whenever the page is not already in the `datacenters` section |
+| Questions to ask a clock vendor | Task-shaped. Slug is `buying-a-datacenter-gnss-clock` — Bob's rule: put the words a searcher would type into the slug, and get *datacenter* in whenever the page is not already in the `datacenters` section |
 | Time Distribution Protocols | A statement, not a question — Bob's call. A compare/contrast page that search will read as one |
 | Measurement resolution and accuracy | A statement, same reasoning. Names both halves of what the page relates |
 | Datacenter GNSS Time Best Practices | A statement, and a phrase people search verbatim. Bob's title and slug |
 | UTC(k), and who defines yesterday | Kept the title; slug is now `who-defines-utc`, which is the searchable half |
-| Questions to ask when benchmarking clocks | Task-shaped |
+| Questions to ask when benchmarking clocks | Task-shaped. Slug is `benchmarking-datacenter-gnss-clocks`, by the same rule |
 | Accurately measuring elapsed time | Plain words, and the reframe puts the surprise in the first line |
 | Comparing distant clocks | Plain words for the actual job |
 | Choosing a GNSS timescale for syncing datacenter clocks | Task-shaped — see the caveat below |
@@ -105,7 +105,8 @@ retitle.
 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | `comparing-distant-clocks` — slug now matches the title |
 | How do I know my clock is still right? | Is my clock right? | `is-my-clock-right` — the question as somebody actually asks it |
 | What happens when I lose GPS? | How does GNSS holdover work? | `how-gnss-holdover-works` — names the mechanism the page explains, and the word people search |
-| *(kept)* Questions to ask a clock vendor | — | `buying-a-datacenter-clock` — slug only |
+| *(kept)* Questions to ask a clock vendor | — | `buying-a-datacenter-gnss-clock` — slug only |
+| *(kept)* Questions to ask when benchmarking clocks | — | `benchmarking-datacenter-gnss-clocks` — slug only |
 
 ## One caveat on a title that passes
 

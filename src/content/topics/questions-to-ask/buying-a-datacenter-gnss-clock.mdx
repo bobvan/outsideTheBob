@@ -67,19 +67,28 @@ depends on how long you watch. A single figure with no interval attached is
 either shorthand for a curve the vendor has, or a sign that they do not have
 one.
 
-Ideally you want a **TDEV(τ) plot**. Failing that, **MDEV(τ)** converts exactly —
-TDEV(τ) = τ·MDEV(τ)/√3 — so a modified-Allan plot is the same information wearing
-a different hat.
+Ideally you want a **TDEV(τ) plot**, because it directly shows *time stability* as
+the averaging interval changes. Its vertical axis is in units of time — likely
+nanoseconds — which is the same currency as your error budget.
 
-**ADEV is the one usually published and the one that does not convert.** ADEV and
-MDEV respond differently to white and flicker phase noise, which is the entire
-reason MDEV exists, so there is no general formula that takes you from one to the
-other. An ADEV plot is still worth having and still tells you a great deal — just
-not TDEV, and a vendor who hands you ADEV while you asked for TDEV should be
-asked which they measured.
+Failing that, **MDEV(τ)** converts exactly: TDEV(τ) = τ·MDEV(τ)/√3. MDEV itself
+is dimensionless like ADEV; the τ in that formula is what supplies the units. So
+a modified-Allan-deviation plot is the same information wearing a different hat.
 
-In the absence of any plot, a table of stability against τ is acceptable, but it
-wants **at least four or five rows** — enough to get a flavor of the shape the
+**ADEV is the one usually published and the one that does not convert.** It shows
+*frequency stability* as the averaging interval changes, and its vertical axis is
+dimensionless — a fractional change in rate. Think very small percentages, then
+parts per million, then parts per billion, and keep going: the clocks this page
+is about are quoted at parts per trillion and better.
+
+ADEV and MDEV respond differently to white and flicker phase noise, which is the
+entire reason MDEV exists, so there is no general formula that takes you from one
+to the other. An ADEV plot is still worth having and still tells you a great
+deal — just not TDEV, and a vendor who hands you ADEV while you asked for TDEV
+should be asked which they measured.
+
+In the absence of any plot, a table of stability as τ changes is acceptable, but
+it wants **at least four or five rows** — enough to get a flavor of the shape the
 plot would have had. One row is not a curve.
 
 ## 5. What is the holdover figure, and against what threshold?
@@ -122,4 +131,4 @@ A vendor confident in their numbers will tell you what to measure and what you
 should expect to see. One who is not will explain why you cannot.
 
 If you want to take them up on it, that is a
-[different set of questions](/timekeeping/questions-to-ask/benchmarking-clocks/).
+[different set of questions](/timekeeping/questions-to-ask/benchmarking-datacenter-gnss-clocks/).

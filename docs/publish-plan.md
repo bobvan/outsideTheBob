@@ -40,7 +40,7 @@ Not a branch — see `held/README.md` for why, and for how to bring one back.
 | `designing-a-clock` | Builder-only, and Bob's own note says it could need a lot of work |
 
 Holding them cost 4 inbound links, now removed and recorded here so they can be
-put back: `do-timestamp-errors-average-out` and `benchmarking-clocks` both
+put back: `do-timestamp-errors-average-out` and `benchmarking-datacenter-gnss-clocks` both
 pointed at *designing a clock*; `how-gnss-holdover-works` pointed at the
 OCXO page twice, and the glossary's `holdover` entry had it in `seeAlso`.
 
@@ -52,7 +52,7 @@ Deferred:
 
 | page | inbound links to fix | why defer |
 |---|---|---|
-| `benchmarking-clocks` | 2 | Bob: *"could need a lot of work"* |
+| `benchmarking-datacenter-gnss-clocks` | 2 | Bob: *"could need a lot of work"* |
 | `designing-a-clock` | 0 | Bob: *"could need a lot of work"*; nothing links to it |
 | `accuracy-and-resolution-in-pictures` | 1 | Bob: *"likely needs serious work"* — the only page he flagged that hard |
 | `how-big-is-a-degree` | 0 | The most-covered-elsewhere page in the garden: decimal degrees and an xkcd. Nothing links to it |
@@ -65,8 +65,8 @@ published page would notice, and no revision is owed when they land.
 The three edits, all trivial:
 
 ```
-buying-a-clock                     → benchmarking-clocks
-how-gnss-holdover-works       → benchmarking-clocks
+buying-a-datacenter-gnss-clock  → benchmarking-datacenter-gnss-clocks
+how-gnss-holdover-works         → benchmarking-datacenter-gnss-clocks
 accuracy-and-precision-in-pictures → accuracy-and-resolution-in-pictures
 ```
 

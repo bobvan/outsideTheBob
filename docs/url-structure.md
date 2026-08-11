@@ -212,3 +212,27 @@ collection *identifier* changes.
    pays for itself, with a real second garden to validate the shape against.
 3. **Never:** restructure speculatively. The current layout has one flaw — a
    generic name — and no second garden to tell us what the right structure is.
+
+## Slug policy, settled 2026-08-11
+
+Bob's rule, and it decides future slugs without another discussion:
+
+> **Put the words a searcher would actually type into the slug**, and get
+> *datacenter* in there whenever the page is not already sitting in the
+> `datacenters` section.
+
+Applied to both `questions-to-ask` pages: `buying-a-clock` →
+`buying-a-datacenter-gnss-clock`, `benchmarking-clocks` →
+`benchmarking-datacenter-gnss-clocks`.
+
+**On the SEO premise, restated fairly.** Exact keywords in a path are a weak
+*ranking* signal today — that part of the 2005 model has moved. But the analysis
+above already lists three things paths still do, and this rule serves all three:
+the URL is **displayed** in results and shared links, it **generates the
+breadcrumb** a searcher scans, and it **expresses the IA**. A slug that names the
+thing gets clicked more than one that does not, whether or not it ranks higher.
+So the instinct survives the mechanism changing under it.
+
+**Cost:** length. `/timekeeping/questions-to-ask/buying-a-datacenter-gnss-clock/`
+is 60 characters against a 43-character median — within the range already set by
+`matching-acquisition-and-distribution` at 64, so no new precedent.

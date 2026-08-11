@@ -173,8 +173,8 @@ have built a very expensive thermometer.
 </CalloutBox>
 
 An oven-controlled oscillator helps precisely because it attacks this term: it
-holds the crystal at a constant temperature so the room's temperature stops
-mattering. That is what you are buying, and it is why the improvement over a
+holds the crystal at a constant temperature so the room's temperature
+matters less. That is what you are buying, and it is why the improvement over a
 TCXO in holdover is far larger than the difference in their quoted stability
 figures suggests.
 
@@ -188,7 +188,7 @@ temperature above all, but also airflow across the case and what the supply rail
 is doing. Those are not properties of the oscillator. They are properties of the
 room, the rack, the season and the day.
 
-So consider the two extremes your test could have landed on.
+So consider the two extreme rooms you could use for holdover testing.
 
 **The lucky room.** Imagine the environment changing in exactly the pattern that
 cancels the oscillator's own drift — the temperature nudging the crystal one way
@@ -271,14 +271,6 @@ measurement side of this in more detail. The point here is that holdover is one
 of the few clock behaviours you can watch for yourself with equipment you already
 own — and that watching it teaches you about your building at least as much as
 about your clock.
-
-[[? One of the three thermal stories has now landed — the ceiling fan is the qErr slide above, and it turned out to be the F9T's TCXO rather than an OCXO, so I have written it as what it is rather than as the 4 ppb version bravo remembered.
-
-Two loose ends left.
-
-1) The other two stories are still unsourced and both would earn their place: the oven that got *worse* when over-insulated because the loop needs somewhere to dump heat, and the back-yard unit that entered a wind-driven limit cycle by day and recovered every night. The over-insulated oven especially — it is genuinely counterintuitive and this page now has the right slot for it.
-
-2) The σ(t) tables are from `tdcp-holdover-anchor.md`, a **design document with no code in flight**, so they are a modelled error budget rather than a measurement. I have labelled them "our own error budget". If any of it has since been measured, say so and I will relabel. Note this now cuts both ways: the new section argues that a *measurement* would be the weaker number anyway, so modelled-from-worst-case is arguably the right thing to be quoting here. ?]]
 
 ## Where to go next
 

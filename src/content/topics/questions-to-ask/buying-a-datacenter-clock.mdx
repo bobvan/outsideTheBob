@@ -3,12 +3,12 @@ title: "Questions to ask a clock vendor"
 description: "Nine questions whose answers tell you whether a vendor understands their own product — no test equipment required."
 section: "questions-to-ask"
 order: 10
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "H"
 tags: ["datacenter", "timing", "buying"]
 draft: true
-reviewed: 2026-08-08
-reviewNote: "Could need a lot of work"
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
@@ -53,11 +53,12 @@ the answer is a GNSS-derived estimate, or a lab's
 Those are not equivalent claims, and a vendor who does not distinguish them has
 not thought about it.
 
-## 3. Is that a specification, a typical, or a measured distribution?
+## 3. Is a number in a specification a min, a max, a typical, or a measured distribution?
 
-A spec is a promise about the worst unit. A typical is a story about a good one.
-A distribution is evidence. Ask which you are being shown, and how many units it
-came from.
+A number given as a min or a max is a promise about the worst unit off the
+production line. A "typical" number is a story about a good one. A distribution
+is evidence. Ask which you are being shown, and how many production units it came
+from.
 
 ## 4. Over what averaging interval?
 
@@ -65,6 +66,21 @@ came from.
 depends on how long you watch. A single figure with no interval attached is
 either shorthand for a curve the vendor has, or a sign that they do not have
 one.
+
+Ideally you want a **TDEV(τ) plot**. Failing that, **MDEV(τ)** converts exactly —
+TDEV(τ) = τ·MDEV(τ)/√3 — so a modified-Allan plot is the same information wearing
+a different hat.
+
+**ADEV is the one usually published and the one that does not convert.** ADEV and
+MDEV respond differently to white and flicker phase noise, which is the entire
+reason MDEV exists, so there is no general formula that takes you from one to the
+other. An ADEV plot is still worth having and still tells you a great deal — just
+not TDEV, and a vendor who hands you ADEV while you asked for TDEV should be
+asked which they measured.
+
+In the absence of any plot, a table of stability against τ is acceptable, but it
+wants **at least four or five rows** — enough to get a flavor of the shape the
+plot would have had. One row is not a curve.
 
 ## 5. What is the holdover figure, and against what threshold?
 
@@ -107,9 +123,3 @@ should expect to see. One who is not will explain why you cannot.
 
 If you want to take them up on it, that is a
 [different set of questions](/timekeeping/questions-to-ask/benchmarking-clocks/).
-
-[[? Two things I am guessing at and you are not.
-
-1) Is there a tenth question about **regulatory traceability** specifically — MiFID II or similar — that a trading buyer would always ask and I have missed? The topic doc leaves "which regulations to name" open, so I have deliberately not named any.
-
-2) Question 3 (spec vs typical vs distribution) is a general hardware-buying instinct rather than something I have seen you say about clocks. Does it hold up in this market, or do clock vendors genuinely publish distributions? ?]]

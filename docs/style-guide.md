@@ -248,3 +248,17 @@ Two of these decisions were applied by bulk replacement, and both bit:
 
 **Always read the diff after a sweep**, and be wary of running one over a
 document that discusses the very strings being replaced.
+
+## Do not name specific regulations
+
+Bob's call, 2026-08-11. Pages may say a requirement **arrived from** a regulator,
+a counterparty, an auditor or a contract — that framing is doing real work and
+stays. What they must not do is cite the regulation by name.
+
+**Why:** naming one invites "IANAL, but here is why you are wrong and I am
+right." That is an argument with no technical content, no way to win, and no
+version of it that improves the page. The reader who is subject to a regulation
+already knows its number; the reader who is not gains nothing from it.
+
+Applies to MiFID II RTS 25 and every equivalent. Declined twice already — do not
+re-propose it.

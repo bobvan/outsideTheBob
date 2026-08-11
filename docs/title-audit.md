@@ -59,7 +59,7 @@ Task-shaped with no jargon, or Bob's explicit call that nothing better exists.
 
 | page | why it works |
 |---|---|
-| Questions to ask a clock vendor | Task-shaped |
+| Questions to ask a clock vendor | Task-shaped. Slug is `buying-a-datacenter-clock` — Bob's rule: get *datacenter* into the URL whenever the page is not already in the `datacenters` section |
 | Time Distribution Protocols | A statement, not a question — Bob's call. A compare/contrast page that search will read as one |
 | Measurement resolution and accuracy | A statement, same reasoning. Names both halves of what the page relates |
 | Datacenter GNSS Time Best Practices | A statement, and a phrase people search verbatim. Bob's title and slug |
@@ -105,6 +105,7 @@ retitle.
 | How do you compare two clocks a thousand miles apart? | Comparing distant clocks | `comparing-distant-clocks` — slug now matches the title |
 | How do I know my clock is still right? | Is my clock right? | `is-my-clock-right` — the question as somebody actually asks it |
 | What happens when I lose GPS? | How does GNSS holdover work? | `how-gnss-holdover-works` — names the mechanism the page explains, and the word people search |
+| *(kept)* Questions to ask a clock vendor | — | `buying-a-datacenter-clock` — slug only |
 
 ## One caveat on a title that passes
 

@@ -82,17 +82,21 @@ per-unit term.*
 
 Each of these is an edit bravo handed us with the reasoning attached.
 
+*D5 and E5 declined by Bob, 2026-08-11 — **do not name specific regulations.**
+His reason: the topic invites "IANAL, but here is why you are wrong and I am
+right", which is an argument this site cannot win and does not want. The
+requirement framing stays; the citation does not. Treat this as standing policy,
+not a one-off, and do not re-propose naming MiFID II RTS 25 or its equivalents.*
+
 | # | item | where |
 |---|---|---|
 | D1c | Band pairs a part *supports* vs *lists* — L1/L2 **or** L1/L5, switchable, NAKing the other. **Still open** — the page names the pairs but never says a part may refuse to run both. | `what-makes-an-accurate-timing-receiver` |
 | D3a | Three-cornered hat: keep it, and make its unavailability the point — it assumes uncorrelated errors, which a shared antenna/reference/room deliberately breaks. | `benchmarking-clocks` |
 | D3b | Replace "replaced by a short" with the **zero-baseline counter test** — split one PPS into both channels; reproducible by any reader with a splitter. | `benchmarking-clocks` |
-| D5 | **Tenth vendor question, and name the regulation** — MiFID II RTS 25. Ask not "are you compliant" but *what do you produce when a regulator asks me to demonstrate divergence over a past quarter?* | `buying-a-clock` |
 | D6a | **Missing category: the actuator.** What are you steering with, how finely, over what range, and is the range symmetric? | `designing-a-clock` — **held**, so this waits for the rework |
 | D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` — **held** |
 | D7 | Gloss common-mode on **first** use. Still open: first use is the pull-quote translation, and the explanation does not arrive until 24 lines later. | `measuring-time/prioritize-agreement-or-accuracy` |
 | D8 | Move **one sentence** of the fairness section up, under the "why has BIPM stopped" heading, so the reader is not braced against us while reading the evidence. Leave the section where it is. | `comparing-distant-clocks` |
-| E5 | Name a regulation somewhere — the page builds its opening on requirements arriving from a regulator and still names none. Bravo argues this is the biggest hole in the search surface. | `measuring-time/why-precise-time` |
 | E6 | Two-Clock Agreement is a section of one, named after Bob's strongest original result. *What limits agreement* has the most unpublished evidence behind it. | new page |
 
 ## 3. Waiting on someone else

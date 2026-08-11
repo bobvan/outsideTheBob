@@ -50,7 +50,19 @@ the scripts that generate the artwork.
 
 ## Hosted On
 
-GitHub Pages, fronted by Cloudflare.
+[Cloudflare Workers](https://workers.cloudflare.com/). Pushing to `main` is the
+deploy: Cloudflare watches the branch, runs the build, and publishes the result.
+There is no server and no Worker code — the configuration says *serve these
+files*, and Cloudflare serves them from wherever you happen to be.
+
+It used to run on GitHub Pages behind Cloudflare, which meant two systems that
+each thought they were in charge of the site. Now there is one. The domains are
+on Cloudflare's DNS too; **ThinkOutsideTheBob.Com** is the real one and
+**OutsideTheBob.Com** is a shortcut that redirects to it, keeping whatever path
+you arrived with.
+
+Neither domain sends or accepts mail, and both say so in DNS — if something
+claims to be email from here, it isn't.
 
 ## Nothing Comes From Anywhere Else
 
@@ -63,10 +75,11 @@ anything. A charting library I tried briefly would have loaded itself from a
 CDN on every page view, which is how I ended up publishing charts as plain
 images instead.
 
-Traffic is measured at Cloudflare's edge, which counts requests as they pass
-through without putting a single line of JavaScript on the page or setting
-anything in your browser. I get to know which posts people read. You don't get
-followed around the internet. This seems like the right trade.
+Traffic is counted at Cloudflare's edge as requests pass through, which needs no
+JavaScript on the page and sets nothing in your browser — and now that Cloudflare
+is also the host, it is simply a byproduct of serving the file. I get to know
+which posts people read. You don't get followed around the internet. This seems
+like the right trade.
 
 ## Typography
 

@@ -7,6 +7,9 @@ tags: ["GNSS", "timekeeping", "talks", "AI", "hardware"]
 draft: false
 ---
 
+import { Image } from "astro:assets";
+import YouTubeShot from "../../assets/SubNanoYouTube.png";
+
 I gave [this talk again](/blog/sub-nanosecond-at-home-with-gnss-and-ai/) today,
 on the [Time Appliances Project](https://www.opencompute.org/projects/time-appliances-project-tap)
 call — a month after the first outing at NPL, and to a room full of the people
@@ -88,6 +91,23 @@ pages are where the answers get written down and corrected.
 **[Watch the talk](https://www.youtube.com/watch?v=1DAI40a6PBg)** — the Time
 Appliances Project published the whole call, and this is the v4 deck with the
 narration that carries it.
+
+<figure class="video-still">
+	<a href="https://www.youtube.com/watch?v=1DAI40a6PBg">
+		<Image
+			src={YouTubeShot}
+			alt="A frame from the recording. The slide plots solid Earth tide as a timing correction — up, north and east components over 48 hours — annotated in magenta: My lab moves up and down by 1.1 ns per day. Bob is speaking in the corner."
+			width={1000}
+			loading="lazy"
+		/>
+	</a>
+	<figcaption>
+		Thirty minutes in, on the slide I did not expect to be arguing about: the
+		solid Earth tide moves my lab up and down by about 33 cm, which is
+		<strong>1.1 ns</strong> of range twice a day, and it is deterministic enough
+		to correct for. Click through for the whole 54 minutes.
+	</figcaption>
+</figure>
 
 [View the presentation on GitHub](https://github.com/bobvan/subNanoAtHomeGnssAI/blob/main/subNanoAtHomeGnssAI.pdf),
 or

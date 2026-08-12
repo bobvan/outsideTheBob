@@ -1,0 +1,120 @@
+---
+title: "Topics In Timekeeping Is Live"
+slug: "topics-in-timekeeping-is-live"
+pubDate: 2026-08-11
+description: "Thirty pages on precise time in datacenters — what limits GNSS accuracy, what traceability actually requires, and how you would know your clock was still right. Not blog posts. Pages I intend to keep correct."
+tags: ["timing", "GNSS", "UTC", "metrology", "datacenter"]
+draft: true
+---
+
+import CalloutBox from "../../components/post/CalloutBox.astro";
+
+Two talks in, I kept running into the same problem.
+
+A presentation is a line. You get an hour, you pick a path through the material,
+and everything off that path gets a wave of the hand — *that's a whole other
+talk* — and then it never is. The questions afterwards were always about the
+things I had waved at.
+
+So I have written those down instead.
+**[Topics In Timekeeping](/timekeeping/)** is live.
+
+## What it is
+
+Thirty pages on getting precise time into a datacenter and knowing whether you
+actually have it. It is deliberately **not** a series of blog posts.
+
+Posts are dated. They are a record of what I thought in a particular week, and
+the honest thing to do with an old one is leave it alone. These pages are the
+opposite: they have no publication date, they carry an *updated* date, and I
+intend to keep them correct. When I learn something that contradicts one, I will
+change the page rather than write a new post explaining that the old one was
+wrong.
+
+That is a promise about maintenance, not about being right the first time.
+Several of these pages already contain arguments I had to withdraw.
+
+## The numbers
+
+| | |
+|---|---|
+| pages | **30**, in six sections |
+| words | about **42,000** |
+| glossary entries | **32** |
+| figures | **19** — 10 drawn for the site, 9 from my talks |
+| links between pages | **143** |
+| outside sources cited | **22** |
+
+Eleven days from the first page to this one.
+
+## The six sections
+
+**[Asking the Right Questions](/timekeeping/questions-to-ask/)** — what to ask a
+vendor before you buy a clock, and what to ask yourself before you benchmark one.
+Nine questions whose *answers* tell you whether the person selling understands
+what they are selling.
+
+**[Timekeeping in Datacenters](/timekeeping/datacenters/)** — the practical
+core. How to get time into a building, what makes a receiver accurate, what to
+type in for your antenna position and feedline, how holdover actually works, and
+eight best practices that mostly cost nothing but attention.
+
+**[GNSS](/timekeeping/gnss/)** — what limits GNSS time accuracy, which
+constellation keeps the best time, and which correction stream you actually need.
+The short version: GNSS time is a *prediction*, and that single fact sets every
+limit.
+
+**[What Is UTC](/timekeeping/utc/)** — whether you can sync to UTC at all
+(literally no, practically yes), who defines it, what "traceable to UTC" really
+requires, and whether you could build your own link to UTC(NIST). We tried. The
+answer is more interesting than yes or no.
+
+**[Measuring Time](/timekeeping/measuring-time/)** — the metrology underneath all
+of it. Timestamps and timescales, precision versus trueness, why averaging stops
+helping, why resolution can counterfeit precision, and how you would know your
+clock was still right.
+
+**[Time Distribution](/timekeeping/time-distribution/)** — NTP, NTS, PTP, White
+Rabbit and a bare PPS, compared on the two things that decide which you need, and
+why acquiring time well and distributing it badly wastes the money you spent on
+the first part.
+
+There is also a **[glossary](/timekeeping/glossary/)**, because half of this
+subject is people using the same word for different things.
+
+## Where to start
+
+Depends what brought you here.
+
+- Somebody handed you a number and told you to hit it →
+  **[Why do you want precise time?](/timekeeping/measuring-time/why-precise-time/)**
+- You are buying →
+  **[Questions to ask a clock vendor](/timekeeping/questions-to-ask/buying-a-datacenter-gnss-clock/)**
+- You already have clocks and want them better →
+  **[Datacenter GNSS time best practices](/timekeeping/datacenters/datacenter-gnss-time-best-practices/)**
+- You want the idea that reorganized my own thinking →
+  **[What are the limits of GNSS time accuracy?](/timekeeping/gnss/limits-of-gnss-time-accuracy/)**
+
+<CalloutBox type="tip" title="The one thing I would put on a poster">
+	Almost every failure in this field is <strong>quiet</strong>. A wrong antenna
+	position, an uncompensated cable, a receiver surveying itself badly, a clock
+	drifting after its reference vanished — none of them raise an alarm, none
+	degrade a status light, and all of them produce a confident, steady, wrong
+	answer.
+
+	Which is why so many of these pages end up in the same place: the number you
+	can defend is the one you checked against something independent, and wrote
+	down.
+</CalloutBox>
+
+## It will change
+
+It is a garden, not a stream. Pages will be revised, split, retitled and
+occasionally deleted. There is
+[an RSS feed](/timekeeping/rss.xml) if you want to hear about that.
+
+Several pages carry measurements I have not finished making, and I have tried to
+be explicit about which numbers are mine, which are somebody else's, and which
+are modelled rather than measured. If you spot something wrong, I want to know —
+[the About page](/about/) says how to reach me, and getting it right matters to
+me more than having said it first.

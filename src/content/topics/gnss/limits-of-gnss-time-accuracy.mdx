@@ -4,9 +4,10 @@ slug: "limits-of-gnss-time-accuracy"
 description: "The limits are not about radio or geometry. GNSS time is a prediction, so its accuracy is bounded by how good the corrections are — and corrections are forecasts of errors that have not happened yet."
 section: "gnss"
 order: 10
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "H"
 tags: ["UTC", "GNSS", "timing", "metrology"]
+bottomLine: "the-one-thing-to-carry-away"
 draft: false
 reviewed: 2026-08-11
 reviewNote: "Ready"
@@ -233,6 +234,27 @@ comparison you make internally.
 So the useful question is not "how close to UTC can I get?" but "does anything I
 do actually require UTC?" For a great deal of datacenter work the answer is no,
 and knowing that is worth a lot of money.
+
+## The one thing to carry away
+
+- **Nothing up there knows what time it is.** The satellites' clocks free-run and
+  drift; the ground measures that drift and publishes a forecast of it; **your
+  receiver does the arithmetic.** Every limit on this page follows from that one
+  sentence.
+- **Your accuracy is somebody's forecast, and forecasts decay.** Which is why a
+  correction's *freshness* is a specification in its own right, and why a
+  five-second-old one is meaningfully worse than its interval suggests.
+- **Buying accuracy means buying corrections, not receivers.** The raw
+  observations do not improve when you spend more. Everything between a
+  hundred-nanosecond fix and a sub-nanosecond clock lives in what you apply on
+  top.
+- **Within the broadcast tier, cadence is not the lever.** Galileo updates more
+  often than GLONASS and is seventeen times better; the difference is the clock on
+  board, not the schedule.
+- **A few nanoseconds to UTC is the floor, and it may not be your problem.** If
+  nobody outside your organization has to accept your timestamps, GPS Time is a
+  perfectly good timescale and the last few nanoseconds to UTC are a cost with no
+  benefit.
 
 ## Where to go next
 

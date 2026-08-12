@@ -4,9 +4,10 @@ slug: "how-gnss-holdover-works"
 description: "When GNSS goes away your clock coasts on the frequency it was last told. How far it drifts is decided by your room more than your oscillator — which is why a holdover measurement and a holdover specification are different objects, and only one of them is a promise."
 section: "datacenters"
 order: 40
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "H"
 tags: ["GNSS", "timing", "datacenter", "oscillators", "buying"]
+bottomLine: "the-short-version"
 draft: false
 reviewed: 2026-08-11
 reviewNote: "Ready"
@@ -272,6 +273,26 @@ measurement side of this in more detail. The point here is that holdover is one
 of the few clock behaviours you can watch for yourself with equipment you already
 own — and that watching it teaches you about your building at least as much as
 about your clock.
+
+## The short version
+
+- **Holdover is not free-running.** The loop already removed the crystal's
+  frequency *error*; what you are left with is its *drift*, which is a much
+  smaller number and the reason holdover works at all.
+- **A holdover figure with no threshold attached means nothing.** Twenty-four
+  hours to 1 ms and twenty-four hours to 100 ns are different products. Ask *to
+  what*, and *on which oscillator*.
+- **The limit is usually your room, not your crystal.** Temperature moves an
+  oscillator faster than it would ever wander alone, so a stable room often buys
+  more than a better part. Find out whether the air conditioning cycles before
+  you price a rubidium.
+- **Quote the specification, never your own test.** Every test lands somewhere
+  between a room that cancels the drift by luck and a room that drives it to the
+  datasheet limit — and real rooms sit near the lucky end. Beating the spec means
+  your room was kind, which it will be right up until it isn't.
+- **Measure anyway, to learn your building.** The gap between your result and the
+  worst case is the margin your room is currently donating. It can stop donating
+  it at any time.
 
 ## Where to go next
 

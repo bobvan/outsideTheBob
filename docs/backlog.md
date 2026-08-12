@@ -143,19 +143,15 @@ Bob's alternative to a parallel summarized site, and a better one: no duplicate
 URLs, no second copy to keep in sync, and the summary is edited alongside the
 page that owns it. See the style-guide entry for the rule and the reasoning.
 
-`npm run bottom-line`. **4 of 9 long pages have one.** Five to write, in
-descending order of how much they need it:
+`npm run bottom-line`. ✅ **9 of 9 long pages have one**, written 2026-08-12.
+The tenth, `datacenter-gnss-time-best-practices`, is under the threshold and
+carries one anyway because it is a list with a shape worth naming.
 
-| words | page |
-|---|---|
-| 3416 | `can-i-build-my-own-link-to-utc-nist` |
-| 3034 | `comparing-distant-clocks` |
-| 3010 | `what-makes-an-accurate-timing-receiver` |
-| 2195 | `how-gnss-holdover-works` |
-| 1525 | `limits-of-gnss-time-accuracy` |
+Two of the nine share the heading *The short version* — deliberate, not an
+oversight. Recognisability across pages is worth more than variety when the
+thing being recognised is "here is the summary".
 
-These are Bob's voice and go on live pages, so each wants his eye before it
-ships rather than a batch of five landing at once.
+
 
 *The parallel-site idea is closed — see the `summaries-prototype` branch for what
 it looked like and why inline won. Kept unmerged; the branch's one summary is

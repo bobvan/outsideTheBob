@@ -4,9 +4,10 @@ slug: "comparing-distant-clocks"
 description: "You cannot run a cable, and neither clock can be the source for the other. So you both watch a third clock in the sky — which drags its error into your answer. Every technique here is a different way of removing it."
 section: "measuring-time"
 order: 120
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology"]
+bottomLine: "what-to-take-away"
 draft: false
 reviewed: 2026-08-10
 reviewNote: "ready"
@@ -392,6 +393,27 @@ Three questions, in the spirit of the
    on the public record and it is no. That is not a gotcha — it is a way of
    asking what the technique is being chosen *for*, which is usually continuity,
    calibration, and a report rather than performance.
+
+## What to take away
+
+- **Pick the technique on its merits, and know it barely matters.** All three
+  remove the satellite's clock error; what separates them is what they cost you
+  in satellites, in noise, and in how far apart the two ends are.
+- **Common view is not obsolete, it is superseded.** The error it removes
+  perfectly stopped being the largest one when Selective Availability went away.
+  Under about a thousand kilometres it still loses you almost nothing.
+- **Baseline is the deciding number.** BIPM measured ~0 % gain from switching at
+  700 km and ~35 % at 10,000 km. If your reference is regional, most of the
+  argument against common view does not apply to you.
+- **None of this is real-time and none of it will be.** Ten minutes is close to
+  the floor for a published comparison, because every technique works by
+  averaging. Use a link to steer a *rate*, and let your own oscillator carry the
+  seconds in between.
+- **What your answer is referenced to matters more than how quiet it is.** A
+  correction stream's datum is stable, private and certified by nobody. Difference
+  two solutions and you land on UTC(NIST), which appears in *Circular T* every
+  month with a published uncertainty. You trade a private zero for a public one,
+  and that is the whole business of traceability.
 
 ## Where to go next
 

@@ -4,9 +4,10 @@ slug: "what-makes-an-accurate-timing-receiver"
 description: "Six traits, in the order they start to matter. The last one separates a box that wants to be your master clock from a box that knows you already have a better one."
 section: "datacenters"
 order: 20
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "M"
 tags: ["GNSS", "timing", "datacenter", "buying", "oscillators"]
+bottomLine: "if-you-read-nothing-else"
 draft: false
 reviewed: 2026-08-11
 reviewNote: "Ready"
@@ -373,6 +374,26 @@ on the datasheet. And it is a question the
 [vendor questions page](/timekeeping/questions-to-ask/buying-a-datacenter-gnss-clock/) never quite asks,
 because it starts from the assumption that you are buying a clock rather than
 the parts to build one.
+
+## If you read nothing else
+
+- **Decide which thing you are buying before you compare anything.** A network
+  clock has already made these decisions; a module hands you the parts and the
+  work. Half the traits above are meaningless on one and decisive on the other.
+- **Two frequency bands is the one to spend money on.** It is the only item here
+  that changes the physics rather than the bookkeeping, and it is a purchase
+  decision you cannot retrofit.
+- **Ask what the firmware will tell you, not just what the hardware does.**
+  Quantization error, raw observations and an honest status are the difference
+  between a box you can audit and a box you have to trust. Same silicon, and the
+  non-timing parts report nothing.
+- **A reference frequency input is the fork in the road.** Without one, whatever
+  you bolt on the outside is a second hop. With one, your oscillator *is* the
+  receiver's clock and the measurement is direct. That single line on a datasheet
+  decides whether the box wants to be your clock or expects you to have one.
+- **Ask which signal combinations run together**, not how many bands are listed —
+  and remember any delay figure you were given is only valid for the combination
+  it was measured on.
 
 ## Where to go next
 

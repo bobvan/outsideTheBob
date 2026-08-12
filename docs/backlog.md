@@ -120,6 +120,23 @@ section into the promise being kept, rather than repeating itself.*
 | D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` — **held** |
 | E6 | Two-Clock Agreement is a section of one, named after Bob's strongest original result. *What limits agreement* has the most unpublished evidence behind it. | new page |
 
+## 2b. Search engine discovery — started 2026-08-11
+
+Bob's call: invite the crawlers rather than wait. The old anonymous sitemap ping
+is retired at both Google and Bing, so this splits in two.
+
+| | state |
+|---|---|
+| **IndexNow** — Bing, and therefore Yahoo, DuckDuckGo and Ecosia; plus Yandex, Naver, Seznam, Yep | ✅ **done.** 75 URLs submitted, 202 Accepted. Re-run `npm run indexnow` after adding pages, or pass specific paths |
+| **Google Search Console** | ⏳ **needs Bob** — it is the only route to Google, and it needs a login. Verify the property, then submit `https://thinkoutsidethebob.com/sitemap-index.xml` |
+| **Bing Webmaster Tools** | optional. IndexNow already gets Bing crawling; the tool is for *reporting*, and it can import the property from Search Console rather than verifying again |
+| **Cloudflare Crawler Hints** | optional one-click: a zone toggle that fires IndexNow automatically on change, replacing the manual `npm run indexnow` |
+
+**Verification, when Bob is ready.** DNS TXT is the one to prefer — he controls
+the Cloudflare zone, it covers the whole domain including subdomains, and it
+needs no repo change. If he would rather do it in the repo, an HTML meta tag in
+`BaseLayout` or a file in `public/` both work and are a one-line change here.
+
 ## 3. Waiting on someone else
 
 | # | item | who |

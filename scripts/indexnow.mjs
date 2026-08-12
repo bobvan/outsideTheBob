@@ -18,7 +18,7 @@
 // is silently discarded — you would get a 200 and nothing would happen. Checking
 // first turns a silent no-op into a loud one.
 
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 
 const HOST = 'thinkoutsidethebob.com';
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
@@ -27,7 +27,16 @@ const argv = process.argv.slice(2);
 const dryRun = argv.includes('--dry-run');
 const explicit = argv.filter((a) => a.startsWith('/'));
 
-const key = readFileSync('.indexnow-key', 'utf8').trim();
+// The key is not a secret — it is published at a public URL by design, and the
+// file that publishes it is committed. So there is nothing to keep out of git,
+// and a second copy in a gitignored file would only mean the script broke on a
+// fresh clone. Read it from the thing that already carries it.
+const keyFile = readdirSync('public').find((f) => /^[0-9a-f]{8,32}\.txt$/.test(f));
+if (!keyFile) {
+	console.error('✗ no IndexNow key file in public/. Create one: a file named <key>.txt containing <key>.');
+	process.exit(1);
+}
+const key = keyFile.replace(/\.txt$/, '');
 const keyLocation = `https://${HOST}/${key}.txt`;
 
 // ---- what to submit

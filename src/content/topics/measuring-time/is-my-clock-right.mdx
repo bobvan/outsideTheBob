@@ -1,10 +1,10 @@
 ---
 title: "Is my clock right?"
 slug: "is-my-clock-right"
-description: "Timing failures are usually quiet, and nothing inside a wrong clock knows it is wrong. The only detector is a second opinion — and what that second opinion shares with the first decides what it can and cannot see."
+description: "Timing failures are usually quiet, and nothing inside a wrong clock knows it is wrong. The only detector is a second clock — and the boundary between what the two share and where they are independent decides what you can learn by comparing them."
 section: "measuring-time"
 order: 110
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "H"
 tags: ["datacenter", "timing", "GNSS", "monitoring", "metrology"]
 draft: false
@@ -25,15 +25,15 @@ correctly. Timing failures are frequently quiet.
 Which leaves an obvious question the rest of the site keeps not answering:
 **how would you know?**
 
-## Why the clock cannot tell you
+## Why one clock cannot tell you
 
 Start with why this is hard, because it is not a matter of better firmware.
 
-A clock's error is the difference between what it says and what is true. The
+A clock's error is the difference between what it says and what is true, and one
 clock has access to exactly one of those. Everything it can measure — its own
 oscillator, its own PPS, its own solution residuals — is measured *in its own
-frame*, and a constant error moves that whole frame together. **You cannot
-detect a silent error from inside the thing that has it.**
+frame*, and a constant error moves that whole frame together. **You cannot detect
+a silent error from inside the thing that has it.**
 
 That is not a limitation anyone has failed to engineer around. It is the shape
 of the problem.
@@ -55,17 +55,24 @@ of the problem.
 	find out about from somebody else.
 </CalloutBox>
 
-## The only detector is a second opinion
+## The only detector is a second clock
 
-So you need something outside the frame. Two sources that ought to agree, and do
-not, are telling you something no single source ever could.
+So you need something outside the frame. Two clocks that ought to agree, and do
+not, are telling you something neither of them could tell you alone.
 
-That much is standard resilience reasoning and most people arrive at it
-unaided. The part that is not standard — and the part worth the rest of this
-page — is that **a second source is not a second source**. What it *shares* with
-the first decides what it can see.
+That much is standard resilience reasoning and most people arrive at it unaided.
+The part that is not standard — and the part worth the rest of this page — is how
+little independence you actually have. **A completely independent second clock is
+much harder to come by than it sounds.** Two clocks in the same building share a
+room, a power feed, a network, a configuration, often an antenna, and always the
+person who set them up.
 
-## What your second opinion shares decides what it can see
+So take an inventory. **Write down what your two clocks share and where they are
+genuinely independent** — and keep that list in mind every time you read one
+against the other. The boundary between the shared column and the independent one
+is exactly what decides what you can and cannot learn by comparing them.
+
+## Where that boundary falls, and what it costs you
 
 Here is the counterintuitive bit, and it runs the opposite way to the instinct.
 
@@ -86,7 +93,10 @@ You have given up that sensitivity — the two now disagree a little for a dozen
 innocent reasons — and bought something you could not have otherwise: the
 comparison can now see an antenna problem.
 
-| your second source | catches | cannot see |
+Here is that inventory for the arrangements you are most likely to have. Read it
+as two columns of one list: what is independent, and therefore what shows up.
+
+| your second clock | catches | cannot see |
 |---|---|---|
 | second receiver, **same antenna** | receiver faults, firmware changes, configuration drift — at millimetre sensitivity | anything about the antenna, feedline, position or sky |
 | second receiver, **own antenna** | antenna moved, feedline changed, local multipath | anything common to the site |
@@ -102,7 +112,7 @@ against another clock directly, which is the cheapest version of this there is.
 The arrangement is the design decision, not the class of hardware.
 
 Read down the "cannot see" column and the design rule writes itself: **choose
-what your second source shares, on purpose, according to what you are trying to
+what your second clock shares, on purpose, according to what you are trying to
 catch.** A backup you never compare against inherits exactly the same silence as
 the primary — and a comparison whose two halves share the fault you fear is
 worse, because it produces confident agreement.
@@ -117,12 +127,12 @@ worse, because it produces confident agreement.
 	both track a spoofed constellation, they will agree beautifully.
 
 	<strong>Agreement is evidence of nothing on its own.</strong> It is only
-	informative in proportion to how independent the two sources are — which is
+	informative in proportion to how independent the two clocks are — which is
 	why the table above is the whole design, and why "we have two of them" is not
 	an answer to the question.
 </CalloutBox>
 
-## Second opinions you can have this week
+## Second clocks you can have this week
 
 Four that cost little and are not widely used.
 
@@ -140,8 +150,9 @@ offset jumps 40 ns one Tuesday, something in your installation changed on
 Tuesday, and it does not matter that you cannot say what the offset should have
 been.
 
-**Every inbound message stream that carries a timestamp.** This one is the best
-of them and it is already arriving, so it gets a section of its own below.
+**Every inbound message stream that carries a timestamp.** Somebody else's clock,
+already arriving at your door. This one is the best of them, so it gets a section
+of its own below.
 
 **The clock's own confidence, published rather than swallowed.** PTP carries a
 `clockClass` field precisely so a grandmaster can announce *my reference is gone
@@ -149,7 +160,7 @@ and my confidence is degrading*. A system that knows it is in
 [holdover](/timekeeping/datacenters/how-gnss-holdover-works/) and does not say
 so has solved the easy half of the problem.
 
-## The free second opinion already arriving at your door
+## The free second clock already arriving at your door
 
 If you are already timestamping a reasonably fast message stream that carries
 somebody else's timestamps — market data, an exchange feed, a partner's API,
@@ -227,7 +238,7 @@ Every stream calibrates its own threshold.
 	them is your clock.
 </CalloutBox>
 
-<CalloutBox type="tip" title="And here is what makes it the best second opinion you have">
+<CalloutBox type="tip" title="And here is what makes it the best second clock you have">
 	Those counterparties share almost nothing. Different clocks, different
 	vendors, different networks, different countries, different reasons to be
 	wrong.
@@ -256,7 +267,7 @@ A comparison nobody reads is not monitoring. Three properties separate the real
 thing from a dashboard:
 
 1. **It alarms on divergence, not on absence.** "The GNSS receiver is up" is the
-   loud failure you already catch. "The two sources moved 30 ns apart" is the
+   loud failure you already catch. "The two clocks moved 30 ns apart" is the
    quiet one.
 2. **The threshold is your error budget**, not a round number somebody liked. If
    you have not written the budget down, the alarm level is a guess and will be
@@ -273,11 +284,11 @@ and being able to show it.
 
 ## The short version
 
-- **Nothing inside a clock can detect a constant error.** Stop looking for a
+- **Nothing inside one clock can detect a constant error.** Stop looking for a
   self-test that would.
-- **Get a second opinion**, and choose deliberately what it shares with the
-  first, because that decides what it can see.
-- **Agreement proves nothing** in proportion to what the two sources have in
+- **Get a second clock**, and inventory what it shares with the first, because
+  that boundary decides what the comparison can see.
+- **Agreement proves nothing** in proportion to what the two clocks have in
   common.
 - **Alarm on divergence against your written budget**, and keep the record — the
   record is the part you cannot backfill.
@@ -291,4 +302,4 @@ and being able to show it.
   — where the monitoring record stops being good practice and becomes the
   deliverable.
 - **[Ways to get time into a datacenter](/timekeeping/datacenters/acquiring-time/)**
-  — the case for a second source, made before you knew what to do with it.
+  — the case for a second clock, made before you knew what to do with it.

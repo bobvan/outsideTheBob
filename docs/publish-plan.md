@@ -48,16 +48,19 @@ would notice and no revision is owed when they land: `how-big-is-a-degree`,
 `why-precise-time`, and `datacenter-gnss-time-best-practices`. If the batch has
 to shrink for editorial reasons, those cost nothing to remove.
 
-## The one page carrying a quality flag
+## No page carries a quality flag any more
 
-`measurement-resolution-and-accuracy` is the only page in the garden whose
-`reviewNote` reads **"Likely needs serious work"**. Everything else says
-"Ready" (8 pages) or some form of "within about an hour" (21 pages).
+**Updated later on 2026-08-11.** `measurement-resolution-and-accuracy` was the
+last page whose `reviewNote` said "Likely needs serious work"; Bob has signed it
+off as **Ready**. Every one of the 30 pages now reads "Ready" (9) or some form of
+"within about an hour" (21).
 
-Deferring it costs **one link edit** — from
-`visualizing-precision-trueness-accuracy` — plus **one glossary `seeAlso` trim**.
-That is the entire price, and it is the only deferral this document actively
-suggests considering.
+So the deferral this document previously suggested considering has gone away
+too, and **there is now no recommended deferral at all**. Publish 30, cost zero.
+
+If you still want a smaller batch for editorial reasons rather than quality
+ones, `how-big-is-a-degree`, `why-precise-time` and
+`datacenter-gnss-time-best-practices` remain free — nothing links to them.
 
 ## Slug corrections since the last version
 

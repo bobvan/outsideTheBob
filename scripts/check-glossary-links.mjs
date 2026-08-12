@@ -1,9 +1,19 @@
 #!/usr/bin/env node
-// Check that the FIRST use of every glossary term on a page links to the
-// glossary.
+// Which glossary terms is a page leaning on without ever linking?
 //
-//     npm run glossary-links            # report
-//     npm run glossary-links -- --strict  # exit 1 if anything is unlinked
+//     npm run glossary-links              # the actionable list
+//     npm run glossary-links -- --first-use   # every unlinked first use
+//     npm run glossary-links -- --strict      # exit 1 on the actionable list
+//
+// **100% compliance was never the goal**, and reporting every unlinked first use
+// made that obvious: 113 hits, most of which read better plain. A list nobody
+// can act on is the same as no list.
+//
+// So the default view is Bob's filter, and it is a much better question:
+// **which pages use a term more than once and never link it at all?** One
+// unlinked mention is a judgement call. A page that says "holdover" six times
+// and never once tells the reader where to find out what it means is not
+// exercising judgement — it is leaning on a term it never introduced.
 //
 // The house rule is "link a term to its glossary entry on first use per page,
 // not every use" (docs/style-guide.md). That rule is easy to state and
@@ -26,7 +36,8 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const strict = process.argv.includes('--strict');
+const has = (f) => process.argv.includes(`--${f}`);
+const strict = has('strict');
 
 // A three-field scanner rather than a YAML dependency. The file is ours, its
 // shape is fixed by the collection schema, and the three keys we need are all
@@ -96,53 +107,145 @@ function glossarySpans(text) {
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 const files = [...walk('src/content')].sort();
-const findings = [];
+
+// The glossary's own seeAlso links. A term whose entry points back at this page
+// is one this page is the home for, which is the commonest legitimate reason not
+// to link it — so the report marks those rather than hiding them.
+const homes = new Map();
+{
+	let current = null;
+	for (const line of readFileSync('src/data/glossary.yaml', 'utf8').split('\n')) {
+		let m;
+		if ((m = line.match(/^- id:\s*(\S+)/))) current = m[1];
+		else if (current && (m = line.match(/^\s+href:\s*"(\/timekeeping\/[^"#]+)\/"/)))
+			homes.set(`${current}|${m[1].split('/').pop()}`, true);
+	}
+}
+
+const rows = [];
 
 for (const file of files) {
 	const raw = readFileSync(file, 'utf8');
 	const text = proseOnly(raw);
 	const spans = glossarySpans(text);
 	const inLink = (i) => spans.some(([a, b]) => i >= a && i < b);
+	const slug = file.split('/').pop().replace(/\.mdx?$/, '');
 
 	for (const { id, needles } of entries) {
-		let first = null;
+		const hits = [];
+		const seen = new Set();
 		for (const needle of needles) {
 			if (TOO_COMMON.has(needle.toLowerCase())) continue;
-			// Word boundaries only where the edge is alphanumeric — "UTC(k)" and
-			// "PPP-AR" end in characters \b would not fire on.
 			const l = /^\w/.test(needle) ? '\\b' : '';
-			const r = /\w$/.test(needle) ? '\\b' : '';
+			// Allow a simple plural. "GNSS Analysis Centers" is the same term as
+			// "GNSS Analysis Center", and treating it as a different string was
+			// enough to hide a real link from this report.
+			const r = /\w$/.test(needle) ? '(?:e?s)?\\b' : '';
 			const re = new RegExp(`${l}${escape(needle)}${r}`, 'gi');
 			for (const m of text.matchAll(re)) {
-				if (first === null || m.index < first.index) first = { index: m.index, needle };
+				// Longest-needle-first means a shorter alias can re-match inside a
+				// span already claimed. Count each position once.
+				if (seen.has(m.index)) continue;
+				seen.add(m.index);
+				hits.push({ index: m.index, needle });
 			}
 		}
-		if (first && !inLink(first.index)) {
-			const line = text.slice(0, first.index).split('\n').length;
-			findings.push({ file, id, needle: first.needle, line });
-		}
+		if (!hits.length) continue;
+		hits.sort((a, b) => a.index - b.index);
+		const linked = hits.filter((h) => inLink(h.index)).length;
+		rows.push({
+			file,
+			slug,
+			id,
+			needle: hits[0].needle,
+			uses: hits.length,
+			linked,
+			line: text.slice(0, hits[0].index).split('\n').length,
+			firstLinked: inLink(hits[0].index),
+			isHome: homes.has(`${id}|${slug}`),
+		});
 	}
 }
 
-const byFile = new Map();
-for (const f of findings) {
-	if (!byFile.has(f.file)) byFile.set(f.file, []);
-	byFile.get(f.file).push(f);
-}
+// ---- the actionable list: leaned on, never linked ---------------------------
+const leaned = rows
+	.filter((r) => r.uses >= 2 && r.linked === 0)
+	.sort((a, b) => b.uses - a.uses || a.file.localeCompare(b.file));
 
-if (!findings.length) {
-	console.error(`✓ every glossary term's first use is linked (${files.length} files)`);
+// The sharper cut. A term linked from *somewhere* is discoverable — leaving it
+// plain on one more page is a style call. A term linked from **nowhere** is a
+// glossary entry no reader can reach by reading, which is a hole rather than a
+// judgement.
+// Read reachability off the LINKS, not off term detection. Deriving it from
+// detected occurrences was wrong in both directions: "Allan deviation" links to
+// #adev without ever spelling "ADEV", and "GNSS Analysis Centers" is a plural the
+// matcher missed — so two entries were reported unreachable while a perfectly
+// good link sat in the source. A link is a link whatever its anchor text says.
+const linkedSomewhere = new Set();
+for (const file of files) {
+	for (const m of readFileSync(file, 'utf8').matchAll(/\/timekeeping\/glossary\/#([a-z0-9-]+)/g)) {
+		linkedSomewhere.add(m[1]);
+	}
+}
+const orphanRows = leaned.filter((r) => !linkedSomewhere.has(r.id));
+const orphanTerms = [...new Set(orphanRows.map((r) => r.id))];
+
+const firstUseOnly = rows.filter((r) => !r.firstLinked);
+
+if (has('first-use')) {
+	const byFile = new Map();
+	for (const r of firstUseOnly) {
+		if (!byFile.has(r.file)) byFile.set(r.file, []);
+		byFile.get(r.file).push(r);
+	}
+	for (const [file, hits] of [...byFile].sort()) {
+		console.error(`\n${file}`);
+		for (const h of hits.sort((a, b) => a.line - b.line))
+			console.error(`  :${String(h.line).padEnd(4)} "${h.needle}" — first use not linked to #${h.id}` +
+				(h.linked ? ` (linked ${h.linked}x later)` : ''));
+	}
+	console.error(`\n${firstUseOnly.length} unlinked first use(s) across ${byFile.size} file(s).`);
+	console.error('Advisory, and mostly noise — see the default view for what is worth acting on.');
 	process.exit(0);
 }
 
-for (const [file, hits] of [...byFile].sort()) {
-	console.error(`\n${file}`);
-	for (const h of hits.sort((a, b) => a.line - b.line)) {
-		console.error(`  :${String(h.line).padEnd(4)} "${h.needle}" — not linked to #${h.id}`);
+if (!leaned.length) {
+	console.error(`✓ no page leans on an unlinked glossary term (${files.length} files, ${rows.length} term-page pairs)`);
+	console.error(`  ${firstUseOnly.length} first use(s) are unlinked — advisory, see --first-use.`);
+	process.exit(0);
+}
+
+if (orphanRows.length) {
+	console.error('UNREACHABLE — leaned on here, and linked from nowhere on the site.');
+	console.error('A reader has no path to these entries at all.\n');
+	console.error(`${'uses'.padStart(4)}  ${'term'.padEnd(22)} page`);
+	for (const r of orphanRows) {
+		console.error(
+			`${String(r.uses).padStart(4)}  ${`"${r.needle}"`.padEnd(22)} ${r.slug}` +
+				(r.isHome ? "   [this page is the term's home]" : ''),
+		);
 	}
+	console.error(`\n${orphanTerms.length} glossary entr(ies) are unreachable: ${orphanTerms.join(', ')}\n`);
+	console.error('─'.repeat(72) + '\n');
+}
+
+console.error('Leaned on here, but linked somewhere else — style calls, most-used first.\n');
+console.error(`${'uses'.padStart(4)}  ${'term'.padEnd(22)} page`);
+for (const r of leaned.filter((r) => linkedSomewhere.has(r.id))) {
+	console.error(
+		`${String(r.uses).padStart(4)}  ${`"${r.needle}"`.padEnd(22)} ${r.slug}` +
+			(r.isHome ? "   [this page is the term's home]" : ''),
+	);
 }
 console.error(
-	`\n${findings.length} unlinked first use(s) across ${byFile.size} file(s), ${files.length} checked.`,
+	`\n${leaned.length} term-page pair(s) leaned on and never linked, out of ${rows.length} pairs in ${files.length} files.` +
+		`\n${firstUseOnly.length} unlinked first use(s) in total — the rest is advisory, see --first-use.`,
 );
-console.error('Advisory: some of these read better plain. Judgement, not a build failure.');
-process.exit(strict ? 1 : 0);
+console.error(
+	'\nRows marked [home] are the likeliest legitimate skips: the glossary entry points\n' +
+		'back at that page, so it is the explanation rather than a place to send someone.\n' +
+		'\nHow to use this: fix the UNREACHABLE block, browse the rest. 100% was never the\n' +
+		'goal — a term that is linked somewhere is discoverable, and plain prose usually\n' +
+		'reads better than a page peppered with the same link.',
+);
+process.exit(strict && orphanRows.length ? 1 : 0);

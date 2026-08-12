@@ -262,3 +262,30 @@ already knows its number; the reader who is not gains nothing from it.
 
 Applies to MiFID II RTS 25 and every equivalent. Declined twice already — do not
 re-propose it.
+
+## Glossary links: reachable, not exhaustive
+
+The rule is still *link a term on first use per page, not every use* — but 100%
+compliance was never the goal, and measuring it that way produced a 114-item
+advisory list nobody could act on.
+
+`npm run glossary-links` now answers Bob's sharper question instead: **which
+pages use a term more than once and never link it at all?** One unlinked mention
+is a style call. A page that says a term six times and never tells the reader
+where to find out what it means is leaning on something it never introduced.
+
+And within that, the cut that actually matters:
+
+- **UNREACHABLE** — leaned on somewhere, and linked from **nowhere on the site**.
+  A glossary entry no reader can arrive at by reading is a hole, not a judgement.
+  **Fix these.**
+- **Everything else** — leaned on here, linked somewhere else. Browse it, act on
+  what reads badly, and leave the rest. `UTC` and `timescale` dominate the list
+  precisely because the site is about them; peppering every page with the same
+  link would be worse prose, not better.
+
+Rows marked `[home]` are the likeliest legitimate skips: the glossary entry
+points back at that page, so the page *is* the explanation rather than a place to
+send someone.
+
+`--strict` fails only on UNREACHABLE, so it is safe to wire into a gate later.

@@ -389,7 +389,8 @@
 
 - id: gnss-analysis-center
   term: "GNSS Analysis Center"
-  aliases: ["analysis center", "AC", "IGS Analysis Center"]
+  # No "AC" alias: it collides with AC power, which this site also writes about.
+  aliases: ["analysis center", "IGS Analysis Center"]
   definition: >-
     An institution that takes raw observations from a global network of tracking
     stations and works out where each satellite really was and what its clock

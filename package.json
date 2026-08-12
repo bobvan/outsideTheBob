@@ -11,13 +11,14 @@
     "og": "node scripts/make-og-image.mjs",
     "banner": "node scripts/make-banner.mjs",
     "astro": "astro",
-    "banner:404": "BANNER_INSIDE=404 BANNER_WORD=OutsideTheSite BANNER_OUT=public/images/outsideTheSite.svg BANNER_LABEL=\"404 \u2014 Outside The Site\" BANNER_INSIDE_CENTER=1 node scripts/make-banner.mjs",
+    "banner:404": "BANNER_INSIDE=404 BANNER_WORD=OutsideTheSite BANNER_OUT=public/images/outsideTheSite.svg BANNER_LABEL=\"404 — Outside The Site\" BANNER_INSIDE_CENTER=1 node scripts/make-banner.mjs",
     "figures": "node scripts/make-figures.mjs",
     "circular-t": "node scripts/fetch-circular-t.mjs",
     "glossary-links": "node scripts/check-glossary-links.mjs",
     "publish-check": "node scripts/publish-check.mjs",
     "review": "node scripts/review-status.mjs",
-    "publish-set": "node scripts/publish-set.mjs"
+    "publish-set": "node scripts/publish-set.mjs",
+    "qr": "node scripts/make-qr.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.3",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "fontkit": "^2.0.4",
+    "qrcode": "^1.5.4",
     "wrangler": "^4.118.0"
   }
 }

@@ -110,7 +110,26 @@ const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 	}
 
 	/* popover puts this in the browser's top layer, so it needs no z-index and
-	   closes on Esc or an outside click without any JavaScript. */
+	   closes on Esc or an outside click without any JavaScript.
+	
+	   These two display rules are load-bearing and were missing. Browsers that
+	   implement popover hide a closed one from their own UA stylesheet, so this
+	   looked fine everywhere we tested — but a browser that does not implement it
+	   ignores the attribute entirely, leaving an ordinary <div> that renders in
+	   the flow. The reader then gets the thumbnail followed by a second, full-size
+	   copy of the same image, which is exactly what Bob saw in Firefox.
+	
+	   Stating the closed state in author CSS covers both cases, and it degrades
+	   the right way: on a browser without popover the zoom is simply absent
+	   rather than broken. `@supports selector()` is not needed for the hiding —
+	   an unsupported `:popover-open` makes only the second rule invalid, and the
+	   first one still applies. */
+	.zoom-overlay {
+		display: none;
+	}
+	.zoom-overlay:popover-open {
+		display: block;
+	}
 	.zoom-overlay {
 		max-width: 96vw;
 		max-height: 96vh;
@@ -153,5 +172,15 @@ const figureClass = plate ? 'zoom-figure diagram' : 'zoom-figure';
 		width: 100%;
 		height: auto;
 		max-width: 100%;
+	}
+
+	/* Where the zoom cannot happen, stop advertising it. The thumbnail stays a
+	   button — it is still the image's accessible name — but a zoom-in cursor
+	   promising something the browser will not do is worse than no cursor. */
+	@supports not selector(:popover-open) {
+		.zoom-thumb,
+		.zoom-thumb img {
+			cursor: default;
+		}
 	}
 </style>

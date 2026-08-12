@@ -13,9 +13,12 @@ tombstones.
 
 ## 0. Publish plan
 
-**[`publish-plan.md`](publish-plan.md)** — which 25 pages ship first, which 6
-defer, and the exact cost (3 link edits, 1 glossary trim). Computed with
-`npm run publish-set`, which prices any batch you propose.
+**[`publish-plan.md`](publish-plan.md)** — **rewritten 2026-08-11, and the
+answer flipped.** Publishing all 30 pages now costs **zero** link edits and zero
+glossary trims; deferring is the expensive option. The only deferral worth
+considering is `measurement-resolution-and-accuracy`, the one page whose
+`reviewNote` says it needs serious work, at 1 edit + 1 glossary trim. Recompute
+any batch with `npm run publish-set`.
 
 ## 0b. URL structure — decisions before launch
 

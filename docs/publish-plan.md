@@ -1,123 +1,119 @@
 # Publish plan — shipping a self-consistent subset
 
-Written 2026-08-10 against a near publication date. The premise, from Bob:
-**fewer self-consistent and correctly-linked pages beat many inconsistent
-stubs.** Publish a batch, then revise it later with links to the pages that
-follow.
+**Rewritten 2026-08-11**, against current slugs and a fresh run of
+`npm run publish-set`. The premise is still Bob's: **fewer self-consistent and
+correctly-linked pages beat many inconsistent stubs.**
 
-Costs below are computed, not estimated: `npm run publish-set`.
+The conclusion has changed, and changed decisively.
 
 ---
 
-## The finding that shapes everything
+## The finding: the cheapest batch is now everything
 
-**Link closure is not a usable selection mechanism here.** The garden is dense —
-31 pages, 133 internal page-to-page links — and the transitive closure of almost
-any seed pulls in **28 of the 31**. Publishing "just the metrology cluster" or
-"just the antennas pages" is not a smaller decision than publishing nearly
-everything.
+```
+publish all 30  →  0 link edits, 0 glossary trims
+```
 
-So the lever is inverted. **Choose the batch editorially, then price what you
-left out.** The price of deferring a page is the number of links to it from
-pages you *do* publish — each one an edit now, and a second edit when the page
-finally lands.
+That is not a rounding. **Publishing the whole garden costs nothing**, because
+there is no longer anything outside it to point at. Two changes got us here:
 
-That price is startlingly low, because the H/S/M discipline built the right
-shape: most inbound links point at concept Homes, and the Homes are the pages
-most ready to go.
+- **The two clock-builder pages moved to `held/`** on 2026-08-10, outside
+  `src/content/`, and their four inbound links were removed at the time. They are
+  no longer drafts a published page might link to — they are not in the build at
+  all, so they cost zero.
+- **Every `[[? ?]]` block is closed** as of 2026-08-11, so P2 gates nothing.
 
-## Not considered for first publication
+The previous version of this document recommended publishing 25 and deferring 6
+for 3 link edits. Rerun today, **that same deferral costs more than it used to
+(4 edits and 2 glossary trims) while publishing everything costs less than it
+used to (zero). Deferring is now the expensive option.**
 
-Bob's list, 2026-08-10 — held back for reasons of *scope* rather than quality:
+Still true, and still the reason this document is short: **link closure is not a
+usable selection mechanism here.** The garden is dense — 30 pages, 135 internal
+page-to-page links — and the closure of almost any seed pulls in nearly all of
+it. The lever was always to choose editorially and price what you leave out.
+Today that price is the only interesting number left.
 
-**Moved to `held/clock-building/` on 2026-08-10**, outside `src/content/` so the
-dev preview answers "what does the site look like at `draft: false`?" honestly.
-Not a branch — see `held/README.md` for why, and for how to bring one back.
+## What deferral costs, if you want it anyway
+
+| batch | pages | link edits | glossary trims |
+|---|---|---|---|
+| **everything** | **30** | **0** | **0** |
+| defer `measurement-resolution-and-accuracy` | 29 | 1 | 1 |
+| …and `how-big-is-a-degree` as well | 28 | 1 | 1 |
+| the old plan's six, retranslated | 25 | 4 | 2 |
+
+**Three pages are free to defer** — nothing links to them, so no published page
+would notice and no revision is owed when they land: `how-big-is-a-degree`,
+`why-precise-time`, and `datacenter-gnss-time-best-practices`. If the batch has
+to shrink for editorial reasons, those cost nothing to remove.
+
+## The one page carrying a quality flag
+
+`measurement-resolution-and-accuracy` is the only page in the garden whose
+`reviewNote` reads **"Likely needs serious work"**. Everything else says
+"Ready" (8 pages) or some form of "within about an hour" (21 pages).
+
+Deferring it costs **one link edit** — from
+`visualizing-precision-trueness-accuracy` — plus **one glossary `seeAlso` trim**.
+That is the entire price, and it is the only deferral this document actively
+suggests considering.
+
+## Slug corrections since the last version
+
+The old plan named pages that no longer exist, which is how it came to be
+rewritten. Recorded so nothing downstream re-derives the wrong list:
+
+| old name | now |
+|---|---|
+| `a-means-to-an-end` | `why-precise-time` |
+| `accuracy-and-resolution-in-pictures` | `measurement-resolution-and-accuracy` |
+| `accuracy-and-precision-in-pictures` | `visualizing-precision-trueness-accuracy` |
+| `benchmarking-clocks` | `benchmarking-datacenter-gnss-clocks` |
+| `buying-a-clock` | `buying-a-datacenter-gnss-clock` |
+| `no-second-chance` | `do-timestamp-errors-average-out` |
+| `what-happens-when-i-lose-gps` | `how-gnss-holdover-works` |
+| `how-do-i-know-its-still-right` | `is-my-clock-right` |
+| `comparing-two-distant-clocks` | `comparing-distant-clocks` |
+| `gnss-time-is-a-prediction` | `limits-of-gnss-time-accuracy` |
+| `do-i-need-an-ocxo`, `designing-a-clock` | **held**, outside the build |
+
+## Held, not deferred
+
+`held/clock-building/` keeps two pages outside `src/content/` so the dev preview
+answers "what does the site look like at `draft: false`?" honestly — see
+`held/README.md`. They are not part of any batch decision. Bringing one back is a
+separate act with its own inbound-link cost, recorded there.
 
 | page | why |
 |---|---|
-| `do-i-need-an-ocxo` | Written for clock builders. Wants redoing as *important properties of GNSS receivers* for the dual audience — buyers and builders — alongside the receiver-traits page |
-| `designing-a-clock` | Builder-only, and Bob's own note says it could need a lot of work |
-
-Holding them cost 4 inbound links, now removed and recorded here so they can be
-put back: `do-timestamp-errors-average-out` and `benchmarking-datacenter-gnss-clocks` both
-pointed at *designing a clock*; `how-gnss-holdover-works` pointed at the
-OCXO page twice, and the glossary's `holdover` entry had it in `seeAlso`.
-
-## The recommended batch — publish 25, defer 6
-
-**Total cost: 3 link edits, plus 1 glossary `seeAlso` trim.**
-
-Deferred:
-
-| page | inbound links to fix | why defer |
-|---|---|---|
-| `benchmarking-datacenter-gnss-clocks` | 2 | Bob: *"could need a lot of work"* |
-| `designing-a-clock` | 0 | Bob: *"could need a lot of work"*; nothing links to it |
-| `accuracy-and-resolution-in-pictures` | 1 | Bob: *"likely needs serious work"* — the only page he flagged that hard |
-| `how-big-is-a-degree` | 0 | The most-covered-elsewhere page in the garden: decimal degrees and an xkcd. Nothing links to it |
-| `a-means-to-an-end` | 0 | Good page, but the "why do you want precise time" argument is the least differentiated thing here. Nothing links to it |
-| `do-timestamp-errors-average-out` | 0 | ~~Nothing links to it~~ — **now cross-linked with the averaging page (2026-08-10), so deferring it costs 1 edit. Reconsider: it is retitled, reviewed and cheap to keep.** |
-
-**Four of the six have zero inbound links.** They are free to defer — not one
-published page would notice, and no revision is owed when they land.
-
-The three edits, all trivial:
-
-```
-buying-a-datacenter-gnss-clock  → benchmarking-datacenter-gnss-clocks
-how-gnss-holdover-works         → benchmarking-datacenter-gnss-clocks
-accuracy-and-precision-in-pictures → accuracy-and-resolution-in-pictures
-```
-
-Each is a "where to go next" bullet or a single in-sentence link. Remove it,
-publish, and put it back in the second batch.
-
-## Why not go leaner
-
-A tighter batch of 21 — additionally deferring the four newest pages
-(`can-i-build-my-own-link-to-utc-nist`, `comparing-distant-clocks`,
-`is-my-clock-right`, `do-i-need-an-ocxo`) — costs **12 edits and 4
-glossary trims**, four times the churn for four fewer pages.
-
-And it is the wrong four. Those are the pages carrying material nobody else
-has: our own UTC(NIST) numbers, BIPM's retirement of common view, the
-shared-antenna monitoring argument, the crossover model. **Deferring them keeps
-the saturated pages and drops the differentiated ones** — precisely backwards by
-the be-the-11th-page rule.
-
-## Deferring by "well covered elsewhere"
-
-Bob's second criterion, applied. Ranked most-saturated first — this is the order
-to cut in if the batch has to shrink further.
-
-| page | how saturated | inbound |
-|---|---|---|
-| `how-big-is-a-degree` | very — every GIS blog has this | 0 |
-| `a-means-to-an-end` | high — "why does timing matter" is a genre | 0 |
-| `how-big-is-a-nanosecond` | high — Grace Hopper's nanosecond is famous | 2 |
-| `timescales` | moderate — but our Victoria example is ours | 3 |
-| `distribution` | moderate — NTP-vs-PTP comparisons are everywhere | 4 |
-| `elapsed-time` | low-moderate | 3 |
-| everything else | **low — first-hand or first-published** | — |
-
-Note what this table says about the batch: after the first two, saturation and
-inbound-links move in opposite directions. The saturated pages are also the
-well-connected ones, so cutting further gets expensive fast. **Stop at six.**
+| `do-i-need-an-ocxo` | Written for clock builders. Wants redoing as *important properties of GNSS receivers* for the dual audience, alongside the receiver-traits page |
+| `designing-a-clock` | Builder-only, and Bob's own note says it could need a lot of work. Carries open items D6a and D6b |
 
 ## Order of operations on publication day
 
-1. `npm run publish-set -- --defer <the six>` — confirm the cost has not moved.
-2. Make the 3 link edits and the 1 glossary `seeAlso` trim.
-3. Resolve `[[? ?]]` blocks on the 25 — they render as body text (P2).
-4. Flip `draft: false` on the 25 pages **and the whole glossary in one commit** —
-   `npm run publish-check` enforces this; 60-odd body links depend on it.
-5. `npm run publish-check --strict`, then the link crawl.
-6. The nav gate and `noindex` clear themselves once `hasPublishedTopics()` is true.
+1. `npm run publish-set` — confirm the cost is still zero for the batch you want.
+2. If deferring anything, make its link edits and glossary `seeAlso` trims first.
+3. **Flip `draft: false` on the pages and the whole glossary in one commit.**
+   `npm run publish-check` enforces this: the glossary's `seeAlso` alone reaches
+   19 pages, and 60-odd body links point into `/timekeeping/glossary/#…`.
+4. `npm run publish-check -- --strict`, then the link crawl.
+5. The nav gate and `noindex` clear themselves once `hasPublishedTopics()` is
+   true — no separate edit.
+6. **Pin explicit slugs.** Every URL is currently derived from its filename, so
+   after publication an editorial file rename silently relocates a live URL. One
+   commit writing each page's current slug into its frontmatter freezes them.
+   See `url-structure.md`.
 
-## And afterwards
+## What is not a publication blocker
 
-The deferred six land as a second batch, at which point the 3 edits get reverted
-and the new pages get their inbound links. That is the *only* revision debt this
-plan creates — three sentences. The alternative, publishing everything now,
-trades that for shipping a page Bob has flagged as needing serious work.
+Recorded because they look like blockers and are not:
+
+- **113 unlinked glossary first-uses** (H1). Advisory. Mostly `UTC` and
+  `timescale`, which read better plain in most positions.
+- **The `stories` section is empty** (H3). Declared in `SECTIONS` with no pages,
+  so it renders nothing. Dropping the key is cleaner than shipping it, but
+  neither is urgent.
+- **16 pages carry a `reviewed:` date older than their last edit.** That is Bob's
+  reading queue, not a mechanical gate — and as of today it is the only thing
+  standing between the current state and publication.

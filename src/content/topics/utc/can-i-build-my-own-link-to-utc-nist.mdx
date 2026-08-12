@@ -4,9 +4,10 @@ slug: "can-i-build-my-own-link-to-utc-nist"
 description: "The data you would need is public, free, and better than most people realize. You can build the measurement in a weekend. What you cannot build is the one thing that turns it into a number somebody else has to accept."
 section: "utc"
 order: 50
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology", "datacenter"]
+bottomLine: "what-you-get-free-and-what-you-have-to-buy"
 draft: false
 reviewed: 2026-08-11
 reviewNote: "Ready"
@@ -441,6 +442,28 @@ That single fact makes a home-built link genuinely valuable:
 
 And what it is not good for: any sentence beginning "we are traceable to". That
 sentence has to be bought.
+
+## What you get free, and what you have to buy
+
+- **Frequency: free, and at full accuracy.** Nothing is missing from this number.
+  Calibrate a standard, characterize its holdover, check a vendor's claim — all
+  of it works today, on public data, with no permission from anybody.
+- **Time: not at any price you can pay yourself.** Your delays are unknown, and
+  an unknown constant ruins an offset while leaving a rate untouched. This is not
+  a software problem and no amount of processing fixes it.
+- **You can still monitor what you cannot claim.** A *step* in an uncalibrated
+  link is a step in your hardware. If the offset jumps 40 ns on a Tuesday,
+  something changed on Tuesday, and not knowing the true value never mattered.
+- **Copying a published calibration gets you started, not finished.** Reproduce a
+  chain somebody documented and you inherit their 1–2 ns floor plus an unmeasured
+  per-unit term — our own bench found two nominally identical receivers further
+  apart than two different models. Better than a guess. Not a calibration.
+- **Traceability is a document, not a measurement.** It cannot be self-issued at
+  any level of skill. That is what a service like TMAS actually sells, alongside
+  ten-minute latency the public files will never match.
+
+**So: build it.** Then use it for the half that works, and buy the other half if
+somebody outside your organization has to accept the answer.
 
 ## Where to go next
 

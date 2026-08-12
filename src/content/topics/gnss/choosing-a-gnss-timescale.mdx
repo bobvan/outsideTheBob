@@ -4,7 +4,7 @@ slug: "choosing-a-gnss-timescale"
 description: "You are not choosing a receiver so much as choosing whose timescale you end up on. There are three ways to do it, they differ by a factor of a hundred in cost, and most datacenters should take the cheapest."
 section: "gnss"
 order: 30
-updatedDate: 2026-08-11
+updatedDate: 2026-08-12
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "datacenter", "buying"]
 bottomLine: "how-to-decide-in-one-pass"
@@ -215,9 +215,10 @@ and anonymous. The claim, no.
 
 1. **Do your clocks only need to agree with each other?** Then take (a), pick any
    constellation but GLONASS, and spend the money on the
-   [antenna](/timekeeping/datacenters/configuring-gnss-antenna-position/) and the
-   [feedline](/timekeeping/datacenters/configuring-gnss-antenna-feedline/) instead — that is where your
-   error actually is.
+   [antenna](/timekeeping/datacenters/configuring-gnss-antenna-position/) and an
+   afternoon on
+   [measuring your feedline delay](/timekeeping/datacenters/configuring-gnss-antenna-feedline/)
+   instead — that is where your error actually is.
 2. **Does somebody outside your estate have to accept your timestamps?** Then
    your problem is traceability, and the fourth answer is on the table.
 3. **Do you genuinely need to beat a few nanoseconds to UTC?** Then (b), and read

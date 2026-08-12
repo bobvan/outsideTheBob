@@ -3,7 +3,7 @@ import { file, glob } from 'astro/loaders';
 
 const blog = defineCollection({
 	// Load Markdown and MDX files in the `src/content/blog/` directory.
-	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+	loader: glob({ base: './src/content/blog', pattern: ['**/*.{md,mdx}', '!**/*.bob.{md,mdx}'] }),
 	// Type-check frontmatter using a schema
 		schema: ({ image }) =>
 			z.object({
@@ -38,7 +38,11 @@ const blog = defineCollection({
 //    frontmatter means the "exactly one H" rule can eventually be checked
 //    rather than remembered.
 const topics = defineCollection({
-	loader: glob({ base: './src/content/topics', pattern: '**/*.{md,mdx}' }),
+	// `!**/*.bob.*` so Bob can keep a working copy beside the real file. Without
+	// it, any .mdx dropped in here becomes a page — a scratch copy would have
+	// built its own route, escaped the title audit, and published as a duplicate
+	// at the flip, carrying whatever was mid-edit in it.
+	loader: glob({ base: './src/content/topics', pattern: ['**/*.{md,mdx}', '!**/*.bob.{md,mdx}'] }),
 	schema: () =>
 		z.object({
 			title: z.string(),

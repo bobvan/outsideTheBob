@@ -49,9 +49,10 @@ of this length could manage:
 **Which protocols compensate for the length of the wire by measuring its delay**, and which leave it to
 you.
 
-NTP, PTP, and White Rabbit all *measure* the path. They exchange timestamps in
-both directions, work out the delay, and subtract it. Add fifty meters of fiber
-and they notice, adjust, and carry on. Path length is their problem, not yours.
+NTP, PTP, and White Rabbit all *measure* the path delay. They exchange timestamps
+in both directions, work out the delay, and subtract it. Add fifty meters of
+fiber and they notice the delay, adjust, and carry on. Path length and delays are
+their problems, not yours.
 
 **PPS does not.** A pulse-per-second signal is a wire with an edge on it. There
 is no exchange, no round trip, nothing to measure with — the pulse arrives when
@@ -62,7 +63,7 @@ That is the same distinction the
 carrying between them: a delay that is measured is a nuisance, and a delay that
 is assumed is a permanent offset.
 
-<CalloutBox type="warn" title="Most compensated protocols still assume symmetry">
+<CalloutBox type="warn" title="Most delay-compensated protocols still assume symmetry">
 	NTP and PTP (IEEE 1588-2008) compute path delay from a round trip and split it
 	in half, which is only correct if the two directions take equally long. An
 	asymmetric path — a different route each way, a queue that fills in one

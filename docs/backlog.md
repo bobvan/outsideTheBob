@@ -41,6 +41,7 @@ Everything here must be true before any `draft: true` becomes `draft: false`.
 | P3 | **Every internal link and glossary anchor resolves.** | ✅ re-crawled 2026-08-10 after the reorganization — 73 routes, 0 broken |
 | P4 | **Nav gate and `noindex` reviewed.** `/timekeeping/` is `noindex` and the nav entry is gated on `hasPublishedTopics()`; both flip implicitly when P1 does. | ⏳ |
 | P5 | **Sanitization pass on anything sourced from private work.** | ✅ for current content |
+| P7 | **No published page links to a draft page.** Each such link is a live 404. Exists because the best inbound link in the garden — `LastNanosecondsToUTC` → `datacenter-gnss-time-best-practices` — must wait for the flip. | ✅ enforced by `publish-check`, has never fired |
 | P6 | **`section:` matches the file's directory.** Nothing enforced this; a page moved between sections without editing frontmatter would build a URL contradicting its own location. | ✅ enforced by `publish-check` |
 
 ## 2. Open findings — `review-2026-08-08.md` (bravo)

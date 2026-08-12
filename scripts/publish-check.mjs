@@ -12,7 +12,7 @@
 // in front of a deploy later without breaking today's builds.
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, basename } from 'node:path';
 
 const strict = process.argv.includes('--strict');
 const walk = (dir) =>
@@ -67,6 +67,28 @@ for (const t of topics) {
 	if (declared && declared !== actual) {
 		problems.push(`P6  ${t.f}: section: "${declared}" but the file is in ${actual}/ — the URL and the file disagree.`);
 	}
+}
+
+// P7 — a published page linking to a draft page is a 404 on the live site, and
+// nothing else here would notice. It has never fired, because no published blog
+// post links into the garden yet — but the moment the garden publishes, the
+// obvious links from the talk write-ups become worth adding, and the obvious
+// mistake is adding one a week early. Cheap insurance for a live-site break.
+const slugOf = (f) => basename(f).replace(/\.mdx?$/, '');
+const draftSlugs = new Set(topics.filter((t) => t.draft).map((t) => slugOf(t.f)));
+const publishedFiles = walk('src/content').filter((f) => !isDraft(readFileSync(f, 'utf8')));
+const liveBreaks = [];
+for (const f of publishedFiles) {
+	for (const href of readFileSync(f, 'utf8').match(/\/timekeeping\/[a-z0-9/-]+/g) ?? []) {
+		const target = href.replace(/\/$/, '').split('/').pop();
+		if (draftSlugs.has(target)) liveBreaks.push(`${f} → ${href}`);
+	}
+}
+if (liveBreaks.length) {
+	problems.push(
+		`P7  ${liveBreaks.length} link(s) from PUBLISHED pages into DRAFT topic pages — each is a 404 on the live site:\n      ` +
+			liveBreaks.join('\n      '),
+	);
 }
 
 console.error(`topics:   ${publishedTopics.length} published / ${topics.length} total`);

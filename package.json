@@ -18,7 +18,8 @@
     "publish-check": "node scripts/publish-check.mjs",
     "review": "node scripts/review-status.mjs",
     "publish-set": "node scripts/publish-set.mjs",
-    "qr": "node scripts/make-qr.mjs"
+    "qr": "node scripts/make-qr.mjs",
+    "figures:check": "node scripts/check-figures.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.3",

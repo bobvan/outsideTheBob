@@ -3,12 +3,12 @@ title: "Time Distribution Protocols"
 description: "NTP, NTS, PTP, White Rabbit and a bare PPS, compared on the two things that decide which you need: how close they can get, and whether they account for the length of the wire."
 section: "time-distribution"
 order: 10
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "H"
 tags: ["datacenter", "timing", "PTP", "NTP", "White Rabbit"]
 draft: true
-reviewed: 2026-08-08
-reviewNote: "Likely less than 1 hr to ready"
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
@@ -30,7 +30,7 @@ it, and keeping track of what the journey cost.
 | Protocol | Standard | Typical accuracy | Compensates for path delay? |
 |---|---|---|---|
 | **NTP** over the internet | RFC 5905 | milliseconds | Yes — round-trip estimate, assumes symmetry |
-| **NTP** on a LAN | RFC 5905 | hundreds of µs to ms | Yes — same mechanism, shorter path |
+| **NTP** on a LAN | RFC 5905 | hundreds of µs to ms | Yes — same mechanism, less jitter |
 | **NTS** | RFC 8915 | as NTP | Yes — NTP, with authentication added |
 | **PTP**, software timestamps | IEEE **1588-2008** | tens of µs | Yes — measured, but timestamps taken late |
 | **PTP**, hardware timestamps | IEEE **1588-2008** | sub-µs to tens of ns | Yes — measured at the wire |
@@ -46,7 +46,7 @@ of this length could manage:
 
 ## The column that matters most
 
-**Which protocols compensate for the length of the wire**, and which leave it to
+**Which protocols compensate for the length of the wire by measuring its delay**, and which leave it to
 you.
 
 NTP, PTP, and White Rabbit all *measure* the path. They exchange timestamps in

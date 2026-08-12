@@ -30,7 +30,7 @@
       href: "#precision"
     - label: "Seen side by side"
       href: "/timekeeping/measuring-time/visualizing-precision-trueness-accuracy/"
-  draft: true
+  draft: false
 
 - id: trueness
   term: Trueness
@@ -50,7 +50,7 @@
       href: "#utc"
     - label: "The limits of averaging"
       href: "/timekeeping/measuring-time/limits-of-averaging/"
-  draft: true
+  draft: false
 
 - id: precision
   term: Precision
@@ -67,7 +67,7 @@
       href: "#trueness"
     - label: "The limits of averaging"
       href: "/timekeeping/measuring-time/limits-of-averaging/"
-  draft: true
+  draft: false
 
 - id: repeatability
   term: Repeatability
@@ -84,7 +84,7 @@
   seeAlso:
     - label: "Precision"
       href: "#precision"
-  draft: true
+  draft: false
 
 - id: traceability
   term: Traceability
@@ -100,7 +100,7 @@
   seeAlso:
     - label: "What \"traceable to UTC\" actually requires"
       href: "/timekeeping/utc/what-does-traceable-to-utc-mean/"
-  draft: true
+  draft: false
 
 - id: stability
   term: Stability
@@ -115,7 +115,7 @@
   authority:
     label: "VIM 4.19, stability of a measuring instrument (the general sense)"
     url: "https://jcgm.bipm.org/vim/en/4.19.html"
-  draft: true
+  draft: false
 
 - id: holdover
   term: Holdover
@@ -131,7 +131,7 @@
       href: "/timekeeping/datacenters/how-gnss-holdover-works/"
     - label: "Stability"
       href: "#stability"
-  draft: true
+  draft: false
 
 - id: timescale
   term: Timescale
@@ -139,7 +139,7 @@
     A way of naming instants, built from three things: the length of a tick, a
     zero point, and a count of ticks since. UTC and TAI are timescales; so,
     absurdly but perfectly validly, is *years since Victoria's reign*.
-  draft: true
+  draft: false
 
 - id: resolution
   term: Resolution
@@ -161,7 +161,7 @@
       href: "#trueness"
     - label: "What coarse resolution hides"
       href: "/timekeeping/measuring-time/measurement-resolution-and-accuracy/"
-  draft: true
+  draft: false
 
 - id: utc
   term: UTC
@@ -186,7 +186,7 @@
       href: "#utc-k"
     - label: "Traceability"
       href: "#traceability"
-  draft: true
+  draft: false
 
 - id: utc-k
   term: UTC(k)
@@ -206,7 +206,7 @@
       href: "#utc"
     - label: "Who defines yesterday"
       href: "/timekeeping/utc/who-defines-utc/"
-  draft: true
+  draft: false
 
 - id: measurement-ratio
   term: "The 10:1 rule"
@@ -225,7 +225,7 @@
       href: "#resolution"
     - label: "Traceability"
       href: "#traceability"
-  draft: true
+  draft: false
 
 - id: common-mode
   term: "Common-mode error"
@@ -240,7 +240,7 @@
       href: "/timekeeping/measuring-time/prioritize-agreement-or-accuracy/"
     - label: "Trueness"
       href: "#trueness"
-  draft: true
+  draft: false
 
 - id: velocity-factor
   term: "Velocity factor"
@@ -255,7 +255,7 @@
   seeAlso:
     - label: "Why the feedline is likely your largest error"
       href: "/timekeeping/datacenters/configuring-gnss-antenna-feedline/"
-  draft: true
+  draft: false
 
 - id: nmi
   term: "NMI"
@@ -272,7 +272,7 @@
   seeAlso:
     - label: "UTC(k)"
       href: "#utc-k"
-  draft: true
+  draft: false
 
 - id: adev
   term: "Allan deviation (ADEV)"
@@ -288,7 +288,7 @@
       href: "#stability"
     - label: "Time deviation"
       href: "#tdev"
-  draft: true
+  draft: false
 
 - id: tdev
   term: "Time deviation (TDEV)"
@@ -302,7 +302,7 @@
       href: "#adev"
     - label: "Stability"
       href: "#stability"
-  draft: true
+  draft: false
 
 - id: spp
   term: "SPP (Single Point Positioning)"
@@ -322,7 +322,7 @@
       href: "/timekeeping/gnss/limits-of-gnss-time-accuracy/"
     - label: "PPP"
       href: "#ppp"
-  draft: true
+  draft: false
 
 - id: ppp
   term: "PPP (Precise Point Positioning)"
@@ -344,7 +344,7 @@
       href: "#ppp-ar"
     - label: "Where the corrections come from"
       href: "/timekeeping/gnss/limits-of-gnss-time-accuracy/"
-  draft: true
+  draft: false
 
 - id: ppp-ar
   term: "PPP-AR (ambiguity resolution)"
@@ -364,7 +364,7 @@
       href: "#ppp"
     - label: "Matching acquisition and distribution"
       href: "/timekeeping/time-distribution/matching-acquisition-and-distribution/"
-  draft: true
+  draft: false
 
 - id: baseline
   term: "Baseline"
@@ -385,7 +385,7 @@
       href: "/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/"
     - label: "PPP"
       href: "#ppp"
-  draft: true
+  draft: false
 
 - id: gnss-analysis-center
   term: "GNSS Analysis Center"
@@ -408,7 +408,7 @@
       href: "#ppp-ar"
     - label: "Datum"
       href: "#datum"
-  draft: true
+  draft: false
 
 - id: bent-pipe
   term: "Bent pipe"
@@ -431,7 +431,7 @@
       href: "/timekeeping/gnss/limits-of-gnss-time-accuracy/"
     - label: "How does GNSS time relate to UTC?"
       href: "/timekeeping/utc/how-gnss-time-relates-to-utc/"
-  draft: true
+  draft: false
 
 - id: datum
   term: "Datum"
@@ -451,7 +451,7 @@
       href: "/timekeeping/measuring-time/comparing-distant-clocks/"
     - label: "PPP-AR"
       href: "#ppp-ar"
-  draft: true
+  draft: false
 
 - id: cggtts
   term: "CGGTTS"
@@ -471,7 +471,7 @@
       href: "/timekeeping/measuring-time/comparing-distant-clocks/"
     - label: "TMAS"
       href: "#tmas"
-  draft: true
+  draft: false
 
 - id: tmas
   term: "TMAS"
@@ -491,7 +491,7 @@
       href: "/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/"
     - label: "Traceability"
       href: "/timekeeping/utc/what-does-traceable-to-utc-mean/"
-  draft: true
+  draft: false
 
 - id: rinex
   term: "RINEX"
@@ -512,7 +512,7 @@
       href: "#cggtts"
     - label: "Comparing distant clocks"
       href: "/timekeeping/measuring-time/comparing-distant-clocks/"
-  draft: true
+  draft: false
 
 - id: peppar-fix
   term: "PePPAR-Fix"
@@ -528,7 +528,7 @@
       href: "#ppp-ar"
     - label: "Choosing a GNSS timescale"
       href: "/timekeeping/gnss/choosing-a-gnss-timescale/"
-  draft: true
+  draft: false
 
 - id: pps
   term: "PPS"
@@ -547,7 +547,7 @@
       href: "#resolution"
     - label: "What makes an accurate timing receiver"
       href: "/timekeeping/datacenters/what-makes-an-accurate-timing-receiver/"
-  draft: true
+  draft: false
 
 - id: gps-network-clock
   term: "GPS network clock"
@@ -567,7 +567,7 @@
       href: "/timekeeping/time-distribution/time-distribution-protocols/"
     - label: "Holdover, which is what its oscillator is really for"
       href: "/timekeeping/datacenters/how-gnss-holdover-works/"
-  draft: true
+  draft: false
 
 - id: epoch
   term: "Epoch"
@@ -593,7 +593,7 @@
       href: "#rinex"
     - label: "PPS, which marks a moment without naming it"
       href: "#pps"
-  draft: true
+  draft: false
 
 - id: three-cornered-hat
   term: "Three-cornered hat"
@@ -618,5 +618,5 @@
       href: "#adev"
     - label: "Common-mode"
       href: "#common-mode"
-  draft: true
+  draft: false
 

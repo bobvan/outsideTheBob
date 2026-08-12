@@ -312,9 +312,9 @@ invisible half by accident.
 It also explains what an agent *is*. Identity comes from the launch directory —
 which means Charlie was never a thing that could be corrupted, only a directory I
 could start something in. I never did find out exactly what happened that day,
-and I no longer have the evidence to check. What I am certain of is that an agent
-could pick up somebody else's identity at all, and that is the part I should have
-chased at the time.
+when Charlie seemed to snatch Bravo's identity, and I no longer have the evidence
+to check. But I am certain that agent identities can be mixed up if you are not
+careful, and that I should have chased down the confusion at the time.
 
 The scaffolding now includes a **tmux startup script per agent** that launches it
 from the correct directory, every time. It is a nine-line shell script guarding
@@ -322,12 +322,12 @@ the single decision that determines who an agent *is*, and writing it down was
 the cheapest fix in this entire story.
 
 Then the meta agent found the thing I would never have found myself: a
-**vestigial `~/.git` left over from that earlier experiment**. My home directory had quietly
-become a git repository, so every agent underneath it that was not inside another
-nested git repo — Proxmox, DNS, the blog, all of them — was pooling its memories
-into one store and reading everybody else's facts. I had been carefully
-separating agents into their own directories and inadvertently running a global hive mind the
-whole time.
+**vestigial `~/.git` left over from that earlier experiment with Gas Town**. My
+home directory had quietly become a git repository, so every agent underneath it
+that was not inside another nested git repo — Proxmox, DNS, the blog, all of
+them — was pooling its memories into one store and reading everybody else's
+retained knowledge. I had been carefully separating agents into their own
+directories and inadvertently running a global hive mind the whole time.
 
 Archiving that stray `.git` fixed it, and we then walked through the rest
 deliberately: isolate retained knowledge where isolation is what you want, and
@@ -368,7 +368,9 @@ it is worth reading separately: **reach.** How far into the real world that agen
 can act. Those two axes are independent, and confusing them is the mistake the
 map exists to prevent — the ops group is the most *isolated* in knowledge and
 contains some of the widest *authority*, while the blog agent is isolated on both
-axes and still carries the fleet's only real risk, because its output is public.
+axes and still carries the fleet's only real risk, because its output is public —
+[this post](/blog/), and everything in
+[Topics In Timekeeping](/timekeeping/), came out of it.
 Sharing and power are different questions.
 
 <CalloutBox type="tip" title="Isolated context is not isolated access">

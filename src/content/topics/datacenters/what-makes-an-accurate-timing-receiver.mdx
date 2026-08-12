@@ -3,12 +3,12 @@ title: "What makes an accurate GNSS timing receiver?"
 description: "Six traits, in the order they start to matter. The last one separates a box that wants to be your master clock from a box that knows you already have a better one."
 section: "datacenters"
 order: 20
-updatedDate: 2026-08-10
+updatedDate: 2026-08-11
 coverage: "M"
 tags: ["GNSS", "timing", "datacenter", "buying", "oscillators"]
 draft: true
-reviewed: 2026-08-08
-reviewNote: "Within 1 hr of read to go. Focus on BYO clock"
+reviewed: 2026-08-11
+reviewNote: "Ready"
 ---
 
 import CalloutBox from "../../../components/post/CalloutBox.astro";
@@ -49,8 +49,8 @@ module hands you the parts.
 	meaningless on a network clock, whose whole job is to have dealt with it
 	already.
 
-	So read the list below with your own answer in mind. The summary table at the
-	end says which traits apply to which.
+	So read the list below with your own intended uses in mind. The summary table
+	at the end says which traits apply to which.
 </CalloutBox>
 
 Here they are in roughly the order they start to matter. The shape of the list
@@ -80,10 +80,10 @@ Same antennas, same roofs.
 Cheap, widely fitted, and more useful as a *diagnostic* than as an alarm — once
 you understand precisely what it is watching.
 
-It watches **the connection, not the signal.** The receiver offers DC on the coax
-to power the antenna and measures the current consumption; too little reads as
-open coax, too much as a short. That is a statement about electrical load, and it is
-only loosely coupled to whether you are receiving anything.
+It watches **the antenna connection, not the signal.** The receiver offers DC on
+the coax to power the antenna and measures the current consumption; too little
+reads as open coax, too much as a short. That is a statement about electrical
+load, and it is only loosely coupled to whether you are receiving anything.
 
 Both failure modes are real and both are common:
 
@@ -91,7 +91,8 @@ Both failure modes are real and both are common:
   that does not mimic an antenna's current draw will read as open forever while
   the signal is perfect.
 - **No signal, connection fine.** Aluminum foil over the antenna will do it in
-  seconds. The current consumption doesn't change, so the supervisor is entirely happy.
+  seconds. The current consumption doesn't change, so the antenna supervisor is
+  entirely happy.
 
 So on its own it is a liar in both directions. What makes it valuable is the
 **correlation**: if signal quality changes *and* the connection state changes at
@@ -101,15 +102,28 @@ firmware, or somebody's foil. That is the
 [second-opinion argument](/timekeeping/measuring-time/is-my-clock-right/)
 in miniature — two indicators that share almost nothing, read together.
 
-For a module builder there is one more reason to want it: an antenna fault is
-usually the leading indicator that
+For a clock builder using a GNSS receiver module there is one more reason to want
+it, and it is the strongest one on this page. An antenna fault is usually the
+leading indicator that
 [holdover](/timekeeping/datacenters/how-gnss-holdover-works/) is in your near
-future. Knowing that a few seconds early is worth having.
+future — but the useful part is what happens in between.
+
+**PPS might keep on ticking for many seconds after an antenna disconnect**, and
+your discipline loop will keep steering on it. So note your DO steering value at
+the moment the supervisor flags the disconnect. If PPS is lost not long after
+that, you may be able to undo whatever transient the failure induced by
+**restoring that earlier steering value and locking it in for holdover**, rather
+than coasting on whatever the loop learned while its reference was falling apart.
+
+Which is the [holdover page's own
+argument](/timekeeping/datacenters/how-gnss-holdover-works/) arriving from a new
+direction: holdover coasts on the last thing the loop was told, so the last thing
+it was told had better not be nonsense.
 
 ## 3. Carrier-phase smoothing
 
-The code measurement — the one that tells you unambiguously *which* nanosecond
-it is — is noisy. The carrier phase is exquisitely quiet but tells you only the
+The pseudorange code measurement — the one that tells you unambiguously *which*
+nanosecond it is — is noisy. The carrier phase is exquisitely quiet but tells you only the
 fractional part of a cycle, with a whole number of cycles unknown.
 
 Smoothing the code with the carrier gets you most of the carrier's quietness
@@ -122,7 +136,8 @@ the difference between a jittery PPS and a steady one.
 	one thing.
 
 	<strong>Carrier smoothing</strong> adds almost no state and no new modelling.
-	Any low-power module does it continuously.
+	A good-quality timing module does it continuously without requiring much
+	power.
 
 	<strong>RTK</strong> does resolve integers — but on a
 	<em>double-differenced</em> problem, where differencing against a base station
@@ -188,8 +203,9 @@ sawtooth-shaped amount — and on a receiver clocked at 125 MHz, that is 8 ns of
 error you could remove if only you knew its sign and size each second.
 
 Good timing firmware **tells you**. It reports the quantization error for the
-edge it just produced, so your loop can correct for it. A receiver that does not
-report it is not less quantized, only less forthcoming, and you have thrown away
+edge it just produced or will next produce, so your loop can correct for it. A
+receiver that does not report it is not less quantized, only less forthcoming,
+and you have thrown away
 the single cheapest nanosecond on the whole board.
 
 <CalloutBox type="warn" title="This is a purchase-level trap, not a footnote">
@@ -333,7 +349,7 @@ else's engineering.
 **A receiver that expects you to have a clock** takes your 10 MHz *in*, times
 everything against it, and tells you how your clock compares to GNSS. That box
 is useless on its own and indispensable the moment you own a rubidium, a maser,
-or anything else whose short-term stability beats a TCXO.
+an OCXO, or anything else whose short-term stability beats a TCXO.
 
 Knowing which one you are shopping for saves more money than any specification
 on the datasheet. And it is a question the

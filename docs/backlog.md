@@ -75,13 +75,17 @@ disambiguated in the sentence that introduces the second. The "BIPM's stated
 
 ### Internal contradictions
 
+*C2 closed 2026-08-11 — "directly traceable to UTC" became "its chain to UTC is
+short and free", with a pointer to the traceability page and one sentence saying
+a short chain is the raw material for traceability rather than traceability
+itself. The acquiring page now defers, as bravo asked.*
+
 *C1 closed 2026-08-11 — the hard stop now names the price of walking through the
 door: copy a published chain, inherit its 1–2 ns floor, add an unmeasured
 per-unit term.*
 
 | # | item | where |
 |---|---|---|
-| C2 | **"Directly traceable to UTC"** is the usage the traceability page forbids. Traceability is the Home; the acquiring page should defer. One occurrence, confirmed still there 2026-08-10. | `datacenters/acquiring-time` |
 
 ### From the answers to our own open questions (§D)
 
@@ -100,13 +104,16 @@ right", which is an argument this site cannot win and does not want. The
 requirement framing stays; the citation does not. Treat this as standing policy,
 not a one-off, and do not re-propose naming MiFID II RTS 25 or its equivalents.*
 
+*D1c, D7 and D8 closed 2026-08-11. D1c became a callout asking which pairs a part
+can run **simultaneously** — and connected it to calibration validity, since
+switching pairs invalidates any delay figure. D7 glosses common-mode inline at
+first use. D8 put one sentence under the BIPM heading and turned the fairness
+section into the promise being kept, rather than repeating itself.*
+
 | # | item | where |
 |---|---|---|
-| D1c | Band pairs a part *supports* vs *lists* — L1/L2 **or** L1/L5, switchable, NAKing the other. **Still open** — the page names the pairs but never says a part may refuse to run both. | `what-makes-an-accurate-timing-receiver` |
 | D6a | **Missing category: the actuator.** What are you steering with, how finely, over what range, and is the range symmetric? | `designing-a-clock` — **held**, so this waits for the rework |
 | D6b | Add a temperature question — ceiling fan, over-insulated oven, wind-driven limit cycle. | `designing-a-clock` — **held** |
-| D7 | Gloss common-mode on **first** use. Still open: first use is the pull-quote translation, and the explanation does not arrive until 24 lines later. | `measuring-time/prioritize-agreement-or-accuracy` |
-| D8 | Move **one sentence** of the fairness section up, under the "why has BIPM stopped" heading, so the reader is not braced against us while reading the evidence. Leave the section where it is. | `comparing-distant-clocks` |
 | E6 | Two-Clock Agreement is a section of one, named after Bob's strongest original result. *What limits agreement* has the most unpublished evidence behind it. | new page |
 
 ## 3. Waiting on someone else

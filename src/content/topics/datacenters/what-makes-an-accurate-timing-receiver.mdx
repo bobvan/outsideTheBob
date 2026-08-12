@@ -75,6 +75,22 @@ NIST quantified the difference on their own hardware: over a long
 ranged up to **50 ns in a day** where dual-frequency stayed within about 10 ns.
 Same antennas, same roofs.
 
+<CalloutBox type="warn" title="Ask which pair, not how many bands">
+	A datasheet listing L1, L2 and L5 is telling you what the silicon
+	<em>supports</em>. It is not promising you can run them together. Parts in
+	this class commonly offer <strong>L1/L2 <em>or</em> L1/L5, switchable</strong>
+	— and will NAK the configuration message that asks for the other combination.
+
+	That matters beyond the disappointment, because a
+	[calibration is only valid for the signal combination it was measured
+	on](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/). Switching pairs to
+	get the bands you wanted invalidates any delay figure you were relying on.
+
+	So the purchase question is <strong>which pairs can this part run
+	simultaneously</strong>, answered from the interface manual rather than the
+	marketing page.
+</CalloutBox>
+
 ## 2. Antenna supervision
 
 Cheap, widely fitted, and more useful as a *diagnostic* than as an alarm — once

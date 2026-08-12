@@ -29,20 +29,24 @@ whether tier 1 stays `/timekeeping/`, and whether to **pin explicit slugs at
 publication** so filenames stop being URLs. Both are free now and permanent
 afterwards; the slug pinning is the one with teeth.
 
-## 1. Publish gate
+## 1. Publish gate — ✅ **passed, and the site is live** (2026-08-11)
 
-Everything here must be true before any `draft: true` becomes `draft: false`.
-`npm run publish-check` verifies the mechanical ones.
+All eight held at the flip and `publish-check --strict` exits 0. They are not
+retired: every one of them still guards the *next* page, and P7 and P8 now guard
+a live site rather than a hypothetical one.
+
+**The rule that replaces them:** URLs are permanent now. A reslug is a broken
+link unless it comes with a redirect.
 
 | # | gate | state |
 |---|---|---|
-| P1 | **Topic pages and glossary entries flip in the same commit.** 60-odd body links point into `/timekeeping/glossary/#…`; flipping pages without the glossary lands every one of them on "nothing published here yet". | ⏳ 30 pages + 30 terms all `draft: true` |
+| P1 | **Topic pages and glossary entries flip in the same commit.** | ✅ done — 30 pages + 32 terms in one commit |
 | P2 | **No `[[? … ?]]` blocks survive.** They render as ordinary body text — readers would see our questions to each other. | ✅ **0 pages** (was 9 on 2026-08-10) |
 | P3 | **Every internal link and glossary anchor resolves.** | ✅ re-crawled 2026-08-10 after the reorganization — 73 routes, 0 broken |
-| P4 | **Nav gate and `noindex` reviewed.** `/timekeeping/` is `noindex` and the nav entry is gated on `hasPublishedTopics()`; both flip implicitly when P1 does. | ⏳ |
+| P4 | **Nav gate and `noindex`.** | ✅ both cleared themselves at the flip, as designed |
 | P5 | **Sanitization pass on anything sourced from private work.** | ✅ for current content |
-| P8 | **Short links resolve to a published page.** `/sl/<id>` is printed on slides and photographed by strangers, so a broken one surfaces in a room rather than in a build log. | ⏳ **firing** — `/sl/bp` points at a draft until the flip |
-| P7 | **No published page links to a draft page.** Each such link is a live 404. Exists because the best inbound link in the garden — `LastNanosecondsToUTC` → `datacenter-gnss-time-best-practices` — must wait for the flip. | ✅ enforced by `publish-check`, has never fired |
+| P8 | **Short links resolve to a published page.** | ✅ quiet — `/sl/bp` verified live through both redirect hops |
+| P7 | **No published page links to a draft page.** Each such link is a live 404. | ✅ enforced; the links it was holding are now added and live |
 | P6 | **`section:` matches the file's directory.** Nothing enforced this; a page moved between sections without editing frontmatter would build a URL contradicting its own location. | ✅ enforced by `publish-check` |
 
 ## 2. Open findings — `review-2026-08-08.md` (bravo)

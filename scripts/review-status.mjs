@@ -3,7 +3,7 @@
 //
 //     npm run review                      # what still needs your eyes
 //     npm run review -- --all             # every draft, including the done ones
-//     npm run review -- --published       # include already-published pages too
+//     npm run review -- --drafts          # only pages not yet published
 //     npm run review -- --never           # only the ones you have never read
 //     npm run review -- --stale           # only the ones that changed after you read them
 //     npm run review -- --mark <slug>     # sign a page off, dated today
@@ -68,13 +68,19 @@ function load(file) {
 	};
 }
 
-// Only drafts are in scope. A published page has already had whatever review it
-// was going to get, and counting nine shipped posts as "never reviewed" made the
-// number useless — the question this tool answers is "what is not ready yet",
-// not "what have I ever read". --published brings them back if you want a sweep.
+// **Everything is in scope, published or not** — changed 2026-08-11, the day the
+// garden went live, because the old default went blind at exactly that moment.
+//
+// Before launch, "draft" meant "in progress" and published meant the nine blog
+// posts, so filtering to drafts gave Bob his queue. The flip inverted it: 39
+// pages became published in one commit and the default report went from 20 rows
+// to zero, while every one of those pages was still being edited. Publication is
+// not the end of editing; it is the point at which editing has consequences.
+//
+// --drafts narrows to unpublished work if that is ever the question again.
 const allPages = [...walk('src/content')].map(load);
-const pages = has('published') ? allPages : allPages.filter((p) => p.draft);
-const hiddenPublished = allPages.length - pages.length;
+const pages = has('drafts') ? allPages.filter((p) => p.draft) : allPages;
+const hiddenDrafts = has('drafts') ? allPages.length - pages.length : 0;
 
 // Astro strips unknown frontmatter keys without complaint, so `reviwed:` would
 // do nothing at all and look like it had worked. Catch the near misses.
@@ -238,8 +244,8 @@ const n = (s) => rows.filter((r) => r.state === s).length;
 const summary =
 	`${n('ok')} current · ${n('stale')} changed since you read them · ${n('sameday')} read and edited the same day · ` +
 	`${n('never')} never reviewed · ` +
-	`${rows.length} draft${rows.length === 1 ? '' : 's'}` +
-	(hiddenPublished ? ` (${hiddenPublished} published page${hiddenPublished === 1 ? '' : 's'} not counted — --published to include)` : '');
+	`${rows.length} page${rows.length === 1 ? '' : 's'}` +
+	(hiddenDrafts ? ` (${hiddenDrafts} published page${hiddenDrafts === 1 ? '' : 's'} hidden by --drafts)` : '');
 console.error(summary);
 if (!has('all') && !only) console.error('listing everything that is not current:');
 
@@ -277,4 +283,4 @@ if (!has('all') && !shown.length) console.error('\n✓ everything is reviewed an
 console.error('\n  ✓ current   ! changed since review   ~ same day, undecidable   · never reviewed');
 console.error('  sign off in vi:  reviewed: YYYY-MM-DD   (reviewNote: "..." optional)');
 console.error('  or from here:    npm run review -- --mark <slug>');
-console.error('  narrow with:     --never   --stale   --all   --published');
+console.error('  narrow with:     --never   --stale   --all   --drafts');

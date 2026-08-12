@@ -1,10 +1,16 @@
-# Publish plan — shipping a self-consistent subset
+# Publish plan — **executed 2026-08-11**
 
-**Rewritten 2026-08-11**, against current slugs and a fresh run of
-`npm run publish-set`. The premise is still Bob's: **fewer self-consistent and
-correctly-linked pages beat many inconsistent stubs.**
-
-The conclusion has changed, and changed decisively.
+> **✅ DONE. Topics In Timekeeping is live.** 30 pages and 32 glossary entries
+> flipped in one commit, slugs pinned first, blog → garden links added in the
+> same commit. Verified against the production build and then against the live
+> site: 72 routes, nothing broken, `/sl/bp` resolving through both hops.
+>
+> **What changed the moment it shipped: URLs are now permanent.** Retitling was
+> free while everything was a draft and is now a broken link for anybody who
+> saved one. A reslug from here needs a redirect — add an entry to
+> `src/data/short-links.yaml` or a Cloudflare rule — not just a `git mv`.
+>
+> The rest of this file is kept as the record of how the decision was made.
 
 ---
 

@@ -236,3 +236,21 @@ So the instinct survives the mechanism changing under it.
 **Cost:** length. `/timekeeping/questions-to-ask/buying-a-datacenter-gnss-clock/`
 is 60 characters against a 43-character median — within the range already set by
 `matching-acquisition-and-distribution` at 64, so no new precedent.
+
+---
+
+## ⚠ Post-launch: URLs are frozen (2026-08-11)
+
+The site is live and every page carries an explicit `slug:`. Two consequences,
+both of which invert advice given above:
+
+1. **Renaming a file no longer changes its URL.** That is the point of pinning.
+   The slug is now the source of truth and the filename is an internal detail.
+2. **Changing a slug is a breaking change.** It was free an hour before launch.
+   From here it orphans every saved link, every search result, and anything
+   printed on a slide. If a slug genuinely must change, ship a redirect with it —
+   an entry in `src/data/short-links.yaml` covers the announced ones, and a
+   Cloudflare Redirect Rule covers the rest.
+
+The retitling section above is history. Read it for the reasoning, not as
+permission.

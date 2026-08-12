@@ -128,9 +128,9 @@ is retired at both Google and Bing, so this splits in two.
 | | state |
 |---|---|
 | **IndexNow** — Bing, and therefore Yahoo, DuckDuckGo and Ecosia; plus Yandex, Naver, Seznam, Yep | ✅ **done.** 75 URLs submitted, 202 Accepted. Re-run `npm run indexnow` after adding pages, or pass specific paths |
-| **Google Search Console** | ⏳ **needs Bob** — it is the only route to Google, and it needs a login. Verify the property, then submit `https://thinkoutsidethebob.com/sitemap-index.xml` |
+| **Google Search Console** | ✅ verified by DNS (Google installed the record) and `sitemap-index.xml` submitted, status Success. **Discovered pages sat at 0 on day one, which is normal** — that count is a separate asynchronous pass. Checked the things that would make it *not* normal: sitemap 200 + `application/xml`, 75 URLs, each matching its page's own canonical exactly, no stray `noindex`, Googlebot allowed. If it is still 0 in three or four days, look at the **Pages** report rather than Sitemaps |
 | **Bing Webmaster Tools** | optional. IndexNow already gets Bing crawling; the tool is for *reporting*, and it can import the property from Search Console rather than verifying again |
-| **Cloudflare Crawler Hints** | optional one-click: a zone toggle that fires IndexNow automatically on change, replacing the manual `npm run indexnow` |
+| **Cloudflare Crawler Hints** | ✅ **on for both zones** (2026-08-11). Cloudflare now fires IndexNow itself when content changes, using its own key. `npm run indexnow` is no longer needed after a routine deploy — keep it for forcing a full re-submit |
 
 **Verification, when Bob is ready.** DNS TXT is the one to prefer — he controls
 the Cloudflare zone, it covers the whole domain including subdomains, and it

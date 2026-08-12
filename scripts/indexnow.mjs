@@ -12,6 +12,13 @@
 // Ecosia, plus Yandex, Naver, Seznam and Yep. That is most of the non-Google
 // web, for one HTTP request.
 //
+// **Cloudflare Crawler Hints is on for both zones** (2026-08-11), so Cloudflare
+// already fires IndexNow itself when content changes, using its own key. This
+// script is therefore not needed after a routine deploy. It stays for the case
+// Crawler Hints does not cover: forcing a full re-submit of every URL, or
+// pushing a specific page immediately rather than when the edge notices. The two
+// keys are independent and coexist happily.
+//
 // The key lives at https://<host>/<key>.txt and must contain exactly the key.
 // The script REFUSES to submit unless it can fetch that file from the live site
 // and read the right value back, because a submission with an unverifiable key

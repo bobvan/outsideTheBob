@@ -16,6 +16,13 @@ const blog = defineCollection({
 				slug: z.string().optional(),
 				tags: z.array(z.string()).optional(),
 				// See the note on the topics collection — Bob's, not ours.
+				// A closing self-summary's anchor, e.g. "the-short-version". When set, the
+				// page shows a jump link near the top. Deliberately the anchor rather
+				// than a boolean: the heading's wording is the author's, and hard-coding
+				// one phrase would flatten six pages into the same voice. Validated at
+				// build time against the real headings, because a jump link that lands
+				// nowhere is worse than no jump link.
+				bottomLine: z.string().optional(),
 				reviewed: z.coerce.date().optional(),
 				reviewNote: z.string().optional(),
 				draft: z.boolean().default(true),
@@ -69,6 +76,8 @@ const topics = defineCollection({
 			reviewNote: z.string().optional(),
 			// Same default as blog: a new file is invisible until it is finished
 			// on purpose, not published until it is hidden on purpose.
+			// Same as on blog: the anchor of a closing self-summary. See the note there.
+			bottomLine: z.string().optional(),
 			draft: z.boolean().default(true),
 		}),
 });

@@ -18,7 +18,17 @@ const postSlug = (post: BlogEntry) => post.data.slug ?? post.id;
 const entry = posts.find((post) => postSlug(post) === slug);
 if (!entry) return Astro.redirect("/");
 
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+
+// See the topic template: the anchor is validated so a jump link cannot rot into
+// a scroll to the top of the page.
+const bottomLine = entry.data.bottomLine;
+if (bottomLine && !headings.some((h) => h.slug === bottomLine)) {
+	throw new Error(
+		`${entry.id}: bottomLine "${bottomLine}" matches no heading. Headings are: ` +
+			headings.map((h) => h.slug).join(', '),
+	);
+}
 
 const newerToOlder = [...posts].sort((a, b) => +b.data.pubDate - +a.data.pubDate);
 const idx = newerToOlder.findIndex((p) => p.id === entry.id);
@@ -42,6 +52,12 @@ export async function getStaticPaths() {
       {entry.data.updatedDate && <> · updated <FormattedDate date={entry.data.updatedDate} /></>}
       <TagList tags={entry.data.tags} />
     </p>
+    {bottomLine && (
+      <p class="bottom-line-jump">
+        <a href={`#${bottomLine}`}>Skip the details — take me to the bottom line ↓</a>
+      </p>
+    )}
+
     <Content />
     <p>
       {prev && <a href={`/blog/${postSlug(prev)}/`}>← {prev.data.title}</a>}
@@ -50,3 +66,7 @@ export async function getStaticPaths() {
     </p>
   </article>
 </BaseLayout>
+
+<style>
+  .bottom-line-jump { margin: -0.4rem 0 1.4rem; font-size: 0.9rem; }
+</style>

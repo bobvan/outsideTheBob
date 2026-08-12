@@ -137,6 +137,30 @@ the Cloudflare zone, it covers the whole domain including subdomains, and it
 needs no repo change. If he would rather do it in the repo, an HTML meta tag in
 `BaseLayout` or a file in `public/` both work and are a one-line change here.
 
+## 2c. Bottom lines on long pages — started 2026-08-12
+
+Bob's alternative to a parallel summarized site, and a better one: no duplicate
+URLs, no second copy to keep in sync, and the summary is edited alongside the
+page that owns it. See the style-guide entry for the rule and the reasoning.
+
+`npm run bottom-line`. **4 of 9 long pages have one.** Five to write, in
+descending order of how much they need it:
+
+| words | page |
+|---|---|
+| 3416 | `can-i-build-my-own-link-to-utc-nist` |
+| 3034 | `comparing-distant-clocks` |
+| 3010 | `what-makes-an-accurate-timing-receiver` |
+| 2195 | `how-gnss-holdover-works` |
+| 1525 | `limits-of-gnss-time-accuracy` |
+
+These are Bob's voice and go on live pages, so each wants his eye before it
+ships rather than a batch of five landing at once.
+
+*The parallel-site idea is closed — see the `summaries-prototype` branch for what
+it looked like and why inline won. Kept unmerged; the branch's one summary is
+already stale, which was the argument against it arriving on day one.*
+
 ## 3. Waiting on someone else
 
 | # | item | who |

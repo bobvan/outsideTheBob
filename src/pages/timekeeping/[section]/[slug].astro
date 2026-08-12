@@ -27,7 +27,19 @@ export async function getStaticPaths() {
 }
 
 const { page, prev, next } = Astro.props;
-const { Content } = await render(page);
+const { Content, headings } = await render(page);
+
+// The jump link to a closing self-summary. Validated here rather than trusted:
+// a dead anchor sends a reader who asked for the short version to the top of the
+// page, which is the opposite of what they clicked for, and nothing else would
+// ever catch it.
+const bottomLine = page.data.bottomLine;
+if (bottomLine && !headings.some((h) => h.slug === bottomLine)) {
+	throw new Error(
+		`${page.id}: bottomLine "${bottomLine}" matches no heading. Headings are: ` +
+			headings.map((h) => h.slug).join(', '),
+	);
+}
 const section = sectionTitle(page.data.section);
 
 // A neighbor in another section gets a parenthetical; one in this section does
@@ -52,6 +64,12 @@ const nextAway = away(next);
 			Updated <FormattedDate date={page.data.updatedDate} />
 			<TagList tags={page.data.tags} />
 		</p>
+
+		{bottomLine && (
+			<p class="bottom-line-jump">
+				<a href={`#${bottomLine}`}>Skip the details — take me to the bottom line ↓</a>
+			</p>
+		)}
 
 		<Content />
 	</article>
@@ -142,4 +160,8 @@ const nextAway = away(next);
 		.links { flex-direction: column; gap: 0.7rem; }
 		.fwd { text-align: left; }
 	}
+</style>
+
+<style>
+	.bottom-line-jump { margin: -0.4rem 0 1.4rem; font-size: 0.9rem; }
 </style>

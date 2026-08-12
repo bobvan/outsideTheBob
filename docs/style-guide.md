@@ -289,3 +289,35 @@ points back at that page, so the page *is* the explanation rather than a place t
 send someone.
 
 `--strict` fails only on UNREACHABLE, so it is safe to wire into a gate later.
+
+## Long pages end with a bottom line
+
+**Soft threshold: about 1500 prose words.** Over that, a page should close with a
+section that states its conclusions on their own — readable without the argument
+above it — and set `bottomLine:` in frontmatter to that section's anchor. The
+page then shows a quiet *"Skip the details — take me to the bottom line ↓"* link
+under the title.
+
+**Why 1500 and not 1000.** Measured, not guessed. The garden's median page is 991
+prose words and its distribution has a fat cluster at 600–800 — pages that are
+already the short version of something. At 1500 the rule marks **9 pages of 41**;
+at 1000 it would mark 21, and a jump link on half the site stops meaning *this
+page is long* and starts meaning nothing. It marks the outliers or it marks
+nothing.
+
+**Soft, though.** `datacenter-gnss-time-best-practices` is 1479 words and closes
+with one because the page is a list and the list has a shape worth naming.
+`npm run bottom-line` reports both directions — long pages without one, and short
+pages with one — and treats neither as an error.
+
+**The anchor, not a boolean.** The heading's wording belongs to whoever wrote the
+page: *The short version*, *How to decide, in one pass*, *What I'd tell someone
+starting*. Hard-coding one phrase would flatten six pages into the same voice.
+The build **fails** if the anchor matches no heading, because a jump link that
+lands nowhere sends a reader who asked for the summary to the top of the page.
+
+**What a bottom line is.** The conclusions, not a précis. It should not
+recapitulate the evidence or the derivations — it should say what to do and what
+is true, in a form somebody could act on having read nothing else. If it reads
+like a shorter version of the page, it is the wrong thing; if it reads like the
+notes you would give a colleague in a corridor, it is right.

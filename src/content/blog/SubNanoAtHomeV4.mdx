@@ -1,0 +1,91 @@
+---
+title: "Sub-Nanosecond at Home, Take Four"
+slug: "sub-nanosecond-at-home-take-four"
+pubDate: 2026-08-12
+description: "The same talk, four slides longer — and almost everything new in it came out of writing the pages rather than building the clock"
+tags: ["GNSS", "timekeeping", "talks", "AI", "hardware"]
+draft: true
+---
+
+I gave [this talk again](/blog/sub-nanosecond-at-home-with-gnss-and-ai/) today, a
+month after the first outing at NPL. Same argument, same parts list, same clock.
+Four more slides.
+
+What is interesting is where those four came from. I spent the month between the
+two versions writing **[Topics In Timekeeping](/timekeeping/)** — thirty pages on
+the material the talk has to skate over — and the new slides are almost entirely
+things I only understood well enough to draw *because* I had to write them down
+properly first.
+
+Explaining it to a reader turned out to be a better way to find the holes than
+explaining it to a room. A room is polite about the parts you hand-wave.
+
+## What is new
+
+**Three pictures of the same satellite, in order of how wrong they are.** The
+intuitive model has master clocks in orbit. The next one has the ground steering
+them. The real one has the satellites free-running while the ground computes
+corrections and the satellite relays them — and **your receiver** does the
+arithmetic. That progression is the spine of
+[what limits GNSS time accuracy](/timekeeping/gnss/limits-of-gnss-time-accuracy/)
+and I could not have drawn it cleanly before writing that page.
+
+**What a correction stream actually buys.** Leaving the broadcast navigation
+message for a real-time stream is **a factor of 25 in error and a factor of 100
+in freshness**, in one step. Two numbers on a slide that used to be a paragraph
+of arm-waving.
+
+**A very expensive thermometer.** Eight minutes of quantization error from a
+u-blox F9T while my lab warmed and cooled — probably a ceiling fan on a warm
+afternoon. The sawtooth sweeps one way, slows, stops, and reverses. Unwrapped,
+the oscillator's phase walked out to **120 ns and came back**. When you compare
+GPS time to quartz time, you have built a thermometer. That slide is now the
+evidence on
+[how GNSS holdover works](/timekeeping/datacenters/how-gnss-holdover-works/),
+because in holdover nothing is watching that happen.
+
+**A trading campus that agrees with itself much better than it agrees with
+UTC.** Any pair of ports across a half-mile Equinix campus in Secaucus syncs to
+**200 ps**, while the same equipment holds only **±15 ns RMS to UTC**. That is a
+factor of seventy-five, it is the normal state of affairs, and for most of what
+those machines compute it is the *right* trade — which is the whole of
+[agreement versus accuracy](/timekeeping/measuring-time/prioritize-agreement-or-accuracy/).
+
+## And one honest new result
+
+The clock reaches **sub-nanosecond stability** and still only manages **3 ns of
+agreement** between clocks.
+
+Those are not in tension, they are the two different ways of being wrong that
+this subject keeps insisting on. Stability says the output is quiet. Agreement
+says two of them land in the same place. The carrier-phase measurement underneath
+is doing extraordinarily well — 37 to 109 ps of per-epoch precision, which is the
+number I keep pointing at — and the gap between that and 3 ns is the work that
+remains.
+
+Saying so on a slide is more useful than saying "sub-nanosecond" and stopping.
+
+## The last slide is a QR code
+
+The talk now ends by pointing at
+[Datacenter GNSS Time Best Practices](/timekeeping/datacenters/datacenter-gnss-time-best-practices/),
+which is the closing slide of my *previous* talk unpacked into a page that has
+room for the reasoning. Eight practices, most of which cost nothing but
+attention.
+
+That is the shape this has settled into: the talks raise the questions, and the
+pages are where the answers get written down and corrected.
+
+## The Slides
+
+[View the presentation on GitHub](https://github.com/bobvan/subNanoAtHomeGnssAI/blob/main/subNanoAtHomeGnssAI.pdf),
+or
+[download it for offline viewing](https://raw.githubusercontent.com/bobvan/subNanoAtHomeGnssAI/main/subNanoAtHomeGnssAI.pdf).
+
+The [dress rehearsal recording](https://us06web.zoom.us/rec/share/1zvoQ55HAjh64t1HXOtMuHbLQsf9KlSkImf9Kdp5P-IfeTKznRcYh0pjgsGdbWsc.UuqJBDgil96nxSYb)
+is still the July version, so it is missing the four slides above — everything
+else in it stands.
+
+As always the slides are heavy on visuals and light on bullets, so the PDF leaves
+out what the narration carried. Increasingly, though, what the narration carried
+is written down properly [next door](/timekeeping/).

@@ -7,7 +7,9 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://thinkoutsidethebob.com',
-	integrations: [mdx(), sitemap()],
+	// Short links are noindex redirects; listing them in the sitemap would be
+	// asking search engines to crawl a page that tells them not to index it.
+	integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/sl/') })],
 	// Astro's default is github-dark alone, which puts white-on-black code
 	// blocks on a light page. Naming both themes makes Shiki emit each token's
 	// dark colour as a --shiki-dark custom property alongside the light one, so

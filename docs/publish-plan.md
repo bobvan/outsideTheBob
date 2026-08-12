@@ -121,8 +121,14 @@ Add it in step 7 below, along with any other blog → garden links worth making.
    true — no separate edit.
 6. **Add the blog → garden links** that P7 has been holding back — starting with
    `LastNanosecondsToUTC` → `datacenter-gnss-time-best-practices`. Re-run
-   `publish-check` afterwards; it should stay silent.
-7. **Pin explicit slugs.** Every URL is currently derived from its filename, so
+   `publish-check` afterwards; it should stay silent, and **P8 should stop
+   complaining about `/sl/bp`** in the same moment.
+7. **Verify the short links against the live site**, not the dev server:
+   `curl -sSL -o /dev/null -w '%{http_code} %{url_effective}\n' https://outsidethebob.com/sl/bp`
+   should end 200 on the best-practices page. Two redirects are involved — the
+   short domain to the canonical one, then the meta refresh — and only the first
+   can be tested before deploying.
+8. **Pin explicit slugs.** Every URL is currently derived from its filename, so
    after publication an editorial file rename silently relocates a live URL. One
    commit writing each page's current slug into its frontmatter freezes them.
    See `url-structure.md`.
@@ -140,6 +146,31 @@ Recorded because they look like blockers and are not:
   reading queue, not a mechanical gate — and as of today it is the only thing
   standing between the current state and publication. Only three of them have
   substantial new prose; the rest are terminology sweeps and link repointing.
+
+## Short links
+
+`src/data/short-links.yaml` → `/sl/<id>`, one entry per link. Said aloud as
+**OutsideTheBob.Com/sl/bp**, because dropping "think" is worth four characters in
+a QR code and a syllable in a room.
+
+`npm run qr -- https://outsidethebob.com/sl/bp --name BestPractices` writes the
+code into `qr/`, which is excluded from git.
+
+**Why the short link is worth the machinery.** URL length sets the QR version and
+the version sets the module size, which is what decides whether a phone at the
+back of a room locks on:
+
+| encoded | chars | version | modules | module at 1080p |
+|---|---|---|---|---|
+| full path on the canonical domain | 91 | 8 | 49×49 | 18.9 px |
+| `outsidethebob.com/sl/bp` | 31 | **3** | **29×29** | **29.2 px** |
+
+A 55% larger module for the same slide area. The `/sl/` directory is free —
+`/bp` alone is also version 3, so the namespace costs nothing.
+
+**P8 guards them.** A short link whose target does not exist, or is still a
+draft, is a 404 for everyone who scans the code — discovered in a room rather
+than in a build log.
 
 ## Orphan pages — none left
 

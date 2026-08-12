@@ -93,4 +93,19 @@ const glossary = defineCollection({
 	}),
 });
 
-export const collections = { blog, topics, glossary };
+// Short links exist so a QR code on a slide can be small enough to scan from the
+// back of a room. The length of the URL decides the QR version, and the version
+// decides the module size — /sl/bp is a 29x29 code where the full path is 49x49,
+// which is a 55% larger module for the same slide area.
+const shortLinks = defineCollection({
+	loader: file('src/data/short-links.yaml'),
+	schema: z.object({
+		// Site-absolute path, trailing slash, matching how the rest of the site links.
+		to: z.string().startsWith('/'),
+		// Who it is for and when. Short links outlive the occasion that created
+		// them and there is no other way to tell a live one from a dead one.
+		note: z.string(),
+	}),
+});
+
+export const collections = { blog, topics, glossary, shortLinks };

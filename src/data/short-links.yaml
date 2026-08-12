@@ -1,0 +1,22 @@
+# Short links, for QR codes and anything read aloud.
+#
+# Each entry becomes /sl/<id> on the canonical site. Say them as
+# OutsideTheBob.Com/sl/<id> — the short domain redirects to the canonical one
+# with the path preserved, and dropping "think" is worth four characters in a
+# QR code and a syllable out loud.
+#
+# House rules:
+#   - `id` is lowercase, short, and permanent. A short link that changes is
+#     worse than no short link, because it is printed on things you cannot
+#     recall — slides, handouts, somebody's photo of a screen.
+#   - `to` is a site-absolute path with a trailing slash, matching how the rest
+#     of the site links.
+#   - `note` says who it is for and when, so nobody has to guess later whether
+#     an entry is still live.
+#
+# `npm run publish-check` verifies every target exists and is not a draft — a
+# short link to a draft page is a 404 for everyone who scans it.
+
+- id: bp
+  to: /timekeeping/datacenters/datacenter-gnss-time-best-practices/
+  note: "Datacenter GNSS time best practices. For the Sub-Nanosecond at Home Zoom talk, 2026-08-12."

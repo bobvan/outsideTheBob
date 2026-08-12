@@ -91,6 +91,20 @@ if (liveBreaks.length) {
 	);
 }
 
+// P8 — short links are printed on slides and photographed by strangers, so a
+// broken one is discovered in a room rather than in a build log. Two ways to
+// break: the target does not exist, or it exists but is still a draft, which is
+// a 404 for everyone who scans the code.
+const shortLinks = [...(readFileSync('src/data/short-links.yaml', 'utf8').matchAll(/^- id:\s*(\S+)[\s\S]*?^\s+to:\s*(\S+)/gm) ?? [])];
+const allSlugs = new Map(topics.map((t) => [slugOf(t.f), t]));
+for (const [, id, to] of shortLinks) {
+	const slug = to.replace(/\/$/, '').split('/').pop();
+	const page = allSlugs.get(slug);
+	if (!page) problems.push(`P8  short link /sl/${id} points at ${to}, which is not a page.`);
+	else if (page.draft) problems.push(`P8  short link /sl/${id} points at ${to}, which is still a DRAFT — a 404 for anyone who scans it.`);
+}
+
+console.error(`short:    ${shortLinks.length} short link(s)`);
 console.error(`topics:   ${publishedTopics.length} published / ${topics.length} total`);
 console.error(`glossary: ${glossPublished} published / ${glossTotal} total`);
 console.error(`prompts:  ${prompted.length} file(s) carry [[? ?]] (${promptedPublished.length} of them published)`);

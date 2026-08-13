@@ -1,0 +1,160 @@
+---
+title: "What a Claude Army Shares"
+slug: "what-a-claude-army-shares"
+pubDate: 2026-08-13
+description: "The last post sorted my agents by how much each group shares. Then I gave a second team a shared day plan and found out that sharing is not one thing — it's four, and mixing them up is how you get a hive mind you did not ask for"
+tags: ["AI", "agents", "tooling", "Proxmox"]
+draft: true
+---
+
+import CalloutBox from "../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
+
+[Last time](/blog/organizing-a-claude-army/) I sorted a dozen agents into three
+groups by **how much** each one shares — a hive mind at one end, complete
+isolation at the other, and a middle group that shares exactly one database.
+
+That map answered *how much*. It did not answer *what*, and I have spent the days
+since finding out the hard way. **Sharing turns out not to be one thing.** There
+are four kinds in my fleet, they ride separate rails, and every time I have been
+sloppy about which is which, I have created a problem I then had to go and undo.
+
+## The thing that forced the question
+
+The hive — the four agents that work on one codebase — coordinate through a
+**day plan**: an append-only log they each append to and replay to see where
+everything stands. It is a stand-up in writing, for participants who cannot see
+each other's conversations.
+
+It works well enough that I wanted it for the ops team too. Seven agents there,
+one each for Proxmox, DNS, NTP, UniFi, the UPSes, Home Bridge and monitoring, and
+they routinely tread on each other: a DNS change monitoring ought to expect, a
+UPS swap that touches the network gear, an NTP roll somebody should be watching.
+
+The obvious move is to point them at the log the hive already uses. **That is the
+move I am glad I did not make.** It would have worked on day one and been wrong
+forever after, because it quietly merges two teams that have no business reading
+each other's plans.
+
+## Distinct by construction, not by discipline
+
+So ops got its own. Separate script, separate directory, separate environment
+variable — which means **an ops agent running the ops tool physically cannot
+write the hive's log.** Not "is told not to." Cannot.
+
+That distinction is the one I keep relearning. Anything enforced by an
+instruction is enforced right up until an agent is halfway through a long task,
+reasoning hard about something else, and takes the shortest path to a plausible
+goal. Anything enforced by construction is enforced always. Given the choice
+between writing a rule and removing the possibility, remove the possibility.
+
+<CalloutBox type="tip" title="Where the log lives is part of the design">
+	The live log sits **outside any repository** — it is runtime state, and
+	versioning it would mean a commit every time an agent said "started this."
+
+	The rolled-up history goes **into** the team's repo when the day closes.
+	That way the transient thing stays transient and the durable summary becomes
+	a durable fact, which is a distinction the two halves of the tool make on
+	their own so nobody has to remember it.
+</CalloutBox>
+
+## The best change I made was to how items are named
+
+The hive's day plan keys each item with an integer stamped from the clock —
+`I-081901`, that sort of thing. Machine-friendly, unique, and I could not hold
+one in my head for five minutes.
+
+When several balls are in the air, numbers and names come apart. I would read a
+plan, form a picture of what `I-081901` was, and by the time I typed a command I
+had it confused with `I-164853`. So the ops version **requires a human-friendly
+key**: `AddTwoUps`, `fix-dns-ptr`. Short, unique for the day, and the same string
+you type into every later command.
+
+That sounds cosmetic. I do not think it is, and the general form is worth
+stating:
+
+> **The stable key should be the thing a human remembers. The free text is what
+> you let change.**
+
+Most systems I have used get that exactly backwards — an opaque identifier that
+never changes and a title that does. Then the title drifts, and the only thing
+tying the conversation together is a number nobody can recall. Putting the
+memorable string in the immutable slot costs nothing and pays every time somebody
+has to talk about the work out loud.
+
+## The fourth rail: a library card for the whole fleet
+
+The other new thing is a **document cache**. My agents keep fetching the same
+third-party PDFs — a UPS manual, a receiver's interface spec, an RFC — and each
+one was fetching them separately, into its own context, over and over.
+
+Now there is one local, full-text-searchable corpus that any agent can add to and
+search. And it is deliberately the least precious store in the fleet:
+
+- **It is a cache, not a source of truth.** Every document records its source URL
+  and a SHA-256 of the bytes, so the whole thing is re-fetchable. If I lost it
+  tomorrow I would type one command and go and make coffee.
+- **It is not versioned, on purpose.** Reconstructible things do not need
+  history. Backing it up is enough.
+- **It is one corpus for the whole fleet**, where every other shared thing is
+  split up by team.
+
+That last point is what made the taxonomy click.
+
+## Two questions decide which rail a thing rides
+
+Why must the day plan be per-team when the document cache can be fleet-wide? Two
+questions, and they are the whole design:
+
+**Is it private, or would it clutter somebody's thinking?** Then isolate it. This
+is why memory is per-agent: I do not want the blog agent's context carrying
+opinions about UPS firmware.
+
+**Is it specific to one team?** Then give each team its own. Coordination is
+inherently team-specific — the ops agents' plan is meaningless to the hive and
+vice versa.
+
+A public device manual fails both tests. It is not private, it does not pollute
+anybody's context to have it *available* rather than loaded, and a datasheet is a
+datasheet whoever reads it. So it does not need dividing, and dividing it would
+just mean fetching everything twice.
+
+<ZoomableImage
+	plate
+	src="/figures/fleet-map.svg"
+	alt="A map of the agent fleet in three columns. Column one, hive mind, everything shared: four agents over three shared pools labelled shared knowledge, shared facts, and shared state. Column two, independent with one shared database: seven ops agents each with private memory, over two shared pools — a shared facts repo and a shared state day plan of their own. Column three, fully independent: meta, the blog and one more, each with its own memory and no shared pool. Beneath all three columns, a single band spanning the full width: shared cache, doclib, one corpus for every agent above. A coloured badge above each agent shows its reach — read-only, admin, or full commit and root."
+	caption="The same map as last time, with the two new rails in it. Note the shape of the
+		argument: three columns for the things that must be divided, and one band underneath
+		for the one thing that does not."
+/>
+
+## The four rails, and what each one is allowed to be
+
+| | what it holds | how it behaves |
+|---|---|---|
+| **Knowledge** | distilled facts an agent learned | private by default; pooled only inside a hive |
+| **Facts** | the inventory — what exists, what version, where | versioned in a repo, one file per thing |
+| **State** | who is doing what, right now | append-only, replayed; per-team, always |
+| **Cache** | third-party documents | disposable, reconstructible, fleet-wide |
+
+Read down the right-hand column and the rules are all different. One is private,
+one is versioned, one is append-only, one is expendable. **The failure mode is
+putting something on the wrong rail**, and it is always quiet: facts in a
+coordination log rot silently, coordination state in a repo produces commit noise
+nobody reads, and cached documents in version control turn a small repo into a
+large one for no benefit at all.
+
+## What I would tell someone starting
+
+The first post's advice was about how much to share. This one is narrower and I
+think more useful.
+
+**Before you give two agents access to the same thing, ask what kind of thing it
+is.** If it is knowledge, isolating it is the default and pooling is the
+exception you should have to justify. If it is coordination, it belongs to
+exactly one team. If it is a fact about your world, version it. And if you could
+download it again in a minute, treat it as disposable and stop protecting it.
+
+Then, wherever you can, make the separation structural rather than a rule you
+wrote down. A rule is a thing an agent can reason its way around at two in the
+morning. A separate directory is not.

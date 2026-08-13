@@ -46,7 +46,7 @@ link unless it comes with a redirect.
 | P4 | **Nav gate and `noindex`.** | ✅ both cleared themselves at the flip, as designed |
 | P5 | **Sanitization pass on anything sourced from private work.** | ✅ for current content |
 | P8 | **Short links resolve to a published page.** | ✅ quiet — `/sl/bp` verified live through both redirect hops |
-| P7 | **No published page links to a draft page.** Each such link is a live 404. | ✅ enforced; the links it was holding are now added and live |
+| P7 | **No published page links to a draft page.** Each such link is a live 404. | ✅ enforced. **Widened 2026-08-13** — it had only checked links into draft *topic* pages, and walked straight past a published blog post linking forward to a draft follow-up. Now covers every collection, and resolves `slug:` rather than assuming the filename |
 | P6 | **`section:` matches the file's directory.** Nothing enforced this; a page moved between sections without editing frontmatter would build a URL contradicting its own location. | ✅ enforced by `publish-check` |
 
 ## 2. Open findings — `review-2026-08-08.md` (bravo)

@@ -115,6 +115,18 @@ cannot be acted on a week early.
 Add it in step 7 below, along with any other blog → garden links worth making.
 `SubNanosecondAtHome` is the other obvious candidate.
 
+## Publishing a post that an existing post should point at
+
+Learned 2026-08-13. When a new post is a follow-up, the forward link from the
+older post **cannot go in until the new one ships** — the older post is live, so
+the link is a 404 the moment it is pushed. P7 catches it, but only since it was
+widened to cover blog posts as well as topic pages.
+
+So the sequence is: write the new post with its backward link (safe — the older
+post is already published), ship it, *then* add the forward link to the older
+post. Two commits, and the second one is easy to forget, which is why it is
+written down here.
+
 ## Order of operations on publication day
 
 1. `npm run publish-set` — confirm the cost is still zero for the batch you want.

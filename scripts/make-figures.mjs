@@ -853,7 +853,7 @@ mkdirSync(OUT, { recursive: true });
 //     figure exists to prevent.
 // ---------------------------------------------------------------------------
 {
-	const W = 1000, H = 548;
+	const W = 1000, H = 610;
 	const BLUE = '#0072B2', GREEN = '#009E73', AMBER = '#E69F00';
 	const COLW = 316, GAP = 16, LEFT = 16;
 	const cx = (i) => LEFT + i * (COLW + GAP) + COLW / 2;
@@ -899,8 +899,8 @@ mkdirSync(OUT, { recursive: true });
 		b += agent(x0(0) + 12 + (k % 2) * 148, 128 + Math.floor(k / 2) * 40, 140, n, 'own worktree · own transcript');
 	});
 	b += text(cx(0), 222, 'all four read / write ↓', { size: 9.5, fill: MUTED, style: 'italic' });
-	[['Shared memory store', 'one .git → one pool'],
-	 ['Shared repo · docs/', 'one .git, four worktrees'],
+	[['Shared knowledge · memory store', 'one .git → one pool'],
+	 ['Shared facts · repo + docs/', 'one .git, four worktrees'],
 	 ['Shared state · day plan', 'append-only, all four append']].forEach(([l, sub], k) => {
 		b += pool(x0(0) + 12, 232 + k * 42, 288, l, sub, true);
 	});
@@ -918,10 +918,14 @@ mkdirSync(OUT, { recursive: true });
 		b += text(x0(1) + 124, y + 12, n, { size: 10.5, weight: 700, anchor: 'start' });
 		b += text(x0(1) + 292, y + 12, 'private memory', { size: 8.5, anchor: 'end', fill: MUTED });
 	});
-	b += text(cx(1), 386, 'all seven read / write ↓', { size: 9.5, fill: MUTED, style: 'italic' });
-	b += pool(x0(1) + 12, 396, 288, 'Shared homelab database', 'referenced, not launched from', true);
-	b += text(cx(1), 450, 'A data repo they reference rather than launch', { size: 9.5, fill: BLUE, style: 'italic' });
-	b += text(cx(1), 463, 'from — so private memory stays private.', { size: 9.5, fill: BLUE, style: 'italic' });
+	b += text(cx(1), 370, 'all seven read / write ↓', { size: 9.5, fill: MUTED, style: 'italic' });
+	b += pool(x0(1) + 12, 378, 288, 'Shared facts · homelab repo', 'referenced, not launched from', true);
+	// Added 2026-08-13: ops got its own day plan, distinct from the hive's by
+	// construction. Two pools in this column now, and they are different rails —
+	// versioned facts against append-only state.
+	b += pool(x0(1) + 12, 416, 288, 'Shared state · ops day plan', 'its own log — cannot write the hive\'s', true);
+	b += text(cx(1), 466, 'Referenced rather than launched from, so', { size: 9.5, fill: BLUE, style: 'italic' });
+	b += text(cx(1), 478, 'private memory stays private.', { size: 9.5, fill: BLUE, style: 'italic' });
 
 	// --- Zone 3: nothing shared ---------------------------------------------
 	const SOLO = [
@@ -944,8 +948,17 @@ mkdirSync(OUT, { recursive: true });
 	b += text(cx(2), 396, 'Different domains that should never', { size: 9.5, fill: BLUE, style: 'italic' });
 	b += text(cx(2), 409, 'bleed into one another.', { size: 9.5, fill: BLUE, style: 'italic' });
 
+	// --- The fourth rail, and the only one that crosses every zone -----------
+	//     Drawn as a band under all three columns rather than inside one,
+	//     because that IS the argument: public reference documents carry
+	//     neither the privacy nor the context-pollution problem that forces the
+	//     other three to be split up, so one corpus serves the whole fleet.
+	b += box(LEFT, 504, W - 2 * LEFT, 44, BLUE);
+	b += text(W / 2, 522, 'Shared cache · doclib — one corpus for every agent above', { size: 11, weight: 700, fill: BLUE });
+	b += text(W / 2, 537, 'third-party manuals and datasheets · full-text search · records source URL + sha256, so it is reconstructible rather than versioned', { size: 9, fill: MUTED });
+
 	// --- Legend --------------------------------------------------------------
-	const ly = 522;
+	const ly = 584;
 	b += text(LEFT, ly, 'reach:', { size: 10, weight: 700, anchor: 'start', fill: MUTED });
 	[['read-only', GREEN], ['admin', AMBER], ['full — commit / root', RED]].forEach(([l, c], k) => {
 		const x = LEFT + 46 + k * 132;
@@ -957,7 +970,7 @@ mkdirSync(OUT, { recursive: true });
 	});
 
 	b += text(LEFT, 24, 'Three ways to organize a Claude army', { size: 15.5, weight: 700, anchor: 'start' });
-	b += text(LEFT, 41, 'One fleet, three organizations — sorted by how much each group shares. Above each agent, a second and independent dimension: its reach.', {
+	b += text(LEFT, 41, 'Sorted by how much each group shares. Above each agent, its reach. Below everything, the one rail that needs no dividing.', {
 		size: 10, fill: MUTED, anchor: 'start',
 	});
 	writeFileSync(`${OUT}/fleet-map.svg`, svg(W, H, b));

@@ -74,19 +74,28 @@ for (const t of topics) {
 // post links into the garden yet — but the moment the garden publishes, the
 // obvious links from the talk write-ups become worth adding, and the obvious
 // mistake is adding one a week early. Cheap insurance for a live-site break.
-const slugOf = (f) => basename(f).replace(/\.mdx?$/, '');
-const draftSlugs = new Set(topics.filter((t) => t.draft).map((t) => slugOf(t.f)));
+// Every draft, not just topic pages. The first version of this looked only at
+// topics, and on 2026-08-13 a published blog post linked forward to a follow-up
+// that was still a draft — a live 404 that this gate was written to prevent and
+// walked straight past. A draft is a draft whichever collection it is in, and an
+// explicit `slug:` is the URL when a file has one.
+const slugOf = (f) => {
+	const fm = readFileSync(f, 'utf8').split(/^---$/m)[1] ?? '';
+	return fm.match(/^slug:\s*"?(.*?)"?\s*$/m)?.[1] || basename(f).replace(/\.mdx?$/, '');
+};
+const allContent = walk('src/content').map((f) => ({ f, draft: isDraft(readFileSync(f, 'utf8')) }));
+const draftSlugs = new Set(allContent.filter((t) => t.draft).map((t) => slugOf(t.f)));
 const publishedFiles = walk('src/content').filter((f) => !isDraft(readFileSync(f, 'utf8')));
 const liveBreaks = [];
 for (const f of publishedFiles) {
-	for (const href of readFileSync(f, 'utf8').match(/\/timekeeping\/[a-z0-9/-]+/g) ?? []) {
+	for (const href of readFileSync(f, 'utf8').match(/\/(?:timekeeping|blog)\/[a-z0-9/-]+/g) ?? []) {
 		const target = href.replace(/\/$/, '').split('/').pop();
 		if (draftSlugs.has(target)) liveBreaks.push(`${f} → ${href}`);
 	}
 }
 if (liveBreaks.length) {
 	problems.push(
-		`P7  ${liveBreaks.length} link(s) from PUBLISHED pages into DRAFT topic pages — each is a 404 on the live site:\n      ` +
+		`P7  ${liveBreaks.length} link(s) from PUBLISHED pages into DRAFT pages — each is a 404 on the live site:\n      ` +
 			liveBreaks.join('\n      '),
 	);
 }

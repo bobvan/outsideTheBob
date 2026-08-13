@@ -157,6 +157,14 @@ thing being recognised is "here is the summary".
 it looked like and why inline won. Kept unmerged; the branch's one summary is
 already stale, which was the argument against it arriving on day one.*
 
+## 2d. In flight right now — 2026-08-13
+
+| what | state |
+|---|---|
+| **`what-a-claude-army-shares`** | **drafted, awaiting Bob's review.** Follow-up to *Organizing a Claude Army*, from meta's brief. The fleet map is regenerated with both new rails. **When it ships, add the forward link to `ClaudeArmy.mdx`** — held out because it is a live 404 until then (P7 catches it) |
+| Google indexing | Search Console verified and submitted 2026-08-11; discovered-pages was 0 on day one, which is normal. If still 0 after a few days, look at the **Pages** report, not Sitemaps |
+| `reviewed:` queue | Bob's reading queue is the only thing between the site and "done". `npm run review` — it counts published pages by default since 2026-08-11 |
+
 ## 3. Waiting on someone else
 
 | # | item | who |

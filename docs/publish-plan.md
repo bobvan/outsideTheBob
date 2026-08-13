@@ -122,10 +122,12 @@ older post **cannot go in until the new one ships** — the older post is live, 
 the link is a 404 the moment it is pushed. P7 catches it, but only since it was
 widened to cover blog posts as well as topic pages.
 
-So the sequence is: write the new post with its backward link (safe — the older
-post is already published), ship it, *then* add the forward link to the older
-post. Two commits, and the second one is easy to forget, which is why it is
-written down here.
+**Better: do both in one commit.** The deploy is atomic, so the follow-up is
+published by the time the link to it is served — it is never a 404, and P7 has
+nothing to catch. Two commits only makes sense if the follow-up ships without
+the older post being touched, and then the second commit is the forgettable one.
+
+Done this way for `what-a-claude-army-shares` on 2026-08-13.
 
 ## Order of operations on publication day
 

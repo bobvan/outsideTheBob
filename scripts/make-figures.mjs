@@ -977,3 +977,58 @@ mkdirSync(OUT, { recursive: true });
 }
 
 console.error(`wrote 11 figures to ${OUT}/`);
+
+// ---------------------------------------------------------------------------
+// 12. Two tab bars — the same window before and after one tmux setting.
+//
+//     The point of the figure is that both bars are CORRECT renderings of a
+//     real tmux field. Nothing was broken; iTerm2 was reading the pane title
+//     when it should have been reading the window name. So the drawing labels
+//     the field each bar comes from, because that is the whole diagnosis.
+//
+//     Agent names are representative rather than the literal roster.
+// ---------------------------------------------------------------------------
+{
+	const W = 1000, H = 300;
+	const GREEN = '#009E73';
+	let b = '';
+
+	const bar = (y, tabs, active) => {
+		let out = `<rect x="20" y="${y}" width="${W - 40}" height="40" rx="6" fill="#f4f4f4" stroke="#ddd"/>`;
+		const tw = (W - 52) / tabs.length;
+		tabs.forEach((label, i) => {
+			const x = 26 + i * tw;
+			const on = i === active;
+			out += `<rect x="${x}" y="${y + 5}" width="${tw - 6}" height="30" rx="4" fill="${on ? '#fff' : '#eaeaea'}" stroke="${on ? '#bbb' : '#e0e0e0'}"/>`;
+			// Long labels are clipped the way a real tab bar clips them — that is
+			// the reader's actual experience of the bug, not an approximation of it.
+			const max = Math.floor((tw - 18) / 6.2);
+			const shown = label.length > max ? label.slice(0, Math.max(1, max - 1)) + '…' : label;
+			out += text(x + (tw - 6) / 2, y + 24, shown, { size: 10.5, weight: on ? 700 : 400, fill: on ? INK : '#555' });
+		});
+		return out;
+	};
+
+	b += text(20, 26, 'One window, many agents — and the tab bar that nearly ruined it', { size: 15.5, weight: 700, anchor: 'start' });
+
+	b += text(20, 62, 'Before — iTerm2 is labelling tabs from the pane title, which Claude rewrites as it works', { size: 10.5, anchor: 'start', fill: RED });
+	b += bar(72, [
+		'Extract agent knowledge to meta directory',
+		'Drafting the follow-up post',
+		'Checking UPS battery self-test',
+		'Reviewing DNS zone changes',
+		'Analysing overnight TDEV run',
+	], 0);
+	b += text(20, 132, "tmux field:  #T  (pane title)  —  every tab says what its agent is thinking about, and none say who it is", { size: 10, anchor: 'start', fill: MUTED, style: 'italic' });
+
+	b += text(20, 182, 'After — one line of tmux config, and the tabs say who each agent is', { size: 10.5, anchor: 'start', fill: GREEN });
+	b += bar(192, ['meta', 'blog', 'proxmox', 'dns', 'ntp'], 0);
+	b += text(20, 252, "tmux field:  #W  (window name)  —  set-titles on  ·  set-titles-string '#W'  ·  then detach and reattach", { size: 10, anchor: 'start', fill: MUTED, style: 'italic' });
+
+	b += text(W - 20, 288, 'Both bars are correct renderings of a real field. The bug was which field was being read.', {
+		size: 9.5, fill: MUTED, anchor: 'end', style: 'italic',
+	});
+
+	writeFileSync(`${OUT}/tab-titles.svg`, svg(W, H, b));
+}
+

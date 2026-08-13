@@ -1,0 +1,188 @@
+---
+title: "One Window, Many Agents"
+slug: "one-window-many-agents"
+pubDate: 2026-08-13
+description: "A dozen Claude agents in one iTerm2 window, one tab each, through tmux control mode — and the tab-title bug that took two wrong fixes before I found the right one"
+tags: ["AI", "agents", "tooling", "tmux"]
+draft: true
+---
+
+import CalloutBox from "../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
+
+I have written about how my agents are
+[organized](/blog/organizing-a-claude-army/) and
+[what they share](/blog/what-a-claude-army-shares/). Both of those are about
+structure. This one is about the far more mundane question that structure raises
+the moment you have more than three of them:
+
+**how do you actually sit in front of a dozen agents at once?**
+
+The answer turned out to be one iTerm2 window with a tab per agent — which took
+about twenty lines of shell, and then one genuinely annoying afternoon.
+
+## Control mode, which I had ignored for years
+
+tmux has a mode I had always scrolled past in the man page: `tmux -CC`. Instead
+of drawing its own status bar and windows inside your terminal, it hands the
+structure to the terminal emulator over a control channel. iTerm2 understands
+that channel, and renders each tmux window as a **native tab**.
+
+So `tmux -CC attach` gives you real tabs — real ⌘1, ⌘2, real tab bar, real
+scrollback — over a session that is still a tmux session, still detachable, still
+running on the box when you close the laptop.
+
+That is the whole trick. Everything after this is plumbing.
+
+## A launcher per group, not per agent
+
+Each agent already had a one-line script that started it in its own directory.
+What I wanted was one script that brings up a *category*: one tmux session, one
+window per agent, each running `claude` in that agent's own directory.
+
+Three of those exist now — one for the four agents that share a codebase, one for
+the seven ops specialists, and one for the independent standalone agents. The
+membership is a list at the top of each script, so enrolling a new agent is
+adding one line.
+
+<CalloutBox type="warn" title="The guard that makes re-running safe">
+	The first version rebuilt the session every time. Run it twice and you get a
+	second `claude` in every directory, two of them fighting over the same
+	conversation, plus a duplicate tab per agent.
+
+	So every launcher now opens with `tmux has-session`: **if the session is
+	already up, attach to it and stop.** Re-running is idempotent — you land back
+	where you left off. A `fresh` argument tears the old session down first and
+	rebuilds clean.
+
+	It is four lines, and it converts a script you have to think before running
+	into one you can mash blindly.
+</CalloutBox>
+
+## One switch, two ways to attach
+
+The awkward part is that `-CC` is a *client* flag. It only works on attach, so it
+cannot be baked into the script that builds the session — and I wanted the same
+script to serve both a plain ssh from a terminal and iTerm2's integration.
+
+One environment variable settles it:
+
+```bash
+if [[ -n "${TMUX_CC:-}" ]]; then CC="-CC"; else CC=""; fi
+...
+exec tmux $CC attach-session -t "$SESSION"
+```
+
+Which makes the iTerm2 profile a single tidy line:
+
+```
+ssh -t bob@<the box> "TMUX_CC=1 ~/tmux-up"
+```
+
+Open that profile and I am looking at every standalone agent, one tab each, on a
+machine somewhere else. Drop `TMUX_CC=1` and the identical script gives an
+ordinary terminal attach.
+
+## And then the tabs were useless
+
+Here is the part worth reading, because I got it wrong twice.
+
+Every tab was labelled with whatever its agent was currently *doing*. Not `meta`
+and `blog` and `dns` — **"Extract agent knowledge to meta directory"**, and four
+more like it, each one truncated at about thirty characters. Claude rewrites that
+string every time its task changes, so the labels also churned while I watched.
+
+A tab bar where every tab says what its agent is thinking about, and none say who
+it is, is worse than no tab bar at all.
+
+<ZoomableImage
+	plate
+	src="/figures/tab-titles.svg"
+	alt="Two mocked-up tab bars. The upper one, labelled before, shows five tabs each carrying a truncated task description such as Extract agent knowledge to meta directory and Checking UPS battery self-test; a note below says this is the tmux pane title field. The lower one, labelled after, shows the same five tabs reading meta, blog, proxmox, dns and ntp; a note below gives the fix as set-titles on with set-titles-string hash W, then detach and reattach."
+	caption="The same window, before and after one setting. Both bars are correct renderings of a
+		real tmux field — the bug was never that something was broken, only that iTerm2 was
+		reading the wrong one."
+/>
+
+**Wrong fix number one: `allow-rename off`.** The obvious suspect is tmux's
+automatic window renaming, so I turned it off. It worked — the tmux *window
+name* stayed exactly as the launcher had set it. The tabs did not change at all,
+because the window name was never what iTerm2 was showing.
+
+**Wrong fix number two: iTerm2's own setting.** There is a checkbox, "Applications
+may change the title." Turning it off did nothing either. In control mode the
+title does not arrive as an escape sequence for the emulator to interpret — it
+comes over the control channel, and sails straight past the setting that governs
+the other path.
+
+Two plausible fixes, two hours, no progress. What broke it open was one command:
+
+```bash
+tmux list-windows -F '#{window_name} / #{pane_title}'
+```
+
+That prints, for every window, the two fields side by side. The window name was
+clean — `meta`, `blog`, exactly as assigned. The pane title was the churning task
+string. **So the bug was not that anything was wrong. Both fields were correct.
+iTerm2 was reading the second one.**
+
+## The actual fix, and the gotcha behind it
+
+In control mode iTerm2 labels a tab from the tmux **window title** — which tmux
+emits *only* when `set-titles` is on. tmux's default is off, so iTerm2 never
+received one and fell back to the pane title. Two lines:
+
+```
+set -g set-titles on
+set -g set-titles-string '#W'
+```
+
+`#W` is the window name — the one the launcher assigns. Pair it with
+`allow-rename off` and `automatic-rename off` so nothing later overwrites it, and
+the tab bar reads like a staff directory.
+
+<CalloutBox type="warn" title="You must detach and reattach — a bare detach will not do">
+	iTerm2 reads `set-titles` **only when the integration begins.** Change it
+	while attached and nothing happens, which is exactly the feedback you do not
+	want while hunting a bug of this kind — a correct fix that looks like another
+	failure.
+
+	And `~/.tmux.conf` is read at *server* start, so if the server is still alive
+	from another session, set it live too:
+
+	```bash
+	tmux set -g set-titles on \; set -g set-titles-string '#W'
+	```
+
+	I lost time to both of these. Between them they make a working fix look like
+	a fifth idea that also did not work.
+</CalloutBox>
+
+## The thing worth carrying away
+
+Every wrong turn here shared a shape: I assumed something was **broken** when
+nothing was. The window name was right. The pane title was right. iTerm2 was
+faithfully displaying a real field. The defect lived entirely in *which of two
+correct values was being read* — and no amount of staring at either value alone
+would ever have shown it.
+
+Printing both fields next to each other took one command and ended the hunt
+immediately. That is the general lesson, and it is the same one I keep writing
+down about [clocks](/timekeeping/measuring-time/is-my-clock-right/): when
+something is confidently wrong, stop interrogating it and get a second reading
+beside the first. The disagreement is the information.
+
+## One last thing, since it looks like the opposite
+
+Sitting a dozen agents in one window makes them look like a team in a room. They
+are not.
+
+**Sharing a tmux session is not sharing anything else.** Each tab still runs
+`claude` in that agent's own directory, so transcripts and memory key exactly as
+they did when each was launched alone. The isolation described in
+[what a Claude army shares](/blog/what-a-claude-army-shares/) is completely
+untouched by co-attaching them — this is a cockpit, not a merger.
+
+Which is a distinction I am glad is enforced by where the directories are rather
+than by my remembering it, because from where I sit it genuinely looks like one
+thing.

@@ -165,6 +165,18 @@ already stale, which was the argument against it arriving on day one.*
 | Google indexing | Search Console verified and submitted 2026-08-11; discovered-pages was 0 on day one, which is normal. If still 0 after a few days, look at the **Pages** report, not Sitemaps |
 | `reviewed:` queue | Bob's reading queue is the only thing between the site and "done". `npm run review` — it counts published pages by default since 2026-08-11 |
 
+### Drafted 2026-08-13, awaiting Bob
+
+**`one-window-many-agents`** — third in the Claude Army sequence, from a meta
+brief. The cockpit rather than the structure: `tmux -CC` control mode, group
+launchers, and the tab-title debugging story. New figure `tab-titles.svg`
+(before/after tab bars).
+
+**When it ships**, add forward links from *both* earlier posts in the same
+commit — `ClaudeArmy.mdx` and `WhatAClaudeArmyShares.mdx`. P7 catches it if they
+go in early; doing all of it in one commit is the right move (see
+`publish-plan.md`).
+
 ## 3. Waiting on someone else
 
 | # | item | who |

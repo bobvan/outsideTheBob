@@ -176,10 +176,14 @@ launchers, and the tab-title debugging story. New figure `tab-titles.svg`
 (dies on sleep), why **mosh cannot substitute** (it is a terminal emulator, and
 control mode is a protocol not screen output), and the three `et` gotchas — `-t`
 means `--tunnel`, the remote command is `--command` not positional, and iTerm2's
-reduced launchd `PATH` needs an absolute path to the binary. **Persistence is
-written as design intent, not a measured result** — Bob was testing overnight
-sleep/wake. If it held, that sentence can be firmed up; if it did not, it is
-already honest.
+reduced launchd `PATH` needs an absolute path to the binary — plus a fourth that
+is not a flag: **ET needs its server half running on the remote box.**
+
+**Persistence confirmed 2026-08-14.** `fleet-doctrine.md` records "verified
+overnight 2026-08-13→14, sessions held through Mac sleep", so the hedge is gone
+and the post states it plainly. Also folded in: the launchers are
+transport-agnostic (only the iTerm2 profile changes) and plain `ssh` still works
+as a fallback that does not survive sleep.
 
 **Hold it — meta says more updates are coming.** Bob, 2026-08-13. Do not ship on
 the current draft; expect another brief and fold it in first.

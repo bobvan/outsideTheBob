@@ -1,0 +1,24 @@
+# Cloudflare Workers static assets reads this file from the assets directory
+# (./dist, per wrangler.jsonc) and does NOT serve it. Up to 100 rules; the path
+# comes first, header lines are indented under it.
+#
+# Cloudflare's default for everything is:
+#     cache-control: public, max-age=0, must-revalidate
+# which is right for HTML — an edit should reach a reader on their next visit —
+# and it is what every path here still gets unless it appears below.
+
+# /_astro/ is the ONE directory where caching forever is provably safe, because
+# Astro fingerprints these filenames with a hash of their contents:
+#     SubNanoYouTube.C6SOVBo-_ZzjrIs.webp
+# Change the image and the hash changes, so the URL changes, so a cached copy can
+# never go stale — it can only become unreferenced. That is what the hash is FOR,
+# and max-age=0 was leaving it unused: a returning reader was making a round trip
+# per image to be told nothing had changed.
+/_astro/*
+  cache-control: public, max-age=31536000, immutable
+
+# DO NOT add /figures/* here. Those SVGs are regenerated in place by
+# `npm run figures` and keep the same filenames, so an immutable cache would pin
+# readers to a stale figure with no way to push a correction. Same for /images/ —
+# the logo and the OpenGraph banner are stable, not immutable. If either ever
+# needs caching, give it a bounded max-age with revalidation, never `immutable`.

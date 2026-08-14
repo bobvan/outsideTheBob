@@ -165,6 +165,13 @@ sleep.
 	the remote machine.** Unlike `ssh`, which is already there on anything you
 	would want to connect to, this is a daemon you install and have to make sure
 	comes back after a reboot.
+
+	**It does not need root, though**, and that is the part worth knowing if you
+	do not have any. `etserver` runs perfectly well as an ordinary user, started
+	by a systemd *user* service — enable lingering for the account and it comes
+	back at boot with nobody logged in. On a machine where you are a guest rather
+	than an owner, that is the difference between this being available to you and
+	not.
 </CalloutBox>
 
 ## And then the tabs were useless

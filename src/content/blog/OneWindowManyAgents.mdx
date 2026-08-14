@@ -4,6 +4,7 @@ slug: "one-window-many-agents"
 pubDate: 2026-08-13
 description: "Three iTerm2 windows, one per team, a tab per agent — through tmux control mode. Plus the tab-title bug that took two wrong fixes before I found the right one"
 tags: ["AI", "agents", "tooling", "tmux"]
+bottomLine: "the-short-version"
 draft: true
 ---
 
@@ -88,13 +89,67 @@ exec tmux $CC attach-session -t "$SESSION"
 Which makes the iTerm2 profile a single tidy line:
 
 ```
-ssh -t bob@<the box> "TMUX_CC=1 ~/tmux-up"
+ssh -t user@host "TMUX_CC=1 ~/tmux-up"
 ```
 
 Open that profile and I am looking at one team, one tab per agent, on a machine
 somewhere else. Swap the launcher path for a different profile and I get a
 different team. Drop `TMUX_CC=1` and the identical script gives an ordinary
 terminal attach.
+
+## A cockpit that dies when you shut the laptop is not a cockpit
+
+Plain `ssh` does not survive sleep. Close the lid, change networks, walk out of
+range — the connection drops, the `-CC` client dies with it, and the tabs vanish.
+The tmux session is still running happily on the box, which is the point of tmux,
+but you are back at a login prompt and have to go and find it again.
+
+The reflex answer is **mosh**, which exists precisely for flaky links and
+roaming laptops. **It does not work here.** mosh is a terminal emulator in its own
+right — it predicts and re-renders the screen locally, which is what makes it feel
+instant over bad links — and control mode is not screen output. It is a protocol
+between tmux and iTerm2 that has to arrive intact. mosh has nothing to pass it
+through with.
+
+**[EternalTerminal](https://eternalterminal.dev/) is the one that fits.** It is a
+durable transport that reconnects itself across sleep and IP changes, and it is
+transparent enough to carry the control channel. The two halves compose cleanly
+and the division of labour is worth stating, because it is what makes the whole
+arrangement work:
+
+> **ET keeps the transport alive. tmux keeps the session alive.**
+
+Neither one is doing the other's job. The laptop wakes, ET re-establishes the
+connection underneath, and the `tmux -CC attach` that was already running is
+simply still there — so iTerm2 drops back into the same native tabs, with each
+agent where you left it.
+
+That is the design intent, at least. I have had it running for a day rather than
+a season, so treat "survives an overnight sleep" as the goal I built for and not
+as a number I have measured.
+
+<CalloutBox type="warn" title="et looks like ssh and is not a drop-in">
+	The iTerm2 profile command becomes:
+
+	```
+	et user@host --command "TMUX_CC=1 ~/tmux-up"
+	```
+
+	Three things bit me, all because the muscle memory is `ssh`:
+
+	**Drop `-t`.** In `ssh` it forces a PTY. In `et` it is `--tunnel`, for port
+	forwarding, so it misparses. ET always allocates a PTY anyway, so there is
+	nothing to force.
+
+	**The remote command is a flag, not a trailing argument.** `ssh host "cmd"`
+	becomes `et host --command "cmd"` — there is no positional slot for it.
+
+	**Give the profile an absolute path to `et`.** iTerm2 runs a profile command
+	under a reduced launchd environment whose `PATH` does not include wherever
+	your package manager installs things. Bare `et` is simply not found, with a
+	message that sends you looking in the wrong place entirely. Point the profile
+	at the full path — whatever your package manager put it at.
+</CalloutBox>
 
 ## And then the tabs were useless
 
@@ -184,6 +239,26 @@ immediately. That is the general lesson, and it is the same one I keep writing
 down about [clocks](/timekeeping/measuring-time/is-my-clock-right/): when
 something is confidently wrong, stop interrogating it and get a second reading
 beside the first. The disagreement is the information.
+
+## The short version
+
+- **One window per team, not one per agent and not one for everything.** The
+  grouping that works is the one you already have — the agents you want on screen
+  together are the ones that already talk to each other.
+- **`tmux -CC` is the whole trick.** Control mode hands the window structure to
+  iTerm2, which renders it as native tabs over a session that is still detachable
+  and still running when you close the laptop.
+- **Guard the launcher with `has-session`** so re-running attaches instead of
+  building a second `claude` in every directory.
+- **Tabs come from the tmux *window* title, which tmux only emits when
+  `set-titles` is on.** Without it iTerm2 falls back to the pane title, which
+  Claude rewrites constantly. `set-titles-string '#W'`, then **detach and
+  reattach** — the setting is read only when the integration begins.
+- **`ssh` does not survive sleep and mosh cannot carry control mode.** Use a
+  transport that can: ET keeps the connection alive, tmux keeps the session
+  alive, and neither does the other's job.
+- **Co-attaching is not merging.** Every tab still runs in its own directory, so
+  the agents' isolation is exactly what it was.
 
 ## One last thing, since it looks like the opposite
 

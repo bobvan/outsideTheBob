@@ -172,6 +172,15 @@ brief. The cockpit rather than the structure: `tmux -CC` control mode, group
 launchers, and the tab-title debugging story. New figure `tab-titles.svg`
 (before/after tab bars).
 
+**Addendum folded in 2026-08-13:** EternalTerminal. Why `ssh` is not enough
+(dies on sleep), why **mosh cannot substitute** (it is a terminal emulator, and
+control mode is a protocol not screen output), and the three `et` gotchas — `-t`
+means `--tunnel`, the remote command is `--command` not positional, and iTerm2's
+reduced launchd `PATH` needs an absolute path to the binary. **Persistence is
+written as design intent, not a measured result** — Bob was testing overnight
+sleep/wake. If it held, that sentence can be firmed up; if it did not, it is
+already honest.
+
 **Hold it — meta says more updates are coming.** Bob, 2026-08-13. Do not ship on
 the current draft; expect another brief and fold it in first.
 

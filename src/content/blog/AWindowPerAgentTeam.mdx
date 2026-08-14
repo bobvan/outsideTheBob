@@ -124,9 +124,16 @@ connection underneath, and the `tmux -CC attach` that was already running is
 simply still there — so iTerm2 drops back into the same native tabs, with each
 agent where you left it.
 
-That is the design intent, at least. I have had it running for a day rather than
-a season, so treat "survives an overnight sleep" as the goal I built for and not
-as a number I have measured.
+**It survives an overnight sleep.** I left it and went to bed rather than
+believing the design; the sessions were still there in the morning, tabs intact.
+One night is not a season, but it is the test that matters — the failure I was
+guarding against happens the first time the lid closes.
+
+The nice part is how little had to change for it. **The launchers are
+transport-agnostic** — they build and attach a tmux session and have no opinion
+about how you reached the machine. Only the one line in the iTerm2 profile moved,
+and the old `ssh` form still works as a fallback. It just does not survive
+sleep.
 
 <CalloutBox type="warn" title="et looks like ssh and is not a drop-in">
 	The iTerm2 profile command becomes:
@@ -149,6 +156,11 @@ as a number I have measured.
 	your package manager installs things. Bare `et` is simply not found, with a
 	message that sends you looking in the wrong place entirely. Point the profile
 	at the full path — whatever your package manager put it at.
+
+	And the one that is not a flag at all: **ET needs its server half running on
+	the remote machine.** Unlike `ssh`, which is already there on anything you
+	would want to connect to, this is a daemon you install and have to make sure
+	comes back after a reboot.
 </CalloutBox>
 
 ## And then the tabs were useless
@@ -256,7 +268,8 @@ beside the first. The disagreement is the information.
   reattach** — the setting is read only when the integration begins.
 - **`ssh` does not survive sleep and mosh cannot carry control mode.** Use a
   transport that can: ET keeps the connection alive, tmux keeps the session
-  alive, and neither does the other's job.
+  alive, and neither does the other's job. The launchers do not care which you
+  used — only the terminal profile changes.
 - **Co-attaching is not merging.** Every tab still runs in its own directory, so
   the agents' isolation is exactly what it was.
 

@@ -111,9 +111,13 @@ instant over bad links — and control mode is not screen output. It is a protoc
 between tmux and iTerm2 that has to arrive intact. mosh has nothing to pass it
 through with.
 
-**[EternalTerminal](https://eternalterminal.dev/) is the one that fits.** It is a
-durable transport that reconnects itself across sleep and IP changes, and it is
-transparent enough to carry the control channel. The two halves compose cleanly
+**[EternalTerminal](https://eternalterminal.dev/) is the one that fits** — and I
+did not find it. My buddy Nick Majeran introduced me to it years ago, long before
+I had a problem shaped like this one. It sat in the back of my head until the
+afternoon `ssh` kept dropping my tabs, and then it was obvious.
+
+It is a durable transport that reconnects itself across sleep and IP changes, and
+it is transparent enough to carry the control channel. The two halves compose cleanly
 and the division of labour is worth stating, because it is what makes the whole
 arrangement work:
 

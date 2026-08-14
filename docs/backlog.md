@@ -167,7 +167,7 @@ already stale, which was the argument against it arriving on day one.*
 
 ### Drafted 2026-08-13, awaiting Bob
 
-**`one-window-many-agents`** — third in the Claude Army sequence, from a meta
+**`a-window-per-agent-team`** — third in the Claude Army sequence, from a meta
 brief. The cockpit rather than the structure: `tmux -CC` control mode, group
 launchers, and the tab-title debugging story. New figure `tab-titles.svg`
 (before/after tab bars).

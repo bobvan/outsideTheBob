@@ -172,7 +172,17 @@ brief. The cockpit rather than the structure: `tmux -CC` control mode, group
 launchers, and the tab-title debugging story. New figure `tab-titles.svg`
 (before/after tab bars).
 
-**When it ships**, add forward links from *both* earlier posts in the same
+**Hold it — meta says more updates are coming.** Bob, 2026-08-13. Do not ship on
+the current draft; expect another brief and fold it in first.
+
+**One correction already applied**, and worth remembering as a pattern: the draft
+claimed a dozen agents in one window. It is **three windows, one per team**, and
+the grouping is the same as the org chart from the earlier posts. Meta's brief
+said "one iTerm2 window, one tab per agent" and I read that as the whole fleet.
+When a brief describes a mechanism, check the scale against the actual launchers
+rather than inferring it.
+
+**When it does ship**, add forward links from *both* earlier posts in the same
 commit — `ClaudeArmy.mdx` and `WhatAClaudeArmyShares.mdx`. P7 catches it if they
 go in early; doing all of it in one commit is the right move (see
 `publish-plan.md`).

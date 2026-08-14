@@ -2,7 +2,7 @@
 title: "One Window, Many Agents"
 slug: "one-window-many-agents"
 pubDate: 2026-08-13
-description: "A dozen Claude agents in one iTerm2 window, one tab each, through tmux control mode — and the tab-title bug that took two wrong fixes before I found the right one"
+description: "Three iTerm2 windows, one per team, a tab per agent — through tmux control mode. Plus the tab-title bug that took two wrong fixes before I found the right one"
 tags: ["AI", "agents", "tooling", "tmux"]
 draft: true
 ---
@@ -16,10 +16,20 @@ I have written about how my agents are
 structure. This one is about the far more mundane question that structure raises
 the moment you have more than three of them:
 
-**how do you actually sit in front of a dozen agents at once?**
+**how do you actually sit in front of them?**
 
-The answer turned out to be one iTerm2 window with a tab per agent — which took
-about twenty lines of shell, and then one genuinely annoying afternoon.
+The answer is one iTerm2 window per *team*, with a tab per agent inside it —
+three windows in total, and I move between them the way you would move between
+three projects. That took about twenty lines of shell, and then one genuinely
+annoying afternoon.
+
+The grouping is not a filing decision I made for the terminal. **It is the same
+grouping as the org chart** — the four agents that share a codebase come up
+together, the seven ops specialists come up together, and the independent ones
+come up together. The cockpit ended up mirroring the structure without my
+planning it, which in hindsight is the only arrangement that could have worked:
+the agents you want on screen at once are the ones that already talk to each
+other.
 
 ## Control mode, which I had ignored for years
 
@@ -37,13 +47,15 @@ That is the whole trick. Everything after this is plumbing.
 ## A launcher per group, not per agent
 
 Each agent already had a one-line script that started it in its own directory.
-What I wanted was one script that brings up a *category*: one tmux session, one
-window per agent, each running `claude` in that agent's own directory.
+What I wanted was one script per *team*: one tmux session, one window per agent,
+each running `claude` in that agent's own directory.
 
-Three of those exist now — one for the four agents that share a codebase, one for
-the seven ops specialists, and one for the independent standalone agents. The
-membership is a list at the top of each script, so enrolling a new agent is
-adding one line.
+There are three, and they are the three groups from the earlier posts — the
+shared-codebase four, the seven ops specialists, and the independent standalone
+agents. Membership is a list at the top of each script, so enrolling a new agent
+is adding one line. One of them also mixes in a couple of plain shell windows at
+`$HOME`, which is worth knowing: a launcher's windows do not all have to be
+agents.
 
 <CalloutBox type="warn" title="The guard that makes re-running safe">
 	The first version rebuilt the session every time. Run it twice and you get a
@@ -79,9 +91,10 @@ Which makes the iTerm2 profile a single tidy line:
 ssh -t bob@<the box> "TMUX_CC=1 ~/tmux-up"
 ```
 
-Open that profile and I am looking at every standalone agent, one tab each, on a
-machine somewhere else. Drop `TMUX_CC=1` and the identical script gives an
-ordinary terminal attach.
+Open that profile and I am looking at one team, one tab per agent, on a machine
+somewhere else. Swap the launcher path for a different profile and I get a
+different team. Drop `TMUX_CC=1` and the identical script gives an ordinary
+terminal attach.
 
 ## And then the tabs were useless
 
@@ -174,8 +187,8 @@ beside the first. The disagreement is the information.
 
 ## One last thing, since it looks like the opposite
 
-Sitting a dozen agents in one window makes them look like a team in a room. They
-are not.
+Sitting a team's agents in one window makes them look like people in a room.
+They are not.
 
 **Sharing a tmux session is not sharing anything else.** Each tab still runs
 `claude` in that agent's own directory, so transcripts and memory key exactly as

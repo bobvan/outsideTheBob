@@ -698,6 +698,54 @@ recalibration rather than a one-time number.
 
 ---
 
+## ✅ TMAS — corrected 2026-08-15 after expert review
+
+A retired NIST engineer who worked near the service read the pages and sent three
+corrections. All three checked out against primary sources; all three were ours
+to fix.
+
+**1. The IGS station was never TMAS's reference.** TMAS needs a *real-time*
+reference receiver connected to UTC(NIST). NIST's program page: *"the real-time,
+multi-channel GNSS common-view technique using a tri-band GNSS receiver at both
+locations (reference and device-under-test)."* NIST's BIPM presentation gives the
+design goal: *"To report measurement results in near real-time, without the
+processing delays of current time-transfer methods."* NIST00USA — the IGS station
+our own DIY work differences against — publishes in batches and is a different
+machine. We never quite said otherwise, but the adjacency invited the inference.
+
+**2. TMAS calibrations are done at NIST, not BIPM.** TMAS is one of NIST's own
+calibration services. The BIPM campaigns we cite (1001-2022, uCAL(P3) = 0.9 ns)
+are how NIST calibrates its *own* link into TAI — a different activity from what
+a TMAS customer buys.
+
+**3. TMAS is no longer single-frequency.** This is the one we had actively wrong,
+in two prominent callouts. NIST's own account:
+> "TMAS systems upgraded to a commercial 5 ps TIC ($3500), but the limitation was
+> clearly the single frequency (L1 only) receiver. Finally, a low-cost dual
+> frequency (L1/L2) receiver became available (u-blox F9T, $299) and we started
+> developing a new SIM system."
+
+and *"Working with Mosaic-T variants now as well — Tri-band, CGGTTS, low-cost
+(< $1000)."* The program page confirms tri-band at both ends, <5 ns (k=2) time
+and 1 × 10⁻¹⁴ frequency at one day.
+
+**Our citation was not wrong, it was stale.** The 2024 study
+([tf.nist.gov/general/pdf/3280.pdf](https://tf.nist.gov/general/pdf/3280.pdf))
+really does describe single-frequency TMAS units — as the *comparison* for a
+prototype that has since become the service. The single/dual numbers (50 ns vs
+10 ns over 5314 km) are kept, reframed as why NIST upgraded.
+
+**The detail worth carrying forward:** NIST rebuilt its calibration service around
+the **u-blox ZED-F9T** — the same $300 part Bob runs and Píriz calibrated. A
+national metrology institute on mass-market silicon is the strongest available
+evidence for the cheap-dual-frequency thread running through these pages.
+
+Sources: [NIST TMAS program page](https://www.nist.gov/programs-projects/time-measurement-and-analysis-service-tmas)
+· NIST/BIPM presentation, Novick & Pera
+· [Improving the Uncertainty of NIST Remote Time and Frequency Calibration Services (2024)](https://tf.nist.gov/general/pdf/3296.pdf)
+
+---
+
 ## ✅ Circular T Section 5 — what technique every TAI link actually uses
 
 **Verified 2026-08-05** by parsing `cirt.462` (June 2026), which

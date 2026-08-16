@@ -4,7 +4,7 @@ slug: "can-i-build-my-own-link-to-utc-nist"
 description: "The data you would need is public, free, and better than most people realize. You can build the measurement in a weekend. What you cannot build is the one thing that turns it into a number somebody else has to accept."
 section: "utc"
 order: 50
-updatedDate: 2026-08-12
+updatedDate: 2026-08-15
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology", "datacenter"]
 bottomLine: "what-you-get-free-and-what-you-have-to-buy"
@@ -33,6 +33,13 @@ receiver and a network connection can difference against them.
 	Read it first if you want to choose a technique. <strong>TMAS is the
 	commercial example there</strong> — NIST selling common view as a turnkey
 	service.
+
+	<strong>One thing TMAS does that this page cannot.</strong> Its far end is a
+	dedicated <em>real-time</em> reference receiver connected to UTC(NIST) — not
+	the IGS station whose data we difference against below. That distinction is
+	the reason the public route can never simply <em>be</em> TMAS: the published
+	observations are batches, and a service that reports every ten minutes needs a
+	receiver reporting continuously at the other end.
 
 	<strong>This page is the attempt.</strong> We picked a technique, ran it
 	against real public data, and report what came out. The technique we ran is
@@ -222,17 +229,23 @@ the single largest term in
 Everything the satellite got wrong is
 [common-mode](/timekeeping/glossary/#common-mode) and cancels.
 
-<CalloutBox type="tip" title="Your home-built end can beat the deployed TMAS unit in one respect">
-	The TMAS field units NIST installed at customer sites are
-	<strong>single-frequency</strong>. NIST's own 2024 study of a low-cost
-	dual-frequency receiver uses them as the comparison, and quantifies the gap:
-	over a 5314 km baseline the L1-only common-view difference ranged up to
-	<strong>50 ns in a day</strong> against about 10 ns for dual-frequency.
+<CalloutBox type="warn" title="Corrected: TMAS is no longer single-frequency">
+	An earlier version of this page said your home-built dual-frequency end would
+	be ahead of the shipped TMAS fleet, on the strength of NIST's 2024 study,
+	which used single-frequency TMAS units as its comparison. **NIST has since
+	upgraded**, and the service now runs a tri-band receiver at both ends. A
+	retired NIST engineer who worked near the service wrote to say so, and the
+	program page and NIST's own conference material both confirm it.
 
-	An L1-only receiver has to <em>model</em> the ionosphere; a dual-frequency
-	receiver <em>measures</em> it. If you build your own end with modern
-	dual-frequency hardware, you are ahead of the shipped fleet on that term
-	before you start.
+	The physics that made the old claim true has not changed — an L1-only receiver
+	<em>models</em> the ionosphere while a dual-frequency one <em>measures</em> it,
+	and over a 5314 km baseline that was worth 50 ns a day against about 10. What
+	changed is which side of that line the service sits on.
+
+	<strong>The upgrade path is the part worth stealing.</strong> NIST rebuilt
+	around the u-blox ZED-F9T — the same $300 receiver this page spends its
+	calibration section on — before moving to tri-band variants. Your home-built
+	end is not ahead of theirs any more. It is built from the same parts.
 </CalloutBox>
 
 ## The gate: your end is not calibrated
@@ -403,6 +416,12 @@ TMAS uploads every ten minutes and you read the answer in a browser. If you are
 disciplining a clock in real time, the public route is useless to you; if you are
 calibrating a frequency standard or auditing last quarter, it is entirely
 adequate. Know which one you are doing.
+
+**The calibration, done by NIST.** The delays on a TMAS installation are
+characterized by NIST itself — this is one of their calibration services, not a
+link that gets sent to BIPM to be certified. The BIPM campaigns described above
+are how NIST calibrates its *own* link into international time; they are a
+different activity from what a TMAS customer buys.
 
 **The report.** [Traceability](/timekeeping/utc/what-does-traceable-to-utc-mean/) cannot be
 self-issued. However good your measurement, the deliverable an auditor wants is a

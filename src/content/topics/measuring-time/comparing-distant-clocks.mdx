@@ -4,7 +4,7 @@ slug: "comparing-distant-clocks"
 description: "You cannot run a cable, and neither clock can be the source for the other. So you both watch a third clock in the sky — which drags its error into your answer. Every technique here is a different way of removing it."
 section: "measuring-time"
 order: 120
-updatedDate: 2026-08-12
+updatedDate: 2026-08-15
 coverage: "M"
 tags: ["UTC", "GNSS", "timing", "metrology"]
 bottomLine: "what-to-take-away"
@@ -318,14 +318,17 @@ asymmetric version, concretely, with a national laboratory at one end and you at
 the other.
 
 **Common view with NIST** is what [TMAS](/timekeeping/glossary/#tmas) sells.
-NIST installs a receiver at your site, takes the PPS from your clock, compares
-against UTC(NIST), and reports every ten minutes. Their end is calibrated, yours
-is calibrated by them, and you get a report. It is the turnkey answer.
+NIST installs a tri-band receiver at your site, takes the PPS from your clock,
+compares against a matching **real-time** receiver connected to UTC(NIST), and
+reports every ten minutes. Their end is calibrated, yours is calibrated by them,
+and you get a report. It is the turnkey answer.
 
 **PPP time transfer with NIST** you can assemble yourself, because
 [NIST's observations are public](/timekeeping/utc/can-i-build-my-own-link-to-utc-nist/):
 their IGS station runs on UTC(NIST) itself, and its raw
-[RINEX](/timekeeping/glossary/#rinex) is anonymously downloadable. Run your PPP
+[RINEX](/timekeeping/glossary/#rinex) is anonymously downloadable. Note that this
+is a *different* receiver from the one TMAS uses — the IGS station publishes in
+batches, which is why the DIY route is a slow measurement rather than a service. Run your PPP
 solution and theirs against the same correction stream, difference them, and you
 have the same measurement TMAS makes — by the technique BIPM prefers, without
 any [baseline](/timekeeping/glossary/#baseline) penalty, at no cost.

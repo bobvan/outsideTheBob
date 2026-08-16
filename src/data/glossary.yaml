@@ -477,10 +477,12 @@
   term: "TMAS"
   aliases: ["Time Measurement and Analysis Service"]
   definition: >-
-    NIST's remote time calibration service. NIST installs a GNSS receiver at
-    your site — the equipment stays theirs — takes the 1 PPS output of your
-    clock, and compares it against UTC(NIST), reporting every ten minutes to a
-    web page. The base tier *measures* rather than steers, and what it really
+    NIST's remote time calibration service. NIST installs a tri-band GNSS
+    receiver at your site — the equipment stays theirs — takes the 1 PPS output
+    of your clock, and compares it against a matching **real-time** receiver
+    connected to UTC(NIST), reporting every ten minutes to a web page. The
+    reference end is *not* NIST's IGS station, whose data is published in
+    batches. Historically single-frequency; upgraded to dual- then tri-band. The base tier *measures* rather than steers, and what it really
     sells is a calibrated end of the link and a report with NIST's uncertainty
     on it.
   authority:

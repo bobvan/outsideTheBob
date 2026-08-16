@@ -179,34 +179,30 @@ and frequency uncertainty near 1×10⁻¹⁴ at one day, and leaves the correcti
 you. NIST sells a disciplined-clock tier separately for customers who want the
 loop closed.
 
-<CalloutBox type="tip" title="It used to be single-frequency, and the upgrade is the interesting part">
-	This page previously said the deployed TMAS fleet was L1-only, on the strength
-	of NIST's own 2024 study, which describes installing "a single-frequency
-	common-view unit (as part of the TMAS network)" at each site. **That is now
-	history.** NIST's program page describes the service as using a
-	<strong>tri-band receiver at both ends</strong> — the reference and the device
-	under test — and their own account of the upgrade is blunt about why: "the
-	limitation was clearly the single frequency (L1 only) receiver."
+<CalloutBox type="tip" title="What NIST measured by moving off single-frequency">
+	TMAS ran on single-frequency (L1-only) receivers for most of its life, and
+	NIST's account of why that changed is the best quantification of
+	dual-frequency's value anywhere on this site.
 
-	The numbers behind that sentence are worth keeping, because they are the best
-	quantification of dual-frequency's value anywhere on this site. Over a 5314 km
-	baseline the L1-only common-view difference ranged up to <strong>50 ns in a
-	day</strong> against about 10 ns for dual-frequency — a factor-of-nine
-	improvement in TDEV below one day. At 78 km the improvement was a factor of
-	two. Beyond two to three days of averaging the two converge.
+	An L1-only receiver has to <em>model</em> the ionosphere; a dual-frequency one
+	<em>measures</em> it — and common view only cancels the part both ends share.
+	Over a 5314 km baseline the single-frequency common-view difference ranged up
+	to <strong>50 ns in a day</strong> against about 10 ns for dual-frequency, a
+	factor-of-nine improvement in TDEV below one day. At 78 km the improvement was
+	a factor of two. Beyond two to three days of averaging the two converge.
 
-	There was a second, separate L1 penalty with nothing to do with baseline: a
+	There is a second, separate penalty with nothing to do with baseline: a
 	24-hour self-survey on a single-frequency receiver determines height to within
 	about 10 m, sometimes worse than 15 m. At 3.3 ns per meter of vertical error,
 	that alone
 	<a href="/timekeeping/datacenters/configuring-gnss-antenna-position/">approaches 50 ns</a>.
 
-	<strong>And the receiver they moved to is one you can buy.</strong> The new
-	system was built around the u-blox ZED-F9T — the same $300 dual-frequency part
-	discussed elsewhere on this site — with tri-band Septentrio variants following.
-	A national metrology institute rebuilt its calibration service on
-	mass-market silicon, which is the strongest evidence available that the cheap
-	dual-frequency receivers are good enough for serious work.
+	<strong>And the receiver they moved to is one you can buy.</strong> The
+	upgraded system was built around the u-blox ZED-F9T — the same $300
+	dual-frequency part discussed elsewhere on this site — with tri-band
+	Septentrio variants following. A national metrology institute rebuilding its
+	calibration service on mass-market silicon is the strongest evidence available
+	that cheap dual-frequency receivers are good enough for serious work.
 </CalloutBox>
 
 If the question behind your project is *how do I prove this to an auditor*

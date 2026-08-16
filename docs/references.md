@@ -700,9 +700,9 @@ recalibration rather than a one-time number.
 
 ## ✅ TMAS — corrected 2026-08-15 after expert review
 
-A retired NIST engineer who worked near the service read the pages and sent three
-corrections. All three checked out against primary sources; all three were ours
-to fix.
+Three points raised in correspondence, all checked against primary sources and
+all ours to fix. Recorded here because the sources took finding; the pages
+themselves simply state the current facts.
 
 **1. The IGS station was never TMAS's reference.** TMAS needs a *real-time*
 reference receiver connected to UTC(NIST). NIST's program page: *"the real-time,
@@ -718,8 +718,8 @@ calibration services. The BIPM campaigns we cite (1001-2022, uCAL(P3) = 0.9 ns)
 are how NIST calibrates its *own* link into TAI — a different activity from what
 a TMAS customer buys.
 
-**3. TMAS is no longer single-frequency.** This is the one we had actively wrong,
-in two prominent callouts. NIST's own account:
+**3. TMAS is no longer single-frequency.** The one we had actively wrong, in two
+prominent callouts. NIST's own account:
 > "TMAS systems upgraded to a commercial 5 ps TIC ($3500), but the limitation was
 > clearly the single frequency (L1 only) receiver. Finally, a low-cost dual
 > frequency (L1/L2) receiver became available (u-blox F9T, $299) and we started

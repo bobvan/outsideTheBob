@@ -321,3 +321,29 @@ recapitulate the evidence or the derivations — it should say what to do and wh
 is true, in a form somebody could act on having read nothing else. If it reads
 like a shorter version of the page, it is the wrong thing; if it reads like the
 notes you would give a colleague in a corridor, it is right.
+
+## Corrections are silent on the page
+
+When a garden page turns out to be wrong, **fix it and say nothing about having
+been wrong.** No "this page previously said", no "corrected on such a date", no
+account of who pointed it out. The page states what is true now.
+
+That is the promise the launch post makes — *"I will change the page rather than
+write a new post explaining that the old one was wrong"* — and it is easy to
+break by accident, because a correction feels like news when you are the one
+making it. It is not news to a reader arriving for the first time; it is
+clutter, and it makes a reference page read like a changelog.
+
+**Never identify the person who reported it**, and take particular care when the
+report comes from inside an organization the page discusses. Attribution that
+seems like generous credit can be an awkward thing to have attached to your name
+in public. Thank people privately.
+
+**What can stay is the substance.** Prior hardware generations, superseded
+techniques, and measurements taken along the way are all legitimate content when
+they explain something — *TMAS ran single-frequency for years and here is what
+NIST measured by changing* is good writing. *We used to say TMAS was
+single-frequency* is not.
+
+The reasoning, the sources and what changed belong in `docs/references.md`, which
+is where anyone who needs the audit trail should look.

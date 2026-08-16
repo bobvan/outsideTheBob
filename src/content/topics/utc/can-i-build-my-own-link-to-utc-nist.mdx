@@ -35,10 +35,10 @@ receiver and a network connection can difference against them.
 	service.
 
 	<strong>One thing TMAS does that this page cannot.</strong> Its far end is a
-	dedicated <em>real-time</em> reference receiver connected to UTC(NIST) — not
-	the IGS station whose data we difference against below. That distinction is
-	the reason the public route can never simply <em>be</em> TMAS: the published
-	observations are batches, and a service that reports every ten minutes needs a
+	dedicated <em>real-time</em> reference receiver connected to UTC(NIST) — a
+	different machine from the IGS station whose data we difference against below.
+	That is why the public route can never simply <em>be</em> TMAS: the published
+	observations are batches, and a service reporting every ten minutes needs a
 	receiver reporting continuously at the other end.
 
 	<strong>This page is the attempt.</strong> We picked a technique, ran it
@@ -229,23 +229,20 @@ the single largest term in
 Everything the satellite got wrong is
 [common-mode](/timekeeping/glossary/#common-mode) and cancels.
 
-<CalloutBox type="warn" title="Corrected: TMAS is no longer single-frequency">
-	An earlier version of this page said your home-built dual-frequency end would
-	be ahead of the shipped TMAS fleet, on the strength of NIST's 2024 study,
-	which used single-frequency TMAS units as its comparison. **NIST has since
-	upgraded**, and the service now runs a tri-band receiver at both ends. A
-	retired NIST engineer who worked near the service wrote to say so, and the
-	program page and NIST's own conference material both confirm it.
+<CalloutBox type="tip" title="NIST reached the same conclusion about cheap dual-frequency hardware">
+	TMAS ran on single-frequency receivers for most of its life, and NIST measured
+	what that cost: over a 5314 km baseline the L1-only common-view difference
+	ranged up to <strong>50 ns in a day</strong> against about 10 ns for
+	dual-frequency. An L1-only receiver <em>models</em> the ionosphere; a
+	dual-frequency one <em>measures</em> it.
 
-	The physics that made the old claim true has not changed — an L1-only receiver
-	<em>models</em> the ionosphere while a dual-frequency one <em>measures</em> it,
-	and over a 5314 km baseline that was worth 50 ns a day against about 10. What
-	changed is which side of that line the service sits on.
+	The service now runs a tri-band receiver at both ends — and the upgrade went
+	through the <strong>u-blox ZED-F9T</strong>, the same $300 part this page
+	spends its calibration section on, before moving to tri-band variants.
 
-	<strong>The upgrade path is the part worth stealing.</strong> NIST rebuilt
-	around the u-blox ZED-F9T — the same $300 receiver this page spends its
-	calibration section on — before moving to tri-band variants. Your home-built
-	end is not ahead of theirs any more. It is built from the same parts.
+	So the hardware question this page keeps circling has an answer from the one
+	organization whose opinion is dispositive: a national metrology institute
+	rebuilt its own calibration service on the receiver you can buy.
 </CalloutBox>
 
 ## The gate: your end is not calibrated

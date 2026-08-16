@@ -322,6 +322,41 @@ is true, in a form somebody could act on having read nothing else. If it reads
 like a shorter version of the page, it is the wrong thing; if it reads like the
 notes you would give a colleague in a corridor, it is right.
 
+## Two surfaces, two jobs
+
+**The blog is where stories go. The garden is where facts go.** They are written
+differently and the difference is not stylistic — it follows from what each one
+promises a reader.
+
+A post is **dated**. It is a record of what was true, or what happened, in a
+particular week, and it is left alone afterwards. Narrative is the whole point:
+what broke, what was tried, what was wrong, who helped.
+
+A garden page is **evergreen**. It carries an updated date and gets corrected,
+and a reader arrives to find out what is true — not to follow anybody's journey
+to it. Narrative there is a tax on every future reader for the benefit of the
+author.
+
+**What that rules out of the garden:**
+
+- *"The part that took me longest to internalize…"* — autobiography. Say the
+  thing; the reader does not need to know it was hard-won.
+- *"The most clarifying thing I found while writing this page…"* — narrates the
+  writing rather than the subject.
+- *"An argument I made here and had to withdraw…"* — see below.
+
+**What it does not rule out.** First-person *evidence* is the site's whole
+differentiator and stays: *we ran it and here is what came out*, *this is from my
+own lab*, *our own antenna positions carry σ ≈ 12 mm*. Provenance is not
+narrative — it is what makes a number citable. The test is whether removing the
+first person removes information. "I measured 57 ps" loses its warrant; "it took
+me months to see" loses nothing.
+
+**When a garden page grows a real story**, the story is usually good and the page
+is the wrong home for it. Move it to a post and link from the page to the post,
+not the other way round — the page stays a reference, and the story gets the
+audience it deserves.
+
 ## Corrections are silent on the page
 
 When a garden page turns out to be wrong, **fix it and say nothing about having

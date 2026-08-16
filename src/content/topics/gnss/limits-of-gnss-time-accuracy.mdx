@@ -4,7 +4,7 @@ slug: "limits-of-gnss-time-accuracy"
 description: "The limits are not about radio or geometry. GNSS time is a prediction, so its accuracy is bounded by how good the corrections are — and corrections are forecasts of errors that have not happened yet."
 section: "gnss"
 order: 10
-updatedDate: 2026-08-12
+updatedDate: 2026-08-15
 coverage: "H"
 tags: ["UTC", "GNSS", "timing", "metrology"]
 bottomLine: "the-one-thing-to-carry-away"
@@ -61,10 +61,9 @@ corrections, the satellite relays them — a
 [bent pipe](/timekeeping/glossary/#bent-pipe), not a brain — and the correction
 is applied **in your receiver**.
 
-That last part is the piece that took me longest to internalize, and it is the
-one worth carrying away. Your box is not receiving the time. It is receiving a
-signal from a drifting clock, plus a separately delivered estimate of how wrong
-that clock is, and doing the arithmetic itself.
+That last part is the one worth carrying away. Your box is not receiving the
+time. It is receiving a signal from a drifting clock, plus a separately delivered
+estimate of how wrong that clock is, and doing the arithmetic itself.
 
 <CalloutBox type="tip" title="Which makes GNSS time a prediction, by construction">
 	The correction was computed on the ground, from observations taken earlier, and

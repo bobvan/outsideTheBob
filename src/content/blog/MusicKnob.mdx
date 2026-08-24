@@ -1,0 +1,109 @@
+---
+title: "A Volume Knob for the macOS Music App"
+slug: "volume-knob-for-the-macos-music-app"
+pubDate: 2026-08-24
+description: "My keyboard's volume keys turn the system volume, not Music's. Every fix I could buy was either wrong or overkill — and then I remembered what was in the drawer"
+tags: ["macOS", "hardware", "AI", "tooling"]
+draft: false
+---
+
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
+import MusicKnob from "../../assets/MusicKnob.jpg";
+
+On macOS there are two volumes, and the keys on my keyboard turn the wrong one.
+
+The volume keys move the **system** output — everything the Mac makes noise
+with, all at once. The Music app has a second volume of its own, a slider inside
+the app, and that is the one I actually want when a track comes on too loud.
+Reaching for it means finding the Music window, which is usually behind whatever
+I am working on, which is the whole problem.
+
+## Three fixes, none of them right
+
+**Remap the keys.**
+[Volume Control for macOS](https://github.com/alberti42/Volume-Control) does
+exactly this: it takes over the keyboard's volume keys and points them at the
+music player instead. It works. But now I have no convenient way to change the
+*system* volume, and I have simply moved the annoyance rather than removed it.
+
+**Buy a cheap USB knob.** There are plenty, and they are inexpensive. They
+enumerate as a plain USB keyboard and send keystrokes — arrow keys, media keys,
+whatever the little configuration tool assigns. That is the catch. A keystroke
+goes to whatever has focus, so a knob like this controls Music only while Music
+is the front application. Which, again, it never is.
+
+**Buy a professional one.** A real MIDI control surface can address an
+application by name and would do the job properly. It is also a large, expensive
+piece of studio equipment bought to solve one small domestic irritation.
+
+So I did nothing about it for a year.
+
+## What was in the drawer
+
+Then I remembered the
+[M5Stack Dial](https://shop.m5stack.com/products/m5stack-dial-v1-1) I had bought
+for some other project and never used: an ESP32-S3 with a rotary encoder wrapped
+around a round touchscreen, about the size of a large bottle cap. It had been
+sitting idle long enough that I had to think for a moment about where I put it.
+
+A few minutes of prompting later, Claude had written two things: firmware that
+makes the Dial a USB serial device and prints one line per click of the encoder,
+and a small Python daemon for the Mac that reads those lines and drives Music
+through AppleScript.
+
+## The indirection is the point
+
+That daemon is the difference between this and the cheap knob.
+
+A HID knob can only send keystrokes, and keystrokes go wherever focus is. The
+daemon does not send keystrokes at all — it asks Music, by name, to change its
+own volume. **Music does not have to be in front, or visible, or even the thing
+I was last using.** The knob talks to the daemon, the daemon talks to Music, and
+the focus question never comes up.
+
+The Dial cannot run AppleScript itself, so that hop through the Mac is forced on
+the design. It turns out to be the feature.
+
+## And then a few more prompts
+
+Having got the hard part working, the rest arrived one request at a time, the
+way these things do now:
+
+- **Play/pause** on the side button, or a tap in the middle of the screen
+- **Acceleration**, so a slow turn moves 2% per detent and a quick flick moves
+  four times that
+- **A touch interface** — drag a finger around the gauge ring and the volume
+  follows it
+- **The artist and title** scrolling along the bottom of the display
+- **Album artwork in color**, sent over the same serial line and drawn inside
+  the ring
+- **A 3D-printed case**, parametric OpenSCAD, a sloped desk stand with a snap-in
+  floor plate and a recess for a non-slip pad
+
+<ZoomableImage
+	src={MusicKnob}
+	alt="The M5Stack Dial in a black 3D-printed sloped case on a wooden desk. The round screen shows album artwork for Webb Wilder's Born To Be Wilder, a blue volume arc up the left side, and a scrolling track title along the bottom. A blue braided USB-C cable runs out of the back."
+	caption="Volume on the arc, artwork in the middle, now-playing scrolling along the bottom. The case took as many commits as the firmware."
+	width={1000}
+/>
+
+There is also a demo mode, which I did not ask for and immediately liked: if the
+knob hears nothing from the Mac for five seconds — because it is running off a
+USB battery on a table somewhere — it fakes the whole thing locally and labels
+the screen so nobody is fooled.
+
+## What actually changed
+
+The interesting part is not the knob. It is that the knob had been three
+evenings of work away for a year, and three evenings was more than the problem
+was worth.
+
+Firmware, a daemon, and a case are each a small job and together they are a
+project. What collapsed was the cost of the small jobs: about 1,100 lines across
+three languages in three days, most of which I spent deciding what I wanted
+rather than writing it. That is the same reason the album art is on there. It
+was never going to be worth an afternoon. It was worth a sentence.
+
+Everything is on GitHub at
+[bobvan/musicKnob](https://github.com/bobvan/musicKnob) — firmware, daemon,
+LaunchAgent, and the OpenSCAD case, under a BSD license.

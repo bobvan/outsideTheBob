@@ -29,6 +29,8 @@ const EDGE_TO_EDGE_ON_PURPOSE = new Set([
 	'ManhattanBlockLatency.jpg', // photograph
 	'SecaucusCampus.jpg', // photograph
 	'lastNs2utcLondon.jpg', // photograph
+	'SubNanoYouTube.png', // frame grabbed from the YouTube recording
+	'MusicKnob.jpg', // photograph
 ]);
 
 const inkMargins = async (file) => {

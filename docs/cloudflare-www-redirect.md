@@ -16,7 +16,29 @@ the site and becomes a signpost to the first one.
 ## The rule
 
 Cloudflare dashboard → the **thinkoutsidethebob.com** zone → **Rules** →
-**Redirect Rules** → **Create rule**.
+**Overview** → **Create rule** → **Redirect Rule**.
+
+### Easiest: use the template
+
+Cloudflare ships a **"Redirect from WWW to root"** template that fills the whole
+form. Take it. It configures:
+
+| field | value |
+|---|---|
+| Request URL | `https://www.*` |
+| Target URL | `https://${1}` |
+| Status code | **301** |
+| Preserve query string | **Enabled** |
+
+The wildcard captures everything after `www.`, so `${1}` expands to
+`thinkoutsidethebob.com/<path>` and the path is preserved without a `concat()`.
+
+Check three things before saving: the status really is **301** and not 302 (302
+tells Google not to consolidate, which defeats the point), the zone is
+**thinkoutsidethebob.com** and not the other one, and the rule is **enabled**
+after save.
+
+### Or by hand, if the template is gone
 
 | field | value |
 |---|---|

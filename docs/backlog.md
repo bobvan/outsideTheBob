@@ -159,23 +159,31 @@ warning at deploy time is a **false negative** for a Worker Custom Domain, and a
 Redirect Rule **does** fire ahead of the Worker. The *Alternate page* count in
 Search Console should now stop growing and decay as Google recrawls.
 
-**Open — `Always Use HTTPS` is OFF for the thinkoutsidethebob.com zone.** Found
-while verifying the `www` rule: **the whole site answers on plain HTTP at 200**,
-apex and `www` alike, with no upgrade to HTTPS and no HSTS header.
+**✅ `Always Use HTTPS` — turned on 2026-08-24.** Found while verifying the `www`
+rule: the whole site had been answering on **plain HTTP at 200**, apex and `www`
+alike, since the Cloudflare migration. `CLAUDE.md` claimed "HTTPS enforced",
+which was a GitHub Pages leftover that did not survive. Corrected.
 
-| | |
-|---|---|
-| `http://thinkoutsidethebob.com/` | **200**, served in the clear |
-| `http://www.thinkoutsidethebob.com/timekeeping/` | **200** — misses the `www` rule, whose match is `https://www.*` |
-| `strict-transport-security` on HTTPS | absent |
+The dashboard warns that enabling this can cause `ERR_TOO_MANY_REDIRECTS` if the
+origin also forces HTTPS. **Not applicable here — there is no origin.**
+`wrangler.jsonc` is assets-only with no Worker script and no adapter, there is no
+`_redirects` file, and the `www` rule matches `https://www.*` so it only fires on
+requests that are already HTTPS. Nothing can redirect back.
 
-Fix: **SSL/TLS → Edge Certificates → Always Use HTTPS**, on. That closes the
-plain-HTTP copies and makes `http://www/…` take two hops to the apex, which is
-normal. Consider **HSTS** afterwards, but only once Always Use HTTPS is confirmed
-— HSTS is remembered by browsers and is deliberately hard to walk back.
+Every chain verified terminating, worst case two hops:
 
-Note `CLAUDE.md` claimed "HTTPS enforced" — true under GitHub Pages, not carried
-over in the Cloudflare migration. Corrected 2026-08-24.
+| from | hops | to |
+|---|---|---|
+| `http://thinkoutsidethebob.com/` | 1 | apex, 200 |
+| `http://www.thinkoutsidethebob.com/timekeeping/` | 2 | apex, 200 |
+| `https://www.../blog/?utm_source=test` | 1 | apex, 200, query intact |
+| `http://outsidethebob.com/sl/bp` | 2 | apex, 200 (short link intact) |
+
+**Still open — HSTS.** Not set; there is no `strict-transport-security` header.
+Worth adding now that Always Use HTTPS is confirmed, but deliberately a separate
+step: browsers *remember* HSTS for its `max-age`, so a mistake is not something a
+dashboard toggle can take back. Start with a short max-age, and do not enable
+preload until it has run clean for a while.
 
 ## 2c. Bottom lines on long pages — started 2026-08-12
 

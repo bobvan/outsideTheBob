@@ -102,13 +102,14 @@ to remove `www` from the Worker's Custom Domains (Workers & Pages →
 `outsidethebob` → Settings → Domains & Routes) so the rule had nothing competing
 with it. Not needed — recorded in case a future Cloudflare change reverses this.
 
-### ⚠ The rule is HTTPS-only
+### The rule is HTTPS-only, which is fine
 
-The template's match is `https://www.*`, so **plain-HTTP `www` does not match it**
-and is served directly instead. That is not a flaw in the rule — it is a symptom
-of **Always Use HTTPS being off for this zone**, which is tracked separately in
-[`backlog.md`](backlog.md) §2b. Once that is on, `http://www/…` takes two hops
-(→ `https://www/…` → apex), which is normal and fine.
+The template's match is `https://www.*`, so plain-HTTP `www` never reaches it.
+That was a live gap until **Always Use HTTPS** was turned on for the zone the same
+day — verifying this rule is what exposed it. Now `http://www/…` takes two hops
+(→ `https://www/…` → apex) and terminates. Do not "fix" the rule to be
+scheme-agnostic; the two-hop path is normal and the scheme upgrade belongs at the
+zone level, not in this rule.
 
 ## Why bother, and why it can also wait
 

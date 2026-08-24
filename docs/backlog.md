@@ -151,12 +151,31 @@ Audited the build while diagnosing: exactly two pages declare a foreign
 canonical, `/404/` and `/sl/bp/`, both deliberate. Sitemap is 84 URLs, apex-only,
 no `www`. `outsidethebob.com` 301s correctly on apex and `www`, HTTP and HTTPS.
 
-**Open — `www` → apex 301 (Bob's call).** Not required: Google says this status
-needs no action. The argument for it is crawl surface — every page currently has
-a second crawlable URL on a young property still working through its first 84.
-The rule is written up in [`cloudflare-www-redirect.md`](cloudflare-www-redirect.md).
-Needs verifying after creation, because `www` is a Worker Custom Domain and the
-rule has to fire ahead of the Worker.
+**✅ `www` → apex 301 — done 2026-08-24.** Built from Cloudflare's own
+"Redirect from WWW to root" template; runbook and verification in
+[`cloudflare-www-redirect.md`](cloudflare-www-redirect.md). Two things worth
+carrying forward: the dashboard's *"DNS may not be proxying traffic for www"*
+warning at deploy time is a **false negative** for a Worker Custom Domain, and a
+Redirect Rule **does** fire ahead of the Worker. The *Alternate page* count in
+Search Console should now stop growing and decay as Google recrawls.
+
+**Open — `Always Use HTTPS` is OFF for the thinkoutsidethebob.com zone.** Found
+while verifying the `www` rule: **the whole site answers on plain HTTP at 200**,
+apex and `www` alike, with no upgrade to HTTPS and no HSTS header.
+
+| | |
+|---|---|
+| `http://thinkoutsidethebob.com/` | **200**, served in the clear |
+| `http://www.thinkoutsidethebob.com/timekeeping/` | **200** — misses the `www` rule, whose match is `https://www.*` |
+| `strict-transport-security` on HTTPS | absent |
+
+Fix: **SSL/TLS → Edge Certificates → Always Use HTTPS**, on. That closes the
+plain-HTTP copies and makes `http://www/…` take two hops to the apex, which is
+normal. Consider **HSTS** afterwards, but only once Always Use HTTPS is confirmed
+— HSTS is remembered by browsers and is deliberately hard to walk back.
+
+Note `CLAUDE.md` claimed "HTTPS enforced" — true under GitHub Pages, not carried
+over in the Cloudflare migration. Corrected 2026-08-24.
 
 ## 2c. Bottom lines on long pages — started 2026-08-12
 

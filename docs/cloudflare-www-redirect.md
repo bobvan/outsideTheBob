@@ -1,14 +1,17 @@
 # Redirect `www.ThinkOutsideTheBob.Com` to the apex
 
-**Status: written up, not applied.** Bob's call. Nothing is broken without it —
-see the reasoning at the bottom.
+**Status: ✅ applied and verified 2026-08-24.** `www` now 301s to the apex with
+the path and query string preserved.
 
-## What it changes
+**The durable finding:** a Redirect Rule **does** fire ahead of a Worker, even
+when the hostname is a Worker Custom Domain. Cloudflare's docs do not say so, and
+the dashboard actively warns that it will not work (see below). It works.
 
-Today `www.thinkoutsidethebob.com` is a **Custom Domain on the `outsidethebob`
-Worker**, exactly like the apex. It therefore serves the entire site at HTTP 200
-and does **not** redirect. Deduplication is handled by each page's
-`<link rel="canonical">`, which points at the apex.
+## What it changed
+
+`www.thinkoutsidethebob.com` was a **Custom Domain on the `outsidethebob`
+Worker**, exactly like the apex, so it served the entire site at HTTP 200 and did
+**not** redirect. Deduplication rested on each page's `<link rel="canonical">`.
 
 This rule replaces that with a real 301, so `www` stops being a second copy of
 the site and becomes a signpost to the first one.
@@ -59,13 +62,24 @@ Two things that bite:
   `http.request.uri.path` is path-only and the toggle re-attaches the query.
   Using `http.request.uri` (path *and* query) *and* the toggle duplicates it.
 
-## Verify after creating it
+## The deploy-time warning is a false negative
 
-The uncertainty worth testing: `www` is a Worker Custom Domain, and this rule has
-to fire **before** the Worker gets the request. Cloudflare's own
-[redirect-a-domain guide](https://developers.cloudflare.com/fundamentals/manage-domains/redirect-domain/)
-gives exactly this rule shape, but does not spell out the interaction with a
-Custom Domain, so confirm rather than assume:
+Clicking **Deploy** raises:
+
+> Your DNS configuration may not be proxying traffic for www, which means
+> requests may not match this rule.
+
+**Ignore it and deploy anyway.** The validator looks for a conventional proxied
+A/AAAA/CNAME record named `www` and does not find one, because the hostname is
+claimed by the **Worker Custom Domain** binding instead. Traffic is proxied
+regardless — `www` resolves to the same Cloudflare anycast IPs as the apex and
+answers with `server: cloudflare` and a `cf-ray`.
+
+**Do not take the "Create a new proxied DNS record" offer.** The Worker already
+owns that hostname; a competing record is refused or leaves two things claiming
+one name.
+
+## Verify after creating it
 
 ```bash
 UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'
@@ -75,17 +89,26 @@ for p in / /timekeeping/ /blog/volume-knob-for-the-macos-music-app/; do
 done
 ```
 
-Want: `301 -> https://thinkoutsidethebob.com<same path>` on all three.
-Still seeing `200` means the Worker answered first — in that case remove `www`
-from the Worker's Custom Domains (Workers & Pages → `outsidethebob` → Settings →
-Domains & Routes), leave a proxied placeholder record for `www` in DNS, and the
-rule will have nothing competing with it.
+Want: `301 -> https://thinkoutsidethebob.com<same path>` on all three. All three
+returned 301 on 2026-08-24, and the query string survives:
 
-Also check the query string survives:
-
-```bash
-curl -sSI -m 10 "https://www.thinkoutsidethebob.com/blog/?utm_source=test" | grep -i '^location'
 ```
+https://www.thinkoutsidethebob.com/blog/?utm_source=test&x=1
+  -> 301 location: https://thinkoutsidethebob.com/blog/?utm_source=test&x=1
+```
+
+Had it returned `200`, the Worker would have answered first, and the fallback was
+to remove `www` from the Worker's Custom Domains (Workers & Pages →
+`outsidethebob` → Settings → Domains & Routes) so the rule had nothing competing
+with it. Not needed — recorded in case a future Cloudflare change reverses this.
+
+### ⚠ The rule is HTTPS-only
+
+The template's match is `https://www.*`, so **plain-HTTP `www` does not match it**
+and is served directly instead. That is not a flaw in the rule — it is a symptom
+of **Always Use HTTPS being off for this zone**, which is tracked separately in
+[`backlog.md`](backlog.md) §2b. Once that is on, `http://www/…` takes two hops
+(→ `https://www/…` → apex), which is normal and fine.
 
 ## Why bother, and why it can also wait
 

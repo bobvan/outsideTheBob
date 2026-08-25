@@ -103,7 +103,7 @@ LACP to a single switch does nothing for you here — the whole bond is behind t
 Configure multiple interfaces with MLAG using links to two different switches.
 This is the point where the cost starts to climb,
 because it needs a second switch and a pair that supports MLAG between them.
-It is also the first mitigation on this list I would consider genuinely optional for a homelab.
+It is also the first mitigation on this list I would consider optional for a homelab.
 
 ### Compute Failure
 
@@ -167,8 +167,8 @@ A DNS resolver or an NTP server holds a configuration file and not much else.
 Replicating it every few minutes is nearly free, so it can sit in Tier 1 and fail over in seconds.
 
 A DVR churning large files is the opposite case.
-Replicating it continuously would saturate the network and the drives to protect data that is,
-frankly, replaceable.
+Replicating it continuously would saturate the network and the drives to protect data that is
+replaceable.
 It belongs in Tier 3 with a sensible backup and no HA at all.
 
 That dividing line — how much data a service carries — turns out to decide almost everything about

@@ -49,9 +49,8 @@ over dedicated fiber to institutions near enough to reach. Superb accuracy, and
 a short list of eligible addresses.
 
 **NTP over the internet.** Free, universal, good to milliseconds. Worth naming
-rather than dismissing — for a great many applications it is genuinely
-sufficient, and organizations spend money escaping it before establishing that
-they needed to.
+rather than dismissing — for a great many applications it is sufficient, and
+organizations spend money escaping it before establishing that they needed to.
 
 Every one of these arrives through
 [a distribution protocol](/timekeeping/time-distribution/time-distribution-protocols/). Acquisition
@@ -97,7 +96,7 @@ more, or are unavailable at your address, or both.
 
 ## Why you want more than one
 
-GNSS is a single point of failure with a large blast radius. A failed antenna, a
+GNSS is a single point of failure, and a wide one. A failed antenna, a
 cut cable, a jammer in the parking lot, a receiver firmware bug or a
 constellation problem takes out everything downstream at once — and, as the
 *silently wrong* theme running through this site keeps demonstrating, timing
@@ -113,7 +112,7 @@ complete confidence and nothing in the system will disagree with it. Two sources
 that ought to agree, and do not, are telling you something no single source ever
 could.
 
-Which is why the useful thing is not merely a spare but **a mechanism for
+Which is why the useful thing is not just a spare but **a mechanism for
 comparing sources against each other**, and something that complains when they
 diverge. A backup nobody compares against inherits exactly the same silence as
 the primary — and what your second source *shares* with the first decides what

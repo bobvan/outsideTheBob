@@ -51,7 +51,7 @@ makes the Dial a USB serial device and prints one line per click of the encoder,
 and a small Python daemon for the Mac that reads those lines and drives Music
 through AppleScript.
 
-## The indirection is the point
+## Why the daemon beats a HID knob
 
 That daemon is the difference between this and the cheap knob.
 
@@ -62,7 +62,7 @@ I was last using.** The knob talks to the daemon, the daemon talks to Music, and
 the focus question never comes up.
 
 The Dial cannot run AppleScript itself, so that hop through the Mac is forced on
-the design. It turns out to be the feature.
+the design. That constraint is what makes it work.
 
 ## And then a few more prompts
 

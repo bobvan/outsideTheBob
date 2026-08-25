@@ -51,7 +51,7 @@ tracked in a git-backed ledger. Conceptually it was exactly what I
 was after.
 
 And when I told the Mayor to write code, I loved the result. That part was
-genuinely good.
+good.
 
 The trouble started when the Mayor **delegated**. Work handed off to another
 agent came back incorrect, or did not come back at all, and I could not see
@@ -73,8 +73,8 @@ parts.
 
 ## The three habits I took with me
 
-I did not leave empty-handed. Three things came out of that experiment and all
-three turned out to be load-bearing.
+I did not leave empty-handed. Three things came out of that experiment and I
+still use every one of them.
 
 ### tmux, and the episodic check-in
 
@@ -164,14 +164,14 @@ container.
 Those questions have good answers here. The container itself I can snapshot, roll
 back, or throw away, on a cluster that can move it between nodes. The lab
 machines it can reach are experiment boxes I can reimage in an afternoon. That is
-the trade — the agents are fast and trusted within a blast radius I have actually
-drawn, instead of being interrupted forty times a day by prompts that were never
-a boundary at all.
+the trade — the agents are fast and trusted within limits I have actually drawn,
+instead of being interrupted forty times a day by prompts that were never a
+boundary at all.
 
-It is worth being honest that this is a *homelab* posture. My blast radius is my
-own equipment and my own time. If the same fleet were touching production systems
-belonging to somebody else, the arithmetic would be different and I would not be
-writing this paragraph so cheerfully.
+This is a *homelab* posture. The damage is limited to my own equipment and my
+own time. If the same fleet were touching production systems belonging to
+somebody else, the arithmetic would be different and I would not be writing this
+paragraph so cheerfully.
 
 ## The day plan
 
@@ -318,7 +318,7 @@ when Charlie seemed to snatch Bravo's identity, and I no longer have the evidenc
 to check. But I am certain that agent identities can be mixed up if you are not
 careful, and that I should have chased down the confusion at the time.
 
-The scaffolding now includes a **tmux startup script per agent** that launches it
+The setup now includes a **tmux startup script per agent** that launches it
 from the correct directory, every time. It is a nine-line shell script guarding
 the single decision that determines who an agent *is*, and writing it down was
 the cheapest fix in this entire story.
@@ -386,7 +386,7 @@ Sharing and power are different questions.
 	context, not about building walls.
 </CalloutBox>
 
-### The scaffolding
+### Where everything lives
 
 The meta agent also worked out what actually goes where, and this is the part I
 would hand to somebody starting today.
@@ -415,9 +415,9 @@ the details.** So every session begins with a summary of all the retained
 knowledge that exists, plus pointers to the depth. The agent reads a page and
 knows what it knows; it goes and reads the file only when it needs the detail.
 
-That is what makes a brand-new session genuinely caught up rather than merely
-resumed — which matters more than it sounds like, because resuming an old session
-replays the entire transcript into context, and transcripts grow without bound.
+That is what makes a brand-new session caught up rather than just resumed —
+which matters more than it sounds like, because resuming an old session replays
+the entire transcript into context, and transcripts grow without bound.
 
 <CalloutBox type="warn" title="The comfort that hid the problem">
 	Here is the mild scar tissue. tmux gave me session continuity, those sessions

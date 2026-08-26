@@ -270,6 +270,7 @@ reading. Ordered as bravo ranked them.
 6. **Actuator resolution and control authority** — §D6's missing category as a page.
 7. **Datums, reference frames, and the ground moving** — Barrow, the Italian earthquake, 15 cm in seven years ≈ 500 ps.
 8. **Spoofing, jamming, and OSNMA** — the acquiring page's authenticity section is a Summary looking for its Home.
+9. **An RTK token network as a free antenna instrument** — standing up an onocoy reference station on the timing hardware, and discovering that its quality grading is a continuous, independent measurement of our own antenna. Source material captured while fresh: [`source-material/onocoy-reference-station.md`](source-material/onocoy-reference-station.md). Strongest hook: the metric it scores us *worst* on (code multipath) is the one a timing project should care about *least*, while the one we pass converts to 4.0 ps — the noise on the observable a carrier-phase clock rides on. Contains a credential-mapping diagnostic ladder that is documented nowhere else, and a stale-coordinate landmine ("check what the slot holds before you select it") that generalises well past GNSS. Two independent confirmations — antenna calibration and phase noise each matching by separate routes — are the emotional beat. Raised 2026-08-26.
 
 ## 5. Bob's review status
 

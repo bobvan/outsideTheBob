@@ -248,6 +248,78 @@ commit — `ClaudeArmy.mdx` and `WhatAClaudeArmyShares.mdx`. P7 catches it if th
 go in early; doing all of it in one commit is the right move (see
 `publish-plan.md`).
 
+### Style-guide trial — ✅ **adopted 2026-11-18**, so the rule is now in force
+
+Tried as 32 edits across 19 files from 2026-09-06, reviewed by Bob with
+`git diff` and `npm run dev`, and adopted. **The rule applies to new writing
+from here**, which is the reason this section stays rather than being deleted
+with the diff. It belongs in `docs/style-guide.md` next time that file is
+touched.
+
+Three sweeps, all reader-facing prose only:
+
+1. **Kinetic register → literal analytic verbs** (20 edits, 11 files). State a
+   causal or quantitative relation with the literal verb, never a metaphor that
+   treats the quantity as an object in motion. Test the rule gives: if the verb
+   would fit a pitch deck or market commentary, replace it. *frequency moves with
+   temperature* → *varies with*; *pulls the average toward its own reading* →
+   *counts for more, and the average sits closer*; *rides over all of that* → *is
+   insensitive to*; *pushed up my productivity* → *increased*; *the single biggest
+   lever* → *does more than anything else*. Left alone where the motion is real
+   (antennas move, the lab moves with the Earth tide) or the term is standard
+   metrology (*scales with*, *dominates*, *compounds*).
+2. **"baked in" → the literal relation** (4 edits). Each wanted a different word,
+   which is the sign the metaphor was covering four distinct relations: *set
+   inside*, *part of*, *hard-coded*, *appears in*.
+3. **"quietly" swept** (8 cut, 5 kept). Cut where the adverb was redundant with
+   its own sentence or pure garnish. **Kept** where undetectability is the subject:
+   `benchmarking-datacenter-gnss-clocks` ("wrong … — quietly", the em-dash
+   punchline), `configuring-gnss-antenna-feedline` ("quietly, permanently, and
+   with nothing in the system disagreeing"), `visualizing-precision` ("where the
+   target quietly lies", a pun), `ClaudeArmy` ("had quietly become a git
+   repository"). Also kept `why-precise-time`'s "an audit that goes quietly",
+   which is a different construction.
+
+Checked and deliberately **not** swept: `silently` (6 — *fails silently*,
+*silently wrong*, a named theme on this site), `happily` (6 — idiom for *without
+objecting*), `faithfully` (3 — means *exactly*). Open question Bob has not ruled
+on: whether the rule should also reach **"costs you" / "buys you"** (16 uses).
+Transactional rather than kinetic, so the rule as written does not cover it, and
+it is a recognizable part of the garden voice — a much bigger sweep if he wants it.
+
+Build green and `npm run publish-check` clear after each sweep. No `updatedDate`
+bumps: these are word swaps, not content revisions, and bumping would resurface
+19 pages in the feed as updated.
+
+### Drafted 2026-09-14, awaiting Bob — `measuring-the-i210-t1-sdp-header`
+
+`src/content/blog/I210SdpHeader.mdx`, `draft: true`, **untracked — not committed
+yet.** Bob asked to be reminded of the open questions (2026-10-14), so they are
+listed here rather than left in a transcript.
+
+Source is `~/git/BBGresearch/docs/reference/i210-t1-sdp-header.md`, bench work
+2026-09-14 with `bbgresearch-c7`. All five technical items were verified against
+the measurement record and three corrections applied; the prose is finished.
+Four things are Bob's:
+
+| # | item | who |
+|---|---|---|
+| I1 | **Two photos.** The header with pin 1 identifiable, and the flash chip with the trace from header pin 6 to its pin 5. A reader cannot reconstruct either from text. Placeholder comment is in the file; import with `scripts/import-figure.mjs`, no trim. | Bob |
+| I2 | **Voice.** Written first person as Bob throughout, per blog convention, where the source doc says "we" and credits the agent. `MusicKnob` has precedent for crediting Claude explicitly, so either reading is defensible. The pad-tracing must keep reading as Bob's own work — magnifier on the board after probing stopped — because that is the step that identified pin 6. | Bob |
+| I3 | **The tools** (`phcout.py`, `sdprelease.py`, `extsee.py`) are on the measurement host and in no public repo. `bbgresearch-c7` thinks they should be published so a reader can repeat the work, and is waiting on Bob. If they land somewhere public, add the links. | Bob |
+| I4 | **`BBGresearch` git history.** The lab hostname was committed as a dateline in nine docs, fixed in the working tree at `6ca81f8`. Repo is **private**, so nothing is exposed — this is a pre-flip decision, not an incident. Three options put to Bob: rewrite with `filter-repo`; publish a curated fresh public repo with a squashed initial commit (recommended); or flip and accept it. No internal addressing ever got in — RFC1918, tailnet and CGNAT all checked. Standing rule either way: quote current files, never older commits. | Bob |
+
+Deliberately **not** in the post: the "why this matters to BBG" section and a
+memory wikilink naming unpublished work. The blog has never mentioned BBG and
+that disclosure is Bob's to make, not a pinout post's.
+
+Also open from the same fleet thread, separate decision: **whether BBG material
+goes on the blog at all**, and five candidate write-ups graded for fit
+(E, B, D, C, A). `bbgresearch-66` holds the outlines. One sequencing question
+worth settling first — if item A is aimed at PTTI or ION, confirm against the
+actual call for papers before item C ships, since C reads most like a paper
+section.
+
 ## 3. Waiting on someone else
 
 | # | item | who |

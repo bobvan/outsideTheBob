@@ -248,7 +248,7 @@ commit — `ClaudeArmy.mdx` and `WhatAClaudeArmyShares.mdx`. P7 catches it if th
 go in early; doing all of it in one commit is the right move (see
 `publish-plan.md`).
 
-### Style-guide trial — ✅ **adopted 2026-11-18**, so the rule is now in force
+### Style-guide trial — ✅ **adopted 2026-11-06**, so the rule is now in force
 
 Tried as 32 edits across 19 files from 2026-09-06, reviewed by Bob with
 `git diff` and `npm run dev`, and adopted. **The rule applies to new writing
@@ -291,7 +291,7 @@ Build green and `npm run publish-check` clear after each sweep. No `updatedDate`
 bumps: these are word swaps, not content revisions, and bumping would resurface
 19 pages in the feed as updated.
 
-### `measuring-the-i210-t1-sdp-header` — committed as a draft 2026-11-18
+### `measuring-the-i210-t1-sdp-header` — committed as a draft 2026-11-06
 
 `src/content/blog/I210SdpHeader.mdx`, **`draft: true`**. Bob read it in dev and
 approved the text. It is on GitHub and **not on the site**: drafts are filtered
@@ -304,8 +304,8 @@ the measurement record and three corrections applied.
 
 | # | item | who |
 |---|---|---|
-| I1 | ✅ **Done 2026-11-18.** Two figures from Bob's phone photos of 2026-09-14. `I210SdpHeader.jpg` is IMG_4885 cropped to the header, with numbered badges on all six contacts, the 1 kΩ pull-down and the flash labelled, and a **dashed** indicator from pin 6 to the flash — dashed and off-colour on purpose, because it marks what connects to what and not the exact copper, which came off Bob's magnifier rather than the photo. `I210SdpKludge.jpg` is IMG_4887, the reworked footprint. **IMG_4887 carried full GPS EXIF** (lat/long/altitude/bearing); both outputs are re-encoded from scratch with zero EXIF, verified by byte scan. Written as JPEG at 1600 px rather than through `import-figure.mjs`, which always emits PNG — 200 KB each instead of multi-MB in a public repo. No content-based trim; see [[never-trim-bobs-figures]]. Both added to `EDGE_TO_EDGE_ON_PURPOSE`. |  |
-| I2 | ✅ **Settled 2026-11-18.** Bob read the draft in first person throughout and approved it, so the blog convention stands and the agent is not credited in the prose. The pad-tracing reads as his own work, which is correct — it is the step that identified pin 6. |  |
+| I1 | ✅ **Done 2026-11-06.** Two figures from Bob's phone photos of 2026-09-14. `I210SdpHeader.jpg` is IMG_4885 cropped to the header, with numbered badges on all six contacts, the 1 kΩ pull-down and the flash labelled, and a **dashed** indicator from pin 6 to the flash — dashed and off-colour on purpose, because it marks what connects to what and not the exact copper, which came off Bob's magnifier rather than the photo. `I210SdpKludge.jpg` is IMG_4887, the reworked footprint. **IMG_4887 carried full GPS EXIF** (lat/long/altitude/bearing); both outputs are re-encoded from scratch with zero EXIF, verified by byte scan. Written as JPEG at 1600 px rather than through `import-figure.mjs`, which always emits PNG — 200 KB each instead of multi-MB in a public repo. No content-based trim; see [[never-trim-bobs-figures]]. Both added to `EDGE_TO_EDGE_ON_PURPOSE`. |  |
+| I2 | ✅ **Settled 2026-11-06.** Bob read the draft in first person throughout and approved it, so the blog convention stands and the agent is not credited in the prose. The pad-tracing reads as his own work, which is correct — it is the step that identified pin 6. |  |
 | I3 | **The tools** (`phcout.py`, `sdprelease.py`, `extsee.py`) are on the measurement host and in no public repo. `bbgresearch-c7` thinks they should be published so a reader can repeat the work, and is waiting on Bob. If they land somewhere public, add the links. | Bob |
 | I4 | **`BBGresearch` git history.** The lab hostname was committed as a dateline in nine docs, fixed in the working tree at `6ca81f8`. Repo is **private**, so nothing is exposed — this is a pre-flip decision, not an incident. Three options put to Bob: rewrite with `filter-repo`; publish a curated fresh public repo with a squashed initial commit (recommended); or flip and accept it. No internal addressing ever got in — RFC1918, tailnet and CGNAT all checked. Standing rule either way: quote current files, never older commits. | Bob |
 

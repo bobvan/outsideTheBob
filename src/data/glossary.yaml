@@ -622,3 +622,33 @@
       href: "#common-mode"
   draft: false
 
+
+- id: twstft
+  term: "TWSTFT"
+  aliases:
+    ["Two-Way Satellite Time and Frequency Transfer", "two-way satellite time transfer"]
+  definition: >-
+    Two clocks compared by each transmitting to the other through a
+    geostationary satellite, with each end measuring when the other's signal
+    arrives. Both signals cross nearly the same path in opposite directions, so
+    the path delay and the satellite's own clock cancel in the difference — which
+    is what separates it from one-way GNSS, where the satellite clock has to be
+    removed by modelling it or by differencing two stations. What remains is
+    dominated by **calibration** of the two earth stations' delays, together with
+    the Sagnac correction and any asymmetry in the transponder. It is a national
+    laboratory technique rather than a datacenter one, because each end needs a
+    licensed transmitting station and leased transponder time. Its share of the
+    work has fallen: of the 86 links computing TAI in *Circular T* 462, three
+    were two-way alone and 48 were GPS PPP, and NIST's own link is two-way
+    *combined* with GPS PPP.
+  authority:
+    label: "ITU-R TF.1153 — the operational use of two-way satellite time and frequency transfer employing pseudorandom noise codes"
+    url: "https://www.itu.int/rec/R-REC-TF.1153/en"
+  seeAlso:
+    - label: "Comparing distant clocks"
+      href: "/timekeeping/measuring-time/comparing-distant-clocks/"
+    - label: "PPP"
+      href: "#ppp"
+    - label: "TMAS"
+      href: "#tmas"
+  draft: false

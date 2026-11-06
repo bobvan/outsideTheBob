@@ -232,7 +232,7 @@ the single cheapest nanosecond on the whole board.
 	signals — will differ on it, and the positioning variant simply returns zero.
 
 	Zero is a plausible-looking number. Nothing errors, nothing warns, and your
-	correction quietly does nothing at all. Check the manual for the specific
+	correction does nothing at all. Check the manual for the specific
 	part number, not the family.
 </CalloutBox>
 
@@ -292,7 +292,7 @@ So the only question left is **where the tick duration comes from.**
 **Without a reference input, the ticks come from a TCXO soldered to the
 receiver's own board.** Every pseudorange, every carrier phase, every PPS edge
 is timed against that oscillator. It is a few dollars' worth of quartz in a can,
-and its short-term instability is baked into every observation the receiver will
+and its short-term instability appears in every observation the receiver will
 ever give you.
 
 **With one, the ticks come from your oscillator** — and the receiver's clock

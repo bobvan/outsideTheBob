@@ -15,7 +15,7 @@ For each kind of failure, the question I keep coming back to is a simple one:
 
 I adopted virtualization to modernize and simplify the administration of my network services.
 Focusing on failure resilience is perhaps less common in a homelab, but it's what I actually cared about.
-The values that drive a high-end homelab overlap substantially with a small IT shop or an SMB:
+The values that matter in a high-end homelab overlap substantially with a small IT shop or an SMB:
 a handful of services that people notice immediately when they stop, and nobody on call at 3 a.m.
 
 This post is the entry-level version.
@@ -101,7 +101,7 @@ The node's hardware is fine, but the switch it connects to has failed.
 LACP to a single switch does nothing for you here — the whole bond is behind the thing that broke.
 
 Configure multiple interfaces with MLAG using links to two different switches.
-This is the point where the cost starts to climb,
+This is the point where it starts to get expensive,
 because it needs a second switch and a pair that supports MLAG between them.
 It is also the first mitigation on this list I would consider optional for a homelab.
 
@@ -154,7 +154,7 @@ Some guests also touch bulk storage that is far too large to replicate.
 And every node dumps to a backup server regardless of tier,
 because none of the above protects you from deleting the wrong thing.
 
-There is one more thing this table quietly assumes, and it took a blackout to show me what.
+There is one more thing this table assumes, and it took a blackout to show me what.
 Every tier above describes what happens when a *node* fails, not what happens when the room does.
 Three HA resolvers spread across three nodes are still one power failure away from silence,
 which turned out to deserve [a post of its own](/blog/subsistence-internet/).

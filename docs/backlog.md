@@ -291,12 +291,13 @@ Build green and `npm run publish-check` clear after each sweep. No `updatedDate`
 bumps: these are word swaps, not content revisions, and bumping would resurface
 19 pages in the feed as updated.
 
-### `measuring-the-i210-t1-sdp-header` — committed as a draft 2026-11-06
+### ✅ `measuring-the-i210-t1-sdp-header` — **published 2026-11-06**
 
-`src/content/blog/I210SdpHeader.mdx`, **`draft: true`**. Bob read it in dev and
-approved the text. It is on GitHub and **not on the site**: drafts are filtered
-by `import.meta.env.DEV`, so `astro build` omits it. Flipping `draft: false` is
-a one-word change and a separate decision.
+`src/content/blog/I210SdpHeader.mdx`, live at
+`/blog/measuring-the-i210-t1-sdp-header/`. `pubDate` was moved from 2026-09-14,
+the bench date I had used as a placeholder, to the publication date — every
+other post on this blog dates from the day it shipped, and back-dating by eight
+weeks would have buried it in the index and in most readers' feeds.
 
 Source is `~/git/BBGresearch/docs/reference/i210-t1-sdp-header.md`, bench work
 2026-09-14 with `bbgresearch-c7`. All five technical items were verified against

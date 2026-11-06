@@ -1,0 +1,225 @@
+---
+title: "Measuring the I210-T1's SDP Header"
+slug: "measuring-the-i210-t1-sdp-header"
+pubDate: 2026-09-14
+description: "The card has a six-pin header. The two best published sources document two of the pins and mark the rest with a question mark. I finished it on the bench — and two of them turn out not to be SDPs at all"
+tags: ["hardware", "networking", "timekeeping", "metrology"]
+draft: true
+---
+
+import CalloutBox from "../../components/post/CalloutBox.astro";
+import ZoomableImage from "../../components/post/ZoomableImage.astro";
+import SdpHeader from "../../assets/I210SdpHeader.jpg";
+import SdpKludge from "../../assets/I210SdpKludge.jpg";
+
+The retail Intel Ethernet Server Adapter I210-T1 has a six-pin header on it, 2×3
+on a tenth-inch pitch. If you want a network card that can timestamp an external
+pulse per second — which is what you want if you are disciplining a clock to
+GNSS — this is one of the few cheap ways in, and that header is how you reach it.
+
+Two people have written down what is on it. Neither finished.
+
+Richard Cochran's [i210-rework
+page](https://linuxptp.sourceforge.net/i210-rework/i210-rework.html), which is
+where everybody starts, gives pin 2 as SDP0, pin 3 as ground and pin 4 as SDP1.
+Pins 1, 5 and 6 are marked `?`. jclark's
+[pc-ptp-ntp-guide](https://github.com/jclark/pc-ptp-ntp-guide/blob/main/pps-nic.md)
+carries a TODO: *"Top left is probably GND. Bottom right might be SDP2. Bottom
+left is probably not GND."*
+
+Those are the two best sources that exist for this card, and they stop in the
+same place. So I put it on the bench.
+
+## The answer
+
+Numbering across the short axis first, then down, with the RJ45 to the left:
+
+| pin | position | signal | how I know |
+|---|---|---|---|
+| 1 | top-left | **GND** | continuity to the bracket |
+| 2 | top-right | **SDP0** | PPS applied, timestamped by SDP0 |
+| 3 | mid-left | **GND** | continuity to the bracket |
+| 4 | mid-right | **SDP1** | PPS applied, timestamped by SDP1 |
+| 5 | bottom-left | **not an SDP** | 1 kΩ to ground; a PPS on it is invisible to all four SDPs |
+| 6 | bottom-right | **`NVM_SI`** | traced to pin 5 of the flash chip |
+
+That numbering is the same one Cochran uses — his table independently has pin 2
+as SDP0, pin 3 as ground and pin 4 as SDP1 — so if you find his page and this one,
+the pin numbers mean the same thing on both.
+
+<ZoomableImage
+	src={SdpHeader}
+	alt="Close-up of the I210-T1 circuit board. A cream six-pin header on the left has each of its six gold contacts labelled with a numbered badge, 1 and 2 on the top row, 3 and 4 in the middle, 5 and 6 on the bottom. A small chip resistor immediately left of contact 5 is labelled one kilohm to ground. On the right an eight-pin black chip is labelled W25Q16JV flash, and a dashed line runs from contact 6 along the bottom of the board to the flash, labelled pin 6 to flash DI."
+	caption="The header as you find it, with the RJ45 off to the left. Pin 5 is the one to orient from: it is the only contact on the header with a part hanging off it, and that part is the kilohm pull-down. The dashed line marks what pin 6 connects to, not the exact copper."
+	width={1600}
+/>
+
+If you are holding a card and want to be sure which corner is pin 1, find that
+resistor. It sits a couple of millimeters from contact 5 and nothing else on the
+header has a discrete component next to it, so once you have it the other five
+follow. The two right-hand contacts in the upper rows have clean traces heading
+off toward the controller, which is SDP0 and SDP1; the two left-hand ones have no
+surface trace at all, because they drop straight into the ground plane.
+
+So the card gives you **two usable SDPs, not four**. And the guess that the
+bottom-right pin might be SDP2 is wrong in a more interesting way than being
+merely incorrect: pins 5 and 6 are not SDPs at all. They are a jumper, and
+somebody put them on that header on purpose.
+
+## Two of the pins belong to the flash chip
+
+Pin 6 goes to pin 5 of a Winbond W25Q16JVNIQ, a 2 MB SPI flash sitting on the
+card. On that package pin 5 is DI — the flash's data *input*.
+
+Here is the part that makes the identification awkward to read. Intel names the
+i210's NVM pins from the **flash's** point of view, not the controller's, so an
+`_SI` pin is an output:
+
+```
+NVM_SI    pin 12    T/s   Output   Connect this lead to the input of the Flash.
+NVM_SO    pin 14    T/s   Input    Connect this lead to the output of the Flash.
+```
+
+Header pin 6 is i210 pin 12, `NVM_SI`, an output driving the flash's data input.
+
+Table 2-1 of the datasheet lists `NVM_SI` as having an external pull-down or
+pull-up, with a footnote: *"When pulled up, Flash security features are
+enabled."* That makes `NVM_SI` the `SECURITY_EN` strap, and pin 5's kilohm to
+ground is its provisioned pull-down. Shorting the two pins together pulls the
+strap up and turns NVM security off.
+
+Section 3.4.3 says what that is for, in so many words:
+
+> By disabling the `SECURITY_EN` strapping option, the iNVM lines left blank
+> become writable again… useful for fixing iNVM values that were programmed
+> wrongly, or if boards are resold to a third party who wants to further
+> customize the iNVM. For example, the third party might want a different MAC
+> address or device ID.
+
+Which explains the header. It is not an accident of routing and it is not a
+debug leftover. Two of the six pins are a factory-provisioning jumper that
+happens to share a connector with the timing pins.
+
+<CalloutBox type="warn" title="This is the pin that bricks cards">
+	Three things before anybody reaches for a jumper. It is a <em>reset-time</em>
+	strap, so it has to be in place before the card powers up — fitting it to a
+	running machine does nothing. Intel's own text says security must be
+	re-enabled after an iNVM write cycle. And security off plus a bad write is
+	exactly how cards end up needing an external SPI programmer to recover. I am
+	documenting what the pins are, not recommending you short them.
+</CalloutBox>
+
+## How I worked out the rest, and the control that made it mean anything
+
+The method is the transferable part, so it is worth more space than the pinout.
+
+**Drive outputs at different frequencies so they identify themselves.** Arming
+two periodic outputs at 1 Hz and 4 Hz rather than both at 1 Hz means a scope on a
+pin tells you *which* channel reached it, not merely that something is happening.
+That distinction paid for itself immediately, because it exposed a driver
+behaviour I would otherwise have spent a long evening on: I armed two channels on
+SDP2 and SDP3, and their frequencies came out of the SDP0 and SDP1 pins.
+
+The reason is in `igb`. `igb_pin_perout()` sets the routing bit for the pin you
+asked for and never clears it for any other pin, and the disable path does not
+clear it either. Routing is cumulative. Muxing a channel onto a different pin
+**adds** an output rather than moving it. The only code that releases a pin is
+the external-timestamp path, which is why releasing one properly means muxing it
+to input, enabling, disabling, and dropping it back to none.
+
+**Then test the other direction, because a pin that will not drive may still
+listen.** Apply a PPS to one header pin at a time and see which SDP timestamps
+it.
+
+And here is the part I would want somebody else to take from this:
+
+<CalloutBox type="tip" title="The first four runs returned zero, and none of them were results">
+	Four pins tested, four times nothing detected — and not one of those nulls was
+	worth anything, because the detector had never detected anything at all. A
+	broken detector and a real null are the same reading. They only became results
+	after a positive control on a pin I knew was good returned 24 events in 12
+	seconds with a pulse width of 5.000 ms and no spread.
+</CalloutBox>
+
+That control carried a second check I had not planned. The card's clock was slow
+by 30.3 ppm by one measurement and 29.7 ppm by another — the first from
+differencing it against the system clock hours earlier, the second from the
+period this run reported, 0.999970 s against a true second. Two unrelated routes
+to the same quartz, agreeing to better than a part per million. At that point the
+nulls meant something.
+
+The same run gave me a negative control for free: with the pulse on pin 4, SDP1
+reported it and SDP0 reported nothing. No crosstalk, no leftover routing on the
+input side.
+
+## Knowing when to stop
+
+Pin 6 I never tested electrically, and the reason is the most useful thing on
+this page for anyone probing unknown hardware.
+
+It measured **60 Ω one way and −2 Ω with the leads reversed**.
+
+A resistor reads the same in both directions. Asymmetry means a junction or a
+driven node, and a negative reading means current is coming *out* of the pin into
+the meter. Driving 2.5 V into 60 Ω would be 42 mA, against a pin rated for six.
+So I stopped and traced it on the board with a magnifier instead, which is how it
+got identified as the flash line at all.
+
+If I do go back to it, the safe version is 3.3 V through 10 kΩ — a third of a
+milliamp no matter what is on the other end. Too weak to overcome the kilohm
+pull-down on pin 5, plenty for a high-impedance input.
+
+## What this means if you have one of these cards
+
+**Two SDPs, so three signals will not fit.** A clock that has to emit a pulse per
+second, emit a second signal, and accept a pulse per second from a GNSS receiver
+needs three pins and this card has two. That is a hardware limit, not a
+configuration you have not found yet.
+
+**Both edges get timestamped.** The v2 external-timestamp ioctl is a dead end on
+this driver — it rejects every flag beyond the enable, so asking for a single
+edge fails and asking for no edge fails. The v1 call works and gives you both
+edges. Budget two events per pulse and compute the period from every *other*
+event. Take consecutive gaps instead and they alternate between the pulse width
+and the period minus the pulse width, so the listener reports 0.994970 s and you
+appear to have a 5000 ppm clock error. I did exactly this on the first run. The
+arithmetic gives it away: 0.994970 + 0.005000 = 0.999970, which is the period.
+
+**Four SDPs are a property of the controller, not of this card.** Intel's own
+reference design brings all four out to an eight-pin header. A custom board could
+have them. But SDP2 and SDP3 have never been confirmed working on an i210 in my
+lab — they were armed, the driver accepted the request without complaint, and
+nothing came out anywhere I could reach. On this card that is fully explained by
+those pins not going to the header. From outside, though, "not routed here" and
+"does not work" are the same observation, and I would not design a board that
+assumes four good SDPs on the strength of it. Settling that costs one sacrificial
+card and Cochran's rework.
+
+## If you add your own pins
+
+The stock header is a shrouded block you cannot easily get a probe or a jumper
+into, so sooner or later you will want pins on it, and there is a second
+footprint beside it that looks like an invitation.
+
+<ZoomableImage
+	src={SdpKludge}
+	alt="The same area of the board after rework. The cream six-pin header now has tall gold pins fitted. Beside it a black two-pin header has been hand-soldered onto a pair of surface-mount pads, its pins leaning slightly, surrounded by a thick untidy fillet of solder. The Intel controller is at the upper right."
+	caption="A two-pin header added to the footprint beside the stock one. Note what it is sitting on: flat surface-mount pads, not plated through-holes, and not on a tenth-inch pitch."
+	width={1600}
+/>
+
+<CalloutBox type="warn" title="Those pads lift, and they take the connection with them">
+	The pads next to the header are <strong>surface mount, not plated
+	through-holes</strong>, and they are not on tenth-inch centers either — so a
+	standard header does not drop into them and you end up holding a part at an
+	angle while you solder it. A through-hole can take some abuse because the
+	plating runs through the board. A surface pad is a foil of copper held on by
+	adhesive, and a little torque in the wrong direction peels it straight off.
+	<strong>I wounded one i210 doing exactly this.</strong>
+
+	What worked much better on the next card was not a header at all:
+	<strong>strain-relieved SMA pigtails soldered to the pads</strong>, with the
+	cable anchored so that nothing a hand does at the connector end reaches the
+	joint. The coax takes the load, the pad never sees it, and the signal comes
+	off the card on something you can actually plug a scope or a PPS into.
+</CalloutBox>

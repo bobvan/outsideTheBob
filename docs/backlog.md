@@ -291,21 +291,21 @@ Build green and `npm run publish-check` clear after each sweep. No `updatedDate`
 bumps: these are word swaps, not content revisions, and bumping would resurface
 19 pages in the feed as updated.
 
-### Drafted 2026-09-14, awaiting Bob — `measuring-the-i210-t1-sdp-header`
+### `measuring-the-i210-t1-sdp-header` — committed as a draft 2026-11-18
 
-`src/content/blog/I210SdpHeader.mdx`, `draft: true`, **untracked — not committed
-yet.** Bob asked to be reminded of the open questions (2026-10-14), so they are
-listed here rather than left in a transcript.
+`src/content/blog/I210SdpHeader.mdx`, **`draft: true`**. Bob read it in dev and
+approved the text. It is on GitHub and **not on the site**: drafts are filtered
+by `import.meta.env.DEV`, so `astro build` omits it. Flipping `draft: false` is
+a one-word change and a separate decision.
 
 Source is `~/git/BBGresearch/docs/reference/i210-t1-sdp-header.md`, bench work
 2026-09-14 with `bbgresearch-c7`. All five technical items were verified against
-the measurement record and three corrections applied; the prose is finished.
-Four things are Bob's:
+the measurement record and three corrections applied.
 
 | # | item | who |
 |---|---|---|
-| I1 | **Two photos.** The header with pin 1 identifiable, and the flash chip with the trace from header pin 6 to its pin 5. A reader cannot reconstruct either from text. Placeholder comment is in the file; import with `scripts/import-figure.mjs`, no trim. | Bob |
-| I2 | **Voice.** Written first person as Bob throughout, per blog convention, where the source doc says "we" and credits the agent. `MusicKnob` has precedent for crediting Claude explicitly, so either reading is defensible. The pad-tracing must keep reading as Bob's own work — magnifier on the board after probing stopped — because that is the step that identified pin 6. | Bob |
+| I1 | ✅ **Done 2026-11-18.** Two figures from Bob's phone photos of 2026-09-14. `I210SdpHeader.jpg` is IMG_4885 cropped to the header, with numbered badges on all six contacts, the 1 kΩ pull-down and the flash labelled, and a **dashed** indicator from pin 6 to the flash — dashed and off-colour on purpose, because it marks what connects to what and not the exact copper, which came off Bob's magnifier rather than the photo. `I210SdpKludge.jpg` is IMG_4887, the reworked footprint. **IMG_4887 carried full GPS EXIF** (lat/long/altitude/bearing); both outputs are re-encoded from scratch with zero EXIF, verified by byte scan. Written as JPEG at 1600 px rather than through `import-figure.mjs`, which always emits PNG — 200 KB each instead of multi-MB in a public repo. No content-based trim; see [[never-trim-bobs-figures]]. Both added to `EDGE_TO_EDGE_ON_PURPOSE`. |  |
+| I2 | ✅ **Settled 2026-11-18.** Bob read the draft in first person throughout and approved it, so the blog convention stands and the agent is not credited in the prose. The pad-tracing reads as his own work, which is correct — it is the step that identified pin 6. |  |
 | I3 | **The tools** (`phcout.py`, `sdprelease.py`, `extsee.py`) are on the measurement host and in no public repo. `bbgresearch-c7` thinks they should be published so a reader can repeat the work, and is waiting on Bob. If they land somewhere public, add the links. | Bob |
 | I4 | **`BBGresearch` git history.** The lab hostname was committed as a dateline in nine docs, fixed in the working tree at `6ca81f8`. Repo is **private**, so nothing is exposed — this is a pre-flip decision, not an incident. Three options put to Bob: rewrite with `filter-repo`; publish a curated fresh public repo with a squashed initial commit (recommended); or flip and accept it. No internal addressing ever got in — RFC1918, tailnet and CGNAT all checked. Standing rule either way: quote current files, never older commits. | Bob |
 

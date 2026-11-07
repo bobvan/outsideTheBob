@@ -1,14 +1,15 @@
 ---
-title: "Measuring the I210-T1's SDP Header"
+title: "All Four SDPs on the Intel I210-T1"
 slug: "measuring-the-i210-t1-sdp-header"
 pubDate: 2026-11-06
-description: "The card has a six-pin header. The two best published sources document two of the pins and mark the rest with a question mark. I finished it on the bench — and two of them turn out not to be SDPs at all"
+description: "Everyone documents two of the six header pins and guesses at the rest. Both guesses are wrong, and the card carries twice the SDPs anybody thought — two on the header, two on bare pads beside it"
 tags: ["hardware", "networking", "timekeeping", "metrology"]
 draft: false
 ---
 
 import CalloutBox from "../../components/post/CalloutBox.astro";
 import ZoomableImage from "../../components/post/ZoomableImage.astro";
+import SdpPins from "../../assets/I210SdpPins.jpg";
 import SdpHeader from "../../assets/I210SdpHeader.jpg";
 import SdpKludge from "../../assets/I210SdpKludge.jpg";
 
@@ -17,54 +18,56 @@ on a tenth-inch pitch. If you want a network card that can timestamp an external
 pulse per second — which is what you want if you are disciplining a clock to
 GNSS — this is one of the few cheap ways in, and that header is how you reach it.
 
-Two people have written down what is on it. Neither finished.
+Two people have already written down most of it, and both of them got what they
+came for.
 
 Richard Cochran's [i210-rework
 page](https://linuxptp.sourceforge.net/i210-rework/i210-rework.html), which is
 where everybody starts, gives pin 2 as SDP0, pin 3 as ground and pin 4 as SDP1.
-Pins 1, 5 and 6 are marked `?`. jclark's
+jclark's
 [pc-ptp-ntp-guide](https://github.com/jclark/pc-ptp-ntp-guide/blob/main/pps-nic.md)
-carries a TODO: *"Top left is probably GND. Bottom right might be SDP2. Bottom
-left is probably not GND."*
+has the same two. Two software definable pins is what the usual job needs — a
+pulse per second in and a pulse per second out — so neither had reason to go
+further, and both were straight about where they stopped rather than guessing.
+Cochran prints `?` against pins 1, 5 and 6. jclark leaves a TODO: *"Top left is
+probably GND. Bottom right might be SDP2. Bottom left is probably not GND."*
 
-Those are the two best sources that exist for this card, and they stop in the
-same place. So I put it on the bench.
-
-## The answer
-
-Numbering across the short axis first, then down, with the RJ45 to the left:
-
-| pin | position | signal | how I know |
-|---|---|---|---|
-| 1 | top-left | **GND** | continuity to the bracket |
-| 2 | top-right | **SDP0** | PPS applied, timestamped by SDP0 |
-| 3 | mid-left | **GND** | continuity to the bracket |
-| 4 | mid-right | **SDP1** | PPS applied, timestamped by SDP1 |
-| 5 | bottom-left | **not an SDP** | 1 kΩ to ground; a PPS on it is invisible to all four SDPs |
-| 6 | bottom-right | **`NVM_SI`** | traced to pin 5 of the flash chip |
-
-That numbering is the same one Cochran uses — his table independently has pin 2
-as SDP0, pin 3 as ground and pin 4 as SDP1 — so if you find his page and this one,
-the pin numbers mean the same thing on both.
+I needed three, and found four.
 
 <ZoomableImage
-	src={SdpHeader}
-	alt="Close-up of the I210-T1 circuit board. A cream six-pin header on the left has each of its six gold contacts labelled with a numbered badge, 1 and 2 on the top row, 3 and 4 in the middle, 5 and 6 on the bottom. A small chip resistor immediately left of contact 5 is labelled one kilohm to ground. On the right an eight-pin black chip is labelled W25Q16JV flash, and a dashed line runs from contact 6 along the bottom of the board to the flash, labelled pin 6 to flash DI."
-	caption="The header as you find it, with the RJ45 off to the left. Pin 5 is the one to orient from: it is the only contact on the header with a part hanging off it, and that part is the kilohm pull-down. The dashed line marks what pin 6 connects to, not the exact copper."
+	src={SdpPins}
+	alt="A close-up of the cream six-pin header on the I210-T1 and the four bare pads immediately to its right. Four header contacts are ringed in yellow and named: GND and SDP0 on the top row, GND and SDP1 in the middle. The two bottom contacts carry orange question marks and a label reading not identified yet. The four bare pads are enclosed in a green box; the upper-left is SDP2, the lower-left is SDP3, and the two on the right are both ground."
+	caption="Everything the card brings out, by function, with the RJ45 off to the left. Four of the six header contacts were already known. The two at the bottom are the ones nobody had identified — they come later on this page."
 	width={1600}
 />
 
-If you are holding a card and want to be sure which corner is pin 1, find that
-resistor. It sits a couple of millimeters from contact 5 and nothing else on the
-header has a discrete component next to it, so once you have it the other five
-follow. The two right-hand contacts in the upper rows have clean traces heading
-off toward the controller, which is SDP0 and SDP1; the two left-hand ones have no
-surface trace at all, because they drop straight into the ground plane.
+## The other two SDPs are already on the card
 
-So the card gives you **two usable SDPs, not four**. And the guess that the
-bottom-right pin might be SDP2 is wrong in a more interesting way than being
-merely incorrect: pins 5 and 6 are not SDPs at all. They are a jumper, and
-somebody put them on that header on purpose.
+The controller has four SDPs. The header carries two. The other two come out a
+few millimeters to the right, on an unpopulated four-pad footprint: **SDP2 top
+left, SDP3 bottom left, and ground on both pads to the right.**
+
+They are harder to get at than the header and easier than the chip pins, and
+they work: I have cards modified this way carrying real signals in a running
+system, with SDP2 taking a GNSS pulse per second into `ts2phc` and SDP3
+timestamping a receiver's time pulse. Soldering to them is a problem of its own,
+and the end of this page is about that rather than about the pinout.
+
+If you want to confirm that mapping on your own card rather than take mine, the
+trick further down this page does it in a minute: arm the two outputs at
+deliberately different frequencies, 1 Hz on one and 4 Hz on the other, and a pad
+tells you *which* signal it carries rather than merely that something is
+happening.
+
+## Then curiosity got the better of me
+
+Three pins was the job and the job was done. But that left pins 1, 5 and 6 still
+carrying a question mark on the two best pages about this card — one of them
+guessed at as a possible SDP2 — and by now the card was on the bench with the
+instruments already set up.
+
+Pin 1 is ground, which is the dull answer and the likely one. Pins 5 and 6 are
+not SDPs at all.
 
 ## Two of the pins belong to the flash chip
 
@@ -108,6 +111,37 @@ happens to share a connector with the timing pins.
 	exactly how cards end up needing an external SPI programmer to recover. I am
 	documenting what the pins are, not recommending you short them.
 </CalloutBox>
+
+<ZoomableImage
+	src={SdpHeader}
+	alt="Close-up of the I210-T1 circuit board. A cream six-pin header on the left has each of its six gold contacts labelled with a numbered badge and its function: 1 GND and 2 SDP0 on the top row, 3 GND and 4 SDP1 in the middle, 5 and 6 NVM_SI on the bottom. A small chip resistor immediately left of contact 5 is labelled one kilohm to ground. On the right an eight-pin black chip is labelled W25Q16JV flash, and a dashed line runs from contact 6 along the bottom of the board to the flash, labelled pin 6 to flash DI."
+	caption="Pulled back far enough to show where pin 6 goes. The dashed line marks what it connects to rather than the exact copper — the routing came off a magnifier, not off this photograph. Pin 5 is the one to orient a card from: it is the only contact on the header with a part hanging off it, and that part is the kilohm pull-down."
+	width={1600}
+/>
+
+## The header, pin by pin
+
+Numbering across the short axis first, then down, with the RJ45 to the left:
+
+| pin | position | signal | how I know |
+|---|---|---|---|
+| 1 | top-left | **GND** | continuity to the bracket |
+| 2 | top-right | **SDP0** | PPS applied, timestamped by SDP0 |
+| 3 | mid-left | **GND** | continuity to the bracket |
+| 4 | mid-right | **SDP1** | PPS applied, timestamped by SDP1 |
+| 5 | bottom-left | **not an SDP** | 1 kΩ to ground; a PPS on it is invisible to all four SDPs |
+| 6 | bottom-right | **`NVM_SI`** | traced to pin 5 of the flash chip |
+
+That numbering is the same one Cochran uses — his table independently has pin 2
+as SDP0, pin 3 as ground and pin 4 as SDP1 — so if you find his page and this one,
+the pin numbers mean the same thing on both.
+
+If you are holding a card and want to be sure which corner is pin 1, find that
+resistor. It sits a couple of millimeters from contact 5 and nothing else on the
+header has a discrete component next to it, so once you have it the other five
+follow. The two right-hand contacts in the upper rows have clean traces heading
+off toward the controller, which is SDP0 and SDP1; the two left-hand ones have no
+surface trace at all, because they drop straight into the ground plane.
 
 ## How I worked out the rest, and the control that made it mean anything
 
@@ -171,10 +205,11 @@ pull-down on pin 5, plenty for a high-impedance input.
 
 ## What this means if you have one of these cards
 
-**Two SDPs, so three signals will not fit.** A clock that has to emit a pulse per
-second, emit a second signal, and accept a pulse per second from a GNSS receiver
-needs three pins and this card has two. That is a hardware limit, not a
-configuration you have not found yet.
+**Three signals fit, but only two of them on the header.** A clock that has to
+emit a pulse per second, emit a second signal, and accept a pulse per second from
+a GNSS receiver needs three pins. The header has two. The third has to come off
+the bare pads, which means soldering — see the warning at the end before you
+reach for an iron.
 
 **Both edges get timestamped.** The v2 external-timestamp ioctl is a dead end on
 this driver — it rejects every flag beyond the enable, so asking for a single
@@ -185,26 +220,25 @@ and the period minus the pulse width, so the listener reports 0.994970 s and you
 appear to have a 5000 ppm clock error. I did exactly this on the first run. The
 arithmetic gives it away: 0.994970 + 0.005000 = 0.999970, which is the period.
 
-**Four SDPs are a property of the controller, not of this card.** Intel's own
-reference design brings all four out to an eight-pin header. A custom board could
-have them. But SDP2 and SDP3 have never been confirmed working on an i210 in my
-lab — they were armed, the driver accepted the request without complaint, and
-nothing came out anywhere I could reach. On this card that is fully explained by
-those pins not going to the header. From outside, though, "not routed here" and
-"does not work" are the same observation, and I would not design a board that
-assumes four good SDPs on the strength of it. Settling that costs one sacrificial
-card and Cochran's rework.
+**A board you lay out yourself can have all four without any of this.** Intel's
+reference design brings every SDP to an eight-pin header; only the T1 makes you
+work for two of them. That is worth saying because for a while I could not tell
+whether SDP2 and SDP3 were broken or simply unrouted — they were armed, the
+driver accepted the request without complaint, and nothing came out anywhere I
+could reach. From outside, "not routed here" and "does not work" are the same
+observation. The only thing that told them apart was getting a wire onto the
+pads.
 
 ## If you add your own pins
 
-The stock header is a shrouded block you cannot easily get a probe or a jumper
-into, so sooner or later you will want pins on it, and there is a second
-footprint beside it that looks like an invitation.
+This is how you reach SDP2 and SDP3. The footprint beside the header looks like
+an invitation, and it is one — but read the warning under the photo before you
+act on it, because the pads are not what they look like.
 
 <ZoomableImage
 	src={SdpKludge}
 	alt="The same area of the board after rework. The cream six-pin header now has tall gold pins fitted. Beside it a black two-pin header has been hand-soldered onto a pair of surface-mount pads, its pins leaning slightly, surrounded by a thick untidy fillet of solder. The Intel controller is at the upper right."
-	caption="A two-pin header added to the footprint beside the stock one. Note what it is sitting on: flat surface-mount pads, not plated through-holes, and not on a tenth-inch pitch."
+	caption="A header added to the SDP2 and SDP3 pads beside the stock one. Note what it is sitting on: flat surface-mount pads, not plated through-holes, and not on a tenth-inch pitch."
 	width={1600}
 />
 

@@ -31,6 +31,7 @@ const EDGE_TO_EDGE_ON_PURPOSE = new Set([
 	'lastNs2utcLondon.jpg', // photograph
 	'SubNanoYouTube.png', // frame grabbed from the YouTube recording
 	'MusicKnob.jpg', // photograph
+	'I210SdpPins.jpg', // photograph, cropped to the pins and pads and annotated
 	'I210SdpHeader.jpg', // photograph, cropped to the header and annotated
 	'I210SdpKludge.jpg', // photograph, cropped to the reworked footprint
 ]);
